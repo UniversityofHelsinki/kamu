@@ -1,0 +1,10 @@
+{% extends "role_base.html" %}
+{% load i18n %}
+{% block role_content %}
+  <h3>{% trans "Role list" %}</h3>
+  <ul class="list-group">
+    {% for role in object_list %}
+      <li class="list-group-item"><a href="{% url 'role-detail' role.pk %}">{{ role.name }}</a></li>
+    {% endfor %}
+  </ul>
+{% endblock %}

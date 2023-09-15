@@ -1,0 +1,11 @@
+{% extends "role_base.html" %}
+{% load i18n %}
+{% load django_bootstrap5 %}
+{% block role_content %}
+  <h3>{% trans "Role creation" %}</h3>
+  <form method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% bootstrap_button _("Submit") button_type="submit" %}
+  </form>
+{% endblock %}

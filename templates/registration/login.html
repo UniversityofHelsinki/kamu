@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load django_bootstrap5 %}
+{% block content %}
+  <h2>{% trans "Login" %}</h2>
+  <form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% bootstrap_button _("Submit") button_type="submit" %}
+    <input type="hidden" name="next" value="{% firstof next '/' %}" />
+  </form>
+{% endblock %}

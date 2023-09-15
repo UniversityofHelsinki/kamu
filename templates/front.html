@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+  <div class="card">
+    <div class="card-body">
+      <h2 class="card-title">{% trans "Identities" %}</h2>
+      {% url 'identity' as identity_link %}
+      {% bootstrap_button _("Identity") button_type="link" href=identity_link %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h2 class="card-title">{% trans "Roles" %}</h2>
+      {% url 'role-list' as role_list_link %}
+      {% bootstrap_button _("List roles") button_type="link" href=role_list_link %}
+      {% url 'role-create' as role_add_link %}
+      {% bootstrap_button _("Add role") button_type="link" href=role_add_link %}
+    </div>
+  </div>
+  {% else %}
+  {% url 'login' as login_link %}
+  {% bootstrap_button _("Login") button_type="link" href=login_link %}
+  {% endif %}
+{% endblock %}

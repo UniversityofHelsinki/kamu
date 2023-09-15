@@ -1,0 +1,29 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Translations
+*.mo
+*.pot
+
+# Sqlite database
+db.sqlite3
+
+# Settings
+local_settings.py
+local_logging.py
+
+# Environments
+venv/
+
+# pycharm
+.idea/
+
+# Coverage
+.coverage
+coverage.xml
+
+# Sonarqube
+sonar-project.properties
+.scannerwork/

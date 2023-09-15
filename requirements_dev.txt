@@ -1,0 +1,8 @@
+# Requirements for development/testing environment
+-r requirements.txt
+black==23.7.0
+coverage==7.3.0
+isort==5.12.0
+mypy==1.5.1
+django-stubs==4.2.4
+djangorestframework-stubs==3.14.2
