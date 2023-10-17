@@ -53,3 +53,21 @@ class RoleTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Role membership", response.content.decode("utf-8"))
         self.assertIn(identity.user.get_full_name(), response.content.decode("utf-8"))
+
+    def test_join_role_with_invalid_date(self):
+        role = Role.objects.create(name="testrole", maximum_duration=365)
+        url = f"/role/{role.pk}/join/"
+        Identity.objects.create(user=self.user)
+        client = Client()
+        client.force_login(self.user)
+        response = client.post(url, {"start_date": "2020-01-11", "expire_date": "2020-01-01"}, follow=True)
+        self.assertIn("Start date cannot be later than expire date", response.content.decode("utf-8"))
+
+    def test_join_role_with_too_long_duration(self):
+        role = Role.objects.create(name="testrole", maximum_duration=3)
+        url = f"/role/{role.pk}/join/"
+        Identity.objects.create(user=self.user)
+        client = Client()
+        client.force_login(self.user)
+        response = client.post(url, {"start_date": "2020-01-01", "expire_date": "2020-01-05"}, follow=True)
+        self.assertIn("Role duration cannot be more than maximum duration", response.content.decode("utf-8"))

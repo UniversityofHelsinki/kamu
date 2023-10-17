@@ -29,6 +29,9 @@ class RoleJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateFo
         return super().get(request, *args, **kwargs)
 
     def get_initial(self):
+        """
+        Adds initial values to start_date and expire_date
+        """
         role = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
         start_date = timezone.now().date()
         expire_date = timezone.now().date() + datetime.timedelta(days=role.maximum_duration)
@@ -36,6 +39,15 @@ class RoleJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateFo
             "start_date": start_date,
             "expire_date": expire_date,
         }
+
+    def get_form_kwargs(self):
+        """
+        Add Role maximum_duration to form kwargs
+        """
+
+        kwargs = super(RoleJoinView, self).get_form_kwargs()
+        kwargs["maximum_duration"] = get_object_or_404(Role, pk=self.kwargs.get("role_pk")).maximum_duration
+        return kwargs
 
     def form_valid(self, form):
         form.instance.identity = self.request.user.identity if self.request.user.is_authenticated else None
