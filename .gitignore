@@ -25,5 +25,4 @@ venv/
 coverage.xml
 
 # Sonarqube
-sonar-project.properties
 .scannerwork/
