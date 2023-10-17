@@ -1,6 +1,10 @@
+import datetime
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView
@@ -24,9 +28,20 @@ class RoleJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateFo
             return redirect("role-detail", pk=kwargs.pop("role_pk"))
         return super().get(request, *args, **kwargs)
 
+    def get_initial(self):
+        role = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
+        start_date = timezone.now().date()
+        expire_date = timezone.now().date() + datetime.timedelta(days=role.maximum_duration)
+        return {
+            "start_date": start_date,
+            "expire_date": expire_date,
+        }
+
     def form_valid(self, form):
         form.instance.identity = self.request.user.identity if self.request.user.is_authenticated else None
-        form.instance.role = Role.objects.get(pk=self.kwargs.pop("role_pk"))
+        if not form.instance.identity:
+            raise Http404(_("Missing form identity."))
+        form.instance.role = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
         return super().form_valid(form)
 
 
