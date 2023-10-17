@@ -26,3 +26,6 @@ coverage.xml
 
 # Sonarqube
 .scannerwork/
+
+# mypy
+.mypy_cache/
