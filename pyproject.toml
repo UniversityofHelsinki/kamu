@@ -10,6 +10,7 @@ python_version = "3.10"
 plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
 exclude = [
     '^venv/$',
+    '^tests/$',
 ]
 check_untyped_defs = true
 #disallow_any_generics = true
