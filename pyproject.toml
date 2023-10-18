@@ -29,4 +29,4 @@ warn_unreachable = true
 warn_no_return = true
 
 [tool.django-stubs]
-django_settings_module = "uforegistry.settings"
+django_settings_module = "uforegistry.settings.test"
