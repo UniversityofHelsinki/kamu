@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
-from role.models import Membership, Role
-from role.serializers import MembershipSerializer, RoleSerializer
+from role.models import Membership, Permission, Role
+from role.serializers import MembershipSerializer, PermissionSerializer, RoleSerializer
 
 
 class MembershipViewSet(viewsets.ModelViewSet):
@@ -21,6 +21,14 @@ class MembershipViewSet(viewsets.ModelViewSet):
             return Membership.objects.all()
         identity = user.identity if user and hasattr(user, "identity") else None
         return Membership.objects.filter(identity=identity)
+
+
+class PermissionViewSet(viewsets.ModelViewSet):
+    """API endpoint for roles"""
+
+    queryset = Permission.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = PermissionSerializer
 
 
 class RoleViewSet(viewsets.ModelViewSet):

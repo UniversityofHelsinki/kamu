@@ -1,9 +1,12 @@
 from rest_framework import routers
 
-from identity.api import IdentityViewSet
-from role.api import MembershipViewSet, RoleViewSet
+from identity.api import AttributeTypeViewSet, AttributeViewSet, IdentityViewSet
+from role.api import MembershipViewSet, PermissionViewSet, RoleViewSet
 
 router = routers.DefaultRouter()
+router.register(r"attributes", AttributeViewSet)
+router.register(r"attributetypes", AttributeTypeViewSet)
 router.register(r"identities", IdentityViewSet)
 router.register(r"memberships", MembershipViewSet)
+router.register(r"permissions", PermissionViewSet)
 router.register(r"roles", RoleViewSet)
