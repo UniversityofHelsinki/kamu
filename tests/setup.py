@@ -12,7 +12,7 @@ class BaseTestCase(APITestCase):
         self.superuser = user.objects.create_user(username="admin", password="test_pass", is_superuser=True)
         self.identity = Identity.objects.create(user=self.user)
         self.superidentity = Identity.objects.create(user=self.superuser)
-        self.attribute_type = AttributeType.objects.create(name="Test attribute")
+        self.attribute_type = AttributeType.objects.create(identifier="Test attribute", regex_pattern="^[a-z]*$")
         self.role = Role.objects.create(name="testrole", maximum_duration=10)
         self.permission = Permission.objects.create(name="testpermission", cost=5)
         self.attribute = Attribute.objects.create(

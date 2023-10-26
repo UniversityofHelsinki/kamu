@@ -7,7 +7,7 @@ class AttributeAdmin(admin.ModelAdmin):
     list_display = ["identity", "attribute_type"]
     search_fields = [
         "identity__user__username",
-        "attribute_type__name",
+        "attribute_type__identifier",
         "value",
     ]
 
@@ -16,11 +16,9 @@ admin.site.register(Attribute, AttributeAdmin)
 
 
 class AttributeTypeAdmin(admin.ModelAdmin):
-    list_display = ["name", "multi_value", "unique"]
+    list_display = ["identifier", "name", "multi_value", "unique"]
     list_filter = ["multi_value", "unique"]
-    search_fields = [
-        "name",
-    ]
+    search_fields = ["identifier", "name_en", "name_fi", "name_sv"]
 
 
 admin.site.register(AttributeType, AttributeTypeAdmin)

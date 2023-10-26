@@ -29,6 +29,10 @@ class Role(models.Model):
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
+    class Meta:
+        verbose_name = _("Role")
+        verbose_name_plural = _("Roles")
+
     def __str__(self):
         return self.name
 
@@ -48,6 +52,10 @@ class Permission(models.Model):
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
+    class Meta:
+        verbose_name = _("Permission")
+        verbose_name_plural = _("Permissions")
+
     def __str__(self):
         return self.name
 
@@ -63,6 +71,10 @@ class Membership(models.Model):
 
     start_date = models.DateField(verbose_name=_("Membership start date"))
     expire_date = models.DateField(verbose_name=_("Membership expire date"))
+
+    class Meta:
+        verbose_name = _("Membership")
+        verbose_name_plural = _("Memberships")
 
     def __str__(self) -> str:
         return f"{self.role.name} - {self.identity.pk}"
