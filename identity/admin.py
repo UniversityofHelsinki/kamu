@@ -1,11 +1,12 @@
 from django.contrib import admin
 
-from identity.models import Attribute, AttributeType, Identity
+from identity.models import Attribute, AttributeType, Identifier, Identity
 
 
 class AttributeAdmin(admin.ModelAdmin):
     list_display = ["identity", "attribute_type"]
     search_fields = [
+        "identity__name",
         "identity__user__username",
         "attribute_type__identifier",
         "value",
@@ -24,13 +25,26 @@ class AttributeTypeAdmin(admin.ModelAdmin):
 admin.site.register(AttributeType, AttributeTypeAdmin)
 
 
-class IdentityAdmin(admin.ModelAdmin):
-    list_display = ["user"]
-    list_filter = ["roles__name"]
+class IdentifierAdmin(admin.ModelAdmin):
+    list_display = ["identity", "type"]
     search_fields = [
-        "user__display_name",
+        "identity__name",
+        "identity__user__username",
+        "type",
+        "value",
+    ]
+
+
+admin.site.register(Identifier, IdentifierAdmin)
+
+
+class IdentityAdmin(admin.ModelAdmin):
+    list_display = ["name"]
+    list_filter = ["roles__identifier"]
+    search_fields = [
+        "name",
         "user__username",
-        "roles__name",
+        "roles__identifier",
     ]
 
 

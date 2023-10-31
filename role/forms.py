@@ -41,4 +41,4 @@ class MembershipCreateForm(ModelForm[Membership]):
 class RoleCreateForm(ModelForm[Role]):
     class Meta:
         model = Role
-        fields = ["name", "maximum_duration"]
+        fields = ["identifier", "maximum_duration"]

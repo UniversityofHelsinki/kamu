@@ -3,7 +3,13 @@ import re
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from identity.models import Attribute, AttributeType, Identity, validate_attribute
+from identity.models import (
+    Attribute,
+    AttributeType,
+    Identifier,
+    Identity,
+    validate_attribute,
+)
 
 
 class AttributeSerializer(serializers.ModelSerializer[Attribute]):
@@ -15,6 +21,7 @@ class AttributeSerializer(serializers.ModelSerializer[Attribute]):
             "attribute_type",
             "value",
             "source",
+            "priority",
             "validated",
         ]
         read_only_fields = [
@@ -47,15 +54,15 @@ class AttributeTypeSerializer(serializers.ModelSerializer[AttributeType]):
         fields = [
             "id",
             "identifier",
-            "multi_value",
-            "unique",
-            "regex_pattern",
             "name_fi",
             "name_en",
             "name_sv",
             "description_fi",
             "description_en",
             "description_sv",
+            "multi_value",
+            "unique",
+            "regex_pattern",
         ]
         read_only_fields = [
             "created_at",
@@ -70,6 +77,23 @@ class AttributeTypeSerializer(serializers.ModelSerializer[AttributeType]):
         return value
 
 
+class IdentifierSerializer(serializers.ModelSerializer[Attribute]):
+    class Meta:
+        model = Identifier
+        fields = [
+            "id",
+            "identity",
+            "type",
+            "value",
+            "validated",
+            "deactivated_at",
+        ]
+        read_only_fields = [
+            "created_at",
+            "updated_at",
+        ]
+
+
 class IdentitySerializer(serializers.ModelSerializer[Identity]):
     attributes = AttributeSerializer(many=True, read_only=True)
 
@@ -78,6 +102,8 @@ class IdentitySerializer(serializers.ModelSerializer[Identity]):
         fields = [
             "id",
             "user",
+            "name",
+            "external",
             "roles",
             "attributes",
         ]

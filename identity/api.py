@@ -1,10 +1,11 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
-from identity.models import Attribute, AttributeType, Identity
+from identity.models import Attribute, AttributeType, Identifier, Identity
 from identity.serializers import (
     AttributeSerializer,
     AttributeTypeSerializer,
+    IdentifierSerializer,
     IdentitySerializer,
 )
 
@@ -32,6 +33,23 @@ class AttributeTypeViewSet(viewsets.ModelViewSet):
     queryset = AttributeType.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = AttributeTypeSerializer
+
+
+class IdentifierViewSet(viewsets.ModelViewSet):
+    """API endpoint for unique identifiers"""
+
+    queryset = Identifier.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = IdentifierSerializer
+
+    def get_queryset(self):
+        """
+        Restricts queryset to authenticated user if user is not a superuser
+        """
+        user = self.request.user if self.request.user.is_authenticated else None
+        if user and user.is_superuser:
+            return Identifier.objects.all()
+        return Identifier.objects.filter(identity__user=user)
 
 
 class IdentityViewSet(viewsets.ModelViewSet):

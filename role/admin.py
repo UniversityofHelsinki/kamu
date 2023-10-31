@@ -17,9 +17,7 @@ admin.site.register(Membership, MembershipAdmin)
 
 class PermissionAdmin(admin.ModelAdmin):
     list_display = ["name", "cost"]
-    search_fields = [
-        "name",
-    ]
+    search_fields = ["identifier", "name_en", "name_fi", "name_sv"]
 
 
 admin.site.register(Permission, PermissionAdmin)
@@ -27,10 +25,7 @@ admin.site.register(Permission, PermissionAdmin)
 
 class RoleAdmin(admin.ModelAdmin):
     list_display = ["name", "parent", "owner"]
-    search_fields = [
-        "name",
-        "parent__name",
-    ]
+    search_fields = ["identifier", "name_en", "name_fi", "name_sv"]
 
 
 admin.site.register(Role, RoleAdmin)

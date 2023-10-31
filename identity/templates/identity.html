@@ -3,7 +3,7 @@
 {% load django_bootstrap5 %}
 {% block content %}
   <h2>{% trans "Identity" %}</h2>
-  <p>{% trans "Name" %}: {{ object.user.get_full_name }}</p>
+  <p>{% trans "Name" %}: {{ object.name }}</p>
   <h3>{% trans "Roles" %}</h3>
   <ul class="list-group">
     {% for role in object.roles.all %}

@@ -2,10 +2,10 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from identity.models import Attribute, AttributeType, Identity
-from tests.setup import BaseTestCase
+from tests.setup import BaseAPITestCase
 
 
-class IdentityAPITests(BaseTestCase):
+class IdentityAPITests(BaseAPITestCase):
     def test_anonymous_list_identities(self):
         client = APIClient()
         client.force_authenticate(None)
@@ -27,7 +27,7 @@ class IdentityAPITests(BaseTestCase):
         self.assertEqual(len(response.data), 2)
 
 
-class AttributeAPITests(BaseTestCase):
+class AttributeAPITests(BaseAPITestCase):
     def setUp(self):
         super().setUp()
         self.attribute_type_multi_value = AttributeType.objects.create(
@@ -101,7 +101,7 @@ class AttributeAPITests(BaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class AttributeTypeAPITests(BaseTestCase):
+class AttributeTypeAPITests(BaseAPITestCase):
     def setUp(self):
         super().setUp()
         self.url = f"{self.url}attributetypes/"

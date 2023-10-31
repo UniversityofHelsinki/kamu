@@ -15,6 +15,8 @@ class Identity(models.Model):
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     roles = models.ManyToManyField("role.Role", through="role.Membership")
+    name = models.CharField(max_length=255, verbose_name=_("Display name"))
+    external = models.BooleanField(default=False, verbose_name=_("External identity"))
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
@@ -23,9 +25,7 @@ class Identity(models.Model):
         verbose_name_plural = _("Identities")
 
     def __str__(self):
-        if hasattr(self, "user") and self.user is not None:
-            return self.user.get_full_name()
-        return str(self.pk)
+        return self.name
 
 
 def validate_attribute_duplicates(error_class, attribute_type, identity, value, pk) -> None:
@@ -80,6 +80,7 @@ class Attribute(models.Model):
     attribute_type = models.ForeignKey("identity.AttributeType", on_delete=models.RESTRICT)
     value = models.CharField(max_length=255, verbose_name=_("Attribute value"))
     source = models.CharField(max_length=20, verbose_name=_("Attribute source"))
+    priority = models.SmallIntegerField(default=0, verbose_name=_("Attribute priority"))
     validated = models.BooleanField(default=False, verbose_name=_("Validated"))
 
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
@@ -90,7 +91,7 @@ class Attribute(models.Model):
         verbose_name_plural = _("Attributes")
 
     def __str__(self):
-        return f"{self.identity.pk}-{self.attribute_type.name()}"
+        return f"{self.identity.name}-{self.attribute_type.name()}"
 
     def clean(self):
         validate_attribute(ValidationError, self.attribute_type, self.identity, self.value, self.pk)
@@ -153,3 +154,37 @@ class AttributeType(models.Model):
             re.compile(self.regex_pattern)
         except re.error:
             raise ValidationError(_("Invalid regex pattern"))
+
+
+class Identifier(models.Model):
+    """
+    Stores a unique identifier, related to :model:`identity.Identity`
+    """
+
+    identity = models.ForeignKey(
+        "identity.Identity",
+        on_delete=models.CASCADE,
+        related_name="identifiers",
+    )
+
+    IDENTIFIER_CHOICES = (
+        ("hetu", _("Finnish national identification number")),
+        ("eidas", _("eIDAS identifier")),
+        ("eppn", _("eduPersonPrincipalName")),
+        ("google", _("Google account")),
+        ("microsoft", _("Microsoft account")),
+    )
+    type = models.CharField(max_length=10, choices=IDENTIFIER_CHOICES, verbose_name=_("Identifier type"))
+    value = models.CharField(max_length=255, verbose_name=_("Identifier value"))
+    validated = models.BooleanField(default=False, verbose_name=_("Validated"))
+
+    deactivated_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Deactivated at"))
+    created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
+
+    class Meta:
+        verbose_name = _("Identifier")
+        verbose_name_plural = _("Identifiers")
+
+    def __str__(self):
+        return f"{self.identity.name}-{self.type}"
