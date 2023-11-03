@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "django_bootstrap5",
     "rest_framework",
     "drf_spectacular",
+    "base",
     "role",
     "identity",
 ]
