@@ -46,5 +46,8 @@ SERVER_EMAIL = "noreply@example.org"
 # Example: [('John', 'john@example.com'), ('Mary', 'mary@example.com')]
 # ADMINS = []
 
+# Role hierarchy maximum depth, 1 = no hierarchy, 2 = parent and child, etc.
+ROLE_HIERARCHY_MAXIMUM_DEPTH = 4
+
 # Path to static files for collection
 STATIC_ROOT = "/path/to/rr/static/"

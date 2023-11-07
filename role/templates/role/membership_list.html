@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+  <h1 id="members-list">{% trans "Members" %}</h1>
+  <table class="table" aria-describedby="members-list">
+    <thead>
+    <tr>
+      <th scope="col">{% trans "Identity" %}</th>
+      <th scope="col">{% trans "Role" %}</th>
+      <th scope="col">{% trans "Status" %}</th>
+      <th scope="col">{% trans "Expires" %}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for membership in object_list %}
+      <tr>
+        <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{{ membership.identity }}</a></th>
+        <td>{{ membership.role }}</td>
+        <td>{{ membership.status }}</td>
+        <td>{{ membership.expire_date }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -76,7 +76,7 @@ class AttributeAPITests(BaseAPITestCase):
     def test_create_existing_attribute(self):
         client = APIClient()
         client.force_authenticate(user=self.user)
-        self.data["attribute_type"] = self.attribute_type.pk
+        self.data["attribute_type"] = self.attribute_type_first_name.pk
         response = client.post(self.url, self.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("already exists for this identity", response.data["non_field_errors"][0])

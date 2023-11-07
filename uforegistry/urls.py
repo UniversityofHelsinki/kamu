@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.conf.urls import include
 from django.contrib import admin
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LogoutView
 from django.urls import path
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -24,13 +24,16 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 
-from identity.views import FrontPageView, IdentityView
+from base.views import CustomLoginView, FrontPageView
+from identity.views import IdentityDetailView, IdentityMeView, IdentitySearchView
 from role.views import (
     MembershipDetailView,
+    MembershipListView,
     RoleCreateView,
     RoleDetailView,
     RoleJoinView,
     RoleListView,
+    RoleSearchView,
 )
 from uforegistry.routers import router
 
@@ -42,12 +45,16 @@ urlpatterns = [
     path("api/schema/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     path("admin/", admin.site.urls),
     path("", FrontPageView.as_view(), name="front-page"),
-    path("identity/", IdentityView.as_view(), name="identity"),
+    path("identity/me/", IdentityMeView.as_view(), name="identity-me"),
+    path("identity/<int:pk>/", IdentityDetailView.as_view(), name="identity-detail"),
+    path("identity/search/", IdentitySearchView.as_view(), name="identity-search"),
+    path("membership/", MembershipListView.as_view(), name="membership-list"),
     path("membership/<int:pk>/", MembershipDetailView.as_view(), name="membership-detail"),
-    path("roles/", RoleListView.as_view(), name="role-list"),
-    path("roles/<int:pk>/", RoleDetailView.as_view(), name="role-detail"),
+    path("role/", RoleListView.as_view(), name="role-list"),
+    path("role/search/", RoleSearchView.as_view(), name="role-search"),
+    path("role/<int:pk>/", RoleDetailView.as_view(), name="role-detail"),
     path("role/<int:role_pk>/join/", RoleJoinView.as_view(), name="role-join"),
     path("role/add/", RoleCreateView.as_view(), name="role-create"),
-    path("login/", LoginView.as_view(), name="login"),
+    path("login/", CustomLoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
 ]

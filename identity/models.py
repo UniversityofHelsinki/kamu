@@ -27,6 +27,12 @@ class Identity(models.Model):
     def __str__(self):
         return self.name
 
+    def get_attributes(self):
+        attributes = {}
+        for attribute in self.attributes.all().prefetch_related("attribute_type"):
+            attributes[attribute.attribute_type.identifier] = attribute.value
+        return attributes
+
 
 def validate_attribute_duplicates(error_class, attribute_type, identity, value, pk) -> None:
     """

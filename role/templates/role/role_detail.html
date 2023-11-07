@@ -1,14 +1,47 @@
-{% extends "role_base.html" %}
+{% extends "base.html" %}
 {% load i18n %}
-{% load django_bootstrap5 %}
-{% block role_content %}
-  <h3>{% trans "Role" %}: {{ object.name }}</h3>
-  {% url 'role-join' object.pk as role_join_link %}
-  {% bootstrap_button _("Join") button_type="link" href=role_join_link %}
-  <h4>{% trans "Members" %}</h4>
-  <ul class="list-group">
-    {% for membership in object.membership_set.all %}
-      <li class="list-group-item">{{ membership }}</li>
+
+{% block content %}
+  <h1>{% trans "Role" %}: {{ object.name }}</h1>
+  <dl class="row">
+    <dt class="col-sm-3">{% trans "Owner" %}</dt>
+    <dd class="col-sm-9">{{ object.owner }}</dd>
+
+    <dt class="col-sm-3">{% trans "Parent" %}</dt>
+    <dd class="col-sm-9">{% if object.parent %}{{ object.parent }}{% endif %}</dd>
+
+    <dt class="col-sm-3">{% trans "Permissions" %}</dt>
+    <dd class="col-sm-9">{% for permission in object.get_permissions %}{{ permission }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+
+    <dt class="col-sm-3">{% trans "Total cost" %}</dt>
+    <dd class="col-sm-9">{{ object.get_cost }} €</dd>
+
+    <dt class="col-sm-3">{% trans "Inviter groups" %}</dt>
+    <dd class="col-sm-9">{% for inviter in object.inviters.all %}{{ inviter }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+
+    <dt class="col-sm-3">{% trans "Approver groups" %}</dt>
+    <dd class="col-sm-9">{% for approver in object.approvers.all %}{{ approver }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+
+    <dt class="col-sm-3">{% trans "Maximum duration" %}</dt>
+    <dd class="col-sm-9">{{ object.maximum_duration }} {% trans "days" %}</dd>
+  </dl>
+  <h2 id="members-list">>{% trans "Members" %}</h2>
+  <table class="table" aria-describedby="members-list">
+    <thead>
+    <tr>
+      <th scope="col">{% trans "Identity" %}</th>
+      <th scope="col">{% trans "Status" %}</th>
+      <th scope="col">{% trans "Expires" %}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for membership in memberships %}
+      <tr>
+        <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{{ membership.identity }}</a></th>
+        <td>{{ membership.status }}</td>
+        <td>{{ membership.expire_date }}</td>
+      </tr>
     {% endfor %}
-  </ul>
+    </tbody>
+  </table>
 {% endblock %}

@@ -22,6 +22,14 @@ class RoleAPITests(BaseAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
 
+    def test_change_role_circular_hierarchy(self):
+        client = APIClient()
+        client.force_authenticate(user=self.superuser)
+        sub_role = Role.objects.create(identifier="subrole", name_en="Sub Role", maximum_duration=10, parent=self.role)
+        data = {"parent": sub_role.identifier}
+        response = client.patch(f"{self.url}roles/{self.role.pk}/", data)
+        self.assertIn(response.data["parent"][0], "Role cannot be in its own hierarchy")
+
 
 class PermissionAPITests(BaseAPITestCase):
     def test_anonymous_list_permissions(self):

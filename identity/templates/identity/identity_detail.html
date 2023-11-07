@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+  <h1>{% trans "Identity" %}: {{ object }}</h1>
+  <dl class="row">
+    <dt class="col-sm-3">{% trans "First names" %}</dt>
+    <dd class="col-sm-9">{{ attributes.first_name }}</dd>
+    <dt class="col-sm-3">{% trans "Last name" %}</dt>
+    <dd class="col-sm-9">{{ attributes.last_name }}</dd>
+    <dt class="col-sm-3">{% trans "Nickname" %}</dt>
+    <dd class="col-sm-9">{{ attributes.nickname }}</dd>
+    <dt class="col-sm-3">{% trans "Date of birth" %}</dt>
+    <dd class="col-sm-9">{{ attributes.date_of_birth }}</dd>
+    <dt class="col-sm-3">{% trans "Email" %}</dt>
+    <dd class="col-sm-9">{{ attributes.email }}</dd>
+  </dl>
+  <h2 id="roles-list">{% trans "Roles" %}</h2>
+  <table class="table" aria-describedby="roles-list">
+  <thead>
+    <tr>
+      <th scope="col">{% trans "Role" %}</th>
+      <th scope="col">{% trans "Status" %}</th>
+      <th scope="col">{% trans "Expires" %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for membership in memberships %}
+    <tr>
+      <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{{ membership.role.name }}</a></th>
+      <td>{{ membership.status }}</td>
+      <td>{{ membership.expire_date }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+  </table>
+{% endblock %}

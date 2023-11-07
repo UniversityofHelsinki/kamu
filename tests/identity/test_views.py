@@ -9,28 +9,33 @@ class IdentityTests(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.url = "/identity/"
+        self.client = Client()
+        self.client.force_login(self.user)
 
     def test_anonymous_view_redirects_to_login(self):
         client = Client()
-        response = client.get(self.url)
+        response = client.get(f"{self.url}1/")
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login/", response["location"])
 
     def test_view_identity_without_identity(self):
-        client = Client()
         self.identity.delete()
-        client.force_login(self.user)
-        response = client.get(self.url)
+        response = self.client.get(f"{self.url}me/", follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("New identity created.", response.content.decode("utf-8"))
 
     def test_view_identity(self):
-        client = Client()
-        client.force_login(self.user)
-        response = client.get(self.url)
+        response = self.client.get(f"{self.url}{self.identity.pk}/")
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("alert", response.content.decode("utf-8"))
-        self.assertIn("Name: Test User", response.content.decode("utf-8"))
+        self.assertIn("Identity: Test User", response.content.decode("utf-8"))
+
+    def test_search_identity(self):
+        url = f"{self.url}search/?first_name=nick&email=example.org"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Test User", response.content.decode("utf-8"))
+        self.assertNotIn("Superuser", response.content.decode("utf-8"))
 
 
 class AdminSiteTests(BaseTestCase):
@@ -43,12 +48,12 @@ class AdminSiteTests(BaseTestCase):
     def test_view_admin_attributetype(self):
         response = self.client.get(f"{self.url}attributetype/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Test Attribute", response.content.decode("utf-8"))
+        self.assertIn("First name", response.content.decode("utf-8"))
 
     def test_view_admin_attribute(self):
         response = self.client.get(f"{self.url}attribute/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Test Attribute", response.content.decode("utf-8"))
+        self.assertIn("First name", response.content.decode("utf-8"))
         self.assertIn("Test User", response.content.decode("utf-8"))
 
     def test_view_admin_identity(self):

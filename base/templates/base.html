@@ -1,0 +1,96 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <link href="{% static 'css/custom.css' %}" rel="stylesheet">
+  <title>Title</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'front-page' %}"><svg viewBox="0 0 1000 1000" height="64" width="64"><path d="M452 0h96v97h-96V0zm0 903h96v97h-96v-97zm380-358q-32-20-38-74-25 3-44-3-28-10-40-42-6-13-12-47t-13-52q-12-32-33-56-33-35-74-50-37-14-78-11 30 19 37 46 6 23-7 41t-36 19-42-12q-8-5-35-27-22-18-40-26-26-12-58-12-25 0-51 13 24 3 40 16 13 12 24 32 3 7 16 39 10 23 27 36t44 22q-13 6-38 6-29 0-55-15-20-11-45-36t-43-36q-28-16-61-16-16 0-29 4t-19 9q23 3 42 14 23 15 23 34 0 11-7 17t-19 5-23-12q-18-20-43-33t-54-12q-13 0-26 3T0 339q34 5 58 28t45 72q15 35 33 51 24 23 64 23 5 0 29-3 20-2 31 0 17 2 27 13 9 8 12 21 2 6 5 23 2 15 6 23 10 21 28 31 21 11 56 11-19 19-54 21-32 2-65-9t-49-28q2 46 25 80 25 37 68 50 49 14 113-4 18-5 30-1t19 24q16 41 71 35 48-5 79 6t59 42q8-81-77-135-15-9-23-19-6-8-9-19l-4-17q16 18 38 28 17 8 43 14 82 10 110 52 2-23-6-42-6-15-19-29-10-10-26-22-19-15-23-18-11-10-13-18 19 12 36 17t38 5q7-1 27-6t31-4q16 0 28 7 15 9 27 29 29-18 68-15 35 3 64 21-12-30-34-52-17-18-44-33-12-7-47-23-28-14-43-24zm-284 36h-96v-97h96v97z"></path></svg></a>
+    <a class="navbar-brand" href="{% url 'front-page' %}">{% trans "University of Helsinki" %}<br/>{% trans "Kamu" %}</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-label="{% trans "Toggle navigation" %}">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarMain">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="{% url 'identity-me' %}">{% trans "My information" %}</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">{% trans "Roles" %}</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'role-search' %}">{% trans "Search" %}</a></li>
+              <li><a class="dropdown-item" href="{% url 'membership-list' %}?filter=expiring">{% trans "Expiring" %}</a></li>
+              <li><a class="dropdown-item" href="{% url 'role-list' %}?filter=inviter">{% trans "Inviter" %}</a></li>
+              <li><a class="dropdown-item" href="{% url 'role-list' %}?filter=approver">{% trans "Approver" %}</a></li>
+              <li><a class="dropdown-item" href="{% url 'role-list' %}?filter=owner">{% trans "Owner" %}</a></li>
+              <li><a class="dropdown-item" href="{% url 'role-create' %}">{% trans "Create" %}</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">{% trans "Identities" %}</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'identity-search' %}">{% trans "Search" %}</a></li>
+            </ul>
+          </li>
+        {% endif %}
+      </ul>
+      <span>
+        <ul class="navbar-nav me-auto mb-lg-0">
+          <li class="nav-item">
+        {% get_current_language as LANGUAGE_CODE %}
+        {% get_available_languages as LANGUAGES %}
+        {% get_language_info_list for LANGUAGES as languages %}
+        <div class="btn-group p-1">
+        {% for language in languages %}
+          {% if language.code != LANGUAGE_CODE %}
+            <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+            <input name="next" type="hidden" value="{{ request.get_full_path }}">
+            <input name="language" type="hidden" value="{{ language.code }}" />
+            <input class="btn btn-sm" type="submit" value="{{ language.name_local }}" />
+          </form>
+          {% endif %}
+        {% endfor %}
+        </div>
+        </li>
+         <li class="nav-item">
+            {% if user.is_authenticated %}
+              <a class="nav-link d-flex" aria-current="page" href="{% url 'logout' %}">{% trans "Logout" %}</a>
+            {% else %}
+              <a class="nav-link d-flex" aria-current="page" href="{% url 'login' %}">{% trans "Login" %}</a>
+            {% endif %}
+          </li>
+        </ul>
+      </span>
+    </div>
+  </div>
+</nav>
+<main class="container">
+  <div class="row">
+    <div class="col">
+      {% for message in messages %}
+        <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert" >
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label=_("Close")></button>
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      {% block content %}
+      {% endblock %}
+    </div>
+  </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+{% block javascript %}
+{% endblock %}
+</body>
+</html>

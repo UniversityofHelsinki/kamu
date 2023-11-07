@@ -1,7 +1,8 @@
 # Common requirements
 Django==4.2.5
 djangorestframework==3.14
-django-bootstrap5==23.1
+django-crispy-forms==2.1.0
+crispy-bootstrap5==2023.10
 django-stubs-ext==4.2.2
 drf-spectacular==0.26.3
 mysqlclient==2.2.0

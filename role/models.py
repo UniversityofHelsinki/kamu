@@ -1,9 +1,26 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
+
+
+def validate_role_hierarchy(error_class, initial_role, parent) -> None:
+    """
+    Detects circular role hierarchy and hierarchy maximum depth
+
+    Cannot have circular hierarchy when creating a new role, only when changing the parent node.
+    """
+    n = 1
+    while parent:
+        n += 1
+        if n > settings.ROLE_HIERARCHY_MAXIMUM_DEPTH:
+            raise error_class(_("Role hierarchy cannot be more than maximum depth"))
+        if initial_role and parent == initial_role:
+            raise error_class(_("Role cannot be in its own hierarchy"))
+        parent = parent.parent
 
 
 class Role(models.Model):
@@ -68,8 +85,53 @@ class Role(models.Model):
         else:
             return self.description_en
 
+    def clean(self):
+        if self.parent:
+            validate_role_hierarchy(ValidationError, self, self.parent)
+
     def get_absolute_url(self):
         return reverse("role-detail", kwargs={"pk": self.pk})
+
+    def get_role_hierarchy(self) -> models.QuerySet:
+        """
+        Get hierarchy of all roles, following parents until maximum depth is reached
+
+        Role modification is validated against a circular hierarchy, but preparing for it anyway
+        """
+        role = self
+        roles = Role.objects.filter(pk=role.pk)
+        n = 1
+        while role.parent:
+            n += 1
+            if n > settings.ROLE_HIERARCHY_MAXIMUM_DEPTH:
+                break
+            role = role.parent
+            roles = roles | Role.objects.filter(pk=role.pk)
+        return roles
+
+    def get_permissions(self) -> models.QuerySet:
+        """
+        Get combined permissions of all distinct roles in hierarchy
+        """
+        roles = self.get_role_hierarchy()
+        return Permission.objects.filter(role__in=roles).distinct()
+
+    def get_cost(self) -> int:
+        """
+        Get combined cost of all distinct permissions in hierarchy
+        """
+        roles = self.get_role_hierarchy()
+        cost = Permission.objects.filter(role__in=roles).distinct().aggregate(models.Sum("cost"))["cost__sum"]
+        return cost if cost else 0
+
+    def get_hierarchy_memberships(self) -> models.QuerySet:
+        """
+        Get all active memberships in the role hierarchy
+        """
+        roles = self.get_role_hierarchy()
+        return Membership.objects.filter(
+            role__in=roles, start_date__lte=timezone.now(), expire_date__gte=timezone.now()
+        )
 
 
 class Permission(models.Model):
@@ -92,6 +154,7 @@ class Permission(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
     class Meta:
+        ordering = ["identifier"]
         verbose_name = _("Permission")
         verbose_name_plural = _("Permissions")
 
@@ -165,6 +228,7 @@ class Membership(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
     class Meta:
+        ordering = ["role__identifier", "expire_date"]
         verbose_name = _("Membership")
         verbose_name_plural = _("Memberships")
 

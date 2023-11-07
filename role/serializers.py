@@ -6,7 +6,13 @@ from django.utils.translation import gettext as _
 from rest_framework import serializers
 
 from identity.models import AttributeType
-from role.models import Membership, Permission, Role, validate_membership
+from role.models import (
+    Membership,
+    Permission,
+    Role,
+    validate_membership,
+    validate_role_hierarchy,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -114,3 +120,7 @@ class RoleSerializer(serializers.ModelSerializer[Role]):
             "created_at",
             "updated_at",
         ]
+
+    def validate_parent(self, value):
+        validate_role_hierarchy(serializers.ValidationError, self.instance, value)
+        return value

@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load crispy_forms_tags %}
+
 {% block content %}
-  <h1 id="roles-list">{% trans "Role list" %}</h1>
-  <table class="table" aria-describedby="roles-list">
+  <h1>{% trans "Role search" %}</h1>
+  {% crispy form form.helper %}
+  <h2 id="results-list">{% trans "Results" %}</h2>
+  <table class="table" aria-describedby="results-list">
   <thead>
     <tr>
       <th scope="col">{% trans "Role" %}</th>

@@ -1,10 +1,17 @@
-{% extends "role_base.html" %}
+{% extends "base.html" %}
 {% load i18n %}
-{% load django_bootstrap5 %}
-{% block role_content %}
-  <h3>{% trans "Role membership" %}</h3>
-  <p>{% trans "Role" %}: {{ object.role }}</p>
-  <p>{% trans "Identity" %}: {{ object.identity }}</p>
-  <p>{% trans "Start date" %}: {{ object.start_date }}</p>
-  <p>{% trans "Expire date" %}: {{ object.expire_date }}</p>
+{% block content %}
+  <h1>{% trans "Role membership" %}</h1>
+  <dl class="row">
+    <dt class="col-sm-3">{% trans "Role" %}</dt>
+    <dd class="col-sm-9"><a href="{% url 'role-detail' object.role.pk %}">{{ object.role }}</a></dd>
+    <dt class="col-sm-3">{% trans "Identity" %}</dt>
+    <dd class="col-sm-9"><a href="{% url 'identity-detail' object.identity.pk %}">{{ object.identity }}</a></dd>
+    <dt class="col-sm-3">{% trans "Start date" %}</dt>
+    <dd class="col-sm-9">{{ object.start_date }}</dd>
+    <dt class="col-sm-3">{% trans "Expire date" %}</dt>
+    <dd class="col-sm-9">{{ object.expire_date }}</dd>
+    <dt class="col-sm-3">{% trans "Reason" %}</dt>
+    <dd class="col-sm-9">{{ object.reason }}</dd>
+  </dl>
 {% endblock %}
