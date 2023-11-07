@@ -1,5 +1,5 @@
 """
-URL configuration for uforegistry project.
+URL configuration for Kamu service.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/
@@ -26,6 +26,7 @@ from drf_spectacular.views import (
 
 from base.views import CustomLoginView, FrontPageView
 from identity.views import IdentityDetailView, IdentityMeView, IdentitySearchView
+from kamu.routers import router
 from role.views import (
     MembershipDetailView,
     MembershipListView,
@@ -35,7 +36,6 @@ from role.views import (
     RoleListView,
     RoleSearchView,
 )
-from uforegistry.routers import router
 
 urlpatterns = [
     path("api/v0/", include(router.urls)),

@@ -1,5 +1,5 @@
 """
-WSGI config for uforegistry project.
+WSGI config for Kamu service.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "uforegistry.settings.production")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kamu.settings.production")
 
 application = get_wsgi_application()

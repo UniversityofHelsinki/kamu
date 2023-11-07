@@ -1,5 +1,5 @@
 """
-Common settings file used by uforegistry project
+Common settings file used by Kamu service
 
 Loaded by environment specific settings files
 """
@@ -67,14 +67,14 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "UFO Registry API",
+    "TITLE": "Kamu API",
     "DESCRIPTION": "REST API for identities and roles.",
     "VERSION": "0.1.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "SCHEMA_PATH_PREFIX": r"/api/v[0-9]",
 }
 
-ROOT_URLCONF = "uforegistry.urls"
+ROOT_URLCONF = "kamu.urls"
 
 TEMPLATES = [
     {
@@ -92,7 +92,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "uforegistry.wsgi.application"
+WSGI_APPLICATION = "kamu.wsgi.application"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

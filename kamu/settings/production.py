@@ -1,7 +1,7 @@
-# Generic production settings for uforegistry project.
+# Generic production settings for kamu project.
 # Requires local_settings.py, check local_settings_example.py for more information.
 
-from uforegistry.settings.common import *
+from kamu.settings.common import *
 
 DEBUG = False
 
@@ -17,6 +17,6 @@ CSRF_COOKIE_HTTPONLY = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 try:
-    from uforegistry.settings.local_settings import *
+    from kamu.settings.local_settings import *
 except ModuleNotFoundError:
-    print("No uforegistry/settings/local_settings.py found, exiting.")
+    print("No kamu/settings/local_settings.py found, exiting.")

@@ -1,5 +1,5 @@
-from uforegistry.settings.common import *
-from uforegistry.settings.local_settings_example import *
+from kamu.settings.common import *
+from kamu.settings.local_settings_example import *
 
 DEBUG = True
 

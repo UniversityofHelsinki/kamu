@@ -11,9 +11,9 @@ ALLOWED_HOSTS = [".local", ".localhost", "127.0.0.1", "[::1]"]
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "uforegistry",
-        "USER": "uforegistry",
-        "PASSWORD": "uforegistry",
+        "NAME": "kamu",
+        "USER": "kamu",
+        "PASSWORD": "kamu",
         "HOST": "localhost",
         "OPTIONS": {
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",

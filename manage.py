@@ -10,9 +10,9 @@ def main() -> None:
         print(
             "using test settings by default, set DJANGO_SETTINGS_MODULE environment variable to change this behavior"
         )
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "uforegistry.settings.test")
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kamu.settings.test")
     else:
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "uforegistry.settings.production")
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kamu.settings.production")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
