@@ -1,0 +1,128 @@
+[
+{
+    "model": "identity.attributetype",
+    "pk": 1,
+    "fields": {
+        "identifier": "given_names",
+        "name_fi": "Etunimet",
+        "name_en": "Given names",
+        "name_sv": "Förnamn",
+        "description_fi": "Kaikki etunimet samassa muodossa kuin virallisissa henkilöasiakirjoissa",
+        "description_en": "All first names in the same format as in official personal documents",
+        "description_sv": "Alla förnamn i samma format som i officiella personhandlingar",
+        "multi_value": false,
+        "unique": false,
+        "regex_pattern": ".*",
+        "created_at": "2023-11-07T13:22:28Z",
+        "updated_at": "2023-11-07T13:22:28Z"
+    }
+},
+{
+    "model": "identity.attributetype",
+    "pk": 2,
+    "fields": {
+        "identifier": "last_names",
+        "name_fi": "Sukunimi",
+        "name_en": "Surname",
+        "name_sv": "Efternamn",
+        "description_fi": "Koko sukunimi samassa muodossa kuin virallisissa henkilöasiakirjoissa",
+        "description_en": "Full surname in the same format as in official personal documents",
+        "description_sv": "Fullständigt efternamn i samma format som i officiella personhandlingar",
+        "multi_value": false,
+        "unique": false,
+        "regex_pattern": ".*",
+        "created_at": "2023-11-07T13:22:28Z",
+        "updated_at": "2023-11-07T13:22:28Z"
+    }
+},
+{
+    "model": "identity.attributetype",
+    "pk": 3,
+    "fields": {
+        "identifier": "nickname",
+        "name_fi": "Kutsumanimi",
+        "name_en": "Nickname",
+        "name_sv": "Smeknamn",
+        "description_fi": "Nimi jota käytetään sukunimen lisäksi näyttönimenä palveluissa",
+        "description_en": "A name that is used as a display name in services in addition to the surname",
+        "description_sv": "Ett namn som används som visningsnamn i tjänster utöver efternamnet",
+        "multi_value": false,
+        "unique": false,
+        "regex_pattern": ".*",
+        "created_at": "2023-11-07T13:22:28Z",
+        "updated_at": "2023-11-07T13:22:28Z"
+    }
+},
+{
+    "model": "identity.attributetype",
+    "pk": 4,
+    "fields": {
+        "identifier": "date_of_birth",
+        "name_fi": "Syntymäaika",
+        "name_en": "Date of Birth",
+        "name_sv": "Födelsedatum",
+        "description_fi": "Syntymäaika muodossa YYYY-MM-DD, esimerkiksi \"2001-03-29\"",
+        "description_en": "Date of birth in YYYY-MM-DD format, for example \"2001-03-29\"",
+        "description_sv": "Födelsedatum i formatet ÅÅÅÅ-MM-DD, till exempel \"2001-03-29\"",
+        "multi_value": false,
+        "unique": false,
+        "regex_pattern": "^(d{4})-(d{2})-(d{2})$",
+        "created_at": "2023-11-07T13:22:28Z",
+        "updated_at": "2023-11-07T13:22:28Z"
+    }
+},
+{
+    "model": "identity.attributetype",
+    "pk": 5,
+    "fields": {
+        "identifier": "email",
+        "name_fi": "Sähköpostiosoite",
+        "name_en": "E-mail",
+        "name_sv": "E-post",
+        "description_fi": "Sähköpostiosoite. Osoitteeseen lähetetään vahvistusviesti.",
+        "description_en": "Email address. A confirmation message will be sent to the address.",
+        "description_sv": "E-postadress. Ett bekräftelsemeddelande kommer att skickas till adressen.",
+        "multi_value": true,
+        "unique": false,
+        "regex_pattern": ".*@.*",
+        "created_at": "2023-11-07T13:22:28Z",
+        "updated_at": "2023-11-07T13:22:28Z"
+    }
+},
+{
+    "model": "identity.attributetype",
+    "pk": 6,
+    "fields": {
+        "identifier": "mobile",
+        "name_fi": "Matkapuhelinnumero",
+        "name_en": "Mobile phone number",
+        "name_sv": "Mobilnummer",
+        "description_fi": "Puhelinnumero. Vahvistetaan SMS-viestillä.",
+        "description_en": "Telephone number. Confirmed by SMS.",
+        "description_sv": "Telefonnummer. Bekräftad via SMS.",
+        "multi_value": true,
+        "unique": false,
+        "regex_pattern": "^(+|00)[1-9][0-9 -().]{7,32}$",
+        "created_at": "2023-11-07T13:22:28Z",
+        "updated_at": "2023-11-07T13:22:28Z"
+    }
+},
+{
+    "model": "identity.attributetype",
+    "pk": 7,
+    "fields": {
+        "identifier": "preferred_language",
+        "name_fi": "Palvelukieli",
+        "name_en": "Preferred Language",
+        "name_sv": "Föredraget språk",
+        "description_fi": "Palvelukieli. Vaihtoehdot: en, fi ja sv.",
+        "description_en": "Service language. Alternatives: en, fi and sv.",
+        "description_sv": "Servicespråk. Alternativ: en, fi och sv.",
+        "multi_value": false,
+        "unique": false,
+        "regex_pattern": "^(fi|sv|en)$",
+        "created_at": "2023-11-07T13:22:29Z",
+        "updated_at": "2023-11-07T13:22:29Z"
+    }
+}
+]

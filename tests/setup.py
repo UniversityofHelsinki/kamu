@@ -16,15 +16,15 @@ class TestData(TestCase):
         )
         self.identity = Identity.objects.create(user=self.user, name="Test User")
         self.superidentity = Identity.objects.create(user=self.superuser, name="Superuser Identity")
-        self.attribute_type_first_name = AttributeType.objects.create(
-            identifier="first_name", name_en="First name", regex_pattern="^[a-z]*$"
-        )
-        self.attribute_type_last_name = AttributeType.objects.create(
-            identifier="last_name", name_en="Last name", regex_pattern="^[a-z]*$"
-        )
-        self.attribute_type_email = AttributeType.objects.create(
-            identifier="email", name_en="Email", regex_pattern="^[a-z]*$"
-        )
+        self.attribute_type_first_name = AttributeType.objects.get_or_create(
+            identifier="given_names", name_en="Given names", regex_pattern=".*"
+        )[0]
+        self.attribute_type_last_name = AttributeType.objects.get_or_create(
+            identifier="last_names", name_en="Surname", regex_pattern=".*"
+        )[0]
+        self.attribute_type_email = AttributeType.objects.get_or_create(
+            identifier="email", name_en="E-mail", regex_pattern=".*@.*"
+        )[0]
         self.role = Role.objects.create(identifier="testrole", name_en="Test Role", maximum_duration=10)
         self.permission = Permission.objects.create(identifier="testpermission", name_en="Test Permission", cost=5)
         self.attribute = Attribute.objects.create(
@@ -33,7 +33,7 @@ class TestData(TestCase):
             value="Nick",
             source="testsource",
         )
-        self.attribute = Attribute.objects.create(
+        self.attribute_email = Attribute.objects.create(
             identity=self.identity,
             attribute_type=self.attribute_type_email,
             value="test@example.org",

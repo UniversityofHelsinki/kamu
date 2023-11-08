@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from identity.models import Attribute, AttributeType, Identity
+from identity.models import Attribute, AttributeType
 from tests.setup import BaseAPITestCase
 
 

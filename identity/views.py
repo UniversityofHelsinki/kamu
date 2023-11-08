@@ -59,11 +59,11 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
             return queryset.none()
         if first_name:
             queryset = queryset.filter(
-                attributes__attribute_type__identifier="first_name", attributes__value__icontains=first_name
+                attributes__attribute_type__identifier="given_names", attributes__value__icontains=first_name
             )
         if last_name:
             queryset = queryset.filter(
-                attributes__attribute_type__identifier="last_name", attributes__value__icontains=last_name
+                attributes__attribute_type__identifier="last_names", attributes__value__icontains=last_name
             )
         if email:
             queryset = queryset.filter(

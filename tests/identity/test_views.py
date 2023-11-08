@@ -1,7 +1,6 @@
-from django.contrib.auth.models import User
-from django.test import Client, RequestFactory, TestCase
+from django.test import Client
 
-from identity.models import Identity
+from identity.models import Attribute
 from tests.setup import BaseTestCase
 
 
@@ -31,6 +30,12 @@ class IdentityTests(BaseTestCase):
         self.assertIn("Identity: Test User", response.content.decode("utf-8"))
 
     def test_search_identity(self):
+        self.attribute = Attribute.objects.create(
+            identity=self.superidentity,
+            attribute_type=self.attribute_type_email,
+            value="super@example.org",
+            source="testsource",
+        )
         url = f"{self.url}search/?first_name=nick&email=example.org"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -48,12 +53,12 @@ class AdminSiteTests(BaseTestCase):
     def test_view_admin_attributetype(self):
         response = self.client.get(f"{self.url}attributetype/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("First name", response.content.decode("utf-8"))
+        self.assertIn("Given names", response.content.decode("utf-8"))
 
     def test_view_admin_attribute(self):
         response = self.client.get(f"{self.url}attribute/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("First name", response.content.decode("utf-8"))
+        self.assertIn("Given names", response.content.decode("utf-8"))
         self.assertIn("Test User", response.content.decode("utf-8"))
 
     def test_view_admin_identity(self):
