@@ -1,3 +1,7 @@
+"""
+API tests for role app.
+"""
+
 import datetime
 
 from django.utils import timezone

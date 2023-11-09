@@ -1,10 +1,14 @@
+"""
+Role app views for the UI.
+"""
+
 import datetime
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.translation import get_language
@@ -18,12 +22,16 @@ from role.models import Membership, Role
 
 
 class RoleJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateForm]):
+    """
+    View for joining a role.
+    """
+
     model = Membership
     form_class = MembershipCreateForm
 
     def get(self, request, *args, **kwargs):
         """
-        Returns user to role details if they don't have an identity
+        Returns user to role details if they don't have an identity.
         """
         user = self.request.user if self.request.user.is_authenticated else None
         if not Identity.objects.filter(user=user).exists():
@@ -33,7 +41,7 @@ class RoleJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateFo
 
     def get_initial(self):
         """
-        Adds initial values to start_date and expire_date
+        Adds initial values to start_date and expire_date.
         """
         role = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
         start_date = timezone.now().date()
@@ -45,32 +53,47 @@ class RoleJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateFo
 
     def get_form_kwargs(self):
         """
-        Add Role maximum_duration to form kwargs
+        Add role to form kwargs.
         """
-
         kwargs = super(RoleJoinView, self).get_form_kwargs()
-        kwargs["maximum_duration"] = get_object_or_404(Role, pk=self.kwargs.get("role_pk")).maximum_duration
+        kwargs["role"] = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
         return kwargs
 
     def form_valid(self, form):
+        """
+        Set identity and role for the membership.
+        """
         form.instance.identity = self.request.user.identity if self.request.user.is_authenticated else None
         if not form.instance.identity:
-            raise Http404(_("Missing form identity."))
+            raise PermissionDenied
         form.instance.role = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
         return super().form_valid(form)
 
 
 class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
+    """
+    View for membership details.
+    """
+
     model = Membership
 
 
 class MembershipListView(LoginRequiredMixin, ListView[Membership]):
+    """
+    View for membership list.
+    """
+
     model = Membership
 
     def get_queryset(self):
+        """
+        Limit membership list to approvers, inviters and owners.
+
+        Include only last 30 days if filter URI parameter with value expiring is used.
+        """
         user = self.request.user
         if not user.is_authenticated:
-            raise Http404(_("User not authenticated"))
+            raise PermissionDenied
         groups = user.groups.all()
         queryset = Membership.objects.all()
         if not user.is_superuser:
@@ -87,15 +110,26 @@ class MembershipListView(LoginRequiredMixin, ListView[Membership]):
 
 
 class RoleCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView[Role, RoleCreateForm]):
+    """
+    View for creating a new role.
+    """
+
     model = Role
     form_class = RoleCreateForm
     success_message = _("New role created.")
 
 
 class RoleDetailView(LoginRequiredMixin, DetailView[Role]):
+    """
+    View for role details.
+    """
+
     model = Role
 
     def get_context_data(self, **kwargs):
+        """
+        Add memberships to context.
+        """
         context = super(RoleDetailView, self).get_context_data(**kwargs)
         context["memberships"] = Membership.objects.filter(
             role=self.object, expire_date__gte=timezone.now().date()
@@ -104,12 +138,19 @@ class RoleDetailView(LoginRequiredMixin, DetailView[Role]):
 
 
 class RoleListView(LoginRequiredMixin, ListView[Role]):
+    """
+    View for role list.
+    """
+
     model = Role
 
     def get_queryset(self):
+        """
+        Filter queryset to inviters, approvers or owners, based on filter URL parameter.
+        """
         user = self.request.user
         if not user.is_authenticated:
-            raise Http404(_("User not authenticated"))
+            raise PermissionDenied
         groups = user.groups.all()
         queryset = Role.objects.all()
         if "filter" in self.request.GET:
@@ -123,10 +164,17 @@ class RoleListView(LoginRequiredMixin, ListView[Role]):
 
 
 class RoleSearchView(LoginRequiredMixin, ListView[Role]):
+    """
+    View for role search.
+    """
+
     template_name = "role/role_search.html"
     model = Role
 
     def get_context_data(self, **kwargs):
+        """
+        Add search form to ListView, including search parameters if present.
+        """
         context = super(RoleSearchView, self).get_context_data(**kwargs)
         if "search" in self.request.GET:
             context["form"] = TextSearchForm(self.request.GET)
@@ -135,6 +183,9 @@ class RoleSearchView(LoginRequiredMixin, ListView[Role]):
         return context
 
     def get_queryset(self):
+        """
+        Filter queryset based on search parameters.
+        """
         queryset = Role.objects.all()
         if "search" not in self.request.GET:
             return queryset.none()

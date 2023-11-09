@@ -1,3 +1,7 @@
+"""
+View tests for role app.
+"""
+
 import datetime
 
 from django.contrib.auth.models import Group
@@ -58,7 +62,13 @@ class RoleJoinTests(BaseTestCase):
     def test_join_role(self):
         url = f"{self.url}{self.role.pk}/join/"
         response = self.client.post(
-            url, {"start_date": "2020-01-01", "expire_date": "2020-01-08", "reason": "Because"}, follow=True
+            url,
+            {
+                "start_date": timezone.now().date(),
+                "expire_date": timezone.now().date() + datetime.timedelta(days=7),
+                "reason": "Because",
+            },
+            follow=True,
         )
         self.assertEqual(response.status_code, 200)
         self.assertIn("Role membership", response.content.decode("utf-8"))
@@ -67,16 +77,28 @@ class RoleJoinTests(BaseTestCase):
     def test_join_role_with_invalid_date(self):
         url = f"{self.url}{self.role.pk}/join/"
         response = self.client.post(
-            url, {"start_date": "2020-01-11", "expire_date": "2020-01-01", "reason": "Because"}, follow=True
+            url,
+            {
+                "start_date": timezone.now().date() + datetime.timedelta(days=7),
+                "expire_date": timezone.now().date(),
+                "reason": "Because",
+            },
+            follow=True,
         )
-        self.assertIn("Start date cannot be later than expire date", response.content.decode("utf-8"))
+        self.assertIn("Role expire date cannot be earlier than start date", response.content.decode("utf-8"))
 
     def test_join_role_with_too_long_duration(self):
         url = f"{self.url}{self.role.pk}/join/"
         self.role.maximum_duration = 3
         self.role.save()
         response = self.client.post(
-            url, {"start_date": "2020-01-01", "expire_date": "2020-01-05", "reason": "Because"}, follow=True
+            url,
+            {
+                "start_date": timezone.now().date(),
+                "expire_date": timezone.now().date() + datetime.timedelta(days=4),
+                "reason": "Because",
+            },
+            follow=True,
         )
         self.assertIn("Role duration cannot be more than maximum duration", response.content.decode("utf-8"))
 

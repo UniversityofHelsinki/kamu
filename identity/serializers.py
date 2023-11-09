@@ -1,3 +1,7 @@
+"""
+Serializers for identity app models.
+"""
+
 import re
 
 from django.utils.translation import gettext_lazy as _
@@ -13,6 +17,10 @@ from identity.models import (
 
 
 class AttributeSerializer(serializers.ModelSerializer[Attribute]):
+    """
+    Serializer for :model:`identity.Attribute`.
+    """
+
     class Meta:
         model = Attribute
         fields = [
@@ -30,7 +38,17 @@ class AttributeSerializer(serializers.ModelSerializer[Attribute]):
         ]
 
     def validate(self, data):
+        """
+        Validates attribute data.
+        """
+
         def get_attribute(attribute) -> str:
+            """
+            Get attribute from data or instance.
+
+            The attribute is required to exist in either the supplied attribute data,
+            or the existing instance in case of a partial update.
+            """
             if attribute in data:
                 return data[attribute]
             elif self.instance and hasattr(self.instance, attribute):
@@ -49,6 +67,10 @@ class AttributeSerializer(serializers.ModelSerializer[Attribute]):
 
 
 class AttributeTypeSerializer(serializers.ModelSerializer[AttributeType]):
+    """
+    Serializer for :model:`identity.AttributeType`.
+    """
+
     class Meta:
         model = AttributeType
         fields = [
@@ -70,6 +92,9 @@ class AttributeTypeSerializer(serializers.ModelSerializer[AttributeType]):
         ]
 
     def validate_regex_pattern(self, value):
+        """
+        Check that regex pattern is in correct format.
+        """
         try:
             re.compile(value)
         except re.error:
@@ -78,6 +103,10 @@ class AttributeTypeSerializer(serializers.ModelSerializer[AttributeType]):
 
 
 class IdentifierSerializer(serializers.ModelSerializer[Attribute]):
+    """
+    Serializer for :model:`identity.Identifier`.
+    """
+
     class Meta:
         model = Identifier
         fields = [
@@ -95,6 +124,10 @@ class IdentifierSerializer(serializers.ModelSerializer[Attribute]):
 
 
 class IdentitySerializer(serializers.ModelSerializer[Identity]):
+    """
+    Serializer for :model:`identity.Identity`.
+    """
+
     attributes = AttributeSerializer(many=True, read_only=True)
 
     class Meta:

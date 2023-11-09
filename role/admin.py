@@ -1,3 +1,7 @@
+"""
+Django admin site configuration for the role app.
+"""
+
 from django.contrib import admin
 
 from role.models import Membership, Permission, Role

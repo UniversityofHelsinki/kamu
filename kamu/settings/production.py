@@ -1,5 +1,8 @@
-# Generic production settings for kamu project.
-# Requires local_settings.py, check local_settings_example.py for more information.
+"""
+Generic production settings for Kamu service.
+
+Requires local_settings.py, check local_settings_example.py for more information.
+"""
 
 from kamu.settings.common import *
 

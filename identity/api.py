@@ -1,3 +1,7 @@
+"""
+Identity app views for API endpoints.
+"""
+
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
@@ -11,7 +15,9 @@ from identity.serializers import (
 
 
 class AttributeViewSet(viewsets.ModelViewSet):
-    """API endpoint for attribute values"""
+    """
+    API endpoint for attribute values.
+    """
 
     queryset = Attribute.objects.all()
     permission_classes = [IsAuthenticated]
@@ -19,7 +25,7 @@ class AttributeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Restricts queryset to authenticated user if user is not a superuser
+        Restricts queryset to authenticated user, if user is not a superuser.
         """
         user = self.request.user if self.request.user.is_authenticated else None
         if user and user.is_superuser:
@@ -28,7 +34,9 @@ class AttributeViewSet(viewsets.ModelViewSet):
 
 
 class AttributeTypeViewSet(viewsets.ModelViewSet):
-    """API endpoint for attribute types"""
+    """
+    API endpoint for attribute types.
+    """
 
     queryset = AttributeType.objects.all()
     permission_classes = [IsAuthenticated]
@@ -36,7 +44,9 @@ class AttributeTypeViewSet(viewsets.ModelViewSet):
 
 
 class IdentifierViewSet(viewsets.ModelViewSet):
-    """API endpoint for unique identifiers"""
+    """
+    API endpoint for unique identifiers.
+    """
 
     queryset = Identifier.objects.all()
     permission_classes = [IsAuthenticated]
@@ -44,7 +54,7 @@ class IdentifierViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Restricts queryset to authenticated user if user is not a superuser
+        Restricts queryset to authenticated user, if user is not a superuser.
         """
         user = self.request.user if self.request.user.is_authenticated else None
         if user and user.is_superuser:
@@ -53,7 +63,9 @@ class IdentifierViewSet(viewsets.ModelViewSet):
 
 
 class IdentityViewSet(viewsets.ModelViewSet):
-    """API endpoint for identities"""
+    """
+    API endpoint for identities.
+    """
 
     queryset = Identity.objects.all()
     permission_classes = [IsAuthenticated]
@@ -61,7 +73,7 @@ class IdentityViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Restricts queryset to authenticated user if user is not a superuser
+        Restricts queryset to authenticated user, if user is not a superuser.
         """
         user = self.request.user if self.request.user.is_authenticated else None
         if user and user.is_superuser:

@@ -1,3 +1,7 @@
+"""
+Role app models.
+"""
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -9,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 
 def validate_role_hierarchy(error_class, initial_role, parent) -> None:
     """
-    Detects circular role hierarchy and hierarchy maximum depth
+    Detects circular role hierarchy and hierarchy maximum depth.
 
     Cannot have circular hierarchy when creating a new role, only when changing the parent node.
     """
@@ -25,7 +29,7 @@ def validate_role_hierarchy(error_class, initial_role, parent) -> None:
 
 class Role(models.Model):
     """
-    Stores a role
+    Stores a role, related to self, :model:`auth.Group` and :model:`role.Permission`.
     """
 
     identifier = models.CharField(max_length=20, unique=True, verbose_name=_("Role identifier"))
@@ -86,17 +90,23 @@ class Role(models.Model):
             return self.description_en
 
     def clean(self):
+        """
+        Validates role data.
+        """
         if self.parent:
             validate_role_hierarchy(ValidationError, self, self.parent)
 
     def get_absolute_url(self):
+        """
+        Returns url to current role's detail view.
+        """
         return reverse("role-detail", kwargs={"pk": self.pk})
 
     def get_role_hierarchy(self) -> models.QuerySet:
         """
-        Get hierarchy of all roles, following parents until maximum depth is reached
+        Returns a hierarchy of all roles, following parents until maximum depth is reached.
 
-        Role modification is validated against a circular hierarchy, but preparing for it anyway
+        Role modification is validated against a circular hierarchy, but preparing for it anyway.
         """
         role = self
         roles = Role.objects.filter(pk=role.pk)
@@ -111,14 +121,14 @@ class Role(models.Model):
 
     def get_permissions(self) -> models.QuerySet:
         """
-        Get combined permissions of all distinct roles in hierarchy
+        Returns combined permissions of all distinct roles in hierarchy.
         """
         roles = self.get_role_hierarchy()
         return Permission.objects.filter(role__in=roles).distinct()
 
     def get_cost(self) -> int:
         """
-        Get combined cost of all distinct permissions in hierarchy
+        Returns combined cost of all distinct permissions in hierarchy.
         """
         roles = self.get_role_hierarchy()
         cost = Permission.objects.filter(role__in=roles).distinct().aggregate(models.Sum("cost"))["cost__sum"]
@@ -126,7 +136,7 @@ class Role(models.Model):
 
     def get_hierarchy_memberships(self) -> models.QuerySet:
         """
-        Get all active memberships in the role hierarchy
+        Returns all active memberships in the role hierarchy.
         """
         roles = self.get_role_hierarchy()
         return Membership.objects.filter(
@@ -136,7 +146,7 @@ class Role(models.Model):
 
 class Permission(models.Model):
     """
-    Stores a permission, give by a Role
+    Stores a permission, related to :model:`identity.AttributeType`.
     """
 
     identifier = models.CharField(max_length=20, unique=True, verbose_name=_("Permission identifier"))
@@ -186,7 +196,7 @@ class Permission(models.Model):
 
 def validate_membership(error_class, role, start_date, expire_date) -> None:
     """
-    Validates membership dates
+    Validates membership dates.
     """
     if expire_date < start_date:
         raise error_class(_("Role expire date cannot be earlier than start date"))
@@ -200,7 +210,7 @@ def validate_membership(error_class, role, start_date, expire_date) -> None:
 
 class Membership(models.Model):
     """
-    Stores a membership between :model:`identity.Identity` and :model:`identity.Role`
+    Stores a membership between :model:`identity.Identity` and :model:`identity.Role`, related to :model:`auth.User`.
     """
 
     identity = models.ForeignKey("identity.Identity", on_delete=models.CASCADE)
@@ -236,4 +246,7 @@ class Membership(models.Model):
         return f"{self.role.name()} - {self.identity.name}"
 
     def get_absolute_url(self):
+        """
+        Returns url to current membership's detail view.
+        """
         return reverse("membership-detail", kwargs={"pk": self.pk})

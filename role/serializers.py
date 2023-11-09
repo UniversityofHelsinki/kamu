@@ -1,3 +1,7 @@
+"""
+Serializers for role app models.
+"""
+
 import logging
 
 from django.contrib.auth import get_user_model
@@ -18,6 +22,10 @@ logger = logging.getLogger(__name__)
 
 
 class MembershipSerializer(serializers.ModelSerializer[Membership]):
+    """
+    Serializer for :model:`role.Membership`.
+    """
+
     approver = serializers.SlugRelatedField(
         slug_field="username", queryset=get_user_model().objects.all(), required=False
     )
@@ -26,7 +34,17 @@ class MembershipSerializer(serializers.ModelSerializer[Membership]):
     )
 
     def validate(self, data):
+        """
+        Validates role membership data.
+        """
+
         def get_attribute(attribute) -> str:
+            """
+            Get attribute from data or instance.
+
+            The attribute is required to exist in either the supplied attribute data,
+            or the existing instance in case of a partial update.
+            """
             if attribute in data:
                 return data[attribute]
             elif self.instance and hasattr(self.instance, attribute):
@@ -59,6 +77,10 @@ class MembershipSerializer(serializers.ModelSerializer[Membership]):
 
 
 class PermissionSerializer(serializers.ModelSerializer[Permission]):
+    """
+    Serializer for :model:`role.Permission`.
+    """
+
     requirements = serializers.SlugRelatedField(
         slug_field="identifier", required=False, many=True, queryset=AttributeType.objects.all()
     )
@@ -84,6 +106,10 @@ class PermissionSerializer(serializers.ModelSerializer[Permission]):
 
 
 class RoleSerializer(serializers.ModelSerializer[Role]):
+    """
+    Serializer for :model:`role.Role`.
+    """
+
     owner = serializers.SlugRelatedField(
         slug_field="username", required=False, queryset=get_user_model().objects.all()
     )
@@ -122,5 +148,8 @@ class RoleSerializer(serializers.ModelSerializer[Role]):
         ]
 
     def validate_parent(self, value):
+        """
+        Validate parent for circular role hierarchy and hierarchy maximum depth.
+        """
         validate_role_hierarchy(serializers.ValidationError, self.instance, value)
         return value

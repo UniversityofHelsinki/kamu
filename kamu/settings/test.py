@@ -1,3 +1,9 @@
+"""
+Test configuration for Kamu service.
+
+Uses local_settings_example configuration with SQLite database, and disables browser security features.
+"""
+
 from kamu.settings.common import *
 from kamu.settings.local_settings_example import *
 

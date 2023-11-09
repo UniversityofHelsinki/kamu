@@ -1,4 +1,6 @@
-from django.test import Client
+"""
+Tests for base views.
+"""
 
 from tests.setup import BaseTestCase
 

@@ -1,5 +1,10 @@
-# Production config uses local_logging.py for logging configuration if available. Otherwise, logging.py is used.
-# See https://docs.djangoproject.com/en/dev/topics/logging/ for more information.
+"""
+Python logging configuration in dictConfig format.
+
+Production config uses local_logging.py for logging configuration if available. Otherwise, logging.py is used.
+
+See https://docs.djangoproject.com/en/dev/topics/logging/ for more information.
+"""
 
 import os
 

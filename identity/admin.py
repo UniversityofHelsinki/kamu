@@ -1,3 +1,7 @@
+"""
+Django admin site configuration for the identity app.
+"""
+
 from django.contrib import admin
 
 from identity.models import Attribute, AttributeType, Identifier, Identity

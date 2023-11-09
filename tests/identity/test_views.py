@@ -1,3 +1,7 @@
+"""
+View tests for identity app.
+"""
+
 from django.test import Client
 
 from identity.models import Attribute

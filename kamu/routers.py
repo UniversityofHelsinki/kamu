@@ -1,3 +1,7 @@
+"""
+Router configuration for the API endpoints.
+"""
+
 from rest_framework import routers
 
 from identity.api import (

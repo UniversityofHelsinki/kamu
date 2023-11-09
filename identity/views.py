@@ -1,3 +1,7 @@
+"""
+Identity app views for the UI.
+"""
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
@@ -13,6 +17,10 @@ from role.models import Membership
 
 
 class IdentityDetailView(LoginRequiredMixin, DetailView):
+    """
+    View for the identity details.
+    """
+
     model = Identity
 
     def get_context_data(self, **kwargs):
@@ -25,6 +33,10 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
 
 
 class IdentityMeView(LoginRequiredMixin, View):
+    """
+    Redirect to current user's detail view.
+    """
+
     def get(self, request):
         """
         Redirects user to their own identity detail page.
@@ -42,15 +54,25 @@ class IdentityMeView(LoginRequiredMixin, View):
 
 
 class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
+    """
+    Identity search view with results list.
+    """
+
     template_name = "identity/identity_search.html"
     model = Identity
 
     def get_context_data(self, **kwargs):
+        """
+        Add form to the ListView.
+        """
         context = super(IdentitySearchView, self).get_context_data(**kwargs)
         context["form"] = IdentitySearchForm(self.request.GET)
         return context
 
     def get_queryset(self):
+        """
+        Filter results based on URL parameters.
+        """
         queryset = Identity.objects.all()
         first_name = self.request.GET.get("first_name")
         last_name = self.request.GET.get("last_name")

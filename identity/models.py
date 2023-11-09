@@ -1,3 +1,7 @@
+"""
+Identity app models.
+"""
+
 import re
 
 from django.conf import settings
@@ -10,7 +14,7 @@ from django.utils.translation import gettext_lazy as _
 
 class Identity(models.Model):
     """
-    Stores an identity, extending :model:`auth.User`, related to :model:`identity.Role`
+    Stores an identity, extending :model:`auth.User`, related to :model:`identity.Role`.
     """
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
@@ -28,6 +32,9 @@ class Identity(models.Model):
         return self.name
 
     def get_attributes(self):
+        """
+        Returns all attributes linked to the identity.
+        """
         attributes = {}
         for attribute in self.attributes.all().prefetch_related("attribute_type"):
             attributes[attribute.attribute_type.identifier] = attribute.value
@@ -36,7 +43,7 @@ class Identity(models.Model):
 
 def validate_attribute_duplicates(error_class, attribute_type, identity, value, pk) -> None:
     """
-    Validates an attribute value against duplicates
+    Validation checks to prevent duplicates.
     """
     if attribute_type.multi_value is False:
         if pk:
@@ -50,7 +57,7 @@ def validate_attribute_duplicates(error_class, attribute_type, identity, value, 
 
 def validate_attribute_uniqueness(error_class, attribute_type, value, pk) -> None:
     """
-    Validates unique attribute values
+    Validates unique attribute values.
     """
     if attribute_type.unique is True:
         if pk:
@@ -62,7 +69,7 @@ def validate_attribute_uniqueness(error_class, attribute_type, value, pk) -> Non
 
 def validate_attribute(error_class, attribute_type, identity, value, pk) -> None:
     """
-    Validates an attribute value against its constraints and type regex pattern
+    Validates an attribute value against its constraints and type regex pattern.
     """
     validate_attribute_duplicates(error_class, attribute_type, identity, value, pk)
     validate_attribute_uniqueness(error_class, attribute_type, value, pk)
@@ -75,7 +82,7 @@ def validate_attribute(error_class, attribute_type, identity, value, pk) -> None
 
 class Attribute(models.Model):
     """
-    Stores a user attribute value, related to :model:`identity.Identity` and :model:`identity.AttributeType`
+    Stores a user attribute value, related to :model:`identity.Identity` and :model:`identity.AttributeType`.
     """
 
     identity = models.ForeignKey(
@@ -100,12 +107,15 @@ class Attribute(models.Model):
         return f"{self.identity.name}-{self.attribute_type.name()}"
 
     def clean(self):
+        """
+        Data validation for attributes.
+        """
         validate_attribute(ValidationError, self.attribute_type, self.identity, self.value, self.pk)
 
 
 class AttributeType(models.Model):
     """
-    Stores an attribute type
+    Stores an attribute type.
     """
 
     identifier = models.CharField(max_length=20, unique=True, verbose_name=_("Attribute identifier"))
@@ -154,7 +164,7 @@ class AttributeType(models.Model):
 
     def clean(self):
         """
-        Validates that pattern is valid regex
+        Validates that pattern is valid regex.
         """
         try:
             re.compile(self.regex_pattern)
@@ -164,7 +174,7 @@ class AttributeType(models.Model):
 
 class Identifier(models.Model):
     """
-    Stores a unique identifier, related to :model:`identity.Identity`
+    Stores a unique identifier, related to :model:`identity.Identity`.
     """
 
     identity = models.ForeignKey(

@@ -1,4 +1,6 @@
-import datetime
+"""
+Role app forms.
+"""
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -7,15 +9,22 @@ from django.core.exceptions import ValidationError
 from django.forms.widgets import DateInput
 from django.utils.translation import gettext as _
 
-from role.models import Membership, Role
+from role.models import Membership, Role, validate_membership
 
 
 class TextSearchForm(forms.Form):
+    """
+    Form for text search.
+
+    Using GET method to get a bookmarkable URL.
+    Only use with insensitive fields as search values are set to URL parameters.
+    """
+
     search = forms.CharField(label="search", max_length=255)
 
     def __init__(self, *args, **kwargs) -> None:
         """
-        Set Crispy Forms helper
+        Crispy Forms helper to set form styles, configuration and buttons.
         """
         super(TextSearchForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -26,11 +35,15 @@ class TextSearchForm(forms.Form):
 
 
 class MembershipCreateForm(forms.ModelForm[Membership]):
+    """
+    Form for creating a new membership.
+    """
+
     def __init__(self, *args, **kwargs):
         """
-        Get maximum_duration from kwargs for form validation and set Crispy Forms helper
+        Get role from kwargs for form validation and set Crispy Forms helper.
         """
-        self.maximum_duration = kwargs.pop("maximum_duration")
+        self.role = kwargs.pop("role")
         super(MembershipCreateForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Submit")))
@@ -44,23 +57,25 @@ class MembershipCreateForm(forms.ModelForm[Membership]):
         }
 
     def clean(self):
+        """
+        Validate dates and duration.
+        """
         cleaned_data = super().clean()
         if cleaned_data is None:
             cleaned_data = self.cleaned_data
         start_date = cleaned_data.get("start_date")
         expire_date = cleaned_data.get("expire_date")
-        if type(start_date) is not datetime.date or type(expire_date) is not datetime.date:
-            raise ValidationError(_("Incorrect date format"))
-        if start_date > expire_date:
-            raise ValidationError(_("Start date cannot be later than expire date"))
-        if (expire_date - start_date).days > self.maximum_duration:
-            raise ValidationError(_("Role duration cannot be more than maximum duration"))
+        validate_membership(ValidationError, self.role, start_date, expire_date)
 
 
 class RoleCreateForm(forms.ModelForm[Role]):
+    """
+    Form for creating a new role.
+    """
+
     def __init__(self, *args, **kwargs):
         """
-        Set Crispy Forms helper
+        Crispy Forms helper to set submit button.
         """
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()

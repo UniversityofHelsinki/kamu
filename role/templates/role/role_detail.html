@@ -25,23 +25,25 @@
     <dt class="col-sm-3">{% trans "Maximum duration" %}</dt>
     <dd class="col-sm-9">{{ object.maximum_duration }} {% trans "days" %}</dd>
   </dl>
-  <h2 id="members-list">>{% trans "Members" %}</h2>
-  <table class="table" aria-describedby="members-list">
-    <thead>
-    <tr>
-      <th scope="col">{% trans "Identity" %}</th>
-      <th scope="col">{% trans "Status" %}</th>
-      <th scope="col">{% trans "Expires" %}</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for membership in memberships %}
+  {% if memberships %}
+    <h2 id="members-list">{% trans "Members" %}</h2>
+    <table class="table" aria-describedby="members-list">
+      <thead>
       <tr>
-        <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{{ membership.identity }}</a></th>
-        <td>{{ membership.status }}</td>
-        <td>{{ membership.expire_date }}</td>
+        <th scope="col">{% trans "Identity" %}</th>
+        <th scope="col">{% trans "Status" %}</th>
+        <th scope="col">{% trans "Expires" %}</th>
       </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+      {% for membership in memberships %}
+        <tr>
+          <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{{ membership.identity }}</a></th>
+          <td>{{ membership.status }}</td>
+          <td>{{ membership.expire_date }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
 {% endblock %}

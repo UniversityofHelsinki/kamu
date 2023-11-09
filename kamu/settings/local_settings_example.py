@@ -1,4 +1,8 @@
-# Example local settings file, copy this to local_settings.py and modify as needed.
+"""
+Example local settings file.
+
+Copy this to local_settings.py and modify as needed.
+"""
 
 DEBUG = False
 

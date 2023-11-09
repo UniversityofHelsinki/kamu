@@ -1,8 +1,11 @@
 """
-Generate test fixtures
+Test data generation.
+
+Create basic fixtures and specified number of identities for development and testing.
 
 Usage help: ./manage.py generate_test_data -h
 """
+
 import datetime
 import random
 import unicodedata

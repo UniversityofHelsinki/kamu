@@ -1,3 +1,7 @@
+"""
+Unit tests for role app.
+"""
+
 import datetime
 
 from django.test import TestCase, override_settings

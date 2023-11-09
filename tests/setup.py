@@ -1,3 +1,7 @@
+"""
+Test setup for all tests.
+"""
+
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 from rest_framework.test import APIRequestFactory, APITestCase
@@ -7,6 +11,10 @@ from role.models import Permission, Role
 
 
 class TestData(TestCase):
+    """
+    Base test data for all tests.
+    """
+
     def setUp(self):
         super().setUp()
         user = get_user_model()
@@ -44,12 +52,20 @@ class TestData(TestCase):
 
 
 class BaseTestCase(TestData):
+    """
+    TestCase class with test data.
+    """
+
     def setUp(self):
         super().setUp()
         self.factory = RequestFactory()
 
 
 class BaseAPITestCase(TestData, APITestCase):
+    """
+    APITestCase class with test data.
+    """
+
     def setUp(self):
         super().setUp()
         self.factory = APIRequestFactory()
