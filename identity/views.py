@@ -25,10 +25,9 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(IdentityDetailView, self).get_context_data(**kwargs)
-        context["attributes"] = self.object.get_attributes()
         context["memberships"] = Membership.objects.filter(
             identity=self.object, expire_date__gte=timezone.now().date()
-        ).prefetch_related("identity__attributes")
+        ).prefetch_related("identity__email_addresses")
         return context
 
 
@@ -74,21 +73,15 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         Filter results based on URL parameters.
         """
         queryset = Identity.objects.all()
-        first_name = self.request.GET.get("first_name")
-        last_name = self.request.GET.get("last_name")
+        given_names = self.request.GET.get("given_names")
+        surname = self.request.GET.get("surname")
         email = self.request.GET.get("email")
-        if not first_name and not last_name and not email:
+        if not given_names and not surname and not email:
             return queryset.none()
-        if first_name:
-            queryset = queryset.filter(
-                attributes__attribute_type__identifier="given_names", attributes__value__icontains=first_name
-            )
-        if last_name:
-            queryset = queryset.filter(
-                attributes__attribute_type__identifier="last_names", attributes__value__icontains=last_name
-            )
+        if given_names:
+            queryset = queryset.filter(given_names__icontains=given_names)
+        if surname:
+            queryset = queryset.filter(surname__icontains=surname)
         if email:
-            queryset = queryset.filter(
-                attributes__attribute_type__identifier="email", attributes__value__icontains=email
-            )
+            queryset = queryset.filter(email_addresses__address__icontains=email)
         return queryset

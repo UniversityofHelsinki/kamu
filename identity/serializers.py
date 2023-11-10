@@ -2,107 +2,72 @@
 Serializers for identity app models.
 """
 
-import re
-
-from django.utils.translation import gettext_lazy as _
+from django.core.validators import EmailValidator
+from django.utils.translation import gettext as _
 from rest_framework import serializers
+from rest_framework.fields import Field
+from rest_framework.validators import UniqueTogetherValidator
 
-from identity.models import (
-    Attribute,
-    AttributeType,
-    Identifier,
-    Identity,
-    validate_attribute,
-)
+from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
 
 
-class AttributeSerializer(serializers.ModelSerializer[Attribute]):
+class EmailAddressSerializer(serializers.ModelSerializer[EmailAddress]):
     """
-    Serializer for :model:`identity.Attribute`.
+    Serializer for :model:`identity.EmailAddress`.
     """
 
     class Meta:
-        model = Attribute
+        model = EmailAddress
         fields = [
             "id",
             "identity",
-            "attribute_type",
-            "value",
-            "source",
+            "address",
             "priority",
-            "validated",
+            "verified",
         ]
         read_only_fields = [
             "created_at",
             "updated_at",
         ]
-
-    def validate(self, data):
-        """
-        Validates attribute data.
-        """
-
-        def get_attribute(attribute) -> str:
-            """
-            Get attribute from data or instance.
-
-            The attribute is required to exist in either the supplied attribute data,
-            or the existing instance in case of a partial update.
-            """
-            if attribute in data:
-                return data[attribute]
-            elif self.instance and hasattr(self.instance, attribute):
-                return getattr(self.instance, attribute)
-            raise serializers.ValidationError(_(f"Field {attribute} is required"))
-
-        attribute_type = get_attribute("attribute_type")
-        identity = get_attribute("identity")
-        value = get_attribute("value")
-        if self.instance and hasattr(self.instance, "pk"):
-            pk = self.instance.pk
-        else:
-            pk = None
-        validate_attribute(serializers.ValidationError, attribute_type, identity, value, pk)
-        return data
-
-
-class AttributeTypeSerializer(serializers.ModelSerializer[AttributeType]):
-    """
-    Serializer for :model:`identity.AttributeType`.
-    """
-
-    class Meta:
-        model = AttributeType
-        fields = [
-            "id",
-            "identifier",
-            "name_fi",
-            "name_en",
-            "name_sv",
-            "description_fi",
-            "description_en",
-            "description_sv",
-            "multi_value",
-            "unique",
-            "regex_pattern",
-        ]
-        read_only_fields = [
-            "created_at",
-            "updated_at",
+        validators = [
+            UniqueTogetherValidator(
+                queryset=EmailAddress.objects.all(),
+                fields=["identity", "address"],
+                message=_("This identity already has the given email address."),
+            )
         ]
 
-    def validate_regex_pattern(self, value):
+    def validate_address(self, value):
         """
-        Check that regex pattern is in correct format.
+        Validates address with Django's built-in email validator.
         """
-        try:
-            re.compile(value)
-        except re.error:
-            raise serializers.ValidationError(_("Invalid regex pattern"))
+        validator = EmailValidator()
+        validator(value)
         return value
 
 
-class IdentifierSerializer(serializers.ModelSerializer[Attribute]):
+class PhoneNumberSerializer(serializers.ModelSerializer[PhoneNumber]):
+    """
+    Serializer for :model:`identity.PhoneNumber`.
+    """
+
+    class Meta:
+        model = PhoneNumber
+        fields = [
+            "id",
+            "identity",
+            "number",
+            "priority",
+            "verified",
+        ]
+        read_only_fields = [
+            "created_at",
+            "updated_at",
+        ]
+        validators = [UniqueTogetherValidator(queryset=PhoneNumber.objects.all(), fields=["identity", "number"])]
+
+
+class IdentifierSerializer(serializers.ModelSerializer[Identifier]):
     """
     Serializer for :model:`identity.Identifier`.
     """
@@ -114,7 +79,7 @@ class IdentifierSerializer(serializers.ModelSerializer[Attribute]):
             "identity",
             "type",
             "value",
-            "validated",
+            "verified",
             "deactivated_at",
         ]
         read_only_fields = [
@@ -128,17 +93,27 @@ class IdentitySerializer(serializers.ModelSerializer[Identity]):
     Serializer for :model:`identity.Identity`.
     """
 
-    attributes = AttributeSerializer(many=True, read_only=True)
+    email_addresses: Field = serializers.SlugRelatedField(many=True, read_only=True, slug_field="address")
+    phone_numbers: Field = serializers.SlugRelatedField(many=True, read_only=True, slug_field="number")
+    roles: Field = serializers.SlugRelatedField(many=True, read_only=True, slug_field="identifier")
 
     class Meta:
         model = Identity
         fields = [
             "id",
             "user",
-            "name",
             "external",
+            "assurance_level",
+            "given_names",
+            "surname",
+            "nickname",
+            "date_of_birth",
+            "gender",
+            "nationality",
+            "preferred_language",
             "roles",
-            "attributes",
+            "email_addresses",
+            "phone_numbers",
         ]
         read_only_fields = [
             "created_at",

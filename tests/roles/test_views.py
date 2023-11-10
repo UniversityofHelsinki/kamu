@@ -72,7 +72,7 @@ class RoleJoinTests(BaseTestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertIn("Role membership", response.content.decode("utf-8"))
-        self.assertIn(self.identity.name, response.content.decode("utf-8"))
+        self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
 
     def test_join_role_with_invalid_date(self):
         url = f"{self.url}{self.role.pk}/join/"
@@ -142,7 +142,7 @@ class RoleViewTests(BaseTestCase):
         url = f"{self.url}{self.role.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Superuser", response.content.decode("utf-8"))
+        self.assertIn("Super User", response.content.decode("utf-8"))
 
     def test_restrict_role_list_to_role_managers(self):
         Membership.objects.create(

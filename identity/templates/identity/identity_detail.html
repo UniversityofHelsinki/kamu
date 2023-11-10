@@ -1,18 +1,20 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block content %}
-  <h1>{% trans "Identity" %}: {{ object }}</h1>
+  <h1>{% trans "Identity" %}: {{ object.display_name }}</h1>
   <dl class="row">
-    <dt class="col-sm-3">{% trans "First names" %}</dt>
-    <dd class="col-sm-9">{{ attributes.first_name }}</dd>
-    <dt class="col-sm-3">{% trans "Last name" %}</dt>
-    <dd class="col-sm-9">{{ attributes.last_name }}</dd>
+    <dt class="col-sm-3">{% trans "Given names" %}</dt>
+    <dd class="col-sm-9">{{ object.given_names }}</dd>
+    <dt class="col-sm-3">{% trans "Surname" %}</dt>
+    <dd class="col-sm-9">{{ object.surname }}</dd>
     <dt class="col-sm-3">{% trans "Nickname" %}</dt>
-    <dd class="col-sm-9">{{ attributes.nickname }}</dd>
+    <dd class="col-sm-9">{{ object.nickname }}</dd>
     <dt class="col-sm-3">{% trans "Date of birth" %}</dt>
-    <dd class="col-sm-9">{{ attributes.date_of_birth }}</dd>
-    <dt class="col-sm-3">{% trans "Email" %}</dt>
-    <dd class="col-sm-9">{{ attributes.email }}</dd>
+    <dd class="col-sm-9">{{ object.date_of_birth }}</dd>
+    <dt class="col-sm-3">{% trans "E-mail addresses" %}</dt>
+    <dd class="col-sm-9">{% for address in object.email_addresses.all %}{{ address.address }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+    <dt class="col-sm-3">{% trans "Phone numbers" %}</dt>
+    <dd class="col-sm-9">{% for number in object.phone_numbers.all %}{{ number.number }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
   </dl>
   <h2 id="roles-list">{% trans "Roles" %}</h2>
   <table class="table" aria-describedby="roles-list">

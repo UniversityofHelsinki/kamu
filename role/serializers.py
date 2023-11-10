@@ -9,7 +9,6 @@ from django.contrib.auth.models import Group
 from django.utils.translation import gettext as _
 from rest_framework import serializers
 
-from identity.models import AttributeType
 from role.models import (
     Membership,
     Permission,
@@ -81,10 +80,6 @@ class PermissionSerializer(serializers.ModelSerializer[Permission]):
     Serializer for :model:`role.Permission`.
     """
 
-    requirements = serializers.SlugRelatedField(
-        slug_field="identifier", required=False, many=True, queryset=AttributeType.objects.all()
-    )
-
     class Meta:
         model = Permission
         fields = [
@@ -96,7 +91,6 @@ class PermissionSerializer(serializers.ModelSerializer[Permission]):
             "description_fi",
             "description_en",
             "description_sv",
-            "requirements",
             "cost",
         ]
         read_only_fields = [

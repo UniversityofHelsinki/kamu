@@ -9,17 +9,17 @@
   <table class="table" aria-describedby="results-list">
   <thead>
     <tr>
-      <th scope="col">{% trans "First names" %}</th>
-      <th scope="col">{% trans "Last name" %}</th>
-      <th scope="col">{% trans "E-mail addresses" %}</th>
+      <th scope="col">{% trans "Given names" %}</th>
+      <th scope="col">{% trans "Surname" %}</th>
+      <th scope="col">{% trans "Nickname" %}</th>
     </tr>
   </thead>
   <tbody>
     {% for identity in object_list %}
     <tr>
-      <th scope="row"><a href="{% url 'identity-detail' identity.pk %}">{{ identity.name }}</a></th>
-      <td>{% if identity.name is not None %}{{ identity.name }}{% endif %}</td>
-      <td>{% if identity.name is not None %}{{ identity.name }}{% endif %}</td>
+      <th scope="row"><a href="{% url 'identity-detail' identity.pk %}">{{ identity.given_names }}</a></th>
+      <td>{{ identity.surname }}</td>
+      <td>{{ identity.nickname }}</td>
     </tr>
   {% endfor %}
   </tbody>

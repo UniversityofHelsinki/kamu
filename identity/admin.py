@@ -4,29 +4,19 @@ Django admin site configuration for the identity app.
 
 from django.contrib import admin
 
-from identity.models import Attribute, AttributeType, Identifier, Identity
+from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
 
 
-class AttributeAdmin(admin.ModelAdmin):
-    list_display = ["identity", "attribute_type"]
+class EmailAddressAdmin(admin.ModelAdmin):
+    list_display = ["identity", "address"]
     search_fields = [
-        "identity__name",
+        "identity__display_name",
         "identity__user__username",
-        "attribute_type__identifier",
-        "value",
+        "address",
     ]
 
 
-admin.site.register(Attribute, AttributeAdmin)
-
-
-class AttributeTypeAdmin(admin.ModelAdmin):
-    list_display = ["identifier", "name", "multi_value", "unique"]
-    list_filter = ["multi_value", "unique"]
-    search_fields = ["identifier", "name_en", "name_fi", "name_sv"]
-
-
-admin.site.register(AttributeType, AttributeTypeAdmin)
+admin.site.register(EmailAddress, EmailAddressAdmin)
 
 
 class IdentifierAdmin(admin.ModelAdmin):
@@ -43,13 +33,27 @@ admin.site.register(Identifier, IdentifierAdmin)
 
 
 class IdentityAdmin(admin.ModelAdmin):
-    list_display = ["name"]
+    list_display = ["given_names", "surname", "nickname"]
     list_filter = ["roles__identifier"]
     search_fields = [
-        "name",
+        "given_names",
+        "surname",
+        "nickname",
         "user__username",
         "roles__identifier",
     ]
 
 
 admin.site.register(Identity, IdentityAdmin)
+
+
+class PhoneNumberAdmin(admin.ModelAdmin):
+    list_display = ["identity", "number"]
+    search_fields = [
+        "identity__display_name",
+        "identity__user__username",
+        "number",
+    ]
+
+
+admin.site.register(PhoneNumber, PhoneNumberAdmin)

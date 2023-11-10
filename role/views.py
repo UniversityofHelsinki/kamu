@@ -106,7 +106,7 @@ class MembershipListView(LoginRequiredMixin, ListView[Membership]):
                     expire_date__gte=timezone.now().date(),
                     expire_date__lte=timezone.now().date() + datetime.timedelta(days=30),
                 ).order_by("expire_date")
-        return queryset.prefetch_related("identity__attributes", "role")
+        return queryset.prefetch_related("identity", "role")
 
 
 class RoleCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView[Role, RoleCreateForm]):
@@ -143,7 +143,7 @@ class RoleDetailView(LoginRequiredMixin, DetailView[Role]):
         ):
             context["memberships"] = Membership.objects.filter(
                 role=self.object, expire_date__gte=timezone.now().date()
-            ).prefetch_related("identity__attributes")
+            ).prefetch_related("identity")
         return context
 
 

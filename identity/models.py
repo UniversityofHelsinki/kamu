@@ -2,13 +2,10 @@
 Identity app models.
 """
 
-import re
-
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.db import models
 from django.utils import timezone
-from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
 
@@ -17,10 +14,63 @@ class Identity(models.Model):
     Stores an identity, extending :model:`auth.User`, related to :model:`identity.Role`.
     """
 
+    LANG_CHOICES = (
+        ("en", _("English")),
+        ("fi", _("Finnish")),
+        ("sv", _("Swedish")),
+    )
+    GENDER_CHOICES = (
+        ("M", _("Male")),
+        ("F", _("Female")),
+        ("O", _("Other")),
+        ("U", _("Unknown")),
+    )
+    ASSURANCE_CHOICES = (
+        ("none", _("No assurance level")),
+        ("low", _("Low, self-asserted with a verified email-address")),
+        ("medium", _("Medium, verified from a government issued photo-ID")),
+        ("high", _("High, eIDAS substantial level or similar")),
+    )
+    VERIFICATION_CHOICES = (
+        (0, _("No verification")),
+        (1, _("Self assurance")),
+        (2, _("External source")),
+        (3, _("Verified from a government issued photo-ID")),
+        (4, _("Strong electrical verification")),
+    )
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     roles = models.ManyToManyField("role.Role", through="role.Membership")
-    name = models.CharField(max_length=255, verbose_name=_("Display name"))
     external = models.BooleanField(default=False, verbose_name=_("External identity"))
+    assurance_level = models.CharField(
+        max_length=10, default="none", choices=ASSURANCE_CHOICES, verbose_name=_("Assurance level")
+    )
+    given_names = models.CharField(blank=True, max_length=255, verbose_name=_("Given names"))
+    given_names_verification = models.SmallIntegerField(
+        choices=VERIFICATION_CHOICES, default=0, verbose_name=_("Given names verification method")
+    )
+    surname = models.CharField(blank=True, max_length=255, verbose_name=_("Surname"))
+    surname_verification = models.SmallIntegerField(
+        choices=VERIFICATION_CHOICES, default=0, verbose_name=_("Surname verification method")
+    )
+    nickname = models.CharField(blank=True, max_length=255, verbose_name=_("Nickname"))
+    nickname_verification = models.SmallIntegerField(
+        choices=VERIFICATION_CHOICES, default=0, verbose_name=_("Nickname verification method")
+    )
+    date_of_birth = models.DateField(blank=True, null=True, verbose_name=_("Date of birth"))
+    date_of_birth_verification = models.SmallIntegerField(
+        choices=VERIFICATION_CHOICES, default=0, verbose_name=_("Date of birth verification method")
+    )
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default="U", verbose_name=_("Gender"))
+    gender_verification = models.SmallIntegerField(
+        choices=VERIFICATION_CHOICES, default=0, verbose_name=_("Gender verification method")
+    )
+    nationality = models.CharField(blank=True, max_length=255, verbose_name=_("Nationality"))
+    nationality_verification = models.SmallIntegerField(
+        choices=VERIFICATION_CHOICES, default=0, verbose_name=_("Nationality verification method")
+    )
+    preferred_language = models.CharField(
+        max_length=2, choices=LANG_CHOICES, default="en", verbose_name=_("Preferred language")
+    )
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
@@ -29,147 +79,62 @@ class Identity(models.Model):
         verbose_name_plural = _("Identities")
 
     def __str__(self):
-        return self.name
+        return self.display_name()
 
-    def get_attributes(self):
-        """
-        Returns all attributes linked to the identity.
-        """
-        attributes = {}
-        for attribute in self.attributes.all().prefetch_related("attribute_type"):
-            attributes[attribute.attribute_type.identifier] = attribute.value
-        return attributes
+    def display_name(self) -> str:
+        return f"{self.nickname} {self.surname}"
 
 
-def validate_attribute_duplicates(error_class, attribute_type, identity, value, pk) -> None:
+class EmailAddress(models.Model):
     """
-    Validation checks to prevent duplicates.
-    """
-    if attribute_type.multi_value is False:
-        if pk:
-            if Attribute.objects.filter(identity=identity, attribute_type=attribute_type).exclude(pk=pk).exists():
-                raise error_class(_(f"An attribute of type {attribute_type.name()} already exists for this identity"))
-        elif Attribute.objects.filter(identity=identity, attribute_type=attribute_type).exists():
-            raise error_class(_(f"An attribute of type {attribute_type.name()} already exists for this identity"))
-    elif Attribute.objects.filter(identity=identity, attribute_type=attribute_type, value=value).exists():
-        raise error_class(_("An attribute with the same value already exists for this identity"))
-
-
-def validate_attribute_uniqueness(error_class, attribute_type, value, pk) -> None:
-    """
-    Validates unique attribute values.
-    """
-    if attribute_type.unique is True:
-        if pk:
-            if Attribute.objects.filter(attribute_type=attribute_type, value=value).exclude(pk=pk).exists():
-                raise error_class(_(f"An attribute of type {attribute_type.name()} with value {value} already exists"))
-        elif Attribute.objects.filter(attribute_type=attribute_type, value=value).exists():
-            raise error_class(_(f"An attribute of type {attribute_type.name()} with value {value} already exists"))
-
-
-def validate_attribute(error_class, attribute_type, identity, value, pk) -> None:
-    """
-    Validates an attribute value against its constraints and type regex pattern.
-    """
-    validate_attribute_duplicates(error_class, attribute_type, identity, value, pk)
-    validate_attribute_uniqueness(error_class, attribute_type, value, pk)
-    try:
-        if not re.match(attribute_type.regex_pattern, value):
-            raise error_class(f"Attribute {attribute_type.name()} value {value} does not match validation pattern")
-    except re.error:
-        raise error_class(_(f"Invalid validation configuration for attribute {attribute_type.name()}"))
-
-
-class Attribute(models.Model):
-    """
-    Stores a user attribute value, related to :model:`identity.Identity` and :model:`identity.AttributeType`.
+    Stores an email address, related to :model:`identity.Identity`.
     """
 
     identity = models.ForeignKey(
         "identity.Identity",
         on_delete=models.CASCADE,
-        related_name="attributes",
+        related_name="email_addresses",
     )
-    attribute_type = models.ForeignKey("identity.AttributeType", on_delete=models.RESTRICT)
-    value = models.CharField(max_length=255, verbose_name=_("Attribute value"))
-    source = models.CharField(max_length=20, verbose_name=_("Attribute source"))
-    priority = models.SmallIntegerField(default=0, verbose_name=_("Attribute priority"))
-    validated = models.BooleanField(default=False, verbose_name=_("Validated"))
+    address = models.CharField(max_length=320, verbose_name=_("Email address"), validators=[validate_email])
+    priority = models.SmallIntegerField(default=0, verbose_name=_("Priority"))
+    verified = models.BooleanField(default=False, verbose_name=_("Verified"))
 
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
     class Meta:
-        verbose_name = _("Attribute")
-        verbose_name_plural = _("Attributes")
+        constraints = [models.UniqueConstraint(fields=["identity", "address"], name="unique_email_address")]
+        verbose_name = _("E-mail address")
+        verbose_name_plural = _("E-mail addresses")
 
     def __str__(self):
-        return f"{self.identity.name}-{self.attribute_type.name()}"
-
-    def clean(self):
-        """
-        Data validation for attributes.
-        """
-        validate_attribute(ValidationError, self.attribute_type, self.identity, self.value, self.pk)
+        return f"{self.address}"
 
 
-class AttributeType(models.Model):
+class PhoneNumber(models.Model):
     """
-    Stores an attribute type.
+    Stores a phone number, related to :model:`identity.Identity`.
     """
 
-    identifier = models.CharField(max_length=20, unique=True, verbose_name=_("Attribute identifier"))
-    name_fi = models.CharField(max_length=20, verbose_name=_("Attribute name (fi)"))
-    name_en = models.CharField(max_length=20, verbose_name=_("Attribute name (en)"))
-    name_sv = models.CharField(max_length=20, verbose_name=_("Attribute name (sv)"))
-    description_fi = models.CharField(max_length=255, verbose_name=_("Attribute description (fi)"))
-    description_en = models.CharField(max_length=255, verbose_name=_("Attribute description (en)"))
-    description_sv = models.CharField(max_length=255, verbose_name=_("Attribute description (sv)"))
-
-    multi_value = models.BooleanField(default=False, verbose_name=_("Multi value attribute"))
-    unique = models.BooleanField(default=False, verbose_name=_("Require Unique value"))
-    regex_pattern = models.CharField(max_length=255, verbose_name=_("Regex validation pattern"))
+    identity = models.ForeignKey(
+        "identity.Identity",
+        on_delete=models.CASCADE,
+        related_name="phone_numbers",
+    )
+    number = models.CharField(max_length=20, verbose_name=_("Phone number"))
+    priority = models.SmallIntegerField(default=0, verbose_name=_("Priority"))
+    verified = models.BooleanField(default=False, verbose_name=_("Verified"))
 
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
     class Meta:
-        verbose_name = _("Attribute type")
-        verbose_name_plural = _("Attribute types")
+        constraints = [models.UniqueConstraint(fields=["identity", "number"], name="unique_phone_number")]
+        verbose_name = _("Phone number")
+        verbose_name_plural = _("Phone numbers")
 
     def __str__(self):
-        return self.name()
-
-    def name(self, lang=get_language()) -> str:
-        """
-        Returns attribute name in a given language (defaulting current language, or English).
-        """
-        if lang == "fi":
-            return self.name_fi
-        elif lang == "sv":
-            return self.name_sv
-        else:
-            return self.name_en
-
-    def description(self, lang=get_language()) -> str:
-        """
-        Returns attribute description in a given language (defaulting current language, or English).
-        """
-        if lang == "fi":
-            return self.description_fi
-        elif lang == "sv":
-            return self.description_sv
-        else:
-            return self.description_en
-
-    def clean(self):
-        """
-        Validates that pattern is valid regex.
-        """
-        try:
-            re.compile(self.regex_pattern)
-        except re.error:
-            raise ValidationError(_("Invalid regex pattern"))
+        return f"{self.number}"
 
 
 class Identifier(models.Model):
@@ -192,7 +157,7 @@ class Identifier(models.Model):
     )
     type = models.CharField(max_length=10, choices=IDENTIFIER_CHOICES, verbose_name=_("Identifier type"))
     value = models.CharField(max_length=255, verbose_name=_("Identifier value"))
-    validated = models.BooleanField(default=False, verbose_name=_("Validated"))
+    verified = models.BooleanField(default=False, verbose_name=_("Verified"))
 
     deactivated_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Deactivated at"))
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
@@ -203,4 +168,4 @@ class Identifier(models.Model):
         verbose_name_plural = _("Identifiers")
 
     def __str__(self):
-        return f"{self.identity.name}-{self.type}"
+        return f"{self.identity.display_name()}-{self.type}"

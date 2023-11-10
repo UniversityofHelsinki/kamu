@@ -146,7 +146,7 @@ class Role(models.Model):
 
 class Permission(models.Model):
     """
-    Stores a permission, related to :model:`identity.AttributeType`.
+    Stores a permission.
     """
 
     identifier = models.CharField(max_length=20, unique=True, verbose_name=_("Permission identifier"))
@@ -158,7 +158,6 @@ class Permission(models.Model):
     description_sv = models.CharField(max_length=255, verbose_name=_("Permission description (sv)"))
 
     cost = models.IntegerField(verbose_name=_("Permission cost"))
-    requirements = models.ManyToManyField("identity.AttributeType", verbose_name=_("Requirements"), blank=True)
 
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
@@ -243,7 +242,7 @@ class Membership(models.Model):
         verbose_name_plural = _("Memberships")
 
     def __str__(self) -> str:
-        return f"{self.role.name()} - {self.identity.name}"
+        return f"{self.role.name()} - {self.identity.display_name()}"
 
     def get_absolute_url(self):
         """

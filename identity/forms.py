@@ -16,8 +16,8 @@ class IdentitySearchForm(forms.Form):
     Only use with insensitive fields as search values are set to URL parameters.
     """
 
-    first_name = forms.CharField(label=_("First name"), max_length=255, required=False)
-    last_name = forms.CharField(label=_("Last name"), max_length=255, required=False)
+    given_names = forms.CharField(label=_("Given name(s)"), max_length=255, required=False)
+    surname = forms.CharField(label=_("Surname"), max_length=255, required=False)
     email = forms.CharField(label=_("E-mail address"), max_length=255, required=False)
 
     def __init__(self, *args, **kwargs) -> None:

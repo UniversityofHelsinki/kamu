@@ -43,7 +43,7 @@ class RoleModelTests(TestCase):
         self.assertEqual(self.role.get_role_hierarchy().count(), 1)
 
     def test_role_hierarchy_memberships(self):
-        identity = Identity.objects.create(name="Test User")
+        identity = Identity.objects.create(given_names="Test User")
         Membership.objects.create(
             role=self.parent_role,
             identity=identity,

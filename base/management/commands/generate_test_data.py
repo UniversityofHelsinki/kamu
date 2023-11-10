@@ -13,11 +13,10 @@ import unicodedata
 import django.db.utils
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from faker import Faker
 
-from identity.models import Attribute, AttributeType, Identity
+from identity.models import EmailAddress, Identity, PhoneNumber
 from role.models import Membership, Permission, Role
 
 fake = Faker()
@@ -233,19 +232,6 @@ class Command(BaseCommand):
         """
         if not self.silent:
             print("Loading attribute types...")
-        if AttributeType.objects.count() == 0:
-            call_command("loaddata", "attributetypes.json", app_label="identity")
-        try:
-            attribute_first_names = AttributeType.objects.get(identifier="given_names")
-            attribute_last_names = AttributeType.objects.get(identifier="last_names")
-            attribute_nickname = AttributeType.objects.get(identifier="nickname")
-            attribute_date_of_birth = AttributeType.objects.get(identifier="date_of_birth")
-            attribute_email = AttributeType.objects.get(identifier="email")
-            attribute_mobile = AttributeType.objects.get(identifier="mobile")
-            attribute_lang = AttributeType.objects.get(identifier="preferred_language")
-        except AttributeType.DoesNotExist:
-            print("Attribute types not found, recreate a fresh database to load correct fixtures.")
-            exit(1)
         if not self.silent:
             print("Creating identities...")
         start_time = datetime.datetime.now()
@@ -259,71 +245,36 @@ class Command(BaseCommand):
                 else:
                     time_remaining = f"{round(seconds_remaining)} seconds"
                 print(f"Created {n}/{number_of_identities} identities, estimated remaining time: {time_remaining}")
-            first_names = []
+            given_names = []
             for r in range(random.randint(1, 4)):
                 name = fake.first_name()
-                if name not in first_names:
-                    first_names.append(name)
-            last_name = fake.last_name()
-            nickname = random.choice(first_names)
-            identity = Identity.objects.create(name=f"{nickname} {last_name}")
-            Attribute.objects.create(
-                identity=identity,
-                attribute_type=attribute_first_names,
-                value=" ".join(first_names),
-                source="faker",
-                validated=True,
+                if name not in given_names:
+                    given_names.append(name)
+            surname = fake.last_name()
+            nickname = random.choice(given_names)
+            identity = Identity.objects.create(
+                given_names=" ".join(given_names),
+                surname=surname,
+                nickname=nickname,
+                date_of_birth=fake.date_of_birth(minimum_age=17, maximum_age=80),
+                preferred_language=random.choice(["fi", "en", "sv"]),
+                nationality=fake.country_code(),
+                gender=random.choice(["M", "N", "O", "U"]),
             )
-            Attribute.objects.create(
-                identity=identity,
-                attribute_type=attribute_last_names,
-                value=last_name,
-                source="faker",
-                validated=True,
-            )
-            Attribute.objects.create(
-                identity=identity,
-                attribute_type=attribute_nickname,
-                value=nickname,
-                source="faker",
-                validated=True,
-            )
-            Attribute.objects.create(
-                identity=identity,
-                attribute_type=attribute_date_of_birth,
-                value=fake.date_of_birth(minimum_age=17, maximum_age=80).strftime("%Y-%m-%d"),
-                source="faker",
-                validated=True,
-            )
-            Attribute.objects.create(
-                identity=identity,
-                attribute_type=attribute_email,
-                value=fake.email(),
-                source="faker",
-                validated=True,
-            )
-            if random.randint(0, 100) < 10:
-                Attribute.objects.create(
+            for r in range(random.randint(1, 2)):
+                PhoneNumber.objects.create(
                     identity=identity,
-                    attribute_type=attribute_email,
-                    value=fake.email(),
-                    source="faker",
-                    validated=True,
+                    number=f"{fake.country_calling_code()}{fake.msisdn()}"[:20],
+                    priority=r,
+                    verified=True,
                 )
-            Attribute.objects.create(
-                identity=identity,
-                attribute_type=attribute_mobile,
-                value=f"{fake.country_calling_code()}{fake.msisdn()}",
-                source="faker",
-                validated=True,
-            )
-            Attribute.objects.create(
-                identity=identity,
-                attribute_type=attribute_lang,
-                value=random.choice(["fi", "en", "sv"]),
-                source="faker",
-                validated=True,
-            )
+            for r in range(random.randint(1, 2)):
+                EmailAddress.objects.create(
+                    identity=identity,
+                    address=fake.email(),
+                    priority=r,
+                    verified=True,
+                )
 
             def add_membership() -> None:
                 role = Role.objects.exclude(parent=None).order_by("?").first()

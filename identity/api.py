@@ -5,42 +5,51 @@ Identity app views for API endpoints.
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
-from identity.models import Attribute, AttributeType, Identifier, Identity
+from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
 from identity.serializers import (
-    AttributeSerializer,
-    AttributeTypeSerializer,
+    EmailAddressSerializer,
     IdentifierSerializer,
     IdentitySerializer,
+    PhoneNumberSerializer,
 )
 
 
-class AttributeViewSet(viewsets.ModelViewSet):
+class EmailAddressViewSet(viewsets.ModelViewSet):
     """
-    API endpoint for attribute values.
+    API endpoint for email addresses.
     """
 
-    queryset = Attribute.objects.all()
+    queryset = EmailAddress.objects.all()
     permission_classes = [IsAuthenticated]
-    serializer_class = AttributeSerializer
+    serializer_class = EmailAddressSerializer
 
     def get_queryset(self):
         """
-        Restricts queryset to authenticated user, if user is not a superuser.
+        Restricts queryset to authenticated user if user is not a superuser.
         """
         user = self.request.user if self.request.user.is_authenticated else None
         if user and user.is_superuser:
-            return Attribute.objects.all()
-        return Attribute.objects.filter(identity__user=user)
+            return EmailAddress.objects.all()
+        return EmailAddress.objects.filter(identity__user=user)
 
 
-class AttributeTypeViewSet(viewsets.ModelViewSet):
+class PhoneNumberViewSet(viewsets.ModelViewSet):
     """
-    API endpoint for attribute types.
+    API endpoint for phone numbers.
     """
 
-    queryset = AttributeType.objects.all()
+    queryset = PhoneNumber.objects.all()
     permission_classes = [IsAuthenticated]
-    serializer_class = AttributeTypeSerializer
+    serializer_class = PhoneNumberSerializer
+
+    def get_queryset(self):
+        """
+        Restricts queryset to authenticated user if user is not a superuser.
+        """
+        user = self.request.user if self.request.user.is_authenticated else None
+        if user and user.is_superuser:
+            return PhoneNumber.objects.all()
+        return PhoneNumber.objects.filter(identity__user=user)
 
 
 class IdentifierViewSet(viewsets.ModelViewSet):
