@@ -128,12 +128,22 @@ class RoleDetailView(LoginRequiredMixin, DetailView[Role]):
 
     def get_context_data(self, **kwargs):
         """
-        Add memberships to context.
+        Add memberships to context, if user is owner, approver or inviter.
         """
         context = super(RoleDetailView, self).get_context_data(**kwargs)
-        context["memberships"] = Membership.objects.filter(
-            role=self.object, expire_date__gte=timezone.now().date()
-        ).prefetch_related("identity__attributes")
+        user = self.request.user
+        if not user.is_authenticated:
+            raise PermissionDenied
+        if (
+            user.is_superuser
+            or self.object.owner == user
+            or user.groups.filter(
+                Q(id__in=self.object.approvers.all()) | Q(id__in=self.object.inviters.all())
+            ).exists()
+        ):
+            context["memberships"] = Membership.objects.filter(
+                role=self.object, expire_date__gte=timezone.now().date()
+            ).prefetch_related("identity__attributes")
         return context
 
 

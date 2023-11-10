@@ -128,6 +128,35 @@ class RoleViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test Role", response.content.decode("utf-8"))
 
+    def test_show_role_list(self):
+        Membership.objects.create(
+            role=self.role,
+            identity=self.superidentity,
+            reason="Because",
+            start_date=timezone.now().date(),
+            expire_date=timezone.now().date() + datetime.timedelta(days=1),
+        )
+        group = Group.objects.create(name="ApproverGroup")
+        self.role.approvers.add(group)
+        self.user.groups.add(group)
+        url = f"{self.url}{self.role.pk}/"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Superuser", response.content.decode("utf-8"))
+
+    def test_restrict_role_list_to_role_managers(self):
+        Membership.objects.create(
+            role=self.role,
+            identity=self.superidentity,
+            reason="Because",
+            start_date=timezone.now().date(),
+            expire_date=timezone.now().date() + datetime.timedelta(days=1),
+        )
+        url = f"{self.url}{self.role.pk}/"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Superuser", response.content.decode("utf-8"))
+
     def test_add_role(self):
         url = f"{self.url}add/"
         response = self.client.post(url, self.role_data, follow=True)
