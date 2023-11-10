@@ -8,7 +8,7 @@ See https://docs.djangoproject.com/en/dev/topics/logging/ for more information.
 
 import os
 
-LOGGING = {
+LOGGING: dict = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {

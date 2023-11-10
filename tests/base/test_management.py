@@ -24,6 +24,6 @@ class GenerateTestDataTests(TestCase):
         return out.getvalue()
 
     def test_generate_data(self):
-        self.call_command("-i 10")
+        self.call_command("-s", "-i 10")
         self.assertEqual(Identity.objects.all().count(), 10)
         self.assertGreaterEqual(Membership.objects.all().count(), 10)

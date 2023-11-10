@@ -19,3 +19,4 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",  # type: ignore[dict-item]
     }
 }
+LOGGING["loggers"]["django.request"] = {"level": "ERROR"}
