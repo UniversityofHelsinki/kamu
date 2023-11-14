@@ -15,7 +15,13 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 
-from base.views import CustomLoginView, FrontPageView
+from base.views import (
+    CustomLoginView,
+    EmailPhoneLoginView,
+    FrontPageView,
+    LocalLoginView,
+    ShibbolethLoginView,
+)
 from identity.views import IdentityDetailView, IdentityMeView, IdentitySearchView
 from kamu.routers import router
 from role.views import (
@@ -47,5 +53,8 @@ urlpatterns = [
     path("role/<int:role_pk>/join/", RoleJoinView.as_view(), name="role-join"),
     path("role/add/", RoleCreateView.as_view(), name="role-create"),
     path("login/", CustomLoginView.as_view(), name="login"),
+    path("login/shibboleth/", ShibbolethLoginView.as_view(), name="login-shibboleth"),
+    path("login/local/", LocalLoginView.as_view(), name="login-local"),
+    path("login/email/", EmailPhoneLoginView.as_view(), name="login-email"),
     path("logout/", LogoutView.as_view(), name="logout"),
 ]

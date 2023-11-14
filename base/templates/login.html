@@ -2,6 +2,13 @@
 {% load i18n %}
 {% load crispy_forms_tags %}
 {% block content %}
-  <h2>{% trans "Login" %}</h2>
-  {% crispy form %}
+  <h1>{% trans "Login" %}</h1>
+
+  <h2>{% trans "Login with HY SSO" %}</h2>
+  <a href="{% url 'login-shibboleth' %}" class="btn btn-primary btn-lg" role="button" aria-pressed="true">{% trans "SSO login" %}</a>
+  <h2>{% trans "Login with a email and phone number" %}</h2>
+  <a href="{% url 'login-email' %}" class="btn btn-primary btn-lg" role="button" aria-pressed="true">{% trans "Email login" %}</a>
+  <h2>{% trans "Use local login" %}</h2>
+  <a href="{% url 'login-local' %}" class="btn btn-primary btn-lg" role="button" aria-pressed="true">{% trans "Local login" %}</a>
+  <p>{% trans "This is for testing purposes and will not be included in a final product." %}</p>
 {% endblock %}

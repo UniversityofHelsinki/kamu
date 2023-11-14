@@ -92,6 +92,12 @@ TEMPLATES = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "base.auth.ShibbolethBackend",
+    "base.auth.EmailSMSBackend",
+)
+
 WSGI_APPLICATION = "kamu.wsgi.application"
 
 # Password validation
@@ -157,3 +163,11 @@ MESSAGE_TAGS = {
 }
 
 LOGIN_REDIRECT_URL = "/"
+
+SAML_GROUP_PREFIXES = ["grp-", "hy-", "sys-"]
+
+SAML_ATTR_USERNAME = "shib_eduPersonPrincipalName"
+SAML_ATTR_GIVEN_NAMES = "shib_givenName"
+SAML_ATTR_SURNAME = "shib_sn"
+SAML_ATTR_EMAIL = "shib_mail"
+SAML_ATTR_GROUPS = "shib_hyGroupCn"
