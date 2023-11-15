@@ -14,6 +14,7 @@ class MembershipAdmin(admin.ModelAdmin):
         "role__name",
         "approver",
     ]
+    autocomplete_fields = ["identity", "role", "approver", "inviter"]
 
 
 admin.site.register(Membership, MembershipAdmin)
@@ -30,6 +31,7 @@ admin.site.register(Permission, PermissionAdmin)
 class RoleAdmin(admin.ModelAdmin):
     list_display = ["name", "parent", "owner"]
     search_fields = ["identifier", "name_en", "name_fi", "name_sv"]
+    autocomplete_fields = ["parent", "owner"]
 
 
 admin.site.register(Role, RoleAdmin)

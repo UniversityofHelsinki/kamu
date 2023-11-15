@@ -14,6 +14,7 @@ class EmailAddressAdmin(admin.ModelAdmin):
         "identity__user__username",
         "address",
     ]
+    autocomplete_fields = ["identity"]
 
 
 admin.site.register(EmailAddress, EmailAddressAdmin)
@@ -27,6 +28,7 @@ class IdentifierAdmin(admin.ModelAdmin):
         "type",
         "value",
     ]
+    autocomplete_fields = ["identity"]
 
 
 admin.site.register(Identifier, IdentifierAdmin)
@@ -42,6 +44,7 @@ class IdentityAdmin(admin.ModelAdmin):
         "user__username",
         "roles__identifier",
     ]
+    autocomplete_fields = ["user"]
 
 
 admin.site.register(Identity, IdentityAdmin)
@@ -54,6 +57,7 @@ class PhoneNumberAdmin(admin.ModelAdmin):
         "identity__user__username",
         "number",
     ]
+    autocomplete_fields = ["identity"]
 
 
 admin.site.register(PhoneNumber, PhoneNumberAdmin)
