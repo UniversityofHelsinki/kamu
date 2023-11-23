@@ -122,7 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "en"
 
 LANGUAGES = [
     ("en", _("English")),
@@ -152,6 +152,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGOUT_REDIRECT_URL = "/"
 
 ROLE_HIERARCHY_MAXIMUM_DEPTH = 4
+
+# Allow use of 900-series Finnish personal identity codes
+ALLOW_TEST_FPIC = False
 
 # Bootstrap alert classes for Django messages
 MESSAGE_TAGS = {

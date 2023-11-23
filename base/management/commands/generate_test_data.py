@@ -13,10 +13,11 @@ import unicodedata
 import django.db.utils
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from faker import Faker
 
-from identity.models import EmailAddress, Identity, PhoneNumber
+from identity.models import EmailAddress, Identity, Nationality, PhoneNumber
 from role.models import Membership, Permission, Role
 
 fake = Faker()
@@ -124,6 +125,10 @@ class Command(BaseCommand):
             "-i", type=int, default=0, action="store", dest="identities", help="Number of identities to generate"
         )
         parser.add_argument("-s", action="store_true", dest="silent", help="Don't print progress")
+
+    def load_fixtures(self) -> None:
+        if Nationality.objects.count() == 0:
+            call_command("loaddata", "nationality.json", app="identity")
 
     def create_users(self) -> None:
         """
@@ -235,6 +240,7 @@ class Command(BaseCommand):
         if not self.silent:
             print("Creating identities...")
         start_time = datetime.datetime.now()
+        finnish_nationality = Nationality.objects.get(code="FI")
         for n in range(number_of_identities):
             if not self.silent and n > 0 and n % 100 == 0:
                 time_elapsed = datetime.datetime.now() - start_time
@@ -245,30 +251,77 @@ class Command(BaseCommand):
                 else:
                     time_remaining = f"{round(seconds_remaining)} seconds"
                 print(f"Created {n}/{number_of_identities} identities, estimated remaining time: {time_remaining}")
-            given_names = []
+            first_names = []
             for r in range(random.randint(1, 4)):
                 name = fake.first_name()
-                if name not in given_names:
-                    given_names.append(name)
-            surname = fake.last_name()
-            nickname = random.choice(given_names)
+                if name not in first_names:
+                    first_names.append(name)
+            if random.randint(0, 100) < 2:
+                surname = ""
+            else:
+                surname = fake.last_name()
+            if random.randint(0, 100) < 2 and not surname:
+                given_names = ""
+            else:
+                given_names = " ".join(first_names)
+            if random.randint(0, 100) < 10:
+                given_name_display = ""
+            else:
+                given_name_display = random.choice(first_names)
+            if random.randint(0, 100) < 10:
+                date_of_birth = None
+            else:
+                date_of_birth = fake.date_of_birth(minimum_age=17, maximum_age=80)
+            verification_level = random.randint(0, 4)
+            if verification_level == 4:
+                assurance_level = "high"
+            elif verification_level == 3:
+                assurance_level = "medium"
+            elif 2 <= verification_level <= 3:
+                assurance_level = "low"
+            else:
+                assurance_level = "none"
             identity = Identity.objects.create(
-                given_names=" ".join(given_names),
+                given_names=given_names,
+                given_names_verification=verification_level,
                 surname=surname,
-                nickname=nickname,
-                date_of_birth=fake.date_of_birth(minimum_age=17, maximum_age=80),
+                surname_verification=verification_level,
+                given_name_display=given_name_display,
+                date_of_birth=date_of_birth,
+                date_of_birth_verification=verification_level,
                 preferred_language=random.choice(["fi", "en", "sv"]),
-                nationality=fake.country_code(),
                 gender=random.choice(["M", "N", "O", "U"]),
+                assurance_level=assurance_level,
             )
-            for r in range(random.randint(1, 2)):
+            rand = random.randint(0, 100)
+            if 0 < rand < 50:
+                identity.nationality.add(random.randint(1, 250))
+            elif 50 <= rand < 90:
+                identity.nationality.add(finnish_nationality)
+            if 45 < rand < 55:  # Add second nationality
+                identity.nationality.add(random.randint(1, 250))
+            if identity.nationality.all().count() > 0:
+                identity.nationality_verification = verification_level
+                identity.save()
+            if date_of_birth and (random.randint(0, 100) < 10 or finnish_nationality in identity.nationality.all()):
+                year_part = date_of_birth.strftime("%d%m%y")
+                if date_of_birth.year < 2000:
+                    intermediate = "-"
+                else:
+                    intermediate = "A"
+                numeric_part = str(random.randint(900, 999)).zfill(3)
+                checksum_characters = "0123456789ABCDEFHJKLMNPRSTUVWXY"
+                checksum = checksum_characters[int(year_part + numeric_part) % 31]
+                identity.fpic = f"{year_part}{intermediate}{numeric_part}{checksum}"
+                identity.save()
+            for r in range(random.randint(0, 2)):
                 PhoneNumber.objects.create(
                     identity=identity,
                     number=f"{fake.country_calling_code()}{fake.msisdn()}"[:20],
                     priority=r,
                     verified=True,
                 )
-            for r in range(random.randint(1, 2)):
+            for r in range(random.randint(0, 2)):
                 EmailAddress.objects.create(
                     identity=identity,
                     address=fake.email(),
@@ -311,6 +364,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         number_of_identities = options["identities"]
         self.silent = options["silent"]
+        self.load_fixtures()
         self.create_users()
         self.create_permissions()
         self.create_roles()

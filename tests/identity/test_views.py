@@ -31,7 +31,7 @@ class IdentityTests(BaseTestCase):
         response = self.client.get(f"{self.url}{self.identity.pk}/")
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("alert", response.content.decode("utf-8"))
-        self.assertIn("Identity: Test User", response.content.decode("utf-8"))
+        self.assertIn("<h1>Test User</h1>", response.content.decode("utf-8"))
 
     def test_search_identity(self):
         EmailAddress.objects.create(
@@ -43,6 +43,78 @@ class IdentityTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test Me", response.content.decode("utf-8"))
         self.assertNotIn("Superuser", response.content.decode("utf-8"))
+
+
+class IdentityEditTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.url = "/identity/1/change/"
+        self.client = Client()
+        self.data = {
+            "given_names": self.identity.given_names,
+            "surname": self.identity.surname,
+            "given_name_display": self.identity.given_name_display,
+            "surname_display": self.identity.surname_display,
+            "preferred_language": self.identity.preferred_language,
+            "date_of_birth": "1999-01-01",
+            "gender": self.identity.gender,
+            "fpic": self.identity.fpic,
+            "nationality": 1,
+            "given_names_verification": self.identity.given_names_verification,
+            "surname_verification": self.identity.surname_verification,
+            "date_of_birth_verification": self.identity.date_of_birth_verification,
+            "fpic_verification": self.identity.fpic_verification,
+            "nationality_verification": self.identity.nationality_verification,
+        }
+
+    def test_edit_own_information_listed_fields(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Basic information", response.content.decode("utf-8"))
+        self.assertIn("Restricted information", response.content.decode("utf-8"))
+        self.assertNotIn("verification method", response.content.decode("utf-8"))
+
+    def test_edit_own_information_disabled_fields(self):
+        self.identity.given_names_verification = 4
+        self.identity.save()
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('disabled id="id_given_names"', response.content.decode("utf-8"))
+
+    def test_edit_own_information(self):
+        self.client.force_login(self.user)
+        response = self.client.post(self.url, self.data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("<h1>Test User</h1>", response.content.decode("utf-8"))
+        self.assertIn("Jan. 1, 1999", response.content.decode("utf-8"))
+
+    def test_edit_identity_view_with_superuser(self):
+        self.client.force_login(self.superuser)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Restricted information", response.content.decode("utf-8"))
+        self.assertIn("verification method", response.content.decode("utf-8"))
+
+    def test_edit_strong_electrical_verification_error(self):
+        self.identity.given_names_verification = 4
+        self.identity.save()
+        self.data["given_names"] = "New Name"
+        self.data["given_names_verification"] = 4
+        self.client.force_login(self.superuser)
+        response = self.client.post(self.url, self.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Cannot set strong electrical verification by hand", response.content.decode("utf-8"))
+
+    def test_edit_other_user(self):
+        self.identity.given_names_verification = 4
+        self.identity.save()
+        self.data["given_names"] = "New Name"
+        self.data["given_names_verification"] = 3
+        self.client.force_login(self.superuser)
+        response = self.client.post(self.url, self.data)
+        self.assertEqual(response.status_code, 302)
 
 
 class AdminSiteTests(BaseTestCase):

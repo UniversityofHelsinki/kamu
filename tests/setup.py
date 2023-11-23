@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 from rest_framework.test import APIRequestFactory, APITestCase
 
-from identity.models import EmailAddress, Identity
+from identity.models import EmailAddress, Identity, Nationality
 from role.models import Permission, Role
 
 
@@ -22,9 +22,11 @@ class TestData(TestCase):
         self.superuser = user.objects.create_user(
             username="admin", password="test_pass", is_superuser=True, is_staff=True
         )
-        self.identity = Identity.objects.create(user=self.user, given_names="Test Me", surname="User", nickname="Test")
+        self.identity = Identity.objects.create(
+            user=self.user, given_names="Test Me", surname="User", given_name_display="Test"
+        )
         self.superidentity = Identity.objects.create(
-            user=self.superuser, given_names="Super", surname="User", nickname="Super"
+            user=self.superuser, given_names="Super", surname="User", given_name_display="Super"
         )
         self.role = Role.objects.create(identifier="testrole", name_en="Test Role", maximum_duration=10)
         self.permission = Permission.objects.create(identifier="testpermission", name_en="Test Permission", cost=5)
@@ -33,6 +35,7 @@ class TestData(TestCase):
             address="test@example.org",
         )
         self.role.permissions.add(self.permission)
+        self.nationality = Nationality.objects.get_or_create(code="FI", name_en="Finland")[0]
 
 
 class BaseTestCase(TestData):

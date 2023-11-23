@@ -24,7 +24,7 @@ class LoginViewTests(BaseTestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Identity: Test User", response.content.decode("utf-8"))
+        self.assertIn("<h1>Test User</h1>", response.content.decode("utf-8"))
 
     @override_settings(SAML_ATTR_USERNAME="HTTP_EPPN")
     def test_shibboleth_login(self):
@@ -44,4 +44,4 @@ class LoginViewTests(BaseTestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Identity: Test User", response.content.decode("utf-8"))
+        self.assertIn("<h1>Test User</h1>", response.content.decode("utf-8"))

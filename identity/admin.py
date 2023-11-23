@@ -35,12 +35,13 @@ admin.site.register(Identifier, IdentifierAdmin)
 
 
 class IdentityAdmin(admin.ModelAdmin):
-    list_display = ["given_names", "surname", "nickname"]
+    list_display = ["given_names", "surname", "assurance_level"]
     list_filter = ["roles__identifier"]
     search_fields = [
         "given_names",
         "surname",
-        "nickname",
+        "given_name_display",
+        "surname_display",
         "user__username",
         "roles__identifier",
     ]

@@ -9,6 +9,7 @@ from rest_framework.fields import Field
 from rest_framework.validators import UniqueTogetherValidator
 
 from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
+from identity.validators import FpicValidator
 
 
 class EmailAddressSerializer(serializers.ModelSerializer[EmailAddress]):
@@ -103,13 +104,16 @@ class IdentitySerializer(serializers.ModelSerializer[Identity]):
             "id",
             "user",
             "external",
+            "uid",
             "assurance_level",
             "given_names",
             "surname",
-            "nickname",
+            "given_name_display",
+            "surname_display",
             "date_of_birth",
             "gender",
             "nationality",
+            "fpic",
             "preferred_language",
             "roles",
             "email_addresses",
@@ -119,3 +123,11 @@ class IdentitySerializer(serializers.ModelSerializer[Identity]):
             "created_at",
             "updated_at",
         ]
+
+    def validate_fpic(self, value):
+        """
+        Validates finnish personal identity code
+        """
+        validator = FpicValidator()
+        validator(value)
+        return value

@@ -2,6 +2,7 @@
 API tests for identity app.
 """
 
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -28,6 +29,23 @@ class IdentityAPITests(BaseAPITestCase):
         response = client.get(f"{self.url}identities/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
+
+    @override_settings(ALLOW_TEST_FPIC=True)
+    def test_update_identity_supseruser(self):
+        client = APIClient()
+        client.force_authenticate(user=self.superuser)
+        data = {"name": "New Name", "fpic": "010181-900C"}
+        response = client.patch(f"{self.url}identities/1/", data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @override_settings(ALLOW_TEST_FPIC=False)
+    def test_update_identity_supseruser_incorrect_fpic(self):
+        client = APIClient()
+        client.force_authenticate(user=self.superuser)
+        data = {"name": "New Name", "fpic": "010181-900C"}
+        response = client.patch(f"{self.url}identities/1/", data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("Incorrect numeric part", response.data["fpic"][0])
 
 
 class EmailAddressAPITests(BaseAPITestCase):

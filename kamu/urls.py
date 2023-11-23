@@ -22,7 +22,12 @@ from base.views import (
     LocalLoginView,
     ShibbolethLoginView,
 )
-from identity.views import IdentityDetailView, IdentityMeView, IdentitySearchView
+from identity.views import (
+    IdentityDetailView,
+    IdentityMeView,
+    IdentitySearchView,
+    IdentityUpdateView,
+)
 from kamu.routers import router
 from role.views import (
     MembershipDetailView,
@@ -45,6 +50,7 @@ urlpatterns = [
     path("identity/me/", IdentityMeView.as_view(), name="identity-me"),
     path("identity/<int:pk>/", IdentityDetailView.as_view(), name="identity-detail"),
     path("identity/search/", IdentitySearchView.as_view(), name="identity-search"),
+    path("identity/<int:pk>/change/", IdentityUpdateView.as_view(), name="identity-change"),
     path("membership/", MembershipListView.as_view(), name="membership-list"),
     path("membership/<int:pk>/", MembershipDetailView.as_view(), name="membership-detail"),
     path("role/", RoleListView.as_view(), name="role-list"),
