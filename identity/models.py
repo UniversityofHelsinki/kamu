@@ -32,10 +32,12 @@ class Nationality(models.Model):
     def __str__(self):
         return self.name()
 
-    def name(self, lang=get_language()) -> str:
+    def name(self, lang=None) -> str:
         """
         Returns nationality name in a given language (defaulting current language, or English).
         """
+        if not lang:
+            lang = get_language()
         if lang == "fi":
             return self.name_fi
         elif lang == "sv":

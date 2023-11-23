@@ -67,10 +67,12 @@ class Role(models.Model):
     def __str__(self):
         return self.name()
 
-    def name(self, lang=get_language()) -> str:
+    def name(self, lang=None) -> str:
         """
         Returns Role name in a given language (defaulting current language, or English).
         """
+        if not lang:
+            lang = get_language()
         if lang == "fi":
             return self.name_fi
         elif lang == "sv":
@@ -78,10 +80,12 @@ class Role(models.Model):
         else:
             return self.name_en
 
-    def description(self, lang=get_language()) -> str:
+    def description(self, lang=None) -> str:
         """
         Returns Role description in a given language (defaulting current language, or English).
         """
+        if not lang:
+            lang = get_language()
         if lang == "fi":
             return self.description_fi
         elif lang == "sv":
@@ -170,10 +174,12 @@ class Permission(models.Model):
     def __str__(self):
         return self.name()
 
-    def name(self, lang=get_language()) -> str:
+    def name(self, lang=None) -> str:
         """
         Returns Permission name in a given language (defaulting current language, or English).
         """
+        if not lang:
+            lang = get_language()
         if lang == "fi":
             return self.name_fi
         elif lang == "sv":
@@ -181,10 +187,12 @@ class Permission(models.Model):
         else:
             return self.name_en
 
-    def description(self, lang=get_language()) -> str:
+    def description(self, lang=None) -> str:
         """
         Returns Permission description in a given language (defaulting current language, or English).
         """
+        if not lang:
+            lang = get_language()
         if lang == "fi":
             return self.description_fi
         elif lang == "sv":
