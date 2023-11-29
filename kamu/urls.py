@@ -19,6 +19,7 @@ from base.views import (
     CustomLoginView,
     EmailPhoneLoginView,
     FrontPageView,
+    GoogleLoginView,
     LocalLoginView,
     ShibbolethLoginView,
 )
@@ -60,6 +61,7 @@ urlpatterns = [
     path("role/add/", RoleCreateView.as_view(), name="role-create"),
     path("login/", CustomLoginView.as_view(), name="login"),
     path("login/shibboleth/", ShibbolethLoginView.as_view(), name="login-shibboleth"),
+    path("login/google/", GoogleLoginView.as_view(), name="login-google"),
     path("login/local/", LocalLoginView.as_view(), name="login-local"),
     path("login/email/", EmailPhoneLoginView.as_view(), name="login-email"),
     path("logout/", LogoutView.as_view(), name="logout"),

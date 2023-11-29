@@ -1,14 +1,47 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load crispy_forms_tags %}
+{% load static %}
 {% block content %}
-  <h1>{% trans "Login" %}</h1>
-
-  <h2>{% trans "Login with HY SSO" %}</h2>
-  <a href="{% url 'login-shibboleth' %}" class="btn btn-primary btn-lg" role="button" aria-pressed="true">{% trans "SSO login" %}</a>
-  <h2>{% trans "Login with a email and phone number" %}</h2>
-  <a href="{% url 'login-email' %}" class="btn btn-primary btn-lg" role="button" aria-pressed="true">{% trans "Email login" %}</a>
-  <h2>{% trans "Use local login" %}</h2>
-  <a href="{% url 'login-local' %}" class="btn btn-primary btn-lg" role="button" aria-pressed="true">{% trans "Local login" %}</a>
-  <p>{% trans "This is for testing purposes and will not be included in a final product." %}</p>
+  <h1 class="mb-5">{% trans "Login" %}</h1>
+  <h2 class="mb-5">{% trans "University of Helsinki account" %}</h2>
+  <div class="row border-bottom mb-3">
+    <div class="col-md-6 col-12 mb-3">
+      <a href="#"><img src="{% static "images/hy-signin-logo.gif" %}" alt="{% trans "University of Helsinki signin" %}"></a>
+    </div>
+    <div class="col-md-6 col-12 mb-3">
+      <p>{% trans "Login with the University of Helsinki single sign on." %}</p>
+      <p>{% trans "Use this method, if you have a University of Helsinki user account." %}</p>
+    </div>
+  </div>
+  <h2 class="mb-5">{% trans "Other methods" %}</h2>
+  <div class="row">
+    <div class="col-md-6 col-12 mb-3">
+      <a href="#"><img class="mb-3" src="{% static "images/suomifi-signin-logo.png" %}" height="40" alt="{% trans "Suomi.fi signin" %}"></a>
+      <p>{% trans "Login with a Suomi.fi e-Identification or eIDAS." %}</p>
+    </div>
+    <div class="col-md-6 col-12 mb-3">
+      <a href="#"><img class="mb-3" src="{% static "images/haka-signin-logo.svg" %}" height="40" alt="{% trans "Haka signin" %}"></a>
+      <p>{% trans "Haka federation login. Finnish universities, polytechnics and research institutions accounts." %}</p>
+    </div>
+    <div class="col-md-6 col-12 mb-3">
+      <a href="#"><img class="mb-3" src="{% static "images/edugain-signin-logo.png" %}" height="40" alt="{% trans "eduGAIN signin" %}"></a>
+      <p>{% trans "eduGAIN federation login. Global research and education institution accounts." %}</p>
+    </div>
+    <div class="col-md-6 col-12 mb-3">
+      <a href="#"><img class="mb-3" src="{% static "images/ms-signin-logo.svg" %}" alt="{% trans "Microsoft signin" %}"></a>
+      <p>{% trans "Login with a Microsoft account." %}</p>
+    </div>
+    <div class="col-md-6 col-12 mb-3">
+      <a href="#"><img class="mb-3" src="{% static "images/google-signin-logo.svg" %}" alt="{% trans "Google signin" %}"></a>
+      <p>{% trans "Login with a Google account." %}</p>
+    </div>
+    <div class="col-md-6 col-12 mb-3">
+      <a href="{% url 'login-email' %}" class="btn btn-outline-dark mb-3" role="button">{% trans "Email+SMS login" %}</a>
+      <p>{% trans "Login with an e-mail and SMS verification." %}</p>
+    </div>
+    <div class="col-md-6 col-12 mb-3">
+      <a href="{% url 'login-local' %}" class="btn btn-outline-dark mb-3" role="button">{% trans "Local login" %}</a>
+      <p>{% trans "Login with a username and password. Only for testing, this will be removed before production version." %}</p>
+    </div>
+  </div>
 {% endblock %}

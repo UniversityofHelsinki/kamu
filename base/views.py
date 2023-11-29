@@ -5,7 +5,9 @@ Base views, shared between apps.
 import logging
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import login as auth_login
+from django.contrib.auth.models import User as UserType
 from django.contrib.auth.views import LoginView
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render
@@ -13,23 +15,40 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views import View
 
-from base.auth import ShibbolethBackend
+from base.auth import GoogleBackend, ShibbolethBackend
 from base.forms import EmailPhoneForm, LoginForm
 
 logger = logging.getLogger(__name__)
 
 
-class ShibbolethLoginView(View):
+class RemoteLoginView(View):
     """
-    LoginView to authenticate user with Shibboleth
+    Base class for remote login views. Overwrite _authenticate_backend and _auth_login methods with
+    correct backend settings.
+    """
 
-    TODO: Fix log messages to correct format when it's decided
-    """
+    @staticmethod
+    def _authenticate_backend(request) -> None | UserType:
+        """
+        Authentication user against a backend.
+        # backend = ShibbolethBackend()
+        # user = backend.authenticate(request, create_user=True)
+        # return user
+        """
+        return None
+
+    @staticmethod
+    def _remote_auth_login(request, user) -> None:
+        """
+        Log user in using a correct backend.
+
+        # auth_login(request, user, backend="base.auth.ShibbolethBackend")
+        """
+        pass
 
     def get(self, request, *args, **kwargs):
         redirect_to = request.GET.get("next", settings.LOGIN_REDIRECT_URL)
-        backend = ShibbolethBackend()
-        user = backend.authenticate(request, create_user=True)
+        user = self._authenticate_backend(request)
         if user:
             if not user.is_active:
                 info_message = _("This account is inactive.")
@@ -42,11 +61,44 @@ class ShibbolethLoginView(View):
                     "point to the login page."
                 )
                 return render(request, "error.html", {"message": error_message})
-            auth_login(request, user, backend="base.auth.ShibbolethBackend")
+            self._remote_auth_login(request, user)
             return HttpResponseRedirect(redirect_to)
         else:
-            logger.debug("Failed Shibboleth login")
+            messages.error(request, _("Login failed."))
+            logger.debug("Failed login")
         return HttpResponseRedirect(reverse("login"))
+
+
+class ShibbolethLoginView(RemoteLoginView):
+    """
+    LoginView to authenticate user with Shibboleth
+    """
+
+    @staticmethod
+    def _authenticate_backend(request):
+        backend = ShibbolethBackend()
+        user = backend.authenticate(request, create_user=True)
+        return user
+
+    @staticmethod
+    def _remote_auth_login(request, user):
+        auth_login(request, user, backend="base.auth.ShibbolethBackend")
+
+
+class GoogleLoginView(RemoteLoginView):
+    """
+    LoginView to authenticate user with Google
+    """
+
+    @staticmethod
+    def _authenticate_backend(request):
+        backend = GoogleBackend()
+        user = backend.authenticate(request, create_user=True)
+        return user
+
+    @staticmethod
+    def _remote_auth_login(request, user):
+        auth_login(request, user, backend="base.auth.GoogleBackend")
 
 
 class EmailPhoneLoginView(LoginView):
