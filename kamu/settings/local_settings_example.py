@@ -55,3 +55,14 @@ ROLE_HIERARCHY_MAXIMUM_DEPTH = 4
 
 # Path to static files for collection
 STATIC_ROOT = "/path/to/rr/static/"
+
+# Used to generate tokens
+TOKEN_SECRET_KEY = "insecure-hash-key-change-for-production"
+# Time limit until a new token with same type and linke dobject can be created (in seconds)
+TOKEN_TIME_LIMIT_NEW = 60
+# Number of tries for verifying tokens
+TOKEN_VERIFICATION_TRIES = 3
+# Token lifetime (in seconds)
+TOKEN_LIFETIME = 30 * 60  # 30 minutes
+# Invite lifetime (in seconds)
+TOKEN_LIFETIME_INVITE = 30 * 24 * 60 * 60  # 30 days
