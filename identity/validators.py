@@ -1,6 +1,7 @@
 """
 Validators for the identity app
 """
+import string
 from datetime import datetime
 
 from django.conf import settings
@@ -48,3 +49,38 @@ class FpicValidator:
 
 
 validate_fpic = FpicValidator()
+
+
+@deconstructible
+class PhoneNumberValidator:
+    """
+    Validate a phone number.
+
+    Requires a phone number in international format, with only a plus sign and digits.
+    """
+
+    code = "invalid"
+
+    def __init__(self, message=None, code=None) -> None:
+        self.message = message
+        if code is not None:
+            self.code = code
+
+    def __call__(self, value):
+        if value[0] != "+":
+            message = self.message or _("Phone number must start with a plus sign")
+            raise ValidationError(message, self.code, params={"value": value})
+        if not set(value[1:]).issubset(string.digits):
+            message = self.message or _("Phone number contains invalid characters")
+            raise ValidationError(message, self.code, params={"value": value})
+        if len(value) < 8:
+            message = self.message or _("Phone number is too short")
+            raise ValidationError(message, self.code, params={"value": value})
+
+    def __eq__(self, other):
+        return (
+            isinstance(other, PhoneNumberValidator) and (self.message == other.message) and (self.code == other.code)
+        )
+
+
+validate_phone_number = PhoneNumberValidator()

@@ -31,6 +31,7 @@
   <p><span class="text-success"> *</span> {% trans "verified" %}</p>
   {% if user == object.user or perms.identity.change_basic_information %}
   <a href="{% url 'identity-change' object.pk %}" class="btn btn-primary">{% trans "Change information" %}</a>
+  <a href="{% url 'contact-change' object.pk %}" class="btn btn-primary">{% trans "Change contact information" %}</a>
   {% endif %}
   <h2 id="roles-list">{% trans "Roles" %}</h2>
   <table class="table" aria-describedby="roles-list">

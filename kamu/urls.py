@@ -24,10 +24,13 @@ from base.views import (
     ShibbolethLoginView,
 )
 from identity.views import (
+    ContactView,
+    EmailAddressVerificationView,
     IdentityDetailView,
     IdentityMeView,
     IdentitySearchView,
     IdentityUpdateView,
+    PhoneNumberVerificationView,
 )
 from kamu.routers import router
 from role.views import (
@@ -50,8 +53,11 @@ urlpatterns = [
     path("", FrontPageView.as_view(), name="front-page"),
     path("identity/me/", IdentityMeView.as_view(), name="identity-me"),
     path("identity/<int:pk>/", IdentityDetailView.as_view(), name="identity-detail"),
+    path("identity/<int:pk>/contacts/", ContactView.as_view(), name="contact-change"),
     path("identity/search/", IdentitySearchView.as_view(), name="identity-search"),
     path("identity/<int:pk>/change/", IdentityUpdateView.as_view(), name="identity-change"),
+    path("email/<int:pk>/verify/", EmailAddressVerificationView.as_view(), name="email-verify"),
+    path("phone/<int:pk>/verify/", PhoneNumberVerificationView.as_view(), name="phone-verify"),
     path("membership/", MembershipListView.as_view(), name="membership-list"),
     path("membership/<int:pk>/", MembershipDetailView.as_view(), name="membership-detail"),
     path("role/", RoleListView.as_view(), name="role-list"),

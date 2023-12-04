@@ -42,8 +42,14 @@ TIME_ZONE = "EET"
 # EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-# Email address used as send address
+# Email address used as send address for error messages to site admins
 SERVER_EMAIL = "noreply@example.org"
+
+# Token verification posts will be sent from this address. Using DEFAULT_FROM_EMAIL if this is not set.
+TOKEN_FROM_EMAIL = "noreply@example.org"
+
+# Maximum number of contacts allowed for user, per type (email address, phone number)
+CONTACT_LIMIT = 3
 
 # Will receive notifications of changes if error 500 occurs
 # Format should be a list of tuples of (Full name, email address).
@@ -66,3 +72,8 @@ TOKEN_VERIFICATION_TRIES = 3
 TOKEN_LIFETIME = 30 * 60  # 30 minutes
 # Invite lifetime (in seconds)
 TOKEN_LIFETIME_INVITE = 30 * 24 * 60 * 60  # 30 days
+
+SMS_API_URL = "https://api-gateway.example.org/sms/send"
+SMS_AUTH_HEADER = "X-Api-Key"
+SMS_API_KEY = ""
+SMS_API_TIMEOUT = 3

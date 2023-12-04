@@ -5,7 +5,7 @@ Unit tests for role app.
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
-from identity.validators import validate_fpic
+from identity.validators import validate_fpic, validate_phone_number
 
 
 class ValidateSSNTests(TestCase):
@@ -36,3 +36,26 @@ class ValidateSSNTests(TestCase):
         with self.assertRaises(ValidationError) as e:
             validate_fpic("010181-900B")
         self.assertEqual(e.exception.message, "Incorrect checksum")
+
+
+class ValidatePhoneNumberTests(TestCase):
+    def test_correct_number(self):
+        self.assertIsNone(validate_phone_number("+35850123456789"))
+
+    def test_without_plus_sign(self):
+        with self.assertRaises(ValidationError) as e:
+            validate_phone_number("35850123456789")
+        self.assertEqual(e.exception.message, "Phone number must start with a plus sign")
+
+    def test_invalid_characters(self):
+        with self.assertRaises(ValidationError) as e:
+            validate_phone_number("+35850132a456")
+        self.assertEqual(e.exception.message, "Phone number contains invalid characters")
+        with self.assertRaises(ValidationError) as e:
+            validate_phone_number("+358 50132456")
+        self.assertEqual(e.exception.message, "Phone number contains invalid characters")
+
+    def test_too_short(self):
+        with self.assertRaises(ValidationError) as e:
+            validate_phone_number("+358501")
+        self.assertEqual(e.exception.message, "Phone number is too short")

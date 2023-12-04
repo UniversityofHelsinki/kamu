@@ -2,6 +2,9 @@
 View tests for identity app.
 """
 
+from unittest import mock
+
+from django.core import mail
 from django.test import Client
 
 from identity.models import EmailAddress, PhoneNumber
@@ -115,6 +118,122 @@ class IdentityEditTests(BaseTestCase):
         self.client.force_login(self.superuser)
         response = self.client.post(self.url, self.data)
         self.assertEqual(response.status_code, 302)
+
+
+class ContactTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.url = f"/identity/{self.identity.pk}/contacts/"
+        self.number = PhoneNumber.objects.create(
+            identity=self.identity,
+            number="+1234567890",
+            priority=0,
+        )
+        self.client = Client()
+        self.client.force_login(self.user)
+
+    def test_view_contacts(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("+1234567890", response.content.decode("utf-8"))
+        self.assertIn("test@example.org", response.content.decode("utf-8"))
+
+    def test_post_new_email_contact(self):
+        data = {"contact": "test@example.com"}
+        response = self.client.post(self.url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("test@example.org", response.content.decode("utf-8"))
+        self.assertIn("test@example.com</th>", response.content.decode("utf-8"))
+
+    def test_post_new_phone_contact(self):
+        data = {"contact": "+358123456789"}
+        response = self.client.post(self.url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("+1234567890</th>", response.content.decode("utf-8"))
+
+    def test_post_incorrect_contact(self):
+        data = {"contact": "incorrect"}
+        response = self.client.post(self.url, data, follow=True)
+        self.assertIn("Invalid e-mail address or phone number", response.content.decode("utf-8"))
+
+    def test_post_contact_over_limit(self):
+        data = {"contact": "test@example.com"}
+        with self.settings(CONTACT_LIMIT=1):
+            response = self.client.post(self.url, data, follow=True)
+        self.assertIn("Maximum number of e-mail addresses reached", response.content.decode("utf-8"))
+
+    def test_post_change_priority_up(self):
+        new_number = PhoneNumber.objects.create(
+            identity=self.identity,
+            number="+3580123456789",
+            priority=1,
+        )
+        data = {"phone_up": new_number.pk}
+        self.client.post(self.url, data, follow=True)
+        new_number.refresh_from_db()
+        self.number.refresh_from_db()
+        self.assertEqual(new_number.priority, 0)
+        self.assertEqual(self.number.priority, 1)
+
+    def test_post_change_priority_down(self):
+        new_number = PhoneNumber.objects.create(
+            identity=self.identity,
+            number="+3580123456789",
+            priority=1,
+        )
+        data = {"phone_down": self.number.pk}
+        self.client.post(self.url, data, follow=True)
+        new_number.refresh_from_db()
+        self.number.refresh_from_db()
+        self.assertEqual(new_number.priority, 0)
+        self.assertEqual(self.number.priority, 1)
+
+    def test_remove_phone(self):
+        data = {"phone_remove": self.number.pk}
+        response = self.client.post(self.url, data, follow=True)
+        self.assertNotIn("+1234567890", response.content.decode("utf-8"))
+        with self.assertRaises(PhoneNumber.DoesNotExist):
+            self.number.refresh_from_db()
+
+
+class VerificationTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.url = f"/email/{self.email_address.pk}/verify/"
+        self.client = Client()
+        self.client.force_login(self.user)
+
+    def test_view_verification_page(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Verification code sent", response.content.decode("utf-8"))
+
+    def test_verify_address(self):
+        self.client.get(self.url)
+        code = mail.outbox[0].body.split(" ")[-1]
+        data = {"code": code}
+        response = self.client.post(self.url, data, follow=True)
+        self.assertIn("test@example.org", response.content.decode("utf-8"))
+        self.assertIn("Verified", response.content.decode("utf-8"))
+        self.email_address.refresh_from_db()
+        self.assertTrue(self.email_address.verified)
+
+    def test_verify_address_invalid_address(self):
+        data = {"code": "invalid_code"}
+        response = self.client.post(self.url, data, follow=True)
+        self.assertIn("Invalid verification code", response.content.decode("utf-8"))
+
+    @mock.patch("identity.views.SmsConnector")
+    def test_verify_sms(self, mock_connector):
+        number = PhoneNumber.objects.create(identity=self.identity, number="+1234567890", priority=0, verified=False)
+        mock_connector.return_value.send_sms.return_value = True
+        url = f"/phone/{number.pk}/verify/"
+        self.client.get(url)
+        code = mock_connector.return_value.send_sms.call_args.args[1].split(" ")[-1]
+        data = {"code": code}
+        self.client.post(url, data, follow=True)
+        number.refresh_from_db()
+        self.assertTrue(number.verified)
 
 
 class AdminSiteTests(BaseTestCase):

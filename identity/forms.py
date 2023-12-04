@@ -5,10 +5,14 @@ Identity app forms.
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Div, Layout, Submit
 from django import forms
+from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.utils.translation import gettext as _
 
-from identity.models import Identity
+from base.models import Token
+from identity.models import EmailAddress, Identity, PhoneNumber
+from identity.validators import validate_phone_number
 
 
 class IdentitySearchForm(forms.Form):
@@ -31,6 +35,130 @@ class IdentitySearchForm(forms.Form):
         self.helper = FormHelper()
         self.helper.form_method = "GET"
         self.helper.add_input(Submit("submit", _("Search")))
+
+
+class ContactForm(forms.Form):
+    """
+    Create or update contact addresses
+    """
+
+    contact = forms.CharField(label=_("E-mail address or phone number"), max_length=320, required=False)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Crispy Forms helper to set submit button.
+        """
+        self.identity = kwargs.pop("identity")
+        super(ContactForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("submit", _("Add")))
+
+    def clean_contact(self):
+        """
+        Check that contact address exists and is an email address or phone number.
+        Check for contact limits.
+        Add contact_type to form data.
+        """
+        contact = self.cleaned_data["contact"]
+        email = True
+        phone = True
+        if not contact:
+            raise ValidationError(_("E-mail address or phone number is required"))
+        try:
+            validate_email(contact)
+        except ValidationError:
+            email = False
+        try:
+            contact = contact.replace(" ", "")
+            validate_phone_number(contact)
+        except ValidationError:
+            phone = False
+        if not email and not phone:
+            raise ValidationError(_("Invalid e-mail address or phone number"))
+        contact_limit = getattr(settings, "CONTACT_LIMIT", 3)
+        if phone:
+            self.cleaned_data["contact_type"] = "phone"
+            if PhoneNumber.objects.filter(identity=self.identity, number=contact).exists():
+                raise ValidationError(_("Phone number already exists"))
+            if PhoneNumber.objects.filter(identity=self.identity).count() >= contact_limit:
+                raise ValidationError(_("Maximum number of phone numbers reached"))
+        if email:
+            self.cleaned_data["contact_type"] = "email"
+            if EmailAddress.objects.filter(identity=self.identity, address=contact).exists():
+                raise ValidationError(_("E-mail address already exists"))
+            if EmailAddress.objects.filter(identity=self.identity).count() >= contact_limit:
+                raise ValidationError(_("Maximum number of e-mail addresses reached"))
+        return contact
+
+
+class EmailAddressVerificationForm(forms.ModelForm):
+    """
+    Verify an email address
+    """
+
+    code = forms.CharField(label=_("Verify code"), max_length=32, required=False)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Crispy Forms helper to set submit and resend buttons.
+        """
+        super(EmailAddressVerificationForm, self).__init__(*args, **kwargs)
+        self.fields["address"].disabled = True
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("submit", _("Save")))
+        self.helper.add_input(Submit("resend_code", _("Resend a code")))
+
+    def clean_code(self):
+        """
+        Test verification code.
+        """
+        code = self.cleaned_data["code"]
+        if not code:
+            raise ValidationError(_("Invalid verification code"))
+        if not Token.objects.validate_email_verification_token(code, self.instance):
+            raise ValidationError(_("Invalid verification code"))
+        return code
+
+    class Meta:
+        model = EmailAddress
+        fields = [
+            "address",
+        ]
+
+
+class PhoneNumberVerificationForm(forms.ModelForm):
+    """
+    Verify a phone number
+    """
+
+    code = forms.CharField(label=_("Verify code"), max_length=32, required=False)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Crispy Forms helper to set submit and resend buttons.
+        """
+        super(PhoneNumberVerificationForm, self).__init__(*args, **kwargs)
+        self.fields["number"].disabled = True
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("submit", _("Save")))
+        self.helper.add_input(Submit("resend_code", _("Resend a code")))
+
+    def clean_code(self):
+        """
+        Test verification code.
+        """
+        code = self.cleaned_data["code"]
+        if not code:
+            raise ValidationError(_("Invalid verification code"))
+        if not Token.objects.validate_sms_verification_token(code, self.instance):
+            raise ValidationError(_("Invalid verification code"))
+        return code
+
+    class Meta:
+        model = PhoneNumber
+        fields = [
+            "number",
+        ]
 
 
 class IdentityForm(forms.ModelForm):
@@ -110,7 +238,7 @@ class IdentityForm(forms.ModelForm):
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit(_("submit"), "Save"))
+        self.helper.add_input(Submit("submit", _("Save")))
         restricted_fields = True
         verification_fields = True
         if not self.instance or self.instance.user == self.request.user:
