@@ -79,7 +79,7 @@ class RoleCreateForm(forms.ModelForm[Role]):
         """
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit(_("submit"), "Submit"))
+        self.helper.add_input(Submit("submit", _("Submit")))
 
     class Meta:
         model = Role
