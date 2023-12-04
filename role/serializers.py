@@ -48,7 +48,7 @@ class MembershipSerializer(serializers.ModelSerializer[Membership]):
                 return data[attribute]
             elif self.instance and hasattr(self.instance, attribute):
                 return getattr(self.instance, attribute)
-            raise serializers.ValidationError(_(f"Field {attribute} is required"))
+            raise serializers.ValidationError(_("Field %(attribute)s is required") % {"attribute": attribute})
 
         role = get_attribute("role")
         start_date = get_attribute("start_date")
