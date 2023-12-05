@@ -36,7 +36,6 @@ from kamu.routers import router
 from role.views import (
     MembershipDetailView,
     MembershipListView,
-    RoleCreateView,
     RoleDetailView,
     RoleJoinView,
     RoleListView,
@@ -64,7 +63,6 @@ urlpatterns = [
     path("role/search/", RoleSearchView.as_view(), name="role-search"),
     path("role/<int:pk>/", RoleDetailView.as_view(), name="role-detail"),
     path("role/<int:role_pk>/join/", RoleJoinView.as_view(), name="role-join"),
-    path("role/add/", RoleCreateView.as_view(), name="role-create"),
     path("login/", CustomLoginView.as_view(), name="login"),
     path("login/shibboleth/", ShibbolethLoginView.as_view(), name="login-shibboleth"),
     path("login/google/", GoogleLoginView.as_view(), name="login-google"),

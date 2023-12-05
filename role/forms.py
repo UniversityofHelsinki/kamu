@@ -66,37 +66,3 @@ class MembershipCreateForm(forms.ModelForm[Membership]):
         start_date = cleaned_data.get("start_date")
         expire_date = cleaned_data.get("expire_date")
         validate_membership(ValidationError, self.role, start_date, expire_date)
-
-
-class RoleCreateForm(forms.ModelForm[Role]):
-    """
-    Form for creating a new role.
-    """
-
-    def __init__(self, *args, **kwargs):
-        """
-        Crispy Forms helper to set submit button.
-        """
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", _("Submit")))
-
-    class Meta:
-        model = Role
-        fields = [
-            "identifier",
-            "name_en",
-            "name_fi",
-            "name_sv",
-            "description_en",
-            "description_fi",
-            "description_sv",
-            "inviters",
-            "approvers",
-            "parent",
-            "owner",
-            "organisation_unit",
-            "permissions",
-            "iam_group",
-            "maximum_duration",
-        ]

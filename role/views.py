@@ -6,7 +6,6 @@ import datetime
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
@@ -17,7 +16,7 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView
 
 from identity.models import Identity
-from role.forms import MembershipCreateForm, RoleCreateForm, TextSearchForm
+from role.forms import MembershipCreateForm, TextSearchForm
 from role.models import Membership, Role
 
 
@@ -107,16 +106,6 @@ class MembershipListView(LoginRequiredMixin, ListView[Membership]):
                     expire_date__lte=timezone.now().date() + datetime.timedelta(days=30),
                 ).order_by("expire_date")
         return queryset.prefetch_related("identity", "role")
-
-
-class RoleCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView[Role, RoleCreateForm]):
-    """
-    View for creating a new role.
-    """
-
-    model = Role
-    form_class = RoleCreateForm
-    success_message = _("New role created.")
 
 
 class RoleDetailView(LoginRequiredMixin, DetailView[Role]):
