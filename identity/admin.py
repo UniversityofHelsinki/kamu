@@ -10,7 +10,10 @@ from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
 class EmailAddressAdmin(admin.ModelAdmin):
     list_display = ["identity", "address"]
     search_fields = [
-        "identity__display_name",
+        "identity__given_names",
+        "identity__surname",
+        "identity__given_name_display",
+        "identity__surname_display",
         "identity__user__username",
         "address",
     ]
@@ -54,7 +57,10 @@ admin.site.register(Identity, IdentityAdmin)
 class PhoneNumberAdmin(admin.ModelAdmin):
     list_display = ["identity", "number"]
     search_fields = [
-        "identity__display_name",
+        "identity__given_names",
+        "identity__surname",
+        "identity__given_name_display",
+        "identity__surname_display",
         "identity__user__username",
         "number",
     ]
