@@ -317,7 +317,7 @@ class Command(BaseCommand):
             for r in range(random.randint(0, 2)):
                 PhoneNumber.objects.create(
                     identity=identity,
-                    number=f"{fake.country_calling_code()}{fake.msisdn()}"[:20],
+                    number=f"{fake.country_calling_code()}{fake.msisdn()}"[:20].replace(" ", ""),
                     priority=r,
                     verified=True,
                 )
