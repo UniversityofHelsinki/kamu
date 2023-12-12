@@ -5,6 +5,7 @@ View tests for role app.
 import datetime
 
 from django.contrib.auth.models import Group
+from django.core import mail
 from django.test import Client, override_settings
 from django.utils import timezone
 
@@ -59,47 +60,40 @@ class RoleJoinTests(BaseTestCase):
         self.client = Client()
         self.client.force_login(self.user)
 
-    def test_join_role(self):
+    def _test_join_role(self, start_date_delta: int = 0, expire_date_delta: int = 0):
         url = f"{self.url}{self.role.pk}/join/"
-        response = self.client.post(
+        return self.client.post(
             url,
             {
-                "start_date": timezone.now().date(),
-                "expire_date": timezone.now().date() + datetime.timedelta(days=7),
+                "start_date": timezone.now().date() + datetime.timedelta(days=start_date_delta),
+                "expire_date": timezone.now().date() + datetime.timedelta(days=expire_date_delta),
                 "reason": "Because",
             },
             follow=True,
         )
+
+    def test_join_role(self):
+        group = Group.objects.create(name="approver")
+        self.user.groups.add(group)
+        self.role.approvers.add(group)
+        response = self._test_join_role(expire_date_delta=7)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Role membership", response.content.decode("utf-8"))
         self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
 
+    def test_join_role_without_approver_status(self):
+        response = self._test_join_role()
+        self.assertEqual(response.status_code, 403)
+
     def test_join_role_with_invalid_date(self):
         url = f"{self.url}{self.role.pk}/join/"
-        response = self.client.post(
-            url,
-            {
-                "start_date": timezone.now().date() + datetime.timedelta(days=7),
-                "expire_date": timezone.now().date(),
-                "reason": "Because",
-            },
-            follow=True,
-        )
+        response = self._test_join_role(start_date_delta=7)
         self.assertIn("Role expire date cannot be earlier than start date", response.content.decode("utf-8"))
 
     def test_join_role_with_too_long_duration(self):
-        url = f"{self.url}{self.role.pk}/join/"
         self.role.maximum_duration = 3
         self.role.save()
-        response = self.client.post(
-            url,
-            {
-                "start_date": timezone.now().date(),
-                "expire_date": timezone.now().date() + datetime.timedelta(days=4),
-                "reason": "Because",
-            },
-            follow=True,
-        )
+        response = self._test_join_role(expire_date_delta=4)
         self.assertIn("Role duration cannot be more than maximum duration", response.content.decode("utf-8"))
 
 
@@ -144,6 +138,65 @@ class RoleViewTests(BaseTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Superuser", response.content.decode("utf-8"))
+
+
+class RoleInviteTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.url = "/role/1/invite/"
+        self.client = Client()
+        self.client.force_login(self.user)
+        group = Group.objects.create(name="InviterGroup")
+        self.role.inviters.add(group)
+        self.user.groups.add(group)
+
+    def test_search_user(self):
+        url = f"{self.url}?given_names=test"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Test User", response.content.decode("utf-8"))
+        self.assertIn("Select", response.content.decode("utf-8"))
+
+    def test_search_not_found_email(self):
+        url = f"{self.url}?email=nonexisting@example.org"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Email address not found", response.content.decode("utf-8"))
+
+    def test_join_role_with_identity(self):
+        url = f"{self.url}{self.identity.pk}/"
+        response = self.client.post(
+            url,
+            {
+                "start_date": timezone.now().date(),
+                "expire_date": timezone.now().date() + datetime.timedelta(days=7),
+                "reason": "Because",
+            },
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Membership.objects.filter(role=self.role, identity=self.identity).exists())
+
+    def test_join_role_send_email_invite(self):
+        url = f"{self.url}email/"
+        response = self.client.post(
+            url,
+            {
+                "start_date": timezone.now().date(),
+                "expire_date": timezone.now().date() + datetime.timedelta(days=7),
+                "reason": "Because",
+                "invite_email_address": "invite@example.org",
+                "invite_language": "en",
+            },
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            Membership.objects.filter(
+                role=self.role, identity=None, invite_email_address="invite@example.org"
+            ).exists()
+        )
+        self.assertIn("Your invite code is", mail.outbox[0].body)
 
 
 class AdminSiteTests(BaseTestCase):

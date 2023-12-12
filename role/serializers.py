@@ -65,6 +65,8 @@ class MembershipSerializer(serializers.ModelSerializer[Membership]):
             "approver",
             "inviter",
             "reason",
+            "invite_email_address",
+            "status",
             "start_date",
             "expire_date",
         ]

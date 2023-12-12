@@ -5,6 +5,7 @@ Role app models.
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import get_language
@@ -147,6 +148,40 @@ class Role(models.Model):
             role__in=roles, start_date__lte=timezone.now(), expire_date__gte=timezone.now()
         )
 
+    def is_approver(self, user) -> bool:
+        """
+        Check if user has approver permission to the role
+
+        Superusers, approvers and the role owner have invite permission.
+        """
+        if user.is_superuser:
+            return True
+        groups = user.groups.all()
+        try:
+            Role.objects.filter(Q(approvers__in=groups) | Q(owner=user)).distinct().get(pk=self.pk)
+            return True
+        except Role.DoesNotExist:
+            pass
+        return False
+
+    def is_inviter(self, user) -> bool:
+        """
+        Check if user has invite permission to the role
+
+        Superusers, inviters, approvers and the role owner have invite permission.
+        """
+        if user.is_superuser:
+            return True
+        groups = user.groups.all()
+        try:
+            Role.objects.filter(Q(inviters__in=groups) | Q(approvers__in=groups) | Q(owner=user)).distinct().get(
+                pk=self.pk
+            )
+            return True
+        except Role.DoesNotExist:
+            pass
+        return False
+
 
 class Permission(models.Model):
     """
@@ -220,16 +255,18 @@ class Membership(models.Model):
     Stores a membership between :model:`identity.Identity` and :model:`identity.Role`, related to :model:`auth.User`.
     """
 
-    identity = models.ForeignKey("identity.Identity", on_delete=models.CASCADE)
+    identity = models.ForeignKey("identity.Identity", blank=True, null=True, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
 
     STATUS_CHOICES = (
+        ("invited", _("Invited")),
         ("require", _("Waiting requirements")),
         ("approval", _("Waiting approval")),
         ("pending", _("Pending")),
         ("active", _("Active")),
         ("expired", _("Expired")),
     )
+    invite_email_address = models.EmailField(blank=True, null=True, verbose_name=_("Invite email address"))
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, verbose_name=_("Membership status"))
     approver = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="membership_approver", on_delete=models.SET_NULL, null=True, blank=True
@@ -250,10 +287,36 @@ class Membership(models.Model):
         verbose_name_plural = _("Memberships")
 
     def __str__(self) -> str:
-        return f"{self.role.name()} - {self.identity.display_name()}"
+        if self.identity:
+            return f"{self.role.name()} - {self.identity.display_name()}"
+        return f"{self.role.name()} - {self.invite_email_address}"
 
     def get_absolute_url(self):
         """
         Returns url to current membership's detail view.
         """
         return reverse("membership-detail", kwargs={"pk": self.pk})
+
+    def set_status(self) -> None:
+        """
+        Sets membership status.
+
+        Requirements have not been implemented yet.
+        """
+        if timezone.now().date() > self.expire_date:
+            self.status = "expired"
+        elif not self.identity:
+            self.status = "invited"
+        elif not self.approver:
+            self.status = "approval"
+        elif timezone.now().date() < self.start_date:
+            self.status = "pending"
+        else:
+            self.status = "active"
+
+    def save(self, *args, **kwargs):
+        """
+        Update status before saving membership.
+        """
+        self.set_status()
+        super(Membership, self).save(*args, **kwargs)

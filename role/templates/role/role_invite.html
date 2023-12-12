@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <h1>{% trans "Invite a new member" %}</h1>
+  <div class="row">
+    <div class="col-md-6">
+      <h2>{% trans "Role" %}</h2>
+      <dl class="row">
+        <dt class="col-sm-3">{% trans "Name" %}</dt>
+        <dd class="col-sm-9"><a href="{% url 'role-detail' role.pk %}">{{ role.name }}</a></dd>
+        <dt class="col-sm-3">{% trans "Permissions" %}</dt>
+        <dd class="col-sm-9">{% for permission in role.get_permissions %}{{ permission }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+        <dt class="col-sm-3">{% trans "Total cost" %}</dt>
+        <dd class="col-sm-9 mb-5">{{ role.get_cost }} €</dd>
+        <dt class="col-sm-3">{% trans "Maximum duration" %}</dt>
+        <dd class="col-sm-9">{{ role.maximum_duration }} {% trans "days" %}</dd>      </dl>
+    </div>
+    {% if identity %}<div class="col-md-6">
+      <h2>{% trans "Identity" %}</h2>
+      <dl class="row">
+        <dt class="col-sm-3">{% trans "Name" %}</dt>
+        <dd class="col-sm-9"><a href="{% url 'identity-detail' identity.pk %}">{{ identity }}</a></dd>
+        <dt class="col-sm-3">{% trans "Preferred language" %}</dt>
+        <dd class="col-sm-9 mb-5">{{ identity.get_preferred_language_display }}</dd>
+      </dl>
+    </div>{% endif %}
+  </div>
+  <h2>{% trans "Member information" %}</h2>
+  <form method="post">
+    {% csrf_token %}
+    {% crispy form form.helper %}
+  </form>
+{% endblock %}

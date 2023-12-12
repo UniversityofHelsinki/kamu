@@ -1,13 +1,15 @@
 """
 Identity app views for the UI.
 """
+from typing import Any
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
-from django.db.models import Model, Q
+from django.db.models import Q
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils import timezone
@@ -346,28 +348,38 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
     template_name = "identity/identity_search.html"
     model = Identity
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
         """
-        Add form to the ListView.
+        Add form and searched phone and email to context data.
         """
         context = super(IdentitySearchView, self).get_context_data(**kwargs)
+        context["phone"] = self.request.GET.get("phone", "").replace(" ", "")
+        context["email"] = self.request.GET.get("email")
         context["form"] = IdentitySearchForm(self.request.GET)
         return context
 
     def get_queryset(self):
         """
         Filter results based on URL parameters.
+
+        Return all results with the exact email address or phone number, regardless of names.
         """
         queryset = Identity.objects.all()
         given_names = self.request.GET.get("given_names")
         surname = self.request.GET.get("surname")
         email = self.request.GET.get("email")
-        if not given_names and not surname and not email:
-            return queryset.none()
+        phone = self.request.GET.get("phone")
+        if not given_names and not surname:
+            queryset = queryset.none()
         if given_names:
-            queryset = queryset.filter(given_names__icontains=given_names)
+            queryset = queryset.filter(
+                Q(given_names__icontains=given_names) | Q(given_name_display__icontains=given_names)
+            )
         if surname:
-            queryset = queryset.filter(surname__icontains=surname)
+            queryset = queryset.filter(Q(surname__icontains=surname) | Q(surname_display__icontains=surname))
         if email:
-            queryset = queryset.filter(email_addresses__address__icontains=email)
+            queryset = queryset.union(Identity.objects.filter(email_addresses__address__iexact=email))
+        if phone:
+            phone = phone.replace(" ", "")
+            queryset = queryset.union(Identity.objects.filter(phone_numbers__number__exact=phone))
         return queryset

@@ -12,6 +12,7 @@
       <th scope="col">{% trans "Name" %}</th>
       <th scope="col">{% trans "Email" %}</th>
       <th scope="col">{% trans "Phone" %}</th>
+      <th scope="col">{% trans "Select" %}</th>
     </tr>
   </thead>
   <tbody>
@@ -20,8 +21,14 @@
       <th scope="row"><a href="{% url 'identity-detail' identity.pk %}">{{ identity.display_name }}</a></th>
       <td>{% for address in identity.email_addresses.all %}{% if address.address == email %}{{ address.address }}{% endif %}{% endfor %}</td>
       <td>{% for number in identity.phone_numbers.all %}{% if number.number == phone %}{{ number.number }}{% endif %}{% endfor %}</td>
+      <td><a href="{% url 'role-invite-details' role.pk identity.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Add role" %}</a></td>
     </tr>
   {% endfor %}
   </tbody>
   </table>
+  {% if email and not email_found %}
+    <h3>{% trans "Email invitation" %}</h3>
+    <p>{% trans "Email address not found" %}: {{ email }}</p>
+    <a href="{% url 'role-invite-details-email' role.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Send invitation" %}</a>
+  {% endif %}
 {% endblock %}

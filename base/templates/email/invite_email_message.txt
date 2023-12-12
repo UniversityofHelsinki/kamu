@@ -1,0 +1,7 @@
+{% load i18n %}{% blocktrans %}Hi
+
+{{ inviter }} has invited you to join the role:
+{{ role }}
+
+Your invite code is:
+{{ token }}{% endblocktrans %}

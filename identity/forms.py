@@ -26,6 +26,7 @@ class IdentitySearchForm(forms.Form):
     given_names = forms.CharField(label=_("Given name(s)"), max_length=255, required=False)
     surname = forms.CharField(label=_("Surname"), max_length=255, required=False)
     email = forms.CharField(label=_("E-mail address"), max_length=255, required=False)
+    phone = forms.CharField(label=_("Phone number"), max_length=20, required=False)
 
     def __init__(self, *args, **kwargs) -> None:
         """
@@ -35,6 +36,27 @@ class IdentitySearchForm(forms.Form):
         self.helper = FormHelper()
         self.helper.form_method = "GET"
         self.helper.add_input(Submit("submit", _("Search")))
+
+    def clean_phone(self):
+        """
+        Only allow valid phone numbers in search field.
+        """
+        phone = self.cleaned_data["phone"]
+        if not phone:
+            return None
+        phone = phone.strip().replace(" ", "")
+        validate_phone_number(phone)
+        return phone
+
+    def clean_email(self):
+        """
+        Only allow valid emails in search field.
+        """
+        email = self.cleaned_data["email"]
+        if not email:
+            return None
+        validate_email(email)
+        return email
 
 
 class ContactForm(forms.Form):

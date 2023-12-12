@@ -41,11 +41,11 @@ class IdentityTests(BaseTestCase):
             identity=self.superidentity,
             address="super@example.org",
         )
-        url = f"{self.url}search/?given_names=test&email=example.org"
+        url = f"{self.url}search/?given_names=test&email=super@example.org"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Test Me", response.content.decode("utf-8"))
-        self.assertNotIn("Superuser", response.content.decode("utf-8"))
+        self.assertIn("Test User", response.content.decode("utf-8"))
+        self.assertIn("Super User", response.content.decode("utf-8"))
 
 
 class IdentityEditTests(BaseTestCase):

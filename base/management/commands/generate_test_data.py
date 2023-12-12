@@ -341,8 +341,8 @@ class Command(BaseCommand):
                         identity=identity,
                         role=role,
                         reason="Because",
-                        start_date=start_date,
-                        expire_date=expire_date,
+                        start_date=start_date.date(),
+                        expire_date=expire_date.date(),
                         status=status,
                     )
 

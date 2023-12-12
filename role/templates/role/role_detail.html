@@ -2,8 +2,11 @@
 {% load i18n %}
 
 {% block content %}
-  <h1>{% trans "Role" %}: {{ object.name }}</h1>
+  <h1 class="mb-3">{% trans "Role details" %}</h1>
   <dl class="row">
+    <dt class="col-sm-3">{% trans "Name" %}</dt>
+    <dd class="col-sm-9">{{ object.name }}</dd>
+
     <dt class="col-sm-3">{% trans "Owner" %}</dt>
     <dd class="col-sm-9">{{ object.owner }}</dd>
 
@@ -25,6 +28,12 @@
     <dt class="col-sm-3">{% trans "Maximum duration" %}</dt>
     <dd class="col-sm-9">{{ object.maximum_duration }} {% trans "days" %}</dd>
   </dl>
+  {% if is_inviter %}
+    <a href="{% url 'role-invite-identity' object.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Invite a new member" %}</a>
+  {% endif %}
+  {% if is_approver %}
+    <a href="{% url 'role-join' object.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Join" %}</a>
+  {% endif %}
   {% if memberships %}
     <h2 id="members-list">{% trans "Members" %}</h2>
     <table class="table" aria-describedby="members-list">

@@ -21,8 +21,8 @@ class TokenModelTests(TestCase):
         self.membership = Membership.objects.create(
             identity=self.identity,
             role=self.role,
-            start_date=timezone.now(),
-            expire_date=timezone.now() + datetime.timedelta(days=30),
+            start_date=timezone.now().date(),
+            expire_date=(timezone.now() + datetime.timedelta(days=30)).date(),
         )
 
     def test_email_verification_token(self):
