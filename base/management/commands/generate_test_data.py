@@ -124,7 +124,6 @@ class Command(BaseCommand):
         parser.add_argument(
             "-i", type=int, default=0, action="store", dest="identities", help="Number of identities to generate"
         )
-        parser.add_argument("-s", action="store_true", dest="silent", help="Don't print progress")
 
     def load_fixtures(self) -> None:
         if Nationality.objects.count() == 0:
@@ -361,7 +360,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         number_of_identities = options["identities"]
-        self.silent = options["silent"]
+        self.silent = options["verbosity"] == 0
         self.load_fixtures()
         self.create_users()
         self.create_permissions()
