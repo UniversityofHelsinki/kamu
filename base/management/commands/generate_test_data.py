@@ -236,8 +236,6 @@ class Command(BaseCommand):
         Create identities.
         """
         if not self.silent:
-            print("Loading attribute types...")
-        if not self.silent:
             print("Creating identities...")
         start_time = datetime.datetime.now()
         finnish_nationality = Nationality.objects.get(code="FI")
