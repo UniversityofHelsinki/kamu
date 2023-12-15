@@ -180,3 +180,6 @@ OIDC_GOOGLE_SUB = "OIDC_CLAIM_sub"
 OIDC_GOOGLE_GIVEN_NAME = "OIDC_CLAIM_given_name"
 OIDC_GOOGLE_FAMILY_NAME = "OIDC_CLAIM_family_name"
 OIDC_GOOGLE_EMAIL = "OIDC_CLAIM_email"
+
+# purge stale data this many days after expiry
+PURGE_DELAY_DAYS = 730
