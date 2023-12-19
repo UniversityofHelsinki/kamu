@@ -1,10 +1,10 @@
-{% load i18n %}{% blocktrans %}Hi
+{% load i18n %}{% trans "Hi" %}
 
-{{ inviter }} has invited you to join the role:
+{% if inviter %}{% blocktrans %}{{ inviter }} has invited you to join the role:{% endblocktrans %}{% else %}{% trans "You have been invited to join the role:" %}{% endif %}
 {{ role }}
 
-Your invite code is:
-{{ token }}{% endblocktrans %}{% if link_url %}
+{% trans "Your invite code is:" %}
+{{ token }}{% if link_url %}
 
 {% trans "Click the following link to accept the invitation:" %}
 {{ link_url }}?token={{ token|urlencode }}{% endif %}

@@ -38,13 +38,14 @@ def send_invite_email(membership, token, address, lang="en", request=None) -> bo
     """
     cur_language = translation.get_language()
     link_url = _get_link_url(request, "login-invite")
+    inviter = membership.inviter.get_full_name() if membership.inviter else None
     try:
         translation.activate(lang)
         subject = render_to_string("email/invite_email_subject.txt")
         message = render_to_string(
             "email/invite_email_message.txt",
             {
-                "inviter": membership.inviter.get_full_name(),
+                "inviter": inviter,
                 "role": membership.role.name(),
                 "token": token,
                 "link_url": link_url,
