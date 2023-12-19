@@ -3,19 +3,15 @@ Serializers for role app models.
 """
 
 import logging
+from typing import Any
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext as _
 from rest_framework import serializers
 
-from role.models import (
-    Membership,
-    Permission,
-    Role,
-    validate_membership,
-    validate_role_hierarchy,
-)
+from role.models import Membership, Permission, Role
+from role.validators import validate_membership, validate_role_hierarchy
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +33,7 @@ class MembershipSerializer(serializers.ModelSerializer[Membership]):
         Validates role membership data.
         """
 
-        def get_attribute(attribute) -> str:
+        def get_attribute(attribute) -> Any:
             """
             Get attribute from data or instance.
 

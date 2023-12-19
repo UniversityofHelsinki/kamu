@@ -1,6 +1,7 @@
 """
 Role app forms.
 """
+from datetime import date
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -10,7 +11,8 @@ from django.core.exceptions import ValidationError
 from django.forms.widgets import DateInput
 from django.utils.translation import gettext as _
 
-from role.models import Membership, validate_membership
+from role.models import Membership
+from role.validators import validate_membership
 
 
 class TextSearchForm(forms.Form):
@@ -66,6 +68,10 @@ class MembershipCreateForm(forms.ModelForm[Membership]):
             cleaned_data = self.cleaned_data
         start_date = cleaned_data.get("start_date")
         expire_date = cleaned_data.get("expire_date")
+        if not start_date or not isinstance(start_date, date):
+            raise ValidationError(_("Invalid start date format"))
+        if not expire_date or not isinstance(expire_date, date):
+            raise ValidationError(_("Invalid expire date format"))
         validate_membership(ValidationError, self.role, start_date, expire_date)
 
 
@@ -108,6 +114,10 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
             cleaned_data = self.cleaned_data
         start_date = cleaned_data.get("start_date")
         expire_date = cleaned_data.get("expire_date")
+        if not start_date or not isinstance(start_date, date):
+            raise ValidationError(_("Invalid start date format"))
+        if not expire_date or not isinstance(expire_date, date):
+            raise ValidationError(_("Invalid expire date format"))
         invite_email_address = cleaned_data.get("invite_email_address")
         validate_membership(ValidationError, self.role, start_date, expire_date)
         if Membership.objects.filter(

@@ -11,21 +11,7 @@ from django.utils import timezone
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
-
-def validate_role_hierarchy(error_class, initial_role, parent) -> None:
-    """
-    Detects circular role hierarchy and hierarchy maximum depth.
-
-    Cannot have circular hierarchy when creating a new role, only when changing the parent node.
-    """
-    n = 1
-    while parent:
-        n += 1
-        if n > settings.ROLE_HIERARCHY_MAXIMUM_DEPTH:
-            raise error_class(_("Role hierarchy cannot be more than maximum depth"))
-        if initial_role and parent == initial_role:
-            raise error_class(_("Role cannot be in its own hierarchy"))
-        parent = parent.parent
+from role.validators import validate_role_hierarchy
 
 
 class Role(models.Model):
@@ -234,20 +220,6 @@ class Permission(models.Model):
             return self.description_sv
         else:
             return self.description_en
-
-
-def validate_membership(error_class, role, start_date, expire_date) -> None:
-    """
-    Validates membership dates.
-    """
-    if expire_date < start_date:
-        raise error_class(_("Role expire date cannot be earlier than start date"))
-    if (expire_date - start_date).days > role.maximum_duration:
-        raise error_class(_("Role duration cannot be more than maximum duration"))
-    if expire_date < timezone.now().date():
-        raise error_class(_("Role expire date cannot be in the past"))
-    if start_date < timezone.now().date():
-        raise error_class(_("Role start date cannot be in the past"))
 
 
 class Membership(models.Model):
