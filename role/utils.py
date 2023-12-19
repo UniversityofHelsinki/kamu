@@ -3,14 +3,16 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from base.models import Token
+from identity.models import Identity
 from role.models import Membership
 
 
-def _get_invitation_session_parameters(request) -> tuple[str, datetime]:
+def _get_invitation_session_parameters(request: HttpRequest) -> tuple[str, datetime]:
     """
     Get invitation session parameters from request.
     """
@@ -29,7 +31,7 @@ def _get_invitation_session_parameters(request) -> tuple[str, datetime]:
     return invitation_code, invitation_time
 
 
-def _get_membership(membership_pk) -> Membership:
+def _get_membership(membership_pk: int | str) -> Membership:
     """
     Parse membership from pk value.
     """
@@ -44,12 +46,12 @@ def _get_membership(membership_pk) -> Membership:
     return membership
 
 
-def _remove_session_parameters(request) -> None:
+def _remove_session_parameters(request: HttpRequest) -> None:
     del request.session["invitation_code"]
     del request.session["invitation_code_time"]
 
 
-def claim_membership(request, identity) -> int:
+def claim_membership(request: HttpRequest, identity: Identity) -> int:
     """
     Tries to claim a membership with invitation code.
 

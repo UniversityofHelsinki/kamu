@@ -9,7 +9,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
-from django.db.models import Q
+from django.db.models import Q, QuerySet
+from django.forms import BaseForm
+from django.http import HttpRequest, HttpResponse, HttpResponseBase
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils import timezone
@@ -37,7 +39,7 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
 
     model = Identity
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add memberships to the context data.
         """
@@ -47,7 +49,7 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
         )
         return context
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Identity]:
         """
         Restrict access to user's own information, unless
          - user has permission to view all basic information,
@@ -66,10 +68,10 @@ class IdentityUpdateView(UpdateView):
     model = Identity
     form_class = IdentityForm
 
-    def form_valid(self, form):
+    def form_valid(self, form: IdentityForm) -> HttpResponse:
         return super().form_valid(form)
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict[str, Any]:
         """
         Add request object to the form class.
         """
@@ -77,7 +79,7 @@ class IdentityUpdateView(UpdateView):
         kwargs["request"] = self.request
         return kwargs
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Identity]:
         """
         Restrict update to user's own information, unless user has permission to modify all basic information.
         """
@@ -86,7 +88,7 @@ class IdentityUpdateView(UpdateView):
             return queryset.filter(user=self.request.user)
         return queryset
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         pk = self.object.pk if self.object else None
         return reverse("identity-detail", kwargs={"pk": pk})
 
@@ -104,7 +106,7 @@ class BaseVerificationView(LoginRequiredMixin, UpdateView):
         """
         return False
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """
         Check for resend button.
         """
@@ -114,7 +116,7 @@ class BaseVerificationView(LoginRequiredMixin, UpdateView):
             return redirect(self.post_redirect, pk=self.object.pk)
         return super().post(request, *args, **kwargs)
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[EmailAddress | PhoneNumber]:
         """
         Restrict update to user's own contacts.
         """
@@ -122,10 +124,10 @@ class BaseVerificationView(LoginRequiredMixin, UpdateView):
             return self.model.objects.none()
         return self.model.objects.filter(identity__user=self.request.user)
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse("contact-change", kwargs={"pk": self.object.identity.pk})
 
-    def form_valid(self, form):
+    def form_valid(self, form: BaseForm) -> HttpResponse:
         """
         Verify a contact if code was correct.
         """
@@ -160,7 +162,7 @@ class EmailAddressVerificationView(BaseVerificationView):
         messages.add_message(self.request, messages.INFO, _("Verification code sent."))
         return True
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """
         Create and send a code when loading a page.
         """
@@ -199,7 +201,7 @@ class PhoneNumberVerificationView(BaseVerificationView):
             messages.add_message(self.request, messages.ERROR, _("Could not send an SMS message."))
             return False
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """
         Create and send a code when loading a page.
         """
@@ -218,7 +220,7 @@ class ContactView(LoginRequiredMixin, FormView):
     template_name = "contact_address.html"
     success_url = "#"
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         user = self.request.user if self.request.user.is_authenticated else None
         if not user:
             raise PermissionDenied
@@ -230,7 +232,7 @@ class ContactView(LoginRequiredMixin, FormView):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict[str, Any]:
         """
         Add identity object to the form class.
         """
@@ -238,7 +240,7 @@ class ContactView(LoginRequiredMixin, FormView):
         kwargs["identity"] = self.identity
         return kwargs
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add lists of users email_addresses and phone_numbers to context.
         """
@@ -248,7 +250,7 @@ class ContactView(LoginRequiredMixin, FormView):
         context["phone_list"] = identity.phone_numbers.all().order_by("priority")
         return context
 
-    def form_valid(self, form):
+    def form_valid(self, form: ContactForm) -> HttpResponse:
         """
         Create an email address or a phone number if form is valid.
         """
@@ -266,7 +268,7 @@ class ContactView(LoginRequiredMixin, FormView):
             PhoneNumber.objects.create(identity=form.identity, number=form.cleaned_data["contact"], priority=priority)
         return super().form_valid(form)
 
-    def _change_contact_priority(self, model, pk: int, direction: str) -> None:
+    def _change_contact_priority(self, model: type[EmailAddress] | type[PhoneNumber], pk: int, direction: str) -> None:
         """
         Change contact priority up or down and move possible other objects to another direction,
         if priorities are the same.
@@ -287,7 +289,7 @@ class ContactView(LoginRequiredMixin, FormView):
                 other_obj.priority -= 1
                 other_obj.save()
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """
         Check for contact removal and priority changes before normal form handling.
         """
@@ -324,7 +326,7 @@ class IdentityMeView(LoginRequiredMixin, View):
     Redirect to current user's detail view.
     """
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         """
         Redirects user to their own identity detail page.
         Creates an identity for user if identity does not exist.
@@ -348,7 +350,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
     template_name = "identity/identity_search.html"
     model = Identity
 
-    def get_context_data(self, **kwargs) -> dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add form and searched phone and email to context data.
         """
@@ -358,7 +360,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         context["form"] = IdentitySearchForm(self.request.GET)
         return context
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Identity]:
         """
         Filter results based on URL parameters.
 

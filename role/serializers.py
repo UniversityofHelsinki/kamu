@@ -3,7 +3,7 @@ Serializers for role app models.
 """
 
 import logging
-from typing import Any
+from typing import Any, Sequence
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -28,12 +28,12 @@ class MembershipSerializer(serializers.ModelSerializer[Membership]):
         slug_field="username", queryset=get_user_model().objects.all(), required=False
     )
 
-    def validate(self, data):
+    def validate(self, data: Any) -> Any:
         """
         Validates role membership data.
         """
 
-        def get_attribute(attribute) -> Any:
+        def get_attribute(attribute: Any) -> Any:
             """
             Get attribute from data or instance.
 
@@ -139,9 +139,13 @@ class RoleSerializer(serializers.ModelSerializer[Role]):
             "updated_at",
         ]
 
-    def validate_parent(self, value):
+    def validate_parent(self, value: Role | None) -> Role | None:
         """
         Validate parent for circular role hierarchy and hierarchy maximum depth.
+
+        In a normal situations, sequence data is never validated as create and update deal in single instances.
         """
+        if isinstance(self.instance, Sequence):
+            raise ValueError(_("Cannot validate sequence data"))
         validate_role_hierarchy(serializers.ValidationError, self.instance, value)
         return value

@@ -3,15 +3,22 @@ Base views, shared between apps.
 """
 
 import logging
+from typing import Any
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth import login as auth_login
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User as UserType
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
-from django.http.response import HttpResponseBase, HttpResponseRedirect
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBase,
+    HttpResponseRedirect,
+)
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -50,7 +57,7 @@ class InviteView(FormView):
     template_name = "invite.html"
     success_url = "#"
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict[str, Any]:
         """
         Add initial token to the form kwargs.
         """
@@ -58,7 +65,7 @@ class InviteView(FormView):
         kwargs["token"] = self.request.GET.get("token", None)
         return kwargs
 
-    def form_valid(self, form):
+    def form_valid(self, form: InviteTokenForm) -> HttpResponse:
         """
         Set invitation code to session and forward to either login or registration process.
         """
@@ -73,16 +80,14 @@ class InviteView(FormView):
         return super().form_valid(form)
 
 
-class BaseRegisterView(
-    FormView[RegistrationForm | EmailAddressVerificationForm | PhoneNumberForm | PhoneNumberVerificationForm]
-):
+class BaseRegisterView(View):
     """
     Base class for registration views.
     """
 
     template_name = "register.html"
 
-    def dispatch(self, request, *args, **kwargs) -> HttpResponseBase:
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """
         Check that user has an invitation code in session and is not already logged in.
         """
@@ -96,7 +101,7 @@ class BaseRegisterView(
         return super().dispatch(request, *args, **kwargs)
 
 
-class RegisterView(BaseRegisterView):
+class RegisterView(BaseRegisterView, FormView):
     """
     Registration view. Start Email and SMS registration process or forward to external methods.
     """
@@ -104,7 +109,7 @@ class RegisterView(BaseRegisterView):
     template_name = "register.html"
     form_class = RegistrationForm
 
-    def _create_verification_token(self, email_address) -> bool:
+    def _create_verification_token(self, email_address: str) -> bool:
         """
         Create and send a verification token.
         """
@@ -122,7 +127,7 @@ class RegisterView(BaseRegisterView):
             messages.add_message(self.request, messages.ERROR, _("Failed to send verification code."))
             return False
 
-    def form_valid(self, form):
+    def form_valid(self, form: RegistrationForm) -> HttpResponse:
         """
         Create and send a code when loading a page.
         """
@@ -137,7 +142,7 @@ class RegisterView(BaseRegisterView):
         return redirect("login-register-email-verify")
 
 
-class VerifyEmailAddressView(BaseRegisterView):
+class VerifyEmailAddressView(BaseRegisterView, FormView):
     """
     Registration view for verifying email address.
     """
@@ -145,7 +150,7 @@ class VerifyEmailAddressView(BaseRegisterView):
     template_name = "register_form.html"
     form_class = EmailAddressVerificationForm
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """
         Check that user has email address in session.
         """
@@ -153,7 +158,7 @@ class VerifyEmailAddressView(BaseRegisterView):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict[str, Any]:
         """
         Add email address to form kwargs.
         """
@@ -161,7 +166,7 @@ class VerifyEmailAddressView(BaseRegisterView):
         kwargs["email_address"] = self.request.session["register_email_address"]
         return kwargs
 
-    def form_valid(self, form):
+    def form_valid(self, form: EmailAddressVerificationForm) -> HttpResponse:
         """
         Create and send a code when loading a page.
         """
@@ -170,7 +175,7 @@ class VerifyEmailAddressView(BaseRegisterView):
         return redirect("login-register-phone")
 
 
-class RegisterPhoneNumberView(BaseRegisterView):
+class RegisterPhoneNumberView(BaseRegisterView, FormView):
     """
     Registration view for asking a phone number.
     """
@@ -178,7 +183,7 @@ class RegisterPhoneNumberView(BaseRegisterView):
     template_name = "register_form.html"
     form_class = PhoneNumberForm
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """
         Check that user has a verified email address in session.
         """
@@ -186,7 +191,7 @@ class RegisterPhoneNumberView(BaseRegisterView):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
-    def _create_verification_token(self, phone_number) -> bool:
+    def _create_verification_token(self, phone_number: str) -> bool:
         """
         Create and send a verification token.
         """
@@ -206,7 +211,7 @@ class RegisterPhoneNumberView(BaseRegisterView):
             messages.add_message(self.request, messages.ERROR, _("Could not send an SMS message."))
             return False
 
-    def form_valid(self, form):
+    def form_valid(self, form: PhoneNumberForm) -> HttpResponse:
         """
         Create and send a code when loading a page.
         """
@@ -217,7 +222,7 @@ class RegisterPhoneNumberView(BaseRegisterView):
         return redirect("login-register-phone-verify")
 
 
-class VerifyPhoneNumberView(BaseRegisterView):
+class VerifyPhoneNumberView(BaseRegisterView, FormView):
     """
     Registration view for verifying phone number.
     """
@@ -225,7 +230,7 @@ class VerifyPhoneNumberView(BaseRegisterView):
     template_name = "register_form.html"
     form_class = PhoneNumberVerificationForm
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """
         Check that user has a verified email address, a phone number and name information in session.
         """
@@ -234,7 +239,7 @@ class VerifyPhoneNumberView(BaseRegisterView):
                 raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict[str, Any]:
         """
         Add phone number to form kwargs.
         """
@@ -242,7 +247,7 @@ class VerifyPhoneNumberView(BaseRegisterView):
         kwargs["phone_number"] = self.request.session["register_phone_number"]
         return kwargs
 
-    def form_valid(self, form):
+    def form_valid(self, form: PhoneNumberVerificationForm) -> HttpResponse:
         """
         Create a new user identity with the linked user. Set basic information from the registration forms.
         """
@@ -280,7 +285,7 @@ class RemoteLoginView(View):
     """
 
     @staticmethod
-    def _authenticate_backend(request) -> None | UserType:
+    def _authenticate_backend(request: HttpRequest) -> None | UserType:
         """
         Authentication user against a backend.
         # backend = ShibbolethBackend()
@@ -290,7 +295,7 @@ class RemoteLoginView(View):
         return None
 
     @staticmethod
-    def _remote_auth_login(request, user) -> None:
+    def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
         """
         Log user in using a correct backend.
 
@@ -298,7 +303,7 @@ class RemoteLoginView(View):
         """
         pass
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request: HttpRequest) -> HttpResponse:
         redirect_to = request.GET.get("next", settings.LOGIN_REDIRECT_URL)
         user = self._authenticate_backend(request)
         if user:
@@ -327,13 +332,13 @@ class ShibbolethLoginView(RemoteLoginView):
     """
 
     @staticmethod
-    def _authenticate_backend(request):
+    def _authenticate_backend(request: HttpRequest) -> UserType | None:
         backend = ShibbolethBackend()
         user = backend.authenticate(request, create_user=True)
         return user
 
     @staticmethod
-    def _remote_auth_login(request, user):
+    def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
         auth_login(request, user, backend="base.auth.ShibbolethBackend")
 
 
@@ -345,7 +350,7 @@ class GoogleLoginView(RemoteLoginView):
     """
 
     @staticmethod
-    def _authenticate_backend(request):
+    def _authenticate_backend(request: HttpRequest) -> UserType | None:
         backend = GoogleBackend()
         if "invitation_code" in request.session and "invitation_code_time" in request.session:
             user = backend.authenticate(request, create_user=True)
@@ -354,7 +359,7 @@ class GoogleLoginView(RemoteLoginView):
         return user
 
     @staticmethod
-    def _remote_auth_login(request, user):
+    def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
         auth_login(request, user, backend="base.auth.GoogleBackend")
 
 
@@ -368,7 +373,7 @@ class EmailPhoneLoginView(LoginView):
     form_class = EmailPhoneForm
     template_name = "login_email.html"
 
-    def form_valid(self, form):
+    def form_valid(self, form: AuthenticationForm) -> HttpResponse:
         """Security check complete. Log the user in."""
         auth_login(self.request, form.get_user(), backend="base.auth.EmailSMSBackend")
         return HttpResponseRedirect(self.get_success_url())
@@ -390,7 +395,7 @@ class CustomLoginView(View):
 
     template_name = "login.html"
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         return render(request, self.template_name)
 
 
@@ -401,5 +406,5 @@ class FrontPageView(View):
 
     template_name = "front.html"
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         return render(request, self.template_name)

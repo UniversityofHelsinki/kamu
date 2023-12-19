@@ -2,6 +2,7 @@
 Authentication backends
 """
 import logging
+from typing import Any
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -10,6 +11,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.models import User as UserType
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.http import HttpRequest
 
 from identity.models import EmailAddress, Identifier, Identity
 
@@ -80,7 +82,9 @@ class ShibbolethBackend(LocalBaseBackend):
     - Updates groups with prefixes in SAML_ATTR_GROUPS.
     """
 
-    def authenticate(self, request, create_user=False, **kwargs) -> UserType | None:
+    def authenticate(self, request: HttpRequest | None, create_user: bool = False, **kwargs: Any) -> UserType | None:
+        if not request:
+            return None
         username = request.META.get(settings.SAML_ATTR_EPPN, "")
         given_names = request.META.get(settings.SAML_ATTR_GIVEN_NAMES, "")
         surname = request.META.get(settings.SAML_ATTR_SURNAME, "")
@@ -105,7 +109,7 @@ class ShibbolethBackend(LocalBaseBackend):
         return user
 
     @staticmethod
-    def update_groups(user: UserType, groups: list, prefixes=None) -> None:
+    def update_groups(user: UserType, groups: list, prefixes: list[str] | None = None) -> None:
         """
         Set users groups to provided groups
 
@@ -133,7 +137,11 @@ class GoogleBackend(LocalBaseBackend):
     if same identifier does not already exist in the database for some other user.
     """
 
-    def authenticate(self, request, create_user=False, link_identifier=False, **kwargs) -> UserType | None:
+    def authenticate(
+        self, request: HttpRequest | None, create_user: bool = False, link_identifier: bool = False, **kwargs: Any
+    ) -> UserType | None:
+        if not request:
+            return None
         unique_identifier = request.META.get(settings.OIDC_GOOGLE_SUB, "")
         given_names = request.META.get(settings.OIDC_GOOGLE_GIVEN_NAME, "")
         surname = request.META.get(settings.OIDC_GOOGLE_FAMILY_NAME, "")
@@ -174,8 +182,10 @@ class EmailSMSBackend(LocalBaseBackend):
     Authenticate only if exactly one address and number is found, and they are for the same identity.
     """
 
-    def authenticate(self, request, email=None, phone=None, **kwargs) -> UserType | None:
-        if not email or not phone:
+    def authenticate(
+        self, request: HttpRequest | None, email: str | None = None, phone: str | None = None, **kwargs: Any
+    ) -> UserType | None:
+        if not request or not email or not phone:
             return None
         email_identities = Identity.objects.filter(email_addresses__address=email, email_addresses__verified=True)
         phone_identities = Identity.objects.filter(phone_numbers__number=phone, phone_numbers__verified=True)

@@ -1,8 +1,10 @@
 """
 Role app models.
 """
+from typing import Any
 
 from django.conf import settings
+from django.contrib.auth.models import User as UserType
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
@@ -51,10 +53,10 @@ class Role(models.Model):
         verbose_name = _("Role")
         verbose_name_plural = _("Roles")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name()
 
-    def name(self, lang=None) -> str:
+    def name(self, lang: str | None = None) -> str:
         """
         Returns Role name in a given language (defaulting current language, or English).
         """
@@ -67,7 +69,7 @@ class Role(models.Model):
         else:
             return self.name_en
 
-    def description(self, lang=None) -> str:
+    def description(self, lang: str | None = None) -> str:
         """
         Returns Role description in a given language (defaulting current language, or English).
         """
@@ -80,14 +82,14 @@ class Role(models.Model):
         else:
             return self.description_en
 
-    def clean(self):
+    def clean(self) -> None:
         """
         Validates role data.
         """
         if self.parent:
             validate_role_hierarchy(ValidationError, self, self.parent)
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         """
         Returns url to current role's detail view.
         """
@@ -134,7 +136,7 @@ class Role(models.Model):
             role__in=roles, start_date__lte=timezone.now(), expire_date__gte=timezone.now()
         )
 
-    def is_approver(self, user) -> bool:
+    def is_approver(self, user: UserType) -> bool:
         """
         Check if user has approver permission to the role
 
@@ -150,7 +152,7 @@ class Role(models.Model):
             pass
         return False
 
-    def is_inviter(self, user) -> bool:
+    def is_inviter(self, user: UserType) -> bool:
         """
         Check if user has invite permission to the role
 
@@ -192,10 +194,10 @@ class Permission(models.Model):
         verbose_name = _("Permission")
         verbose_name_plural = _("Permissions")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name()
 
-    def name(self, lang=None) -> str:
+    def name(self, lang: str | None = None) -> str:
         """
         Returns Permission name in a given language (defaulting current language, or English).
         """
@@ -208,7 +210,7 @@ class Permission(models.Model):
         else:
             return self.name_en
 
-    def description(self, lang=None) -> str:
+    def description(self, lang: str | None = None) -> str:
         """
         Returns Permission description in a given language (defaulting current language, or English).
         """
@@ -263,7 +265,7 @@ class Membership(models.Model):
             return f"{self.role.name()} - {self.identity.display_name()}"
         return f"{self.role.name()} - {self.invite_email_address}"
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         """
         Returns url to current membership's detail view.
         """
@@ -286,7 +288,7 @@ class Membership(models.Model):
         else:
             self.status = "active"
 
-    def save(self, *args, **kwargs) -> None:
+    def save(self, *args: Any, **kwargs: Any) -> None:
         """
         Update status before saving membership.
         """

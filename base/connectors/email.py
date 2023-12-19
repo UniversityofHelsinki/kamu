@@ -1,11 +1,14 @@
 from django.conf import settings
 from django.core.mail import send_mail
+from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import translation
 
+from role.models import Membership
 
-def _send_email(subject, message, from_email=None, recipient_list=None) -> bool:
+
+def _send_email(subject: str, message: str, recipient_list: list[str], from_email: str | None = None) -> bool:
     """
     Send email using Django's send_email function, returning success as bool.
 
@@ -18,7 +21,7 @@ def _send_email(subject, message, from_email=None, recipient_list=None) -> bool:
     return False
 
 
-def _get_link_url(request=None, view_name="front-page") -> str | None:
+def _get_link_url(request: HttpRequest | None = None, view_name: str = "front-page") -> str | None:
     """
     Get link URL for email messages.
 
@@ -32,7 +35,9 @@ def _get_link_url(request=None, view_name="front-page") -> str | None:
     return None
 
 
-def send_invite_email(membership, token, address, lang="en", request=None) -> bool:
+def send_invite_email(
+    membership: Membership, token: str, address: str, lang: str = "en", request: HttpRequest | None = None
+) -> bool:
     """
     Send a role invite by email.
     """
@@ -56,7 +61,7 @@ def send_invite_email(membership, token, address, lang="en", request=None) -> bo
     return _send_email(subject, message, recipient_list=[address])
 
 
-def send_verification_email(token, email_address, lang="en") -> bool:
+def send_verification_email(token: str, email_address: str, lang: str = "en") -> bool:
     """
     Send a verification email.
     """

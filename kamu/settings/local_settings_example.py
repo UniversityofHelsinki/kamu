@@ -4,18 +4,20 @@ Example local settings file.
 Copy this to local_settings.py and modify as needed.
 """
 
-DEBUG = False
+from typing import Any
 
-SECRET_KEY = "insecure-secret-key-change-for-production"
+DEBUG: bool = False
 
-ALLOWED_HOSTS = [".local", ".localhost", "127.0.0.1", "[::1]"]
+SECRET_KEY: str = "insecure-secret-key-change-for-production"
+
+ALLOWED_HOSTS: list[str] = [".local", ".localhost", "127.0.0.1", "[::1]"]
 
 # Service base URL for links in emails, scheme://url:port
-SERVICE_LINK_URL = "https://localhost:8000"
+SERVICE_LINK_URL: str = "https://localhost:8000"
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-DATABASES = {
+DATABASES: dict[str, dict[str, Any]] = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "kamu",
@@ -33,29 +35,29 @@ try:
 except ModuleNotFoundError:
     from .logging import *
 
-SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTPONLY = True
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_SECURE: bool = True
+SESSION_COOKIE_HTTPONLY: bool = True
+CSRF_COOKIE_SECURE: bool = True
+CSRF_COOKIE_HTTPONLY: bool = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE: bool = True
 
-TIME_ZONE = "EET"
+TIME_ZONE: str = "EET"
 
 # Email backend, see https://docs.djangoproject.com/en/dev/topics/email/
 # EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND: str = "django.core.mail.backends.console.EmailBackend"
 
 # Email address used as send address for error messages to site admins
-SERVER_EMAIL = "noreply@example.org"
+SERVER_EMAIL: str = "noreply@example.org"
 
 # Token verification posts will be sent from this address. Using DEFAULT_FROM_EMAIL if this is not set.
-TOKEN_FROM_EMAIL = "noreply@example.org"
+TOKEN_FROM_EMAIL: str = "noreply@example.org"
 
 # Maximum number of contacts allowed for user, per type (email address, phone number)
-CONTACT_LIMIT = 3
+CONTACT_LIMIT: int = 3
 
 # Used in locally created usernames, i.e. in email and SMS registration.
-LOCAL_IDENTITY_SUFFIX = "@local_identity"
+LOCAL_IDENTITY_SUFFIX: str = "@local_identity"
 
 # Will receive notifications of changes if error 500 occurs
 # Format should be a list of tuples of (Full name, email address).
@@ -63,25 +65,25 @@ LOCAL_IDENTITY_SUFFIX = "@local_identity"
 # ADMINS = []
 
 # Role hierarchy maximum depth, 1 = no hierarchy, 2 = parent and child, etc.
-ROLE_HIERARCHY_MAXIMUM_DEPTH = 4
+ROLE_HIERARCHY_MAXIMUM_DEPTH: int = 4
 
 # Path to static files for collection
-STATIC_ROOT = "/path/to/rr/static/"
+STATIC_ROOT: str = "/path/to/rr/static/"
 
 # Used to generate tokens
-TOKEN_SECRET_KEY = "insecure-hash-key-change-for-production"
+TOKEN_SECRET_KEY: str = "insecure-hash-key-change-for-production"
 # Time limit until a new token with same type and linke dobject can be created (in seconds)
-TOKEN_TIME_LIMIT_NEW = 60
+TOKEN_TIME_LIMIT_NEW: int = 60
 # Number of tries for verifying tokens
-TOKEN_VERIFICATION_TRIES = 3
+TOKEN_VERIFICATION_TRIES: int = 3
 # Token lifetime (in seconds)
-TOKEN_LIFETIME = 30 * 60  # 30 minutes
+TOKEN_LIFETIME: int = 30 * 60  # 30 minutes
 # Invite lifetime (in seconds)
-TOKEN_LIFETIME_INVITE = 30 * 24 * 60 * 60  # 30 days
+TOKEN_LIFETIME_INVITE: int = 30 * 24 * 60 * 60  # 30 days
 # How long registration process can take (in seconds)
-INVITATION_PROCESS_TIME = 60 * 60  # 1 hour
+INVITATION_PROCESS_TIME: int = 60 * 60  # 1 hour
 
-SMS_API_URL = "https://api-gateway.example.org/sms/send"
-SMS_AUTH_HEADER = "X-Api-Key"
-SMS_API_KEY = ""
-SMS_API_TIMEOUT = 3
+SMS_API_URL: str = "https://api-gateway.example.org/sms/send"
+SMS_AUTH_HEADER: str = "X-Api-Key"
+SMS_API_KEY: str = ""
+SMS_API_TIMEOUT: int = 3

@@ -5,6 +5,7 @@ Usage help: ./manage.py purge_data -h
 """
 
 import datetime
+from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
@@ -22,7 +23,7 @@ class Command(BaseCommand):
         "membership": Membership,
     }
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: Any) -> None:
         default_days = getattr(settings, "PURGE_DELAY_DAYS", 730)
         parser.add_argument(
             "-d",
@@ -43,7 +44,7 @@ class Command(BaseCommand):
             help="type(s) of data to purge (default: purge everything)",
         )
 
-    def handle(self, *args, **options):
+    def handle(self, **options: Any) -> None:
         if options["list_types"]:
             self.stdout.write(f"Supported types: {' '.join(self.types.keys())}")
             return

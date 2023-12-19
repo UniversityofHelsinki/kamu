@@ -18,12 +18,12 @@ class FpicValidator:
 
     code = "invalid"
 
-    def __init__(self, message=None, code=None) -> None:
+    def __init__(self, message: str | None = None, code: str | None = None) -> None:
         self.message = message
         if code is not None:
             self.code = code
 
-    def __call__(self, value):
+    def __call__(self, value: str) -> None:
         if len(value) != 11:
             message = self.message or _("Personal identity code length should be 11 characters")
             raise ValidationError(message, self.code, params={"value": value})
@@ -44,7 +44,7 @@ class FpicValidator:
             message = self.message or _("Incorrect checksum")
             raise ValidationError(message, self.code, params={"value": value})
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         return isinstance(other, FpicValidator) and (self.message == other.message) and (self.code == other.code)
 
 
@@ -61,12 +61,12 @@ class PhoneNumberValidator:
 
     code = "invalid"
 
-    def __init__(self, message=None, code=None) -> None:
+    def __init__(self, message: str | None = None, code: str | None = None) -> None:
         self.message = message
         if code is not None:
             self.code = code
 
-    def __call__(self, value):
+    def __call__(self, value: str) -> None:
         if value[0] != "+":
             message = self.message or _("Phone number must start with a plus sign")
             raise ValidationError(message, self.code, params={"value": value})
@@ -77,7 +77,7 @@ class PhoneNumberValidator:
             message = self.message or _("Phone number is too short")
             raise ValidationError(message, self.code, params={"value": value})
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         return (
             isinstance(other, PhoneNumberValidator) and (self.message == other.message) and (self.code == other.code)
         )

@@ -2,6 +2,8 @@
 Identity app forms.
 """
 
+from typing import Any
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Div, Layout, Submit
 from django import forms
@@ -28,7 +30,7 @@ class IdentitySearchForm(forms.Form):
     email = forms.CharField(label=_("E-mail address"), max_length=255, required=False)
     phone = forms.CharField(label=_("Phone number"), max_length=20, required=False)
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
@@ -37,7 +39,7 @@ class IdentitySearchForm(forms.Form):
         self.helper.form_method = "GET"
         self.helper.add_input(Submit("submit", _("Search")))
 
-    def clean_phone(self):
+    def clean_phone(self) -> str | None:
         """
         Only allow valid phone numbers in search field.
         """
@@ -48,7 +50,7 @@ class IdentitySearchForm(forms.Form):
         validate_phone_number(phone)
         return phone
 
-    def clean_email(self):
+    def clean_email(self) -> str | None:
         """
         Only allow valid emails in search field.
         """
@@ -66,7 +68,7 @@ class ContactForm(forms.Form):
 
     contact = forms.CharField(label=_("E-mail address or phone number"), max_length=320, required=False)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Crispy Forms helper to set submit button.
         """
@@ -75,7 +77,7 @@ class ContactForm(forms.Form):
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Add")))
 
-    def clean_contact(self):
+    def clean_contact(self) -> str:
         """
         Check that contact address exists and is an email address or phone number.
         Check for contact limits.
@@ -120,7 +122,7 @@ class EmailAddressVerificationForm(forms.ModelForm):
 
     code = forms.CharField(label=_("Verify code"), max_length=32, required=False)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Crispy Forms helper to set submit and resend buttons.
         """
@@ -130,7 +132,7 @@ class EmailAddressVerificationForm(forms.ModelForm):
         self.helper.add_input(Submit("submit", _("Save")))
         self.helper.add_input(Submit("resend_code", _("Resend a code")))
 
-    def clean_code(self):
+    def clean_code(self) -> str:
         """
         Test verification code.
         """
@@ -155,7 +157,7 @@ class PhoneNumberVerificationForm(forms.ModelForm):
 
     code = forms.CharField(label=_("Verify code"), max_length=32, required=False)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Crispy Forms helper to set submit and resend buttons.
         """
@@ -165,7 +167,7 @@ class PhoneNumberVerificationForm(forms.ModelForm):
         self.helper.add_input(Submit("submit", _("Save")))
         self.helper.add_input(Submit("resend_code", _("Resend a code")))
 
-    def clean_code(self):
+    def clean_code(self) -> str:
         """
         Test verification code.
         """
@@ -189,7 +191,7 @@ class IdentityForm(forms.ModelForm):
     """
 
     @staticmethod
-    def _create_layout(include_restricted_fields, include_verification_fields) -> Layout:
+    def _create_layout(include_restricted_fields: bool, include_verification_fields: bool) -> Layout:
         """
         Create layout for IdentityForm.
         """
@@ -247,7 +249,7 @@ class IdentityForm(forms.ModelForm):
                 layout[10].append(Div("fpic_verification", css_class="col-md-4"))
         return layout
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Restrict fields to basic information unless
         - user is modifying their own information,
@@ -275,7 +277,7 @@ class IdentityForm(forms.ModelForm):
                 del self.fields[field]
         self.helper.layout = self._create_layout(restricted_fields, verification_fields)
 
-    def clean(self):
+    def clean(self) -> None:
         """
         Check that strong electrical verification cannot be set by hand.
         """

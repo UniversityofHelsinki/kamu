@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 def validate_role_hierarchy(
     error_class: type[ValidationError] | type[DRFValidationError],
-    initial_role: Role | Sequence[Role] | None,
+    initial_role: Role | None,
     parent: Role | None,
 ) -> None:
     """

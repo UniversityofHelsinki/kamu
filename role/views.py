@@ -8,7 +8,8 @@ from typing import Any
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
+from django.db.models import Q, QuerySet
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.translation import get_language
@@ -33,7 +34,7 @@ class RoleJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateFo
     model = Membership
     form_class = MembershipCreateForm
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """
         Requires approver permissions for the role.
         Redirects user to role details if they don't have an identity.
@@ -56,7 +57,7 @@ class RoleJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateFo
             pass
         return super().get(request, *args, **kwargs)
 
-    def get_initial(self):
+    def get_initial(self) -> dict[str, Any]:
         """
         Adds initial values to start_date and expire_date.
         """
@@ -68,7 +69,7 @@ class RoleJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateFo
             "expire_date": expire_date,
         }
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict[str, Any]:
         """
         Add role to form kwargs.
         """
@@ -76,7 +77,7 @@ class RoleJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateFo
         kwargs["role"] = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
         return kwargs
 
-    def form_valid(self, form):
+    def form_valid(self, form: MembershipCreateForm) -> HttpResponse:
         """
         Set identity and role and other information for the membership.
         """
@@ -100,7 +101,7 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
 
     model = Membership
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Membership]:
         """
         Limit membership details to a member, approvers, inviters and owners.
         """
@@ -126,7 +127,7 @@ class MembershipListView(LoginRequiredMixin, ListView[Membership]):
 
     model = Membership
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Membership]:
         """
         Limit membership list to approvers, inviters and owners.
 
@@ -157,7 +158,7 @@ class RoleDetailView(LoginRequiredMixin, DetailView[Role]):
 
     model = Role
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add memberships to context, if user is owner, approver or inviter.
         """
@@ -182,7 +183,7 @@ class RoleInviteIdentitySearch(IdentitySearchView):
 
     template_name = "role/role_invite_identity.html"
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add form and role to the context data.
         Add searched email and information if it has been found.
@@ -205,7 +206,7 @@ class BaseRoleInviteView(LoginRequiredMixin, CreateView[Membership, MembershipCr
     model = Membership
     template_name = "role/role_invite.html"
 
-    def get_initial(self):
+    def get_initial(self) -> dict[str, Any]:
         """
         Adds initial values to start_date and expire_date.
         """
@@ -217,7 +218,7 @@ class BaseRoleInviteView(LoginRequiredMixin, CreateView[Membership, MembershipCr
             "expire_date": expire_date,
         }
 
-    def get_context_data(self, **kwargs) -> dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add role to context.
         """
@@ -241,7 +242,7 @@ class RoleInviteView(BaseRoleInviteView):
 
     form_class = MembershipCreateForm
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add identity to context.
         """
@@ -249,13 +250,16 @@ class RoleInviteView(BaseRoleInviteView):
         context["identity"] = get_object_or_404(Identity, pk=self.kwargs.get("identity_pk"))
         return context
 
-    def form_valid(self, form):
+    def form_valid(self, form: MembershipCreateForm | MembershipEmailCreateForm) -> HttpResponse:
         """
         Set role and other data to the membership.
         """
         form.instance.identity = get_object_or_404(Identity, pk=self.kwargs.get("identity_pk"))
         form.instance.role = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
-        form.instance.inviter = self.request.user
+        user = self.request.user if self.request.user.is_authenticated else None
+        if not user:
+            raise PermissionDenied
+        form.instance.inviter = user
         return super().form_valid(form)
 
 
@@ -266,7 +270,7 @@ class RoleInviteEmailView(BaseRoleInviteView):
 
     form_class = MembershipEmailCreateForm
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add email to context.
         """
@@ -276,7 +280,7 @@ class RoleInviteEmailView(BaseRoleInviteView):
             raise PermissionDenied
         return context
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict[str, Any]:
         """
         Add email to form kwargs.
         """
@@ -284,22 +288,24 @@ class RoleInviteEmailView(BaseRoleInviteView):
         kwargs["email"] = self.request.session.get("invitation_email_address")
         return kwargs
 
-    def form_valid(self, form):
+    def form_valid(self, form: MembershipCreateForm | MembershipEmailCreateForm) -> HttpResponse:
         """
         Set role and other data to the membership.
         """
         form.instance.identity = None
         form.instance.role = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
-        form.instance.inviter = self.request.user
+        user = self.request.user if self.request.user.is_authenticated else None
+        if not user or not form.instance.invite_email_address:
+            raise PermissionDenied
+        invite_email_address = form.instance.invite_email_address
+        form.instance.inviter = user
         if hasattr(form, "cleaned_data") and "invite_language" in form.cleaned_data:
             invite_language = form.cleaned_data["invite_language"]
         else:
             invite_language = "en"
         membership = form.save()
         token = Token.objects.create_invite_token(membership=membership)
-        send_invite_email(
-            membership, token, membership.invite_email_address, lang=invite_language, request=self.request
-        )
+        send_invite_email(membership, token, invite_email_address, lang=invite_language, request=self.request)
         messages.add_message(self.request, messages.INFO, _("Invite email sent."))
         return redirect("membership-detail", pk=membership.pk)
 
@@ -311,7 +317,7 @@ class RoleListView(LoginRequiredMixin, ListView[Role]):
 
     model = Role
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Role]:
         """
         Filter queryset to inviters, approvers or owners, based on filter URL parameter.
         """
@@ -335,7 +341,7 @@ class MembershipClaimView(LoginRequiredMixin, View):
     Claim an invitation to a role membership.
     """
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         user = self.request.user
         if not user.is_authenticated:
             raise PermissionDenied
@@ -355,7 +361,7 @@ class RoleSearchView(LoginRequiredMixin, ListView[Role]):
     template_name = "role/role_search.html"
     model = Role
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add search form to ListView, including search parameters if present.
         """
@@ -366,7 +372,7 @@ class RoleSearchView(LoginRequiredMixin, ListView[Role]):
             context["form"] = TextSearchForm()
         return context
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Role]:
         """
         Filter queryset based on search parameters.
         """

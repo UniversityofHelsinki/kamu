@@ -2,6 +2,7 @@
 Role app forms.
 """
 from datetime import date
+from typing import Any
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -25,7 +26,7 @@ class TextSearchForm(forms.Form):
 
     search = forms.CharField(label="search", max_length=255)
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
@@ -42,7 +43,7 @@ class MembershipCreateForm(forms.ModelForm[Membership]):
     Form for creating a new membership.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Get role from kwargs for form validation and set Crispy Forms helper.
         """
@@ -59,7 +60,7 @@ class MembershipCreateForm(forms.ModelForm[Membership]):
             "expire_date": DateInput(attrs={"type": "date"}),
         }
 
-    def clean(self):
+    def clean(self) -> None:
         """
         Validate dates and duration.
         """
@@ -82,7 +83,7 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
 
     invite_language = forms.ChoiceField(label=_("Invite language"), choices=settings.LANGUAGES)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Get role from kwargs for form validation and set Crispy Forms helper.
 
@@ -105,7 +106,7 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
             "expire_date": DateInput(attrs={"type": "date"}),
         }
 
-    def clean(self):
+    def clean(self) -> None:
         """
         Validate dates, duration and overlapping memberships.
         """

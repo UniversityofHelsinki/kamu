@@ -3,12 +3,14 @@ Common settings file used by Kamu service
 
 Loaded by environment specific settings files
 """
-
+from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
 import django_stubs_ext
 from django.contrib.messages import constants as messages
 from django.utils.translation import gettext_lazy as _
+from django_stubs_ext import StrOrPromise
 
 # Monkeypatching Django, so stubs will work for all generics,
 # see: https://github.com/typeddjango/django-stubs
@@ -23,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Application definition
 
-INSTALLED_APPS = [
+INSTALLED_APPS: list[str] = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -39,11 +41,11 @@ INSTALLED_APPS = [
     "identity",
 ]
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_ALLOWED_TEMPLATE_PACKS: str = "bootstrap5"
 
-CRISPY_TEMPLATE_PACK = "bootstrap5"
+CRISPY_TEMPLATE_PACK: str = "bootstrap5"
 
-MIDDLEWARE = [
+MIDDLEWARE: list[str] = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -54,7 +56,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-REST_FRAMEWORK = {
+REST_FRAMEWORK: dict[str, Any] = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework.authentication.SessionAuthentication",),
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
@@ -66,7 +68,7 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {"anon": "5/min", "user": "100/min"},
 }
 
-SPECTACULAR_SETTINGS = {
+SPECTACULAR_SETTINGS: dict[str, Any] = {
     "TITLE": "Kamu API",
     "DESCRIPTION": "REST API for identities and roles.",
     "VERSION": "0.1.0",
@@ -74,9 +76,9 @@ SPECTACULAR_SETTINGS = {
     "SCHEMA_PATH_PREFIX": r"/api/v[0-9]",
 }
 
-ROOT_URLCONF = "kamu.urls"
+ROOT_URLCONF: str = "kamu.urls"
 
-TEMPLATES = [
+TEMPLATES: list[dict[str, Any]] = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],
@@ -92,19 +94,19 @@ TEMPLATES = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = (
+AUTHENTICATION_BACKENDS: Sequence[str] = (
     "django.contrib.auth.backends.ModelBackend",
     "base.auth.ShibbolethBackend",
     "base.auth.GoogleBackend",
     "base.auth.EmailSMSBackend",
 )
 
-WSGI_APPLICATION = "kamu.wsgi.application"
+WSGI_APPLICATION: str = "kamu.wsgi.application"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
+AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
@@ -123,42 +125,39 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = "en"
+LANGUAGE_CODE: str = "en"
 
-LANGUAGES = [
+LANGUAGES: list[tuple[str, StrOrPromise]] = [
     ("en", _("English")),
     ("fi", _("Finnish")),
     ("sv", _("Swedish")),
 ]
 
 
-TIME_ZONE = "Europe/Helsinki"
+TIME_ZONE: str = "Europe/Helsinki"
 
-USE_I18N = True
+USE_I18N: bool = True
 
-USE_TZ = True
+USE_TZ: bool = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL: str = "static/"
 
-LOGIN_URL = "/login/"
+LOGIN_URL: str = "/login/"
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+DEFAULT_AUTO_FIELD: str = "django.db.models.BigAutoField"
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+LOGOUT_REDIRECT_URL: str = "/"
 
-LOGOUT_REDIRECT_URL = "/"
-
-ROLE_HIERARCHY_MAXIMUM_DEPTH = 4
+ROLE_HIERARCHY_MAXIMUM_DEPTH: int = 4
 
 # Allow use of 900-series Finnish personal identity codes
-ALLOW_TEST_FPIC = False
+ALLOW_TEST_FPIC: bool = False
 
 # Bootstrap alert classes for Django messages
-MESSAGE_TAGS = {
+MESSAGE_TAGS: dict[int, str] = {
     messages.DEBUG: "alert-secondary",
     messages.INFO: "alert-info",
     messages.SUCCESS: "alert-success",
@@ -166,20 +165,20 @@ MESSAGE_TAGS = {
     messages.ERROR: "alert-danger",
 }
 
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL: str = "/"
 
-SAML_GROUP_PREFIXES = ["grp-", "hy-", "sys-"]
+SAML_GROUP_PREFIXES: list[str] = ["grp-", "hy-", "sys-"]
 
-SAML_ATTR_EPPN = "shib_eduPersonPrincipalName"
-SAML_ATTR_GIVEN_NAMES = "shib_givenName"
-SAML_ATTR_SURNAME = "shib_sn"
-SAML_ATTR_EMAIL = "shib_mail"
-SAML_ATTR_GROUPS = "shib_hyGroupCn"
+SAML_ATTR_EPPN: str = "shib_eduPersonPrincipalName"
+SAML_ATTR_GIVEN_NAMES: str = "shib_givenName"
+SAML_ATTR_SURNAME: str = "shib_sn"
+SAML_ATTR_EMAIL: str = "shib_mail"
+SAML_ATTR_GROUPS: str = "shib_hyGroupCn"
 
-OIDC_GOOGLE_SUB = "OIDC_CLAIM_sub"
-OIDC_GOOGLE_GIVEN_NAME = "OIDC_CLAIM_given_name"
-OIDC_GOOGLE_FAMILY_NAME = "OIDC_CLAIM_family_name"
-OIDC_GOOGLE_EMAIL = "OIDC_CLAIM_email"
+OIDC_GOOGLE_SUB: str = "OIDC_CLAIM_sub"
+OIDC_GOOGLE_GIVEN_NAME: str = "OIDC_CLAIM_given_name"
+OIDC_GOOGLE_FAMILY_NAME: str = "OIDC_CLAIM_family_name"
+OIDC_GOOGLE_EMAIL: str = "OIDC_CLAIM_email"
 
 # purge stale data this many days after expiry
-PURGE_DELAY_DAYS = 730
+PURGE_DELAY_DAYS: int = 730

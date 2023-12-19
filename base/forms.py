@@ -1,6 +1,7 @@
 """
 Base forms, shared between apps.
 """
+from typing import Any
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -30,7 +31,7 @@ class EmailPhoneForm(AuthenticationForm):
         "inactive": _("This account is inactive."),
     }
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
@@ -40,7 +41,7 @@ class EmailPhoneForm(AuthenticationForm):
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Login")))
 
-    def clean(self):
+    def clean(self) -> dict[str, Any]:
         email = self.cleaned_data.get("email")
         phone = self.cleaned_data.get("phone")
 
@@ -65,7 +66,7 @@ class RegistrationForm(forms.Form):
     surname = forms.CharField(label=_("Surname"), max_length=200, required=False, help_text=_("Official surname(s)."))
     email_address = forms.CharField(label=_("E-mail address"), max_length=320, validators=[validate_email])
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
@@ -73,7 +74,7 @@ class RegistrationForm(forms.Form):
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Send verification code")))
 
-    def clean_email_address(self):
+    def clean_email_address(self) -> str:
         """
         Test if email address is already in use.
         """
@@ -82,7 +83,7 @@ class RegistrationForm(forms.Form):
             raise ValidationError(_("This e-mail address is already linked to an account."))
         return email_address
 
-    def clean(self):
+    def clean(self) -> None:
         """
         Test that either given_names or surname is filled in.
         """
@@ -102,7 +103,7 @@ class EmailAddressVerificationForm(forms.Form):
 
     code = forms.CharField(label=_("E-mail address verification code"), max_length=20)
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Get email_address from form kwargs.
         Crispy Forms helper to set form styles, configuration and buttons.
@@ -112,7 +113,7 @@ class EmailAddressVerificationForm(forms.Form):
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Verify")))
 
-    def clean_code(self):
+    def clean_code(self) -> str:
         """
         Test verification code.
         """
@@ -131,7 +132,7 @@ class PhoneNumberForm(forms.Form):
 
     phone_number = forms.CharField(label=_("Phone number"), max_length=20)
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
@@ -139,7 +140,7 @@ class PhoneNumberForm(forms.Form):
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Send verification code")))
 
-    def clean_phone_number(self):
+    def clean_phone_number(self) -> str:
         phone_number = self.cleaned_data["phone_number"]
         number = phone_number.replace(" ", "")
         validate_phone_number(number)
@@ -153,7 +154,7 @@ class PhoneNumberVerificationForm(forms.Form):
 
     code = forms.CharField(label=_("Phone number verification code"), max_length=20)
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Get phone_number from form kwargs.
         Crispy Forms helper to set form styles, configuration and buttons.
@@ -163,7 +164,7 @@ class PhoneNumberVerificationForm(forms.Form):
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Verify")))
 
-    def clean_code(self):
+    def clean_code(self) -> str:
         """
         Test verification code.
         """
@@ -180,7 +181,7 @@ class LoginForm(AuthenticationForm):
     Custom AuthenticationForm to add crispy forms helper.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
@@ -196,7 +197,7 @@ class InviteTokenForm(forms.Form):
 
     code = forms.CharField(label=_("Invitation code"), max_length=320, required=True)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Fill initial token if given.
         Crispy Forms helper to set submit button.
@@ -208,7 +209,7 @@ class InviteTokenForm(forms.Form):
         self.helper = FormHelper()
         self.helper.form_tag = False
 
-    def clean_code(self):
+    def clean_code(self) -> str:
         """
         Test the invite code.
         Check for existing membership and a valid token.

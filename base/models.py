@@ -13,9 +13,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from identity.models import EmailAddress as EmailAddressType
-from identity.models import PhoneNumber as PhoneNumberType
-from role.models import Membership as MembershipType
+from identity.models import EmailAddress, PhoneNumber
+from role.models import Membership
 
 
 class TimeLimitError(Exception):
@@ -47,10 +46,10 @@ class TokenManager(models.Manager["Token"]):
 
     def _create_token(
         self,
-        token_type,
-        membership: MembershipType | None = None,
-        email_object: EmailAddressType | None = None,
-        phone_object: PhoneNumberType | None = None,
+        token_type: str,
+        membership: Membership | None = None,
+        email_object: EmailAddress | None = None,
+        phone_object: PhoneNumber | None = None,
         email_address: str = "",
         phone_number: str = "",
         length: int = 8,
@@ -108,25 +107,25 @@ class TokenManager(models.Manager["Token"]):
         token.save()
         return secret
 
-    def create_email_object_verification_token(self, email: EmailAddressType) -> str:
+    def create_email_object_verification_token(self, email: EmailAddress) -> str:
         """
         Create a new email verification token.
         """
         return self._create_token("emailobjectverif", email_object=email)
 
-    def create_phone_object_verification_token(self, phone: PhoneNumberType) -> str:
+    def create_phone_object_verification_token(self, phone: PhoneNumber) -> str:
         """
         Create a new SMS verification token.
         """
         return self._create_token("phoneobjectverif", phone_object=phone)
 
-    def create_email_login_token(self, email: EmailAddressType) -> str:
+    def create_email_login_token(self, email: EmailAddress) -> str:
         """
         Create a new email login token.
         """
         return self._create_token("emaillogin", email_object=email)
 
-    def create_phone_login_token(self, phone: PhoneNumberType) -> str:
+    def create_phone_login_token(self, phone: PhoneNumber) -> str:
         """
         Create a new SMS login token.
         """
@@ -144,7 +143,7 @@ class TokenManager(models.Manager["Token"]):
         """
         return self._create_token("phonenumberverif", phone_number=phone_number)
 
-    def create_invite_token(self, membership: MembershipType) -> str:
+    def create_invite_token(self, membership: Membership) -> str:
         """
         Create a new invite token.
         """
@@ -152,14 +151,14 @@ class TokenManager(models.Manager["Token"]):
 
     def _validate_token(
         self,
-        secret,
-        token_type,
-        membership=None,
-        email_object=None,
-        phone_object=None,
-        email_address="",
-        phone_number="",
-        remove_token=True,
+        secret: str,
+        token_type: str,
+        membership: Membership | None = None,
+        email_object: EmailAddress | None = None,
+        phone_object: PhoneNumber | None = None,
+        email_address: str = "",
+        phone_number: str = "",
+        remove_token: bool = True,
     ) -> bool:
         """
         Validates a token.
@@ -211,25 +210,25 @@ class TokenManager(models.Manager["Token"]):
             token.delete()
         return False
 
-    def validate_email_object_verification_token(self, secret: str, email: EmailAddressType) -> bool:
+    def validate_email_object_verification_token(self, secret: str, email: EmailAddress) -> bool:
         """
         Validates a email verification token.
         """
         return self._validate_token(secret, "emailobjectverif", email_object=email)
 
-    def validate_phone_object_verification_token(self, secret: str, phone: PhoneNumberType) -> bool:
+    def validate_phone_object_verification_token(self, secret: str, phone: PhoneNumber) -> bool:
         """
         Validates an SMS verification token.
         """
         return self._validate_token(secret, "phoneobjectverif", phone_object=phone)
 
-    def validate_email_login_token(self, secret: str, email: EmailAddressType) -> bool:
+    def validate_email_login_token(self, secret: str, email: EmailAddress) -> bool:
         """
         Validates a email login token.
         """
         return self._validate_token(secret, "emaillogin", email_object=email)
 
-    def validate_phone_login_token(self, secret: str, phone: PhoneNumberType) -> bool:
+    def validate_phone_login_token(self, secret: str, phone: PhoneNumber) -> bool:
         """
         Validates an SMS login token.
         """
@@ -247,7 +246,7 @@ class TokenManager(models.Manager["Token"]):
         """
         return self._validate_token(secret, "phonenumberverif", phone_number=phone_number)
 
-    def validate_invite_token(self, secret: str, membership: MembershipType, remove_token: bool = True) -> bool:
+    def validate_invite_token(self, secret: str, membership: Membership, remove_token: bool = True) -> bool:
         """
         Validates a invite login token.
         """
@@ -288,5 +287,5 @@ class Token(models.Model):
         verbose_name = _("Login token")
         verbose_name_plural = _("Login tokens")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.token_type}: {self.created_at}"

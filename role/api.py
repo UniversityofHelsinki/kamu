@@ -2,6 +2,7 @@
 Role app views for API endpoints.
 """
 
+from django.db.models import QuerySet
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
@@ -18,7 +19,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = MembershipSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Membership]:
         """
         Restricts queryset to authenticated user, if user is not a superuser.
         """

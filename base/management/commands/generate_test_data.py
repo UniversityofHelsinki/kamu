@@ -9,6 +9,7 @@ Usage help: ./manage.py generate_test_data -h
 import datetime
 import random
 import unicodedata
+from typing import Any
 
 import django.db.utils
 from django.contrib.auth import get_user_model
@@ -120,7 +121,7 @@ ROLES: list = [
 
 
 class Command(BaseCommand):
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: Any) -> None:
         parser.add_argument(
             "-i", type=int, default=0, action="store", dest="identities", help="Number of identities to generate"
         )
@@ -230,7 +231,7 @@ class Command(BaseCommand):
                     s_role.owner = get_user_model().objects.get(username="owner")
                 s_role.save()
 
-    def create_identities(self, number_of_identities) -> None:
+    def create_identities(self, number_of_identities: int) -> None:
         """
         Create identities.
         """
@@ -358,7 +359,7 @@ class Command(BaseCommand):
                 identity.user = user
                 identity.save()
 
-    def handle(self, *args, **options):
+    def handle(self, **options: Any) -> None:
         number_of_identities = options["identities"]
         self.silent = options["verbosity"] == 0
         self.load_fixtures()

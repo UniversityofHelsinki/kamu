@@ -1,6 +1,7 @@
 """
 Identity app models.
 """
+from typing import Any
 
 from django.conf import settings
 from django.core.validators import validate_email
@@ -29,10 +30,10 @@ class Nationality(models.Model):
         verbose_name = _("Nationality")
         verbose_name_plural = _("Nationalities")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name()
 
-    def name(self, lang=None) -> str:
+    def name(self, lang: str | None = None) -> str:
         """
         Returns nationality name in a given language (defaulting current language, or English).
         """
@@ -176,7 +177,7 @@ class Identity(models.Model):
         verbose_name = _("Identity")
         verbose_name_plural = _("Identities")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.display_name()
 
     def display_name(self) -> str:
@@ -207,7 +208,7 @@ class Identity(models.Model):
             for attr in self.basic_verification_fields() + self.restricted_verification_fields()
         ]
 
-    def save(self, *args, **kwargs) -> None:
+    def save(self, *args: Any, **kwargs: Any) -> None:
         """
         Override save method to update the user's display names if they are not given.
         """
@@ -240,7 +241,7 @@ class EmailAddress(models.Model):
         verbose_name = _("E-mail address")
         verbose_name_plural = _("E-mail addresses")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.address}"
 
 
@@ -266,7 +267,7 @@ class PhoneNumber(models.Model):
         verbose_name = _("Phone number")
         verbose_name_plural = _("Phone numbers")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.number}"
 
 
@@ -300,5 +301,5 @@ class Identifier(models.Model):
         verbose_name = _("Identifier")
         verbose_name_plural = _("Identifiers")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.identity.display_name()}-{self.type}"

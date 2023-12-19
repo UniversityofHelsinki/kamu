@@ -38,7 +38,7 @@ class EmailAddressSerializer(serializers.ModelSerializer[EmailAddress]):
             )
         ]
 
-    def validate_address(self, value):
+    def validate_address(self, value: str) -> str:
         """
         Validates address with Django's built-in email validator.
         """
@@ -124,7 +124,7 @@ class IdentitySerializer(serializers.ModelSerializer[Identity]):
             "updated_at",
         ]
 
-    def validate_fpic(self, value):
+    def validate_fpic(self, value: str) -> str:
         """
         Validates finnish personal identity code
         """

@@ -2,6 +2,7 @@
 Identity app views for API endpoints.
 """
 
+from django.db.models import QuerySet
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
@@ -23,7 +24,7 @@ class EmailAddressViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = EmailAddressSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[EmailAddress]:
         """
         Restricts queryset to authenticated user if user is not a superuser.
         """
@@ -42,7 +43,7 @@ class PhoneNumberViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = PhoneNumberSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[PhoneNumber]:
         """
         Restricts queryset to authenticated user if user is not a superuser.
         """
@@ -61,7 +62,7 @@ class IdentifierViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = IdentifierSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Identifier]:
         """
         Restricts queryset to authenticated user, if user is not a superuser.
         """
@@ -80,7 +81,7 @@ class IdentityViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = IdentitySerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Identity]:
         """
         Restricts queryset to authenticated user, if user is not a superuser.
         """
