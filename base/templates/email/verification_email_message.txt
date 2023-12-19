@@ -1,0 +1,6 @@
+{% load i18n %}{% blocktrans %}Hi
+
+Please verify your email address. If you haven't tried to sign up for a Kamu account, you can safely ignore this email.
+
+Your verification code is:
+{{ token }}{% endblocktrans %}

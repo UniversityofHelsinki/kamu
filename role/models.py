@@ -314,7 +314,7 @@ class Membership(models.Model):
         else:
             self.status = "active"
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> None:
         """
         Update status before saving membership.
         """

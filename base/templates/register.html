@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+  <h1 class="mb-5">{% trans "Registration" %}</h1>
+  <p>{% trans "Welcome to Kamu registration. We recommend using an external identity but you can also register with an email address and SMS capable phone number." %}</p>
+  <h2 class="mb-5">{% trans "Register with an external identity" %}</h2>
+  <div class="row">
+    <div class="col-md-6 col-12 mb-3">
+      <a href="#"><img class="mb-3" src="{% static "images/suomifi-signin-logo.png" %}" height="40" alt="{% trans "Suomi.fi signin" %}"></a>
+      <p>{% trans "Register with a Suomi.fi e-Identification or eIDAS." %}</p>
+    </div>
+    <div class="col-md-6 col-12 mb-3">
+      <a href="#"><img class="mb-3" src="{% static "images/haka-signin-logo.svg" %}" height="40" alt="{% trans "Haka signin" %}"></a>
+      <p>{% trans "Register with a Haka federation account. Finnish universities, polytechnics and research institutions accounts." %}</p>
+    </div>
+    <div class="col-md-6 col-12 mb-3">
+      <a href="#"><img class="mb-3" src="{% static "images/edugain-signin-logo.png" %}" height="40" alt="{% trans "eduGAIN signin" %}"></a>
+      <p>{% trans "Register with an eduGAIN federation account. Global research and education institution accounts." %}</p>
+    </div>
+    <div class="col-md-6 col-12 mb-3">
+      <a href="#"><img class="mb-3" src="{% static "images/ms-signin-logo.svg" %}" alt="{% trans "Microsoft signin" %}"></a>
+      <p>{% trans "Register with a Microsoft account." %}</p>
+    </div>
+    <div class="col-md-6 col-12 mb-3">
+      <a href="{% url 'login-google' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/google-signin-logo.svg" %}" alt="{% trans "Google signin" %}"></a>
+      <p>{% trans "Register with a Google account." %}</p>
+    </div>
+  </div>
+  <h2 class="mb-3">{% trans "Register with email and SMS verification" %}</h2>
+  {% crispy form %}
+  <p>{% trans "Registration with an email account and SMS capable phone number is possible but we recommend using external identities." %}</p>
+{% endblock %}

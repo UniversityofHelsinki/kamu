@@ -10,6 +10,9 @@ SECRET_KEY = "insecure-secret-key-change-for-production"
 
 ALLOWED_HOSTS = [".local", ".localhost", "127.0.0.1", "[::1]"]
 
+# Service base URL for links in emails, scheme://url:port
+SERVICE_LINK_URL = "https://localhost:8000"
+
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
@@ -51,6 +54,9 @@ TOKEN_FROM_EMAIL = "noreply@example.org"
 # Maximum number of contacts allowed for user, per type (email address, phone number)
 CONTACT_LIMIT = 3
 
+# Used in locally created usernames, i.e. in email and SMS registration.
+LOCAL_IDENTITY_SUFFIX = "@local_identity"
+
 # Will receive notifications of changes if error 500 occurs
 # Format should be a list of tuples of (Full name, email address).
 # Example: [('John', 'john@example.com'), ('Mary', 'mary@example.com')]
@@ -72,6 +78,8 @@ TOKEN_VERIFICATION_TRIES = 3
 TOKEN_LIFETIME = 30 * 60  # 30 minutes
 # Invite lifetime (in seconds)
 TOKEN_LIFETIME_INVITE = 30 * 24 * 60 * 60  # 30 days
+# How long registration process can take (in seconds)
+INVITATION_PROCESS_TIME = 60 * 60  # 1 hour
 
 SMS_API_URL = "https://api-gateway.example.org/sms/send"
 SMS_AUTH_HEADER = "X-Api-Key"

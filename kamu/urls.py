@@ -20,8 +20,13 @@ from base.views import (
     EmailPhoneLoginView,
     FrontPageView,
     GoogleLoginView,
+    InviteView,
     LocalLoginView,
+    RegisterPhoneNumberView,
+    RegisterView,
     ShibbolethLoginView,
+    VerifyEmailAddressView,
+    VerifyPhoneNumberView,
 )
 from identity.views import (
     ContactView,
@@ -34,6 +39,7 @@ from identity.views import (
 )
 from kamu.routers import router
 from role.views import (
+    MembershipClaimView,
     MembershipDetailView,
     MembershipListView,
     RoleDetailView,
@@ -62,6 +68,7 @@ urlpatterns = [
     path("phone/<int:pk>/verify/", PhoneNumberVerificationView.as_view(), name="phone-verify"),
     path("membership/", MembershipListView.as_view(), name="membership-list"),
     path("membership/<int:pk>/", MembershipDetailView.as_view(), name="membership-detail"),
+    path("membership/claim/", MembershipClaimView.as_view(), name="membership-claim"),
     path("role/", RoleListView.as_view(), name="role-list"),
     path("role/search/", RoleSearchView.as_view(), name="role-search"),
     path("role/<int:pk>/", RoleDetailView.as_view(), name="role-detail"),
@@ -70,9 +77,14 @@ urlpatterns = [
     path("role/<int:role_pk>/invite/email/", RoleInviteEmailView.as_view(), name="role-invite-details-email"),
     path("role/<int:role_pk>/join/", RoleJoinView.as_view(), name="role-join"),
     path("login/", CustomLoginView.as_view(), name="login"),
+    path("login/invite/", InviteView.as_view(), name="login-invite"),
     path("login/shibboleth/", ShibbolethLoginView.as_view(), name="login-shibboleth"),
     path("login/google/", GoogleLoginView.as_view(), name="login-google"),
     path("login/local/", LocalLoginView.as_view(), name="login-local"),
     path("login/email/", EmailPhoneLoginView.as_view(), name="login-email"),
+    path("login/register/", RegisterView.as_view(), name="login-register"),
+    path("login/register/email/verify/", VerifyEmailAddressView.as_view(), name="login-register-email-verify"),
+    path("login/register/phone/", RegisterPhoneNumberView.as_view(), name="login-register-phone"),
+    path("login/register/phone/verify/", VerifyPhoneNumberView.as_view(), name="login-register-phone-verify"),
     path("logout/", LogoutView.as_view(), name="logout"),
 ]

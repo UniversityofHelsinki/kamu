@@ -149,7 +149,7 @@ class EmailAddressVerificationView(BaseVerificationView):
         Create and send a verification token.
         """
         try:
-            token = Token.objects.create_email_verification_token(self.object)
+            token = Token.objects.create_email_object_verification_token(self.object)
         except TimeLimitError:
             messages.add_message(self.request, messages.WARNING, _("Tried to send a new code too soon."))
             return False
@@ -165,7 +165,7 @@ class EmailAddressVerificationView(BaseVerificationView):
         Create and send a code when loading a page.
         """
         get = super().get(request, *args, **kwargs)
-        if not Token.objects.filter(email=self.object).exists():
+        if not Token.objects.filter(email_object=self.object).exists():
             self._create_verification_token()
         return get
 
@@ -185,7 +185,7 @@ class PhoneNumberVerificationView(BaseVerificationView):
         Create and send a verification token.
         """
         try:
-            token = Token.objects.create_sms_verification_token(self.object)
+            token = Token.objects.create_phone_object_verification_token(self.object)
         except TimeLimitError:
             messages.add_message(self.request, messages.WARNING, _("Tried to send a new code too soon."))
             return False
@@ -204,7 +204,7 @@ class PhoneNumberVerificationView(BaseVerificationView):
         Create and send a code when loading a page.
         """
         get = super().get(request, *args, **kwargs)
-        if not Token.objects.filter(phone=self.object).exists():
+        if not Token.objects.filter(phone_object=self.object).exists():
             self._create_verification_token()
         return get
 

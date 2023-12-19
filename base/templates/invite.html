@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <h1 class="mb-3">{% trans "Invite to the role" %}</h1>
+  <p>{% trans "You have received an invite to the new role at the University of Helsinki." %}</p>
+  <form method="post">
+  {% crispy form %}
+  <div class="row">
+    <div class="col-md-6">
+      <h2>{% trans "Login" %}</h2>
+      <p>{% trans "If you already have a University of Helsinki account or a Kamu registered identity, please log in." %}</p>
+      <input type="submit" name="login" value="{% trans 'Login' %}" class="btn btn-primary" id="submit-id-submit"/>
+    </div>
+    <div class="col-md-6">
+      <h2>{% trans "Create identity" %}</h2>
+      <p>{% trans "If you don't have a user account or an identity yet, please create an identity." %}</p>
+      <input type="submit" name="register" value="{% trans 'Create identity' %}" class="btn btn-primary" id="submit-id-submit"/>
+    </div>
+  </div>
+  </form>
+{% endblock %}

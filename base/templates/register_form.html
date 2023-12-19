@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+  <h1 class="mb-5">{% trans "Registration" %}</h1>
+  <h2 class="mb-3">{% trans "Register with email and SMS verification" %}</h2>
+  {% crispy form %}
+{% endblock %}

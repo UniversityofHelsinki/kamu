@@ -4,4 +4,7 @@
 {{ role }}
 
 Your invite code is:
-{{ token }}{% endblocktrans %}
+{{ token }}{% endblocktrans %}{% if link_url %}
+
+{% trans "Click the following link to accept the invitation:" %}
+{{ link_url }}?token={{ token|urlencode }}{% endif %}

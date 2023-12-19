@@ -6,19 +6,271 @@ import logging
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.models import User as UserType
 from django.contrib.auth.views import LoginView
-from django.http.response import HttpResponseRedirect
-from django.shortcuts import render
+from django.core.exceptions import PermissionDenied
+from django.http.response import HttpResponseBase, HttpResponseRedirect
+from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils import timezone
+from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from django.views import View
+from django.views.generic import FormView
 
 from base.auth import GoogleBackend, ShibbolethBackend
-from base.forms import EmailPhoneForm, LoginForm
+from base.connectors.email import send_verification_email
+from base.connectors.sms import SmsConnector
+from base.forms import (
+    EmailAddressVerificationForm,
+    EmailPhoneForm,
+    InviteTokenForm,
+    LoginForm,
+    PhoneNumberForm,
+    PhoneNumberVerificationForm,
+    RegistrationForm,
+)
+from base.models import TimeLimitError, Token
+from identity.models import EmailAddress, Identity, PhoneNumber
+from role.utils import claim_membership
 
 logger = logging.getLogger(__name__)
+
+UserModel = get_user_model()
+
+
+class InviteView(FormView):
+    """
+    View to check invite token and select registration process.
+    """
+
+    form_class = InviteTokenForm
+    template_name = "invite.html"
+    success_url = "#"
+
+    def get_form_kwargs(self):
+        """
+        Add initial token to the form kwargs.
+        """
+        kwargs = super(InviteView, self).get_form_kwargs()
+        kwargs["token"] = self.request.GET.get("token", None)
+        return kwargs
+
+    def form_valid(self, form):
+        """
+        Set invitation code to session and forward to either login or registration process.
+        """
+
+        code = form.cleaned_data["code"]
+        self.request.session["invitation_code"] = code
+        self.request.session["invitation_code_time"] = timezone.now().isoformat()
+        if "register" in form.data:
+            return HttpResponseRedirect(reverse("login-register"))
+        if "login" in form.data:
+            return HttpResponseRedirect(reverse("login") + "?next=" + reverse("membership-claim"))
+        return super().form_valid(form)
+
+
+class BaseRegisterView(
+    FormView[RegistrationForm | EmailAddressVerificationForm | PhoneNumberForm | PhoneNumberVerificationForm]
+):
+    """
+    Base class for registration views.
+    """
+
+    template_name = "register.html"
+
+    def dispatch(self, request, *args, **kwargs) -> HttpResponseBase:
+        """
+        Check that user has an invitation code in session and is not already logged in.
+        """
+        if not self.request.user.is_anonymous:
+            messages.add_message(self.request, messages.INFO, _("You are already logged in."))
+            return redirect("front-page")
+        if "invitation_code" not in self.request.session:
+            raise PermissionDenied
+        if "invitation_code_time" not in self.request.session:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+
+class RegisterView(BaseRegisterView):
+    """
+    Registration view. Start Email and SMS registration process or forward to external methods.
+    """
+
+    template_name = "register.html"
+    form_class = RegistrationForm
+
+    def _create_verification_token(self, email_address) -> bool:
+        """
+        Create and send a verification token.
+        """
+        try:
+            token = Token.objects.create_email_address_verification_token(email_address)
+        except TimeLimitError:
+            messages.add_message(
+                self.request, messages.WARNING, _("Tried to send a new code too soon. Please try again in one minute.")
+            )
+            return False
+        if send_verification_email(token, email_address=email_address, lang=get_language()):
+            messages.add_message(self.request, messages.INFO, _("Verification code sent."))
+            return True
+        else:
+            messages.add_message(self.request, messages.ERROR, _("Failed to send verification code."))
+            return False
+
+    def form_valid(self, form):
+        """
+        Create and send a code when loading a page.
+        """
+        email_address = form.cleaned_data["email_address"]
+        given_names = form.cleaned_data["given_names"]
+        surname = form.cleaned_data["surname"]
+        if not self._create_verification_token(email_address):
+            return redirect("login-register")
+        self.request.session["register_email_address"] = email_address
+        self.request.session["register_given_names"] = given_names
+        self.request.session["register_surname"] = surname
+        return redirect("login-register-email-verify")
+
+
+class VerifyEmailAddressView(BaseRegisterView):
+    """
+    Registration view for verifying email address.
+    """
+
+    template_name = "register_form.html"
+    form_class = EmailAddressVerificationForm
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Check that user has email address in session.
+        """
+        if "register_email_address" not in self.request.session:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        """
+        Add email address to form kwargs.
+        """
+        kwargs = super(VerifyEmailAddressView, self).get_form_kwargs()
+        kwargs["email_address"] = self.request.session["register_email_address"]
+        return kwargs
+
+    def form_valid(self, form):
+        """
+        Create and send a code when loading a page.
+        """
+        self.request.session["verified_email_address"] = self.request.session["register_email_address"]
+        del self.request.session["register_email_address"]
+        return redirect("login-register-phone")
+
+
+class RegisterPhoneNumberView(BaseRegisterView):
+    """
+    Registration view for asking a phone number.
+    """
+
+    template_name = "register_form.html"
+    form_class = PhoneNumberForm
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Check that user has a verified email address in session.
+        """
+        if "verified_email_address" not in self.request.session:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+    def _create_verification_token(self, phone_number) -> bool:
+        """
+        Create and send a verification token.
+        """
+        try:
+            token = Token.objects.create_phone_number_verification_token(phone_number)
+        except TimeLimitError:
+            messages.add_message(
+                self.request, messages.WARNING, _("Tried to send a new code too soon. Please try again in one minute.")
+            )
+            return False
+        sms_connector = SmsConnector()
+        success = sms_connector.send_sms(phone_number, _("Kamu verification code: %(token)s") % {"token": token})
+        if success:
+            messages.add_message(self.request, messages.INFO, _("Verification code sent."))
+            return True
+        else:
+            messages.add_message(self.request, messages.ERROR, _("Could not send an SMS message."))
+            return False
+
+    def form_valid(self, form):
+        """
+        Create and send a code when loading a page.
+        """
+        phone_number = form.cleaned_data["phone_number"]
+        if not self._create_verification_token(phone_number):
+            return redirect("login-register-phone")
+        self.request.session["register_phone_number"] = phone_number
+        return redirect("login-register-phone-verify")
+
+
+class VerifyPhoneNumberView(BaseRegisterView):
+    """
+    Registration view for verifying phone number.
+    """
+
+    template_name = "register_form.html"
+    form_class = PhoneNumberVerificationForm
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Check that user has a verified email address, a phone number and name information in session.
+        """
+        for item in ["verified_email_address", "register_phone_number", "register_given_names", "register_surname"]:
+            if item not in self.request.session:
+                raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        """
+        Add phone number to form kwargs.
+        """
+        kwargs = super(VerifyPhoneNumberView, self).get_form_kwargs()
+        kwargs["phone_number"] = self.request.session["register_phone_number"]
+        return kwargs
+
+    def form_valid(self, form):
+        """
+        Create a new user identity with the linked user. Set basic information from the registration forms.
+        """
+        given_names = self.request.session["register_given_names"]
+        surname = self.request.session["register_surname"]
+        email_address = self.request.session["verified_email_address"]
+        phone_number = self.request.session["register_phone_number"]
+        identity = Identity.objects.create(
+            given_names=given_names, surname=surname, assurance_level="low", preferred_language=get_language()
+        )
+        identity_suffix = getattr(settings, "LOCAL_IDENTITY_SUFFIX", "@local_identity")
+        user = UserModel.objects.create_user(
+            username=f"{identity.id}{identity_suffix}",
+            email=email_address,
+            first_name=given_names,
+            last_name=surname,
+        )
+        identity.user = user
+        identity.save()
+        EmailAddress.objects.create(address=email_address, identity=identity, verified=True)
+        PhoneNumber.objects.create(number=phone_number, identity=identity, verified=True)
+        auth_login(self.request, user, backend="base.auth.EmailSMSBackend")
+        claim_membership(self.request, identity)
+        del self.request.session["verified_email_address"]
+        del self.request.session["register_phone_number"]
+        del self.request.session["register_given_names"]
+        del self.request.session["register_surname"]
+        return redirect("identity-detail", pk=identity.id)
 
 
 class RemoteLoginView(View):
@@ -87,13 +339,18 @@ class ShibbolethLoginView(RemoteLoginView):
 
 class GoogleLoginView(RemoteLoginView):
     """
-    LoginView to authenticate user with Google
+    LoginView to authenticate user with Google.
+
+    Create a new user if the user does not exist yet and user has an invitation code in the session.
     """
 
     @staticmethod
     def _authenticate_backend(request):
         backend = GoogleBackend()
-        user = backend.authenticate(request, create_user=True)
+        if "invitation_code" in request.session and "invitation_code_time" in request.session:
+            user = backend.authenticate(request, create_user=True)
+        else:
+            user = backend.authenticate(request, create_user=False)
         return user
 
     @staticmethod

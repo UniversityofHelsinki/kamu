@@ -137,7 +137,7 @@ class EmailAddressVerificationForm(forms.ModelForm):
         code = self.cleaned_data["code"]
         if not code:
             raise ValidationError(_("Invalid verification code"))
-        if not Token.objects.validate_email_verification_token(code, self.instance):
+        if not Token.objects.validate_email_object_verification_token(code, self.instance):
             raise ValidationError(_("Invalid verification code"))
         return code
 
@@ -172,7 +172,7 @@ class PhoneNumberVerificationForm(forms.ModelForm):
         code = self.cleaned_data["code"]
         if not code:
             raise ValidationError(_("Invalid verification code"))
-        if not Token.objects.validate_sms_verification_token(code, self.instance):
+        if not Token.objects.validate_phone_object_verification_token(code, self.instance):
             raise ValidationError(_("Invalid verification code"))
         return code
 

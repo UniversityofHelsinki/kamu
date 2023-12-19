@@ -112,6 +112,7 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
         validate_membership(ValidationError, self.role, start_date, expire_date)
         if Membership.objects.filter(
             role=self.role,
+            identity=None,
             start_date__lte=expire_date,
             expire_date__gte=start_date,
             invite_email_address=invite_email_address,

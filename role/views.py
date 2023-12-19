@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, View
 from django.views.generic.edit import CreateView
 
 from base.connectors.email import send_invite_email
@@ -22,6 +22,7 @@ from identity.models import Identity
 from identity.views import IdentitySearchView
 from role.forms import MembershipCreateForm, MembershipEmailCreateForm, TextSearchForm
 from role.models import Membership, Role
+from role.utils import claim_membership
 
 
 class RoleJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateForm]):
@@ -296,7 +297,9 @@ class RoleInviteEmailView(BaseRoleInviteView):
             invite_language = "en"
         membership = form.save()
         token = Token.objects.create_invite_token(membership=membership)
-        send_invite_email(membership, token, membership.invite_email_address, lang=invite_language)
+        send_invite_email(
+            membership, token, membership.invite_email_address, lang=invite_language, request=self.request
+        )
         messages.add_message(self.request, messages.INFO, _("Invite email sent."))
         return redirect("membership-detail", pk=membership.pk)
 
@@ -325,6 +328,23 @@ class RoleListView(LoginRequiredMixin, ListView[Role]):
             if self.request.GET["filter"] == "owner":
                 queryset = queryset.filter(owner=user)
         return queryset.prefetch_related("owner", "parent")
+
+
+class MembershipClaimView(LoginRequiredMixin, View):
+    """
+    Claim an invitation to a role membership.
+    """
+
+    def get(self, request):
+        user = self.request.user
+        if not user.is_authenticated:
+            raise PermissionDenied
+        if not hasattr(user, "identity"):
+            Identity.objects.create(user=user, given_names=user.first_name, surname=user.last_name)
+        membership_pk = claim_membership(request, user.identity)
+        if membership_pk == -1:
+            return redirect("front-page")
+        return redirect("membership-detail", pk=membership_pk)
 
 
 class RoleSearchView(LoginRequiredMixin, ListView[Role]):
