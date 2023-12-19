@@ -167,3 +167,16 @@ class RegistrationViewTests(TestCase):
         response = self.client.get(url, follow=True, headers={"SUB": "1234567890"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Membership created", response.content.decode("utf-8"))
+
+
+class ErrorViewTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_permission_denied_view(self):
+        response = self.client.get(reverse("login-register-email-verify"))
+        self.assertContains(response, "Permission denied", status_code=403)
+
+    def test_page_not_found_view(self):
+        response = self.client.get("/page_not_found")
+        self.assertContains(response, "Page not found", status_code=404)

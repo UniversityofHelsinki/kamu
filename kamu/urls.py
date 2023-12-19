@@ -51,6 +51,12 @@ from role.views import (
     RoleSearchView,
 )
 
+# Overwrite default status views
+handler400 = "base.error_views.bad_request"
+handler403 = "base.error_views.permission_denied"
+handler404 = "base.error_views.page_not_found"
+handler500 = "base.error_views.server_error"
+
 urlpatterns = [
     path("api/v0/", include(router.urls)),
     path("i18n/", include("django.conf.urls.i18n")),

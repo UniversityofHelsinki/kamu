@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+  <h1>{% trans "Permission denied" %}</h1>
+  <p>{% trans "You have insufficient permissions to access this page." %}</p>
+  <a href="{% url 'front-page' %}" class="btn btn-primary" role="button">{% trans "Front page" %}</a>
+{% endblock %}

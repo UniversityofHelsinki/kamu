@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+  <h1>{% trans "Bad request" %}</h1>
+  <p>{% trans "There is something wrong in the request. Please check the address and restart your browser if it's correct." %}</p>
+  <a href="{% url 'front-page' %}" class="btn btn-primary" role="button">{% trans "Front page" %}</a>
+{% endblock %}
