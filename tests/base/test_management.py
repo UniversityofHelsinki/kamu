@@ -101,3 +101,18 @@ class PurgeDataTests(ManagementCommandTestCase):
         with self.settings(PURGE_DELAY_DAYS=3):
             self.call_command("-v=0")
             self.assertEqual(Membership.objects.all().count(), 2)
+
+    def test_purge_delay(self):
+        self.roles[0].purge_delay = 40
+        self.roles[0].save()
+        self.roles[1].purge_delay = 50
+        self.roles[1].save()
+
+        self.assertEqual(Membership.objects.all().count(), 3)
+        self.call_command("-v=0")
+        self.assertEqual(Membership.objects.all().count(), 3)
+        for membership in Membership.objects.all():
+            membership.expire_date = timezone.now().date() - datetime.timedelta(days=45)
+            membership.save()
+        self.call_command("-v=0")
+        self.assertEqual(Membership.objects.all().count(), 2)

@@ -57,6 +57,7 @@ ROLES: list = [
         "description_sv": "Extern styrelseledamot.",
         "sub_roles": ["HY247", "HY+", "Unigrafia"],
         "permissions": ["useraccount"],
+        "purge_delay": 50,
         "set_inviters": False,
         "set_approvers": False,
         "set_owner": True,
@@ -71,6 +72,7 @@ ROLES: list = [
         "description_sv": "Extern konsult.",
         "sub_roles": ["TIKE", "OPA", "HY247", "KK"],
         "permissions": ["useraccount"],
+        "purge_delay": 70,
         "set_inviters": True,
         "set_approvers": True,
         "set_owner": True,
@@ -85,6 +87,7 @@ ROLES: list = [
         "description_sv": "Forskningsgrupp extern medlem.",
         "sub_roles": ["BYTDK", "HYMTDK", "MLTDK", "MMTDK"],
         "permissions": ["useraccount"],
+        "purge_delay": 90,
         "set_inviters": False,
         "set_approvers": False,
         "set_owner": True,
@@ -99,6 +102,7 @@ ROLES: list = [
         "description_sv": "Gäststudent.",
         "sub_roles": ["BYTDK", "HYMTDK", "MLTDK", "MMTDK"],
         "permissions": ["lightaccount"],
+        "purge_delay": 110,
         "set_inviters": False,
         "set_approvers": False,
         "set_owner": True,
@@ -197,6 +201,9 @@ class Command(BaseCommand):
             )[0]
             for permission in role["permissions"]:
                 base_role.permissions.add(Permission.objects.get(identifier=permission))
+            if "purge_delay" in role:
+                base_role.purge_delay = role["purge_delay"]
+                base_role.save()
             for sub_role in role["sub_roles"]:
                 sub_role_identifier = unicodedata.normalize("NFKD", sub_role).lower()
                 s_role = Role.objects.get_or_create(

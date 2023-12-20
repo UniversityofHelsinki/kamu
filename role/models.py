@@ -49,6 +49,13 @@ class Role(models.Model):
 
     maximum_duration = models.IntegerField(verbose_name=_("Maximum duration (days)"))
 
+    purge_delay = models.IntegerField(
+        verbose_name=_("Purge delay (days)"),
+        help_text=_("Grace period from membership expiration to purge (days)"),
+        blank=True,
+        null=True,
+    )
+
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
@@ -234,13 +241,18 @@ class MembershipManager(models.Manager["Membership"]):
 
     def get_stale(self, grace_days: int | None = None) -> list[Membership]:
         """
-        Returns a list of membership objects that have expired and
-        grace_days (defaulting to the PURGE_DELAY_DAYS setting) have
-        passed since.
+        Returns a list of membership objects that have expired and a role
+        specific grace period (or lacking that, settings.PURGE_DELAY_DAYS)
+        has passed since. This grace period can optionally be overridden
+        with the grace_days parameter
         """
-        delay = grace_days or int(getattr(settings, "PURGE_DELAY_DAYS", 730))
-        cutoff = timezone.now() - datetime.timedelta(days=delay)
-        return list(self.filter(expire_date__lt=cutoff))
+        ret = []
+        for role in Role.objects.all():
+            delay = grace_days or role.purge_delay or int(getattr(settings, "PURGE_DELAY_DAYS", 730))
+            cutoff = timezone.now() - datetime.timedelta(delay)
+            stale = list(self.filter(role=role, expire_date__lt=cutoff))
+            ret += stale
+        return ret
 
 
 class Membership(models.Model):

@@ -133,6 +133,7 @@ class RoleSerializer(serializers.ModelSerializer[Role]):
             "permissions",
             "iam_group",
             "maximum_duration",
+            "purge_delay",
         ]
         read_only_fields = [
             "created_at",
