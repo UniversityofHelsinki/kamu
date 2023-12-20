@@ -30,7 +30,7 @@ class Command(BaseCommand):
             "--days",
             type=int,
             default=default_days,
-            dest="max_days",
+            dest="grace_days",
             help=f"Purge data after this many days since expiry (default: {default_days})",
         )
         parser.add_argument(
@@ -54,7 +54,7 @@ class Command(BaseCommand):
             if t not in self.types:
                 raise UsageError(f"Invalid type '{t}' (use --list-types to show choices)")
 
-        cutoff = timezone.now() - datetime.timedelta(days=options["max_days"])
+        cutoff = timezone.now() - datetime.timedelta(days=options["grace_days"])
 
         for t in types:
             if options["verbosity"] > 1:
