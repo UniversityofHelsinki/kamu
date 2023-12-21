@@ -4,12 +4,10 @@ Remove expired data (currently just memberships) X days after expiry.
 Usage help: ./manage.py purge_data -h
 """
 
-import datetime
 from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.utils import timezone
 
 from role.models import Membership
 
@@ -24,14 +22,12 @@ class Command(BaseCommand):
     }
 
     def add_arguments(self, parser: Any) -> None:
-        default_days = getattr(settings, "PURGE_DELAY_DAYS", 730)
         parser.add_argument(
             "-d",
             "--days",
             type=int,
-            default=default_days,
             dest="grace_days",
-            help=f"Purge data after this many days since expiry (default: {default_days})",
+            help=f"Force data purge after this many days since expiry (default varies by data type)",
         )
         parser.add_argument(
             "-l", "--list-types", default=False, action="store_true", help="List purgeable types for --type option"
@@ -54,14 +50,12 @@ class Command(BaseCommand):
             if t not in self.types:
                 raise UsageError(f"Invalid type '{t}' (use --list-types to show choices)")
 
-        cutoff = timezone.now() - datetime.timedelta(days=options["grace_days"])
-
         for t in types:
             if options["verbosity"] > 1:
-                self.stdout.write(f"Purging {t} data with cutoff time {cutoff}")
+                self.stdout.write(f"Purging {t} data")
             data_class = self.types[t]
-            stale = data_class.objects.filter(expire_date__lt=cutoff)
-            if not stale.exists():
+            stale = data_class.objects.get_stale(grace_days=options.get("grace_days"))
+            if not stale:
                 if options["verbosity"] > 1:
                     self.stdout.write(f"Skipping {t}: nothing to purge")
                 continue

@@ -1,6 +1,9 @@
 """
 Role app models.
 """
+from __future__ import annotations
+
+import datetime
 from typing import Any
 
 from django.conf import settings
@@ -224,6 +227,22 @@ class Permission(models.Model):
             return self.description_en
 
 
+class MembershipManager(models.Manager["Membership"]):
+    """
+    Manager methods for :model:`role.Membership`.
+    """
+
+    def get_stale(self, grace_days: int | None = None) -> list[Membership]:
+        """
+        Returns a list of membership objects that have expired and
+        grace_days (defaulting to the PURGE_DELAY_DAYS setting) have
+        passed since.
+        """
+        delay = grace_days or int(getattr(settings, "PURGE_DELAY_DAYS", 730))
+        cutoff = timezone.now() - datetime.timedelta(days=delay)
+        return list(self.filter(expire_date__lt=cutoff))
+
+
 class Membership(models.Model):
     """
     Stores a membership between :model:`identity.Identity` and :model:`identity.Role`, related to :model:`auth.User`.
@@ -254,6 +273,8 @@ class Membership(models.Model):
 
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
+
+    objects = MembershipManager()
 
     class Meta:
         ordering = ["role__identifier", "expire_date"]
