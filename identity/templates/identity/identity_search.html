@@ -3,25 +3,34 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-  <h1>{% trans "Identity search" %}</h1>
+  <h1 class="mb-4">{% trans "Identity search" %}</h1>
   {% crispy form form.helper %}
-  <h2 id="results-list">{% trans "Results" %}</h2>
+  <h2 id="results-list" class="mt-4">{% trans "Results" %}</h2>
+  {% if object_list %}
+  <p>{% trans "To protect user privacy, email addresses and phone numbers are only listed when exactly matching the search parameter." %}</p>
   <table class="table" aria-describedby="results-list">
-  <thead>
+    <thead>
     <tr>
       <th scope="col">{% trans "Name" %}</th>
       <th scope="col">{% trans "Email" %}</th>
       <th scope="col">{% trans "Phone" %}</th>
     </tr>
-  </thead>
-  <tbody>
+    </thead>
+    <tbody>
     {% for identity in object_list %}
-    <tr>
-      <th scope="row"><a href="{% url 'identity-detail' identity.pk %}">{{ identity.display_name }}</a></th>
-      <td>{% for address in identity.email_addresses.all %}{% if address.address == email %}{{ address.address }}{% endif %}{% endfor %}</td>
-      <td>{% for number in identity.phone_numbers.all %}{% if number.number == phone %}{{ number.number }}{% endif %}{% endfor %}</td>
-    </tr>
-  {% endfor %}
-  </tbody>
+      <tr>
+        <th scope="row"><a href="{% url 'identity-detail' identity.pk %}">{{ identity.display_name }}</a></th>
+        <td>{% for address in identity.email_addresses.all %}{% if address.address == email %}{{ address.address }}{% endif %}{% endfor %}</td>
+        <td>{% for number in identity.phone_numbers.all %}{% if number.number == phone %}{{ number.number }}{% endif %}{% endfor %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
   </table>
+  {% else %}
+    {% if request.GET.submit %}
+      <p>{% trans "No results with the provided search parameters." %}</p>
+    {% else %}
+      <p>{% trans "Submit a search to get results." %}</p>
+    {% endif %}
+  {% endif %}
 {% endblock %}

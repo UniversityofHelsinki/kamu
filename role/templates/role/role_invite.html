@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-  <h1>{% trans "Invite a new member" %}</h1>
+  <h1 class="mb-5">{% trans "Invite a new member" %}</h1>
   <div class="row">
     <div class="col-md-6">
       <h2>{% trans "Role" %}</h2>
@@ -27,7 +27,7 @@
       </dl>
     </div>{% endif %}
   </div>
-  <h2>{% trans "Member information" %}</h2>
+  <h2 class="mb-3 mt-4">{% trans "Member information" %}</h2>
   <form method="post">
     {% csrf_token %}
     {% crispy form form.helper %}

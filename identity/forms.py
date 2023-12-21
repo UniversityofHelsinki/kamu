@@ -224,7 +224,7 @@ class IdentityForm(forms.ModelForm):
         if include_restricted_fields:
             layout.extend(
                 [
-                    HTML(_("<h2 class='mb-3'>Restricted information</h2>")),
+                    HTML(_("<h2 class='mb-3 mt-5'>Restricted information</h2>")),
                     Div(
                         Div("date_of_birth", css_class="col-md-8"),
                         css_class="row mb-3",

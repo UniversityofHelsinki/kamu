@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block content %}
-  <h1>{{ object.display_name }}</h1>
+  <h1 class="mb-4">{{ object.display_name }}</h1>
   <dl class="row">
     <dt class="col-sm-3">{% trans "Given names" %}</dt>
     <dd class="col-sm-9">{% if object.given_names %}{{ object.given_names }}{% else %}&nbsp;{% endif %}{% if object.given_names_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
@@ -12,44 +12,48 @@
     <dt class="col-sm-3">{% trans "Preferred language" %}</dt>
     <dd class="col-sm-9">{{ object.get_preferred_language_display }}</dd>
     {% if user == object.user or perms.identity.view_restricted_information %}
-    <dt class="col-sm-3">{% trans "Date of birth" %}</dt>
-    <dd class="col-sm-9">{% if object.date_of_birth %}{{ object.date_of_birth }}{% else %}&nbsp;{% endif %}{% if object.date_of_birth_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
-    <dt class="col-sm-3">{% trans "Gender" %}</dt>
-    <dd class="col-sm-9">{{ object.get_gender_display }}{% if object.given_names_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
-    <dt class="col-sm-3">{% trans "Nationality" %}</dt>
-    <dd class="col-sm-9">{% for nationality in object.nationality.all %}{{ nationality.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if object.nationality_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
-    <dt class="col-sm-3">{% trans "Finnish personal identity code" %}</dt>
-    <dd class="col-sm-9">{% if object.fpic %}{{ object.fpic }}{% else %}&nbsp;{% endif %}{% if object.fpic_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+      <dt class="col-sm-3">{% trans "Date of birth" %}</dt>
+      <dd class="col-sm-9">{% if object.date_of_birth %}{{ object.date_of_birth }}{% else %}&nbsp;{% endif %}{% if object.date_of_birth_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+      <dt class="col-sm-3">{% trans "Gender" %}</dt>
+      <dd class="col-sm-9">{{ object.get_gender_display }}{% if object.given_names_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+      <dt class="col-sm-3">{% trans "Nationality" %}</dt>
+      <dd class="col-sm-9">{% for nationality in object.nationality.all %}{{ nationality.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if object.nationality_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+      <dt class="col-sm-3">{% trans "Finnish personal identity code" %}</dt>
+      <dd class="col-sm-9">{% if object.fpic %}{{ object.fpic }}{% else %}&nbsp;{% endif %}{% if object.fpic_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
     {% endif %}
     {% if user == object.user or perms.identity.view_contacts %}
-    <dt class="col-sm-3">{% trans "E-mail addresses" %}</dt>
-    <dd class="col-sm-9">{% for address in object.email_addresses.all %}{{ address.address }}{% if address.verified > 1 %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
-    <dt class="col-sm-3">{% trans "Phone numbers" %}</dt>
-    <dd class="col-sm-9">{% for number in object.phone_numbers.all %}{{ number.number }}{% if number.verified > 1 %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+      <dt class="col-sm-3">{% trans "E-mail addresses" %}</dt>
+      <dd class="col-sm-9">{% for address in object.email_addresses.all %}{{ address.address }}{% if address.verified %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+      <dt class="col-sm-3">{% trans "Phone numbers" %}</dt>
+      <dd class="col-sm-9">{% for number in object.phone_numbers.all %}{{ number.number }}{% if number.verified %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
     {% endif %}
   </dl>
   <p><span class="text-success"> *</span> {% trans "verified" %}</p>
   {% if user == object.user or perms.identity.change_basic_information %}
-  <a href="{% url 'identity-change' object.pk %}" class="btn btn-primary">{% trans "Change information" %}</a>
-  <a href="{% url 'contact-change' object.pk %}" class="btn btn-primary">{% trans "Change contact information" %}</a>
+    <a href="{% url 'identity-change' object.pk %}" class="btn btn-primary me-2">{% trans "Update information" %}</a>
+    <a href="{% url 'contact-change' object.pk %}" class="btn btn-primary">{% trans "Update contact information" %}</a>
   {% endif %}
-  <h2 id="roles-list">{% trans "Roles" %}</h2>
-  <table class="table" aria-describedby="roles-list">
-  <thead>
-    <tr>
-      <th scope="col">{% trans "Role" %}</th>
-      <th scope="col">{% trans "Status" %}</th>
-      <th scope="col">{% trans "Expires" %}</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for membership in memberships %}
-    <tr>
-      <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{{ membership.role.name }}</a></th>
-      <td>{{ membership.status }}</td>
-      <td>{{ membership.expire_date }}</td>
-    </tr>
-  {% endfor %}
-  </tbody>
-  </table>
+  <h2 id="roles-list" class="mt-4">{% trans "Roles" %}</h2>
+  {% if memberships %}
+    <table class="table" aria-describedby="roles-list">
+      <thead>
+      <tr>
+        <th scope="col">{% trans "Role" %}</th>
+        <th scope="col">{% trans "Status" %}</th>
+        <th scope="col">{% trans "Expires" %}</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for membership in memberships %}
+        <tr>
+          <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{{ membership.role.name }}</a></th>
+          <td>{{ membership.status }}</td>
+          <td>{{ membership.expire_date }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>{% trans "You do not have any roles." %}</p>
+  {% endif %}
 {% endblock %}

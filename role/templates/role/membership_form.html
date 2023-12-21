@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-  <h1>{% trans "Join role" %}</h1>
+  <h1 class="mb-4">{% trans "Join role" %}</h1>
   <form method="post">
     {% csrf_token %}
     {% crispy form form.helper %}

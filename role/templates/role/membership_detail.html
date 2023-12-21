@@ -17,12 +17,12 @@
     <div class="col-md-6">
       <h2>{% trans "Identity" %}</h2>
       {% if object.identity %}
-      <dl class="row">
-        <dt class="col-sm-3">{% trans "Name" %}</dt>
-        <dd class="col-sm-9"><a href="{% url 'identity-detail' object.identity.pk %}">{{ object.identity }}</a></dd>
-        <dt class="col-sm-3">{% trans "Preferred language" %}</dt>
-        <dd class="col-sm-9 mb-5">{{ object.identity.get_preferred_language_display }}</dd>
-      </dl>
+        <dl class="row">
+          <dt class="col-sm-3">{% trans "Name" %}</dt>
+          <dd class="col-sm-9"><a href="{% url 'identity-detail' object.identity.pk %}">{{ object.identity }}</a></dd>
+          <dt class="col-sm-3">{% trans "Preferred language" %}</dt>
+          <dd class="col-sm-9 mb-5">{{ object.identity.get_preferred_language_display }}</dd>
+        </dl>
       {% else %}
         <p>{% trans "Identity has not yet been linked to this membership." %}</p>
         <p>{% trans "Invite has been sent to"%} {{ membership.invite_email_address }}.</p>

@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block content %}
-  <h1>{% trans "Error" %}</h1>
+  <h1 class="mb-4">{% trans "Error" %}</h1>
   {% if message %}
     <p>{% trans "Error" %}: {{ message }}</p>
   {% endif %}

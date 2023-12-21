@@ -30,7 +30,7 @@ class LoginViewTests(BaseTestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn("<h1>Test User</h1>", response.content.decode("utf-8"))
+        self.assertIn("Test User</h1>", response.content.decode("utf-8"))
 
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
     def test_shibboleth_login(self):
@@ -45,7 +45,7 @@ class LoginViewTests(BaseTestCase):
         Identifier.objects.create(type="google", value="1234567890", identity=self.identity)
         response = self.client.get(f"{url}?next=/identity/me", follow=True, headers={"SUB": "1234567890"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn("<h1>Test User</h1>", response.content.decode("utf-8"))
+        self.assertIn("Test User</h1>", response.content.decode("utf-8"))
 
     @override_settings(OIDC_GOOGLE_SUB="HTTP_SUB")
     def test_google_login_without_account(self):
@@ -65,7 +65,7 @@ class LoginViewTests(BaseTestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn("<h1>Test User</h1>", response.content.decode("utf-8"))
+        self.assertIn("Test User</h1>", response.content.decode("utf-8"))
 
 
 class RegistrationViewTests(TestCase):

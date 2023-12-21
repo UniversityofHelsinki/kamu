@@ -34,7 +34,7 @@ class IdentityTests(BaseTestCase):
         response = self.client.get(f"{self.url}{self.identity.pk}/")
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("alert", response.content.decode("utf-8"))
-        self.assertIn("<h1>Test User</h1>", response.content.decode("utf-8"))
+        self.assertIn("Test User</h1>", response.content.decode("utf-8"))
 
     def test_search_identity(self):
         EmailAddress.objects.create(
@@ -90,7 +90,7 @@ class IdentityEditTests(BaseTestCase):
         self.client.force_login(self.user)
         response = self.client.post(self.url, self.data, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("<h1>Test User</h1>", response.content.decode("utf-8"))
+        self.assertIn("Test User</h1>", response.content.decode("utf-8"))
         self.assertIn("Jan. 1, 1999", response.content.decode("utf-8"))
 
     def test_edit_identity_view_with_superuser(self):
