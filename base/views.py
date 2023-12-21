@@ -8,7 +8,6 @@ from typing import Any
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.contrib.auth import login as auth_login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User as UserType
 from django.contrib.auth.views import LoginView
@@ -27,7 +26,7 @@ from django.utils.translation import gettext as _
 from django.views import View
 from django.views.generic import FormView
 
-from base.auth import GoogleBackend, ShibbolethBackend
+from base.auth import GoogleBackend, ShibbolethBackend, auth_login
 from base.connectors.email import send_verification_email
 from base.connectors.sms import SmsConnector
 from base.forms import (
@@ -386,6 +385,11 @@ class LocalLoginView(LoginView):
 
     template_name = "login_local.html"
     form_class = LoginForm
+
+    def form_valid(self, form: AuthenticationForm) -> HttpResponse:
+        """Security check complete. Log the user in."""
+        auth_login(self.request, form.get_user(), backend="django.contrib.auth.backends.ModelBackend")
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class CustomLoginView(View):

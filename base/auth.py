@@ -5,8 +5,9 @@ import logging
 from typing import Any
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.contrib.auth.backends import BaseBackend
+from django.contrib.auth import get_user_model, login
+from django.contrib.auth.backends import BaseBackend, ModelBackend
+from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User as UserType
 from django.core.exceptions import ValidationError
@@ -14,9 +15,30 @@ from django.core.validators import validate_email
 from django.http import HttpRequest
 
 from identity.models import EmailAddress, Identifier, Identity
+from role.models import Role
 
 UserModel = get_user_model()
 logger = logging.getLogger(__name__)
+
+
+def post_login_tasks(request: HttpRequest) -> None:
+    """
+    Checks user information and sets certain session parameters.
+    """
+    if not request.user.is_authenticated:
+        return
+    request.session["is_owner"] = (
+        True if request.user.is_superuser or Role.objects.filter(owner=request.user).exists() else False
+    )
+    request.session["has_groups"] = True if request.user.is_superuser or request.user.groups.all().exists() else False
+
+
+def auth_login(request: HttpRequest, user: AbstractBaseUser | None, backend: type[ModelBackend] | str | None) -> None:
+    """
+    Custom login function with post login tasks
+    """
+    login(request, user, backend)
+    post_login_tasks(request)
 
 
 class LocalBaseBackend(BaseBackend):
