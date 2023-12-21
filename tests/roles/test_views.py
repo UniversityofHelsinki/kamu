@@ -10,7 +10,7 @@ from django.test import Client, override_settings
 from django.utils import timezone
 
 from role.models import Membership, Role
-from role.views import RoleListView
+from role.views import RoleListApproverView, RoleListInviterView, RoleListOwnerView
 from tests.setup import BaseTestCase
 
 
@@ -19,19 +19,41 @@ class RoleListTests(BaseTestCase):
         super().setUp()
         self.url = "/role/"
         self.another_role = Role.objects.create(identifier="another", name_en="Another Role", maximum_duration=10)
+        self.group = Group.objects.create(name="group")
         self.client = Client()
         self.client.force_login(self.user)
 
     def test_anonymous_view_redirects_to_login(self):
         client = Client()
-        response = client.get(self.url)
+        response = client.get(f"{self.url}owner/")
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login/", response["location"])
 
-    def test_view_role_list(self):
-        request = self.factory.get(self.url)
+    def test_view_role_owner_list(self):
+        request = self.factory.get(f"{self.url}owner/")
         request.user = self.user
-        response = RoleListView.as_view()(request)
+        self.role.owner = self.user
+        self.role.save()
+        response = RoleListOwnerView.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data["object_list"].count(), 1)
+
+    def test_view_role_approver_list(self):
+        request = self.factory.get(f"{self.url}approver/")
+        request.user = self.user
+        self.role.approvers.add(self.group)
+        self.user.groups.add(self.group)
+        response = RoleListApproverView.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data["object_list"].count(), 1)
+
+    def test_view_role_inviter_list(self):
+        request = self.factory.get(f"{self.url}inviter/")
+        request.user = self.user
+        self.role.approvers.add(self.group)
+        self.another_role.inviters.add(self.group)
+        self.user.groups.add(self.group)
+        response = RoleListInviterView.as_view()(request)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data["object_list"].count(), 2)
 
@@ -41,16 +63,6 @@ class RoleListTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Another Role", response.content.decode("utf-8"))
         self.assertNotIn("Test Role", response.content.decode("utf-8"))
-
-    def test_view_role_list_approver(self):
-        group = Group.objects.create(name="ApproverGroup")
-        self.role.approvers.add(group)
-        self.user.groups.add(group)
-        url = f"{self.url}?filter=approver"
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Test Role", response.content.decode("utf-8"))
-        self.assertNotIn("Another Role", response.content.decode("utf-8"))
 
 
 class RoleJoinTests(BaseTestCase):

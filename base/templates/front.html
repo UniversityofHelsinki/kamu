@@ -2,6 +2,62 @@
 {% load i18n %}
 
 {% block content %}
-  <h1>{% trans "Kamu" %}</h1>
-  {% lorem 6 p %}
+  <h1 class="mb-3">{% trans "Kamu" %}</h1>
+  <p>{% trans "University of Helsinki registry for external identities." %}</p>
+  {% if user.is_authenticated %}
+    <div class="row">
+      <div class="col-md-6">
+        <h2 class="mt-4">{% trans "My information" %}</h2>
+        <p>{% trans "Manage your own information." %}</p>
+        <a href="{% url 'identity-me' %}" class="btn btn-primary mb-3">{% trans "My information" %}</a>
+      </div>
+    </div>
+    {% if request.session.has_groups or request.session.is_owner %}
+      <h2 class="mb-4 mt-4">{% trans "Role and membership management" %}</h2>
+      <div class="row">
+        <div class="col-lg-4 col-md-6 mb-3">
+          <h3>{% trans "Expiring" %}</h3>
+          <p>{% trans "Show expiring memberships." %}</p>
+          <a href="{% url 'membership-list' %}?filter=expiring" class="btn btn-primary mb-3">{% trans "Expiring" %}</a>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-3">
+          <h3>{% trans "Invite" %}</h3>
+          <p>{% trans "Show roles with invite permissions." %}</p>
+          <a href="{% url 'role-list-inviter' %}" class="btn btn-primary mb-3">{% trans "Invite" %}</a>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-3">
+          <h3>{% trans "Approver" %}</h3>
+          <p>{% trans "Show roles with approve permissions." %}</p>
+          <a href="{% url 'role-list-approver' %}" class="btn btn-primary mb-3">{% trans "Approver" %}</a>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-3">
+          <h3>{% trans "Owner" %}</h3>
+          <p>{% trans "Show roles you own." %}</p>
+          <a href="{% url 'role-list-owner' %}" class="btn btn-primary mb-3">{% trans "Owner" %}</a>
+        </div>
+      </div>
+    {% endif %}
+    {% if request.user.is_staff %}
+      <h2 class="mb-4 mt-4">{% trans "Admin utilities" %}</h2>
+      <div class="row">
+        <div class="col-lg-4 col-md-6 mb-3">
+          <h3>{% trans "Admin site" %}</h3>
+          <p>{% trans "Manage roles and permissions " %}</p>
+          <a href="{% url 'admin:index' %}" class="btn btn-primary mb-3">{% trans "Admin site" %}</a>
+        </div>
+      </div>
+    {% endif %}
+  {% else %}
+    <div class="row">
+    <div class="col-md-6">
+      <h2>{% trans "Login" %}</h2>
+      <p>{% trans "Manage your information or roles." %}</p>
+      <a href="{% url 'login' %}" class="btn btn-primary mb-3">{% trans "Login" %}</a>
+    </div>
+    <div class="col-md-6">
+      <h2>{% trans "Register" %}</h2>
+      <p>{% trans "If you have an invite code, register here." %}</p>
+      <a href="{% url 'login-invite' %}" class="btn btn-primary mb-3">{% trans "Register" %}</a>
+    </div>
+  {% endif %}
 {% endblock %}

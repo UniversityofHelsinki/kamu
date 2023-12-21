@@ -47,7 +47,9 @@ from role.views import (
     RoleInviteIdentitySearch,
     RoleInviteView,
     RoleJoinView,
-    RoleListView,
+    RoleListApproverView,
+    RoleListInviterView,
+    RoleListOwnerView,
     RoleSearchView,
 )
 
@@ -75,7 +77,9 @@ urlpatterns = [
     path("membership/", MembershipListView.as_view(), name="membership-list"),
     path("membership/<int:pk>/", MembershipDetailView.as_view(), name="membership-detail"),
     path("membership/claim/", MembershipClaimView.as_view(), name="membership-claim"),
-    path("role/", RoleListView.as_view(), name="role-list"),
+    path("role/approver/", RoleListApproverView.as_view(), name="role-list-approver"),
+    path("role/inviter/", RoleListInviterView.as_view(), name="role-list-inviter"),
+    path("role/owner/", RoleListOwnerView.as_view(), name="role-list-owner"),
     path("role/search/", RoleSearchView.as_view(), name="role-search"),
     path("role/<int:pk>/", RoleDetailView.as_view(), name="role-detail"),
     path("role/<int:role_pk>/invite/", RoleInviteIdentitySearch.as_view(), name="role-invite-identity"),

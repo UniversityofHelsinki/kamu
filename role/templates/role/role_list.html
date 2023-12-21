@@ -1,23 +1,29 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block content %}
-  <h1 id="roles-list">{% trans "Role list" %}</h1>
-  <table class="table" aria-describedby="roles-list">
-  <thead>
-    <tr>
-      <th scope="col">{% trans "Role" %}</th>
-      <th scope="col">{% trans "Parent" %}</th>
-      <th scope="col">{% trans "Owner" %}</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for role in object_list %}
-    <tr>
-      <th scope="row"><a href="{% url 'role-detail' role.pk %}">{{ role.name }}</a></th>
-      <td>{% if role.parent is not None %}{{ role.parent }}{% endif %}</td>
-      <td>{% if role.owner is not None %}{{ role.owner }}{% endif %}</td>
-    </tr>
-  {% endfor %}
-  </tbody>
-  </table>
+  {% block role_list_description %}
+    <h1 id="roles-list" class="mb-4">{% trans "Role list" %}</h1>
+  {% endblock %}
+  {% if object_list %}
+    <table class="table" aria-describedby="roles-list">
+      <thead>
+      <tr>
+        <th scope="col">{% trans "Role" %}</th>
+        <th scope="col">{% trans "Parent" %}</th>
+        <th scope="col">{% trans "Owner" %}</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for role in object_list %}
+        <tr>
+          <th scope="row"><a href="{% url 'role-detail' role.pk %}">{{ role.name }}</a></th>
+          <td>{% if role.parent is not None %}{{ role.parent }}{% endif %}</td>
+          <td>{% if role.owner is not None %}{{ role.owner.get_full_name }}{% endif %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>{% trans "No roles." %}</p>
+  {% endif %}
 {% endblock %}

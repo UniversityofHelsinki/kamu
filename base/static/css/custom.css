@@ -3,3 +3,15 @@
   border-bottom: 1px solid #000;
   margin-bottom: 1rem;
 }
+
+* {
+   border-radius: 0 !important;
+}
+
+
+.btn-lang {
+  --bs-btn-color: #000;
+  --bs-btn-hover-color: #000;
+  --bs-btn-hover-bg: #d3d4d5;
+  --bs-btn-hover-border-color: #c6c7c8;
+}

@@ -310,29 +310,62 @@ class RoleInviteEmailView(BaseRoleInviteView):
         return redirect("membership-detail", pk=membership.pk)
 
 
-class RoleListView(LoginRequiredMixin, ListView[Role]):
+class RoleListApproverView(LoginRequiredMixin, ListView[Role]):
     """
-    View for role list.
+    List all roles where user is an approver.
     """
 
     model = Role
+    template_name = "role/role_list_approver.html"
 
     def get_queryset(self) -> QuerySet[Role]:
         """
-        Filter queryset to inviters, approvers or owners, based on filter URL parameter.
+        Filter queryset to approvers and owners.
         """
         user = self.request.user
         if not user.is_authenticated:
             raise PermissionDenied
         groups = user.groups.all()
-        queryset = Role.objects.all()
-        if "filter" in self.request.GET:
-            if self.request.GET["filter"] == "inviter":
-                queryset = queryset.filter(inviters__in=groups)
-            elif self.request.GET["filter"] == "approver":
-                queryset = queryset.filter(approvers__in=groups)
-            if self.request.GET["filter"] == "owner":
-                queryset = queryset.filter(owner=user)
+        queryset = Role.objects.filter(Q(approvers__in=groups) | Q(owner=user)).distinct()
+        return queryset.prefetch_related("owner", "parent")
+
+
+class RoleListInviterView(LoginRequiredMixin, ListView[Role]):
+    """
+    List all roles where user is an inviter.
+    """
+
+    model = Role
+    template_name = "role/role_list_inviter.html"
+
+    def get_queryset(self) -> QuerySet[Role]:
+        """
+        Filter queryset to inviters, approvers and owners.
+        """
+        user = self.request.user
+        if not user.is_authenticated:
+            raise PermissionDenied
+        groups = user.groups.all()
+        queryset = Role.objects.filter(Q(approvers__in=groups) | Q(inviters__in=groups) | Q(owner=user)).distinct()
+        return queryset.prefetch_related("owner", "parent")
+
+
+class RoleListOwnerView(LoginRequiredMixin, ListView[Role]):
+    """
+    List all roles owned by the user.
+    """
+
+    model = Role
+    template_name = "role/role_list_owner.html"
+
+    def get_queryset(self) -> QuerySet[Role]:
+        """
+        Filter queryset to owners.
+        """
+        user = self.request.user
+        if not user.is_authenticated:
+            raise PermissionDenied
+        queryset = Role.objects.filter(owner=user)
         return queryset.prefetch_related("owner", "parent")
 
 
