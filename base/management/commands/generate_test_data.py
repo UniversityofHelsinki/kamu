@@ -128,7 +128,7 @@ class Command(BaseCommand):
 
     def load_fixtures(self) -> None:
         if Nationality.objects.count() == 0:
-            call_command("loaddata", "nationality.json", app="identity")
+            call_command("loaddata", "nationality.json", app="identity", verbosity=(0 if self.silent else 1))
 
     def create_users(self) -> None:
         """
