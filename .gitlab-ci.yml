@@ -29,6 +29,13 @@ test:
     paths:
       - coverage.xml
 
+migrations-check:
+  stage: test
+  script:
+    - ./manage.py makemigrations --no-input --check -v0 ||
+      ( RET=$?; echo "makemigrations failed with code $?, dry-run follows:" 1>&2;
+        ./manage.py makemigrations --no-input --dry-run; exit $RET )
+
 black:
   stage: formatter-checks
   script:
