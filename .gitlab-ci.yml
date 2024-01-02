@@ -22,7 +22,7 @@ stages:
 
 test:
   script:
-    - coverage run ./manage.py test
+    - coverage run ./manage.py test --parallel
     - coverage xml
   artifacts:
     expire_in: 2 days
