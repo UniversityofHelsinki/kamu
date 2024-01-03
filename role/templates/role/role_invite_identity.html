@@ -41,6 +41,7 @@
       <th scope="col">{% trans "Name" %}</th>
       <th scope="col">{% trans "User account" %}</th>
       <th scope="col">{% trans "Email" %}</th>
+      <th scope="col">{% trans "Select" %}</th>
     </tr>
     </thead>
     <tbody>
@@ -49,6 +50,7 @@
         <th scope="row">{{ result.cn }}</th>
         <td>{{ result.uid }}</td>
         <td>{{ result.mail }}</td>
+        <td><a href="{% url 'role-invite-ldap' role.pk result.uid %}" class="btn btn-primary mb-3 me-3">{% trans "Add role" %}</a></td>
       </tr>
     {% endfor %}
     </tbody>

@@ -10,9 +10,24 @@ from django.core import mail
 from django.test import Client, override_settings
 from django.utils import timezone
 
+from identity.models import Identity
 from role.models import Membership, Role
 from role.views import RoleListApproverView, RoleListInviterView, RoleListOwnerView
 from tests.setup import BaseTestCase
+
+LDAP_RETURN_VALUE = [
+    {
+        "uid": "ldapuser",
+        "cn": "Ldap User",
+        "mail": "ldap.user@example.org",
+        "dn": "uid=ldapuser,ou=users,dc=example,dc=org",
+        "preferredLanguage": "en",
+        "givenName": "Ldap",
+        "sn": "User",
+        "schacDateOfBirth": "19810101",
+        "schacPersonalUniqueID": "urn:schac:personalUniqueID:fi:010181-900C",
+    }
+]
 
 
 class RoleListTests(BaseTestCase):
@@ -193,6 +208,26 @@ class RoleInviteTests(BaseTestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Membership.objects.filter(role=self.role, identity=self.identity).exists())
+
+    @mock.patch("role.views.ldap_search")
+    @override_settings(ALLOW_TEST_FPIC=True)
+    def test_join_role_with_ldap(self, mock_ldap):
+        mock_ldap.return_value = LDAP_RETURN_VALUE
+        url = f"{self.url}ldap/ldapuser/"
+        response = self.client.post(
+            url,
+            {
+                "start_date": timezone.now().date(),
+                "expire_date": timezone.now().date() + datetime.timedelta(days=7),
+                "reason": "Because",
+            },
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        identity = Identity.objects.get(uid="ldapuser")
+        self.assertTrue(Membership.objects.filter(role=self.role, identity=identity).exists())
+        self.assertEqual(identity.fpic, "010181-900C")
+        self.assertEqual(identity.display_name(), "Ldap User")
 
     def test_join_role_send_email_invite(self):
         url = f"{self.url}email/"

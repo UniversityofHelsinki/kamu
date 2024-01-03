@@ -5,9 +5,10 @@ Role app views for the UI.
 import datetime
 from typing import Any
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db.models import Q, QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -16,10 +17,13 @@ from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from django.views.generic import DetailView, ListView, View
 from django.views.generic.edit import CreateView
+from ldap.filter import escape_filter_chars
 
 from base.connectors.email import send_invite_email
+from base.connectors.ldap import ldap_search
 from base.models import Token
-from identity.models import Identity
+from identity.models import EmailAddress, Identity
+from identity.validators import validate_fpic
 from identity.views import IdentitySearchView
 from role.forms import MembershipCreateForm, MembershipEmailCreateForm, TextSearchForm
 from role.models import Membership, Role
@@ -260,6 +264,127 @@ class RoleInviteView(BaseRoleInviteView):
         if not user:
             raise PermissionDenied
         form.instance.inviter = user
+        return super().form_valid(form)
+
+
+class RoleInviteLdapView(BaseRoleInviteView):
+    """
+    Invite view for identities found in the LDAP.
+    """
+
+    form_class = MembershipCreateForm
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Redirect user to role invite view if identity is found with uid.
+        """
+        self.object = None
+        context = self.get_context_data(**kwargs)
+        if "identity" in context:
+            return redirect("role-invite-details", role_pk=context["role"].pk, identity_pk=context["identity"].pk)
+        return self.render_to_response(context)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Add user to context. Add identity to context if found.
+        """
+        context = super(RoleInviteLdapView, self).get_context_data(**kwargs)
+        uid = escape_filter_chars(self.kwargs.get("uid"))
+        ldap_user = ldap_search(search_filter=f"(uid={uid})", ldap_attributes=["uid", "cn", "mail"])
+        if not ldap_user or len(ldap_user) != 1:
+            raise PermissionDenied
+        user = ldap_user[0]
+        try:
+            identity = Identity.objects.get(uid=user["uid"])
+            context["identity"] = identity
+        except Identity.DoesNotExist:
+            pass
+        except Identity.MultipleObjectsReturned:
+            raise PermissionDenied
+        context["user"] = user
+        return context
+
+    @staticmethod
+    def _parse_fpic(user: dict) -> str | None:
+        """
+        Parse fpic from user.
+        """
+        if "schacPersonalUniqueID" in user:
+            fpic = user["schacPersonalUniqueID"].rsplit(":", 1)[1]
+            try:
+                validate_fpic(fpic)
+                return fpic
+            except ValidationError:
+                return None
+        return None
+
+    def _create_identity_from_ldap(self, user: dict) -> Identity:
+        """
+        Create identity from LDAP attributes.
+        """
+        identity = Identity.objects.create(
+            uid=user["uid"],
+            given_names=user["givenName"],
+            given_names_verification=2,
+            surname=user["sn"],
+            surname_verification=2,
+        )
+        if "mail" in user:
+            EmailAddress.objects.create(address=user["mail"], identity=identity)
+        if "schacDateOfBirth" in user:
+            identity.date_of_birth = datetime.datetime.strptime(user["schacDateOfBirth"], "%Y%m%d").date()
+            identity.date_of_birth_verification = 2
+        if "preferredLanguage" in user and user["preferredLanguage"] in [k for k, v in settings.LANGUAGES]:
+            identity.preferred_language = user["preferredLanguage"]
+        fpic = self._parse_fpic(user)
+        if fpic:
+            identity.fpic = fpic
+            identity.fpic_verification = 2
+        identity.save()
+        return identity
+
+    def _check_existing_identity(self, user: dict) -> Identity | None:
+        """
+        Check if identity already exists.
+        """
+        if Identity.objects.filter(uid=user["uid"]).exists():
+            return Identity.objects.get(uid=user["uid"])
+        fpic = self._parse_fpic(user)
+        if fpic and Identity.objects.filter(fpic=fpic).exists():
+            return Identity.objects.get(fpic=fpic)
+        return None
+
+    def form_valid(self, form: MembershipCreateForm | MembershipEmailCreateForm) -> HttpResponse:
+        """
+        Create identity and membership.
+
+        If identity already exists with the same uid or fpic, use it instead.
+        """
+        uid = escape_filter_chars(self.kwargs.get("uid"))
+        ldap_user = ldap_search(
+            search_filter=f"(uid={uid})",
+            ldap_attributes=[
+                "uid",
+                "givenName",
+                "sn",
+                "mail",
+                "schacDateOfBirth",
+                "preferredLanguage",
+                "schacPersonalUniqueID",
+            ],
+        )
+        if not ldap_user or len(ldap_user) != 1:
+            raise PermissionDenied
+        user = ldap_user[0]
+        identity = self._check_existing_identity(user)
+        if not identity:
+            identity = self._create_identity_from_ldap(user)
+        form.instance.identity = identity
+        form.instance.role = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
+        inviter = self.request.user if self.request.user.is_authenticated else None
+        if not inviter:
+            raise PermissionDenied
+        form.instance.inviter = inviter
         return super().form_valid(form)
 
 
