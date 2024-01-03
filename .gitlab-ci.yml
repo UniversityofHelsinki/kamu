@@ -16,8 +16,8 @@ before_script:
   - pip --require-virtualenv install -r requirements_dev.txt
 
 stages:
-  - test
   - formatter-checks
+  - test
   - sonarqube-check
 
 test:
