@@ -98,18 +98,17 @@ def _get_search_base() -> str | None:
     return search_base
 
 
-def ldap_search(search_filter: str) -> list | None:
+def ldap_search(search_filter: str, ldap_attributes: list[str] | None = None) -> list | None:
     """
     Search LDAP
 
     Returns a list of dictionaries with LDAP attributes, or None if error.
     """
-    ldap_attributes = getattr(settings, "LDAP_ATTRIBUTES", ["uid"])
+    if not ldap_attributes:
+        ldap_attributes = getattr(settings, "LDAP_ATTRIBUTES")
     ldap_connection = _get_connection()
-    if not ldap_connection:
-        return None
     search_base = _get_search_base()
-    if not search_filter:
+    if not ldap_connection or not search_base or not search_filter or not ldap_attributes:
         return None
     try:
         result = ldap_connection.search_s(search_base, ldap.SCOPE_SUBTREE, search_filter, ldap_attributes)
