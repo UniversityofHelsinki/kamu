@@ -12,9 +12,11 @@ from identity.models import Identity
 from role.models import Membership
 
 
-def _get_invitation_session_parameters(request: HttpRequest) -> tuple[str, datetime]:
+def get_invitation_session_parameters(request: HttpRequest) -> tuple[str, datetime]:
     """
     Get invitation session parameters from request.
+
+    Raises PermissionDenied if anything went wrong.
     """
     if "invitation_code" not in request.session or not request.session["invitation_code"]:
         raise PermissionDenied
@@ -59,7 +61,7 @@ def claim_membership(request: HttpRequest, identity: Identity) -> int:
 
     Raises PermissionDenied if the invitation code is missing or invalid.
     """
-    invitation_code, invitation_time = _get_invitation_session_parameters(request)
+    invitation_code, invitation_time = get_invitation_session_parameters(request)
     if (timezone.now() - invitation_time).total_seconds() > getattr(settings, "INVITATION_PROCESS_TIME", 60 * 60):
         messages.add_message(request, messages.WARNING, _("Invitation process has taken too long."))
         _remove_session_parameters(request)
