@@ -6,29 +6,19 @@ variables:
 cache:
   paths:
     - .cache/pip
-    - venv/
+  key: pip
 
 before_script:
-  - python -V
-  - source venv/bin/activate
-  - pip --require-virtualenv list
-
-stages:
-  - init
-  - lint
-  - test
-  - sonarqube-check
-
-prepare:
-  stage: init
-  before_script:
   - python -V
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
   - pip --require-virtualenv install -r requirements_dev.txt
-  script:
-  - pip --require-virtualenv list
+
+stages:
+  - lint
+  - test
+  - sonarqube-check
 
 test:
   script:
