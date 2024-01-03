@@ -182,3 +182,6 @@ OIDC_GOOGLE_EMAIL: str = "OIDC_CLAIM_email"
 
 # purge stale data this many days after expiry
 PURGE_DELAY_DAYS: int = 730
+
+LDAP_SETTINGS: dict[str, Any] = {}
+LDAP_ATTRIBUTES: list[str] = ["cn", "mail", "uid"]

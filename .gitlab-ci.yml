@@ -10,6 +10,7 @@ cache:
 
 before_script:
   - python -V
+  - apt update && apt install -y libldap-dev python3-dev libsasl2-dev
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate

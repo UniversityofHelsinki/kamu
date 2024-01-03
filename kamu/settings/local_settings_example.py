@@ -87,3 +87,15 @@ SMS_API_URL: str = "https://api-gateway.example.org/sms/send"
 SMS_AUTH_HEADER: str = "X-Api-Key"
 SMS_API_KEY: str = ""
 SMS_API_TIMEOUT: int = 3
+
+LDAP_SETTINGS: dict[str, Any] = {
+    "HOST": "127.0.0.1",
+    "PORT": 389,
+    "USER": "ou=ldapuser,dc=example,dc=org",
+    "PASSWORD": "ldapuser_password",
+    "TIMEOUT_SECONDS": 5,
+    "USE_LDAPS": True,
+    "CACERTFILE": "/path/to/cacert.pem",  # set None to use system default
+    "IGNORE_TLS_CHECK": False,
+    "SEARCH_BASE": "ou=users,dc=example,dc=org",
+}

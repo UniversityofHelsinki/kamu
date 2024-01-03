@@ -6,4 +6,5 @@ crispy-bootstrap5==2023.10
 django-stubs-ext==4.2.2
 drf-spectacular==0.26.3
 mysqlclient==2.2.0
+python-ldap==3.4.4
 requests==2.26.0
