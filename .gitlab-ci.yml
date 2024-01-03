@@ -10,15 +10,25 @@ cache:
 
 before_script:
   - python -V
+  - source venv/bin/activate
+  - pip --require-virtualenv list
+
+stages:
+  - init
+  - lint
+  - test
+  - sonarqube-check
+
+prepare:
+  stage: init
+  before_script:
+  - python -V
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
   - pip --require-virtualenv install -r requirements_dev.txt
-
-stages:
-  - lint
-  - test
-  - sonarqube-check
+  script:
+  - pip --require-virtualenv list
 
 test:
   script:
