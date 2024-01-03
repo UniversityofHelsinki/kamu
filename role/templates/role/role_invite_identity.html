@@ -5,7 +5,7 @@
 {% block content %}
   <h1>{% trans "Identity search" %}</h1>
   {% crispy form form.helper %}
-  <h2 id="results-list">{% trans "Results" %}</h2>
+  <h2 id="results-list">{% trans "Kamu results" %}</h2>
   <table class="table" aria-describedby="results-list">
     <thead>
     <tr>
@@ -32,5 +32,26 @@
     <h3>{% trans "Email invitation" %}</h3>
     <p>{% trans "Email address not found" %}: {{ email }}</p>
     <a href="{% url 'role-invite-details-email' role.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Send invitation" %}</a>
+  {% endif %}
+  {% if ldap_results %}
+  <h2 id="ldap-results-list" class="mt-4">{% trans "LDAP results" %}</h2>
+  <table class="table" aria-describedby="ldap-results-list">
+    <thead>
+    <tr>
+      <th scope="col">{% trans "Name" %}</th>
+      <th scope="col">{% trans "User account" %}</th>
+      <th scope="col">{% trans "Email" %}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for result in ldap_results %}
+      <tr>
+        <th scope="row">{{ result.cn }}</th>
+        <td>{{ result.uid }}</td>
+        <td>{{ result.mail }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
   {% endif %}
 {% endblock %}

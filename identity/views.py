@@ -18,7 +18,9 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views import View
 from django.views.generic import DetailView, FormView, ListView, UpdateView
+from ldap.filter import escape_filter_chars
 
+from base.connectors.ldap import ldap_search
 from base.connectors.sms import SmsConnector
 from base.models import TimeLimitError, Token
 from identity.forms import (
@@ -350,6 +352,60 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
     template_name = "identity/identity_search.html"
     model = Identity
 
+    def _ldap_search_attribute(self, attribute: list[tuple[str, str, bool]]) -> list | None:
+        """
+        Search LDAP for attribute(s).
+
+        attribute is the list of tuples containing LDAP attribute name, URL parameter name and wildcard boolean.
+
+        Return empty list if no search parameters are found.
+        Return None if LDAP search does not succeed.
+        """
+        ldap_parameters = []
+        for attr in attribute:
+            ldap_name, param_name, wildcard = attr
+            value = self.request.GET.get(param_name)
+            if not value:
+                continue
+            if wildcard:
+                ldap_parameters.append("(" + ldap_name + "=*" + escape_filter_chars(value) + "*)")
+            else:
+                ldap_parameters.append("(" + ldap_name + "=" + escape_filter_chars(value) + ")")
+        if not ldap_parameters:
+            return []
+        ldap_result = ldap_search("(&" + "".join(ldap_parameters) + ")")
+        return ldap_result if isinstance(ldap_result, list) else None
+
+    def _get_ldap_results(self) -> list | None:
+        """
+        Search LDAP based on URL parameters.
+
+        Append separate search results to combined results and return them.
+
+        Return None if LDAP search does not succeed.
+        """
+        results: list = []
+        search_attributes = [
+            [("givenName", "given_names", True), ("sn", "surname", True)],
+            [("mail", "email", False)],
+            [("uid", "uid", False)],
+        ]
+        for attribute in search_attributes:
+            search_result = self._ldap_search_attribute(attribute)
+            if search_result is None:
+                return None
+            else:
+                results.extend(res for res in search_result if res not in results)
+        return results
+
+    @staticmethod
+    def _filter_ldap_list(object_list: QuerySet[Identity], ldap_results: list) -> list:
+        """
+        Filter out LDAP results where uid is already in object_list and sort results.
+        """
+        result_uids = set(object_list.values_list("uid", flat=True))
+        return sorted([res for res in ldap_results if res["uid"] not in result_uids], key=lambda x: x["cn"])
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add form and searched phone and email to context data.
@@ -358,6 +414,13 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         context["phone"] = self.request.GET.get("phone", "").replace(" ", "")
         context["email"] = self.request.GET.get("email")
         context["form"] = IdentitySearchForm(self.request.GET)
+        ldap_results = self._get_ldap_results()
+        if isinstance(ldap_results, list):
+            context["ldap_results"] = self._filter_ldap_list(context["object_list"], ldap_results)
+        else:
+            messages.add_message(
+                self.request, messages.ERROR, _("LDAP search failed, could not search existing accounts.")
+            )
         return context
 
     def get_queryset(self) -> QuerySet[Identity]:

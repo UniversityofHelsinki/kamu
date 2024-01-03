@@ -10,6 +10,15 @@ from django.test import Client
 from identity.models import EmailAddress, PhoneNumber
 from tests.setup import BaseTestCase
 
+LDAP_RETURN_VALUE = [
+    {
+        "uid": "ldapuser",
+        "cn": "Ldap User",
+        "mail": "ldap.user@example.org",
+        "dn": "uid=ldapuser,ou=users,dc=example,dc=org",
+    }
+]
+
 
 class IdentityTests(BaseTestCase):
     def setUp(self):
@@ -36,7 +45,9 @@ class IdentityTests(BaseTestCase):
         self.assertNotIn("alert", response.content.decode("utf-8"))
         self.assertIn("Test User</h1>", response.content.decode("utf-8"))
 
-    def test_search_identity(self):
+    @mock.patch("identity.views.ldap_search")
+    def test_search_identity(self, mock_ldap):
+        mock_ldap.return_value = []
         EmailAddress.objects.create(
             identity=self.superidentity,
             address="super@example.org",
@@ -46,6 +57,23 @@ class IdentityTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User", response.content.decode("utf-8"))
         self.assertIn("Super User", response.content.decode("utf-8"))
+
+    @mock.patch("base.connectors.ldap.logger")
+    def test_search_ldap_fail(self, mock_logger):
+        url = f"{self.url}search/?uid=testuser"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("LDAP search failed", response.content.decode("utf-8"))
+        mock_logger.error.assert_called_once()
+
+    @mock.patch("identity.views.ldap_search")
+    def test_search_ldap(self, mock_ldap):
+        mock_ldap.return_value = LDAP_RETURN_VALUE
+        url = f"{self.url}search/?uid=testuser&given_names=test"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Test User", response.content.decode("utf-8"))
+        self.assertIn("ldap.user@example.org", response.content.decode("utf-8"))
 
 
 class IdentityEditTests(BaseTestCase):

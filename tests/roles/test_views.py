@@ -3,6 +3,7 @@ View tests for role app.
 """
 
 import datetime
+from unittest import mock
 
 from django.contrib.auth.models import Group
 from django.core import mail
@@ -162,14 +163,18 @@ class RoleInviteTests(BaseTestCase):
         self.role.inviters.add(group)
         self.user.groups.add(group)
 
-    def test_search_user(self):
+    @mock.patch("identity.views.ldap_search")
+    def test_search_user(self, mock_ldap):
+        mock_ldap.return_value = []
         url = f"{self.url}?given_names=test"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User", response.content.decode("utf-8"))
         self.assertIn("Select", response.content.decode("utf-8"))
 
-    def test_search_not_found_email(self):
+    @mock.patch("identity.views.ldap_search")
+    def test_search_not_found_email(self, mock_ldap):
+        mock_ldap.return_value = []
         url = f"{self.url}?email=nonexisting@example.org"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
