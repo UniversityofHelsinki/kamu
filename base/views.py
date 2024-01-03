@@ -40,7 +40,7 @@ from base.forms import (
 )
 from base.models import TimeLimitError, Token
 from identity.models import EmailAddress, Identity, PhoneNumber
-from role.utils import claim_membership
+from role.utils import claim_membership, get_invitation_session_parameters
 
 logger = logging.getLogger(__name__)
 
@@ -93,10 +93,8 @@ class BaseRegisterView(View):
         if not self.request.user.is_anonymous:
             messages.add_message(self.request, messages.INFO, _("You are already logged in."))
             return redirect("front-page")
-        if "invitation_code" not in self.request.session:
-            raise PermissionDenied
-        if "invitation_code_time" not in self.request.session:
-            raise PermissionDenied
+        # checks session parameters and raises PermissionDenied in case of problems
+        get_invitation_session_parameters(request)
         return super().dispatch(request, *args, **kwargs)
 
 
