@@ -22,7 +22,9 @@ stages:
 
 test:
   script:
+    - printf "[run]\nconcurrency = multiprocessing" > .coveragerc
     - coverage run ./manage.py test --parallel
+    - coverage combine
     - coverage xml
   artifacts:
     expire_in: 2 days
