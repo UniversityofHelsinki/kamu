@@ -94,6 +94,25 @@ class RegistrationViewTests(TestCase):
         url = reverse("membership-claim")
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 403)
+        self.assertIsNone(self.membership.identity)
+
+    def test_claim_membership_without_code_time(self):
+        del self.session["invitation_code_time"]
+        self.session.save()
+        self.client.force_login(self.user)
+        url = reverse("membership-claim")
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 403)
+        self.assertIsNone(self.membership.identity)
+
+    def test_claim_membership_with_invalid_code_time(self):
+        self.session["invitation_code_time"] += "x"
+        self.session.save()
+        self.client.force_login(self.user)
+        url = reverse("membership-claim")
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 403)
+        self.assertIsNone(self.membership.identity)
 
     def test_claim_membership(self):
         self.client.force_login(self.user)
@@ -101,7 +120,20 @@ class RegistrationViewTests(TestCase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.membership.refresh_from_db()
+        self.assertIsNotNone(self.membership.identity)
         self.assertEqual(self.membership.identity, self.user.identity)
+
+    def test_claim_membership_with_expired_code_time(self):
+        self.session["invitation_code_time"] = (timezone.now() - datetime.timedelta(seconds=600)).isoformat()
+        self.session.save()
+        self.client.force_login(self.user)
+        url = reverse("membership-claim")
+        with self.settings(INVITATION_PROCESS_TIME=500):
+            response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.membership.refresh_from_db()
+        self.assertIsNone(self.membership.identity)
+        self.assertEqual(response.url, reverse("front-page"))
 
     def test_invite_view(self):
         self.client.force_login(self.user)
