@@ -371,6 +371,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         surname = self.request.GET.get("surname")
         email = self.request.GET.get("email")
         phone = self.request.GET.get("phone")
+        uid = self.request.GET.get("uid")
         if not given_names and not surname:
             queryset = queryset.none()
         if given_names:
@@ -381,6 +382,8 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
             queryset = queryset.filter(Q(surname__icontains=surname) | Q(surname_display__icontains=surname))
         if email:
             queryset = queryset.union(Identity.objects.filter(email_addresses__address__iexact=email))
+        if uid:
+            queryset = queryset.union(Identity.objects.filter(uid=uid))
         if phone:
             phone = phone.replace(" ", "")
             queryset = queryset.union(Identity.objects.filter(phone_numbers__number__exact=phone))

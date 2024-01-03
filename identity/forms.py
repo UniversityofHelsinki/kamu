@@ -27,6 +27,7 @@ class IdentitySearchForm(forms.Form):
 
     given_names = forms.CharField(label=_("Given name(s)"), max_length=255, required=False)
     surname = forms.CharField(label=_("Surname"), max_length=255, required=False)
+    uid = forms.CharField(label=_("User account"), max_length=255, required=False)
     email = forms.CharField(label=_("E-mail address"), max_length=255, required=False)
     phone = forms.CharField(label=_("Phone number"), max_length=20, required=False)
 
@@ -38,6 +39,21 @@ class IdentitySearchForm(forms.Form):
         self.helper = FormHelper()
         self.helper.form_method = "GET"
         self.helper.add_input(Submit("submit", _("Search")))
+        self.helper.layout = Layout(
+            HTML("<h2 class='mb-3'>" + _("Name search") + "</h2>"),
+            Div(
+                Div("given_names", css_class="col-md-6"),
+                Div("surname", css_class="col-md-6"),
+                css_class="row mb-3",
+            ),
+            HTML("<h2 class='mb-3'>" + _("Exact identifiers") + "</h2>"),
+            Div(
+                Div("uid", css_class="col-md-6"),
+                Div("email", css_class="col-md-6"),
+                Div("phone", css_class="col-md-6"),
+                css_class="row mb-3",
+            ),
+        )
 
     def clean_phone(self) -> str | None:
         """
