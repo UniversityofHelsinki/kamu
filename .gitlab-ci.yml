@@ -16,7 +16,7 @@ before_script:
   - pip --require-virtualenv install -r requirements_dev.txt
 
 stages:
-  - formatter-checks
+  - lint
   - test
   - sonarqube-check
 
@@ -37,17 +37,17 @@ migrations-check:
         ./manage.py makemigrations --no-input --dry-run; exit $RET )
 
 black:
-  stage: formatter-checks
+  stage: lint
   script:
     - black . --check
 
 isort:
-  stage: formatter-checks
+  stage: lint
   script:
     - isort . --check
 
 mypy:
-  stage: formatter-checks
+  stage: lint
   script:
     - mypy .
 
