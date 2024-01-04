@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpRequest
+from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import translation
@@ -61,7 +62,9 @@ def send_invite_email(
     return _send_email(subject, message, recipient_list=[address])
 
 
-def send_verification_email(token: str, email_address: str, lang: str = "en") -> bool:
+def send_verification_email(
+    token: str, email_address: str, lang: str = "en", template: str = "verification_email"
+) -> bool:
     """
     Send a verification email.
     """
@@ -69,8 +72,10 @@ def send_verification_email(token: str, email_address: str, lang: str = "en") ->
     cur_language = translation.get_language()
     try:
         translation.activate(lang)
-        subject = render_to_string("email/verification_email_subject.txt")
-        message = render_to_string("email/verification_email_message.txt", {"token": token})
+        subject = render_to_string(f"email/{ template }_subject.txt")
+        message = render_to_string(f"email/{ template }_message.txt", {"token": token})
+    except TemplateDoesNotExist:
+        return False
     finally:
         translation.activate(cur_language)
     return _send_email(subject, message, recipient_list=[email_address])
