@@ -87,6 +87,8 @@ SMS_API_URL: str = "https://api-gateway.example.org/sms/send"
 SMS_AUTH_HEADER: str = "X-Api-Key"
 SMS_API_KEY: str = ""
 SMS_API_TIMEOUT: int = 3
+# SMS messages will be logged instead of sent to API if SMS_DEBUG is True.
+SMS_DEBUG: bool = False
 
 LDAP_SETTINGS: dict[str, Any] = {
     "HOST": "127.0.0.1",

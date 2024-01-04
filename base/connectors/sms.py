@@ -1,7 +1,10 @@
 import json
+import logging
 
 import requests
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 
 class SmsConnector:
@@ -26,6 +29,9 @@ class SmsConnector:
             return False
         headers = {self.authorization_header: self.api_key, "Content-Type": "application/json"}
         data = {"mobileNumber": number, "message": message}
+        if getattr(settings, "SMS_DEBUG", False):
+            logger.debug(f"SMS DEBUG: {data}")
+            return True
         response = requests.post(self.url, headers=headers, timeout=self.timeout, data=json.dumps(data))
         if response.status_code == 200:
             return True
