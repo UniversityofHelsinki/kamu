@@ -210,17 +210,21 @@ class TokenManager(models.Manager["Token"]):
             token.delete()
         return False
 
-    def validate_email_object_verification_token(self, secret: str, email: EmailAddress) -> bool:
+    def validate_email_object_verification_token(
+        self, secret: str, email: EmailAddress, remove_token: bool = True
+    ) -> bool:
         """
         Validates a email verification token.
         """
-        return self._validate_token(secret, "emailobjectverif", email_object=email)
+        return self._validate_token(secret, "emailobjectverif", email_object=email, remove_token=remove_token)
 
-    def validate_phone_object_verification_token(self, secret: str, phone: PhoneNumber) -> bool:
+    def validate_phone_object_verification_token(
+        self, secret: str, phone: PhoneNumber, remove_token: bool = True
+    ) -> bool:
         """
         Validates an SMS verification token.
         """
-        return self._validate_token(secret, "phoneobjectverif", phone_object=phone)
+        return self._validate_token(secret, "phoneobjectverif", phone_object=phone, remove_token=remove_token)
 
     def validate_email_login_token(self, secret: str, email: EmailAddress) -> bool:
         """
