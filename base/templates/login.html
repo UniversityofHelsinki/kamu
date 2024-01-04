@@ -36,7 +36,7 @@
       <p>{% trans "Login with a Google account." %}</p>
     </div>
     <div class="col-md-6 col-12 mb-3">
-      <a href="{% url 'login-email' %}" class="btn btn-outline-dark mb-3" role="button">{% trans "Email+SMS login" %}</a>
+      <a href="{% url 'login-email' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" class="btn btn-outline-dark mb-3" role="button">{% trans "Email+SMS login" %}</a>
       <p>{% trans "Login with an e-mail and SMS verification." %}</p>
     </div>
     <div class="col-md-6 col-12 mb-3">

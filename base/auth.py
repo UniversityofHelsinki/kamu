@@ -10,11 +10,16 @@ from django.contrib.auth.backends import BaseBackend, ModelBackend
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User as UserType
-from django.core.exceptions import ValidationError
+from django.core.exceptions import (
+    MultipleObjectsReturned,
+    ObjectDoesNotExist,
+    ValidationError,
+)
 from django.core.validators import validate_email
 from django.http import HttpRequest
 
-from identity.models import EmailAddress, Identifier, Identity
+from base.models import Token
+from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
 from role.models import Role
 
 UserModel = get_user_model()
@@ -201,19 +206,28 @@ class EmailSMSBackend(LocalBaseBackend):
     """
     Backend to authenticate with email address and phone number.
 
-    Authenticate only if exactly one address and number is found, and they are for the same identity.
+    Authenticate only if exactly one address and number is found, they are for the same identity, and tokens match.
     """
 
     def authenticate(
-        self, request: HttpRequest | None, email: str | None = None, phone: str | None = None, **kwargs: Any
+        self,
+        request: HttpRequest | None,
+        email_address: str | None = None,
+        email_token: str | None = None,
+        phone_number: str | None = None,
+        phone_token: str | None = None,
+        **kwargs: Any,
     ) -> UserType | None:
-        if not request or not email or not phone:
+        if not email_address or not email_token or not phone_number or not phone_token:
             return None
-        email_identities = Identity.objects.filter(email_addresses__address=email, email_addresses__verified=True)
-        phone_identities = Identity.objects.filter(phone_numbers__number=phone, phone_numbers__verified=True)
-        if email_identities.count() == 1 and phone_identities.count() == 1:
-            email_identity = email_identities[0]
-            phone_identity = phone_identities[0]
-            if email_identity.user and email_identity.user == phone_identity.user:
-                return email_identity.user
+        try:
+            email_obj = EmailAddress.objects.get(address=email_address, verified=True)
+            phone_obj = PhoneNumber.objects.get(number=phone_number, verified=True)
+        except (ObjectDoesNotExist, MultipleObjectsReturned):
+            return None
+        if email_obj.identity.user and email_obj.identity.user == phone_obj.identity.user:
+            if Token.objects.validate_email_object_verification_token(
+                email_token, email_obj
+            ) and Token.objects.validate_phone_object_verification_token(phone_token, phone_obj):
+                return email_obj.identity.user
         return None

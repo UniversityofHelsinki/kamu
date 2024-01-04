@@ -17,6 +17,7 @@ from drf_spectacular.views import (
 
 from base.views import (
     CustomLoginView,
+    EmailPhoneLoginVerificationView,
     EmailPhoneLoginView,
     FrontPageView,
     GoogleLoginView,
@@ -94,6 +95,7 @@ urlpatterns = [
     path("login/google/", GoogleLoginView.as_view(), name="login-google"),
     path("login/local/", LocalLoginView.as_view(), name="login-local"),
     path("login/email/", EmailPhoneLoginView.as_view(), name="login-email"),
+    path("login/email/verify/", EmailPhoneLoginVerificationView.as_view(), name="login-email-verify"),
     path("login/register/", RegisterView.as_view(), name="login-register"),
     path("login/register/email/verify/", VerifyEmailAddressView.as_view(), name="login-register-email-verify"),
     path("login/register/phone/", RegisterPhoneNumberView.as_view(), name="login-register-phone"),

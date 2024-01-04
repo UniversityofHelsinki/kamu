@@ -21,9 +21,13 @@ from django.http import (
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from django.views import View
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import FormView
 
 from base.auth import GoogleBackend, ShibbolethBackend, auth_login
@@ -32,6 +36,7 @@ from base.connectors.sms import SmsConnector
 from base.forms import (
     EmailAddressVerificationForm,
     EmailPhoneForm,
+    EmailPhoneVerificationForm,
     InviteTokenForm,
     LoginForm,
     PhoneNumberForm,
@@ -360,20 +365,114 @@ class GoogleLoginView(RemoteLoginView):
         auth_login(request, user, backend="base.auth.GoogleBackend")
 
 
-class EmailPhoneLoginView(LoginView):
+class EmailPhoneLoginView(FormView):
     """
-    LoginView to authenticate user with email address and phone number.
-
-    TODO: Currently for testing purposes. It needs verification methods etc.
+    View to ask email address and phone number for login.
     """
 
     form_class = EmailPhoneForm
     template_name = "login_email.html"
 
+    def form_valid(self, form: EmailPhoneForm) -> HttpResponse:
+        """
+        Set session variables and redirect to verification form.
+        """
+        email_address = form.cleaned_data["email_address"]
+        phone_number = form.cleaned_data["phone_number"]
+        self.request.session["login_email_address"] = email_address
+        self.request.session["login_phone_number"] = phone_number
+        response = redirect("login-email-verify")
+        if self.request.GET.get("next", None):
+            response["Location"] += "?next=" + self.request.GET.get("next", "/")
+        return response
+
+
+class EmailPhoneLoginVerificationView(LoginView):
+    """
+    LoginView to with email address and phone number verification.
+    """
+
+    form_class = EmailPhoneVerificationForm
+    template_name = "login_email_verify.html"
+
+    @method_decorator(sensitive_post_parameters())
+    @method_decorator(csrf_protect)
+    @method_decorator(never_cache)
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        """
+        Check that user has email address and phone number in session.
+        """
+        if "login_email_address" not in self.request.session or "login_phone_number" not in self.request.session:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self) -> dict[str, Any]:
+        """
+        Add email address and phone_number to form kwargs.
+        """
+        kwargs = super(EmailPhoneLoginVerificationView, self).get_form_kwargs()
+        kwargs["email_address"] = self.request.session["login_email_address"]
+        kwargs["phone_number"] = self.request.session["login_phone_number"]
+        return kwargs
+
     def form_valid(self, form: AuthenticationForm) -> HttpResponse:
-        """Security check complete. Log the user in."""
+        """
+        Delete login session parameters and log user in if validation is successful.
+        """
+        del self.request.session["login_email_address"]
+        del self.request.session["login_phone_number"]
         auth_login(self.request, form.get_user(), backend="base.auth.EmailSMSBackend")
         return HttpResponseRedirect(self.get_success_url())
+
+    def redirect_to_self(self) -> HttpResponse:
+        response = redirect("login-email-verify")
+        if self.request.GET.get("next", None):
+            response["Location"] += "?next=" + self.request.GET.get("next", "/")
+        return response
+
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Check for resend button.
+        """
+        if "resend_email_code" in self.request.POST:
+            try:
+                email_address = EmailAddress.objects.get(
+                    address=self.request.session["login_email_address"], verified=True
+                )
+            except EmailAddress.DoesNotExist:
+                return self.redirect_to_self()
+            except EmailAddress.MultipleObjectsReturned:
+                return self.redirect_to_self()
+            try:
+                email_token = Token.objects.create_email_object_verification_token(email_address)
+                send_verification_email(email_token, email_address.address, template="login_verification_email")
+            except TimeLimitError:
+                messages.add_message(
+                    self.request,
+                    messages.WARNING,
+                    _("Tried to send a new code too soon. Please try again in one minute."),
+                )
+            return self.redirect_to_self()
+        if "resend_phone_code" in self.request.POST:
+            try:
+                phone_number = PhoneNumber.objects.get(
+                    number=self.request.session["login_phone_number"], verified=True
+                )
+            except PhoneNumber.DoesNotExist:
+                return self.redirect_to_self()
+            except PhoneNumber.MultipleObjectsReturned:
+                return self.redirect_to_self()
+            try:
+                phone_token = Token.objects.create_phone_object_verification_token(phone_number)
+                SmsConnector().send_sms(phone_number.number, phone_token)
+            except TimeLimitError:
+                messages.add_message(
+                    self.request,
+                    messages.WARNING,
+                    _("Tried to send a new code too soon. Please try again in one minute."),
+                )
+            return self.redirect_to_self()
+        return super().post(request, *args, **kwargs)
 
 
 class LocalLoginView(LoginView):

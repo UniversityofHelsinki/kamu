@@ -54,18 +54,111 @@ class LoginViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Login failed", response.content.decode("utf-8"))
 
-    def test_email_login(self):
+    @override_settings(SMS_DEBUG=True)
+    @mock.patch("base.connectors.sms.logger")
+    def test_email_login(self, mock_logger):
         phone_number = PhoneNumber.objects.create(identity=self.identity, number="+123456789", verified=True)
         self.email_address.verified = True
         self.email_address.save()
         url = reverse("login-email") + "?next=/identity/me/"
         response = self.client.post(
             url,
-            {"email": self.email_address.address, "phone": phone_number.number},
+            {"email_address": self.email_address.address, "phone_number": phone_number.number},
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Login verification", response.content.decode("utf-8"))
+        self.assertEqual("Kamu login verification", mail.outbox[0].subject)
+        mock_logger.debug.assert_called_once()
+
+    def test_email_login_duplicate_number(self):
+        phone_number = PhoneNumber.objects.create(identity=self.identity, number="+123456789", verified=True)
+        PhoneNumber.objects.create(identity=self.superidentity, number="+123456789", verified=True)
+        self.email_address.verified = True
+        self.email_address.save()
+        url = reverse("login-email") + "?next=/identity/me/"
+        response = self.client.post(
+            url,
+            {"email_address": self.email_address.address, "phone_number": phone_number.number},
+            follow=True,
+        )
+        self.assertIn("This contact information cannot be used to login", response.content.decode("utf-8"))
+
+    def _test_email_login_verification(self):
+        self.url = reverse("login-email-verify") + "?next=/identity/me/"
+        phone_number = PhoneNumber.objects.create(identity=self.identity, number="+123456789", verified=True)
+        self.email_address.verified = True
+        self.email_address.save()
+        self.session = self.client.session
+        self.session["login_email_address"] = self.email_address.address
+        self.session["login_phone_number"] = phone_number.number
+        self.session.save()
+        email_secret = Token.objects.create_email_object_verification_token(self.email_address)
+        phone_secret = Token.objects.create_phone_object_verification_token(phone_number)
+        return email_secret, phone_secret
+
+    def test_email_login_verification(self):
+        email_secret, phone_secret = self._test_email_login_verification()
+        response = self.client.post(
+            self.url,
+            {"email_verification_token": email_secret, "phone_verification_token": phone_secret},
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User</h1>", response.content.decode("utf-8"))
+
+    def test_email_login_verification_incorrect_token(self):
+        email_secret, phone_secret = self._test_email_login_verification()
+        response = self.client.post(
+            self.url,
+            {"email_verification_token": email_secret, "phone_verification_token": phone_secret + "a"},
+            follow=True,
+        )
+        self.assertIn("Invalid verification code", response.content.decode("utf-8"))
+
+    def test_email_login_verification_incorrect_user(self):
+        email_secret, phone_secret = self._test_email_login_verification()
+        self.email_address.identity = self.superidentity
+        self.email_address.save()
+        response = self.client.post(
+            self.url,
+            {"email_verification_token": email_secret, "phone_verification_token": phone_secret},
+            follow=True,
+        )
+        self.assertIn("Error when logging in, please try again", response.content.decode("utf-8"))
+
+    @override_settings(TOKEN_TIME_LIMIT_NEW=0)
+    @override_settings(SMS_DEBUG=True)
+    @mock.patch("base.connectors.sms.logger")
+    def test_email_login_resend_phone_token(self, mock_logger):
+        self._test_email_login_verification()
+        self.client.post(
+            self.url,
+            {"resend_phone_code": True},
+            follow=True,
+        )
+        mock_logger.debug.assert_called_once()
+
+    @override_settings(TOKEN_TIME_LIMIT_NEW=0)
+    def test_email_login_resend_email_token(self):
+        self._test_email_login_verification()
+        self.client.post(
+            self.url,
+            {"resend_email_code": True},
+            follow=True,
+        )
+        self.assertEqual("Kamu login verification", mail.outbox[0].subject)
+
+    @override_settings(TOKEN_TIME_LIMIT_NEW=60)
+    def test_email_login_resend_email_token(self):
+        self._test_email_login_verification()
+        response = self.client.post(
+            self.url,
+            {"resend_email_code": True},
+            follow=True,
+        )
+        self.assertIn("Tried to send a new code too soon", response.content.decode("utf-8"))
+        self.assertEqual(0, len(mail.outbox))
 
 
 class RegistrationViewTests(TestCase):
