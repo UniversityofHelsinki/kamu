@@ -26,7 +26,8 @@ admin.site.register(EmailAddress, EmailAddressAdmin)
 class IdentifierAdmin(admin.ModelAdmin):
     list_display = ["identity", "type"]
     search_fields = [
-        "identity__name",
+        "identity__given_names",
+        "identity__surname",
         "identity__user__username",
         "type",
         "value",
