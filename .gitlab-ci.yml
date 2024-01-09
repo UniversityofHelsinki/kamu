@@ -10,16 +10,31 @@ cache:
 
 before_script:
   - python -V
-  - apt update && apt install -y libldap-dev python3-dev libsasl2-dev
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
-  - pip --require-virtualenv install -r requirements_dev.txt
+  - test -n "$SKIP_PIP_INSTALL" || find .wheels -name '*.whl' -print0 | xargs -0 --no-run-if-empty pip --require-virtualenv install
+  - test -n "$SKIP_PIP_INSTALL" || pip --require-virtualenv install -r requirements_dev.txt
 
 stages:
+  - prepare
   - lint
   - test
   - sonarqube-check
+
+build-ldap:
+  stage: prepare
+  variables:
+    SKIP_PIP_INSTALL: "yes"
+  script:
+  - apt update && apt install -y libldap-dev python3-dev libsasl2-dev
+  - pip install python-ldap
+  - mkdir .wheels
+  - find .cache/pip -name 'python_ldap*.whl' -print0 | xargs -0 -i cp -v "{}" .wheels/
+  artifacts:
+    expire_in: 2 days
+    paths:
+    - .wheels
 
 test:
   script:
