@@ -73,7 +73,7 @@ class IdentityTests(BaseTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User", response.content.decode("utf-8"))
-        self.assertIn("ldap.user@example.org", response.content.decode("utf-8"))
+        self.assertEqual(response.content.decode("utf-8").count("ldap.user@example.org"), 1)
 
 
 class IdentityEditTests(BaseTestCase):

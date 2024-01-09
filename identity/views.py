@@ -384,7 +384,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
 
         Return None if LDAP search does not succeed.
         """
-        results: list = []
+        results: set = set()
         search_attributes = [
             [("givenName", "given_names", True), ("sn", "surname", True)],
             [("mail", "email", False)],
@@ -395,8 +395,8 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
             if search_result is None:
                 return None
             else:
-                results.extend(res for res in search_result if res not in results)
-        return results
+                results |= set(frozenset(res.items()) for res in search_result)
+        return [dict(res) for res in results]
 
     @staticmethod
     def _filter_ldap_list(object_list: QuerySet[Identity], ldap_results: list) -> list:
