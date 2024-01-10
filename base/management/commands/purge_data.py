@@ -55,7 +55,7 @@ class Command(BaseCommand):
                 self.stdout.write(f"Purging {t} data")
             data_class = self.types[t]
             stale = data_class.objects.get_stale(grace_days=options.get("grace_days"))
-            if not stale:
+            if not stale.exists():
                 if options["verbosity"] > 1:
                     self.stdout.write(f"Skipping {t}: nothing to purge")
                 continue

@@ -10,7 +10,7 @@ from django.conf import settings
 from django.contrib.auth.models import User as UserType
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import get_language
@@ -239,20 +239,19 @@ class MembershipManager(models.Manager["Membership"]):
     Manager methods for :model:`role.Membership`.
     """
 
-    def get_stale(self, grace_days: int | None = None) -> list[Membership]:
+    def get_stale(self, grace_days: int | None = None) -> QuerySet[Membership]:
         """
         Returns a list of membership objects that have expired and a role
         specific grace period (or lacking that, settings.PURGE_DELAY_DAYS)
         has passed since. This grace period can optionally be overridden
         with the grace_days parameter
         """
-        ret = []
+        query = Q()
         for role in Role.objects.all():
             delay = grace_days or role.purge_delay or int(getattr(settings, "PURGE_DELAY_DAYS", 730))
             cutoff = timezone.now() - datetime.timedelta(delay)
-            stale = list(self.filter(role=role, expire_date__lt=cutoff))
-            ret += stale
-        return ret
+            query |= Q(role=role, expire_date__lt=cutoff)
+        return self.filter(query)
 
 
 class Membership(models.Model):
