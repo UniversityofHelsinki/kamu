@@ -30,7 +30,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import FormView
 
-from base.auth import GoogleBackend, ShibbolethBackend, auth_login
+from base.auth import GoogleBackend, MicrosoftBackend, ShibbolethBackend, auth_login
 from base.connectors.email import send_verification_email
 from base.connectors.sms import SmsConnector
 from base.forms import (
@@ -363,6 +363,27 @@ class GoogleLoginView(RemoteLoginView):
     @staticmethod
     def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
         auth_login(request, user, backend="base.auth.GoogleBackend")
+
+
+class MicrosoftLoginView(RemoteLoginView):
+    """
+    LoginView to authenticate user with Microsoft.
+
+    Create a new user if the user does not exist yet and user has an invitation code in the session.
+    """
+
+    @staticmethod
+    def _authenticate_backend(request: HttpRequest) -> UserType | None:
+        backend = MicrosoftBackend()
+        if "invitation_code" in request.session and "invitation_code_time" in request.session:
+            user = backend.authenticate(request, create_user=True)
+        else:
+            user = backend.authenticate(request, create_user=False)
+        return user
+
+    @staticmethod
+    def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
+        auth_login(request, user, backend="base.auth.MicrosoftBackend")
 
 
 class EmailPhoneLoginView(FormView):

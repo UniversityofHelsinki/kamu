@@ -338,6 +338,39 @@ class GoogleBackend(LocalBaseBackend):
         return unique_identifier, given_names, surname, email, preferred_username
 
 
+class MicrosoftBackend(LocalBaseBackend):
+    """
+    Backend for Microsoft authentication.
+    """
+
+    def _get_identifier_type(self, request: HttpRequest) -> str:
+        """
+        Get identifier type. Values from the Identifier model choices.
+        """
+        return "microsoft"
+
+    @staticmethod
+    def _get_username_suffix() -> str:
+        """
+        Custom username suffix.
+        """
+        return settings.ACCOUNT_SUFFIX_MICROSOFT
+
+    def _get_request_data(self, request: HttpRequest) -> tuple[str, str, str, str | None, str | None]:
+        """
+        Get META parameters for Microsoft authentication.
+        """
+        issuer = request.META.get(settings.OIDC_MICROSOFT_ISSUER, "")
+        if not issuer.startswith("https://login.microsoftonline.com/"):
+            return "", "", "", None, None
+        unique_identifier = request.META.get(settings.OIDC_MICROSOFT_IDENTIFIER, "")
+        given_names = request.META.get(settings.OIDC_MICROSOFT_GIVEN_NAME, "")
+        surname = request.META.get(settings.OIDC_MICROSOFT_FAMILY_NAME, "")
+        email = request.META.get(settings.OIDC_MICROSOFT_EMAIL, None)
+        preferred_username = request.META.get(settings.OIDC_MICROSOFT_PREFERRED_USERNAME, None)
+        return unique_identifier, given_names, surname, email, preferred_username
+
+
 class EmailSMSBackend(LocalBaseBackend):
     """
     Backend to authenticate with email address and phone number.

@@ -28,7 +28,7 @@
       <p>{% trans "eduGAIN federation login. Global research and education institution accounts." %}</p>
     </div>
     <div class="col-md-6 col-12 mb-3">
-      <a href="#"><img class="mb-3" src="{% static "images/ms-signin-logo.svg" %}" alt="{% trans "Microsoft signin" %}"></a>
+      <a href="{% url 'login-microsoft' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/ms-signin-logo.svg" %}" alt="{% trans "Microsoft signin" %}"></a>
       <p>{% trans "Login with a Microsoft account." %}</p>
     </div>
     <div class="col-md-6 col-12 mb-3">

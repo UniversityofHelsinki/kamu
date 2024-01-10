@@ -54,6 +54,31 @@ class LoginViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Login failed", response.content.decode("utf-8"))
 
+    @override_settings(OIDC_MICROSOFT_IDENTIFIER="HTTP_OID")
+    @override_settings(OIDC_MICROSOFT_ISSUER="HTTP_ISS")
+    def _test_microsoft_login(self, iss, oid):
+        url = reverse("login-microsoft")
+        Identifier.objects.create(type="microsoft", value=oid, identity=self.identity)
+        response = self.client.get(
+            f"{url}?next=/identity/me",
+            follow=True,
+            headers={"OID": oid, "ISS": iss},
+        )
+        return response
+
+    def test_microsoft_login(self):
+        oid = "00000000-0000-0000-0123-456789abcdef"
+        iss = "https://login.microsoftonline.com/12345678-1234-1234-1234-123456789abc/v2.0"
+        response = self._test_microsoft_login(iss, oid)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Test User</h1>", response.content.decode("utf-8"))
+
+    def test_microsoft_login_with_incorrect_issuer(self):
+        oid = "00000000-0000-0000-0123-456789abcdef"
+        iss = "https://login.example.org/"
+        response = self._test_microsoft_login(iss, oid)
+        self.assertIn("Login failed", response.content.decode("utf-8"))
+
     @override_settings(SMS_DEBUG=True)
     @mock.patch("base.connectors.sms.logger")
     def test_email_login(self, mock_logger):

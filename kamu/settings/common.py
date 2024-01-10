@@ -98,6 +98,7 @@ AUTHENTICATION_BACKENDS: Sequence[str] = (
     "django.contrib.auth.backends.ModelBackend",
     "base.auth.ShibbolethBackend",
     "base.auth.GoogleBackend",
+    "base.auth.MicrosoftBackend",
     "base.auth.EmailSMSBackend",
 )
 
@@ -186,7 +187,15 @@ OIDC_CLAIM_GIVEN_NAME: str = "OIDC_CLAIM_given_name"
 OIDC_CLAIM_FAMILY_NAME: str = "OIDC_CLAIM_family_name"
 OIDC_CLAIM_EMAIL: str = "OIDC_CLAIM_email"
 
+OIDC_MICROSOFT_IDENTIFIER: str = "OIDC_CLAIM_oid"
+OIDC_MICROSOFT_GIVEN_NAME: str = "OIDC_CLAIM_givenname"
+OIDC_MICROSOFT_FAMILY_NAME: str = "OIDC_CLAIM_familyname"
+OIDC_MICROSOFT_EMAIL: str = "OIDC_CLAIM_email"
+OIDC_MICROSOFT_ISSUER: str = "OIDC_CLAIM_iss"
+OIDC_MICROSOFT_PREFERRED_USERNAME: str = "OIDC_CLAIM_preferred_username"
+
 ACCOUNT_SUFFIX_GOOGLE: str = "@google"
+ACCOUNT_SUFFIX_MICROSOFT: str = "@microsoft"
 
 # purge stale data this many days after expiry
 PURGE_DELAY_DAYS: int = 730
