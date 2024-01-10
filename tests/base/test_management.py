@@ -36,7 +36,7 @@ class GenerateTestDataTests(ManagementCommandTestCase):
     def test_generate_data(self):
         self.call_command("-v 0", "-i 10")
         self.assertEqual(Identity.objects.all().count(), 10)
-        self.assertGreaterEqual(Membership.objects.all().count(), 10)
+        self.assertGreaterEqual(Membership.objects.all().count(), 1)
 
 
 class PurgeDataTests(ManagementCommandTestCase):

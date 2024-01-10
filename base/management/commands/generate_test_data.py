@@ -351,7 +351,8 @@ class Command(BaseCommand):
                         status=status,
                     )
 
-            add_membership()
+            if n == 0 or random.randint(0, 100) < 80:
+                add_membership()
             if random.randint(0, 100) < 10:
                 add_membership()
 
