@@ -102,6 +102,7 @@ class IdentitySerializer(serializers.ModelSerializer[Identity]):
         model = Identity
         fields = [
             "id",
+            "kamu_id",
             "user",
             "external",
             "uid",

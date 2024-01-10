@@ -3,6 +3,7 @@ Identity app models.
 """
 import datetime
 from typing import Any
+from uuid import uuid4
 
 from django.conf import settings
 from django.core.validators import validate_email
@@ -95,6 +96,12 @@ class Identity(models.Model):
         (4, _("Strong electrical verification")),
     )
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    kamu_id = models.UUIDField(
+        unique=True,
+        default=uuid4,
+        verbose_name=_("Kamu ID"),
+        help_text=_("Unique identifier for this identity."),
+    )
     roles = models.ManyToManyField("role.Role", through="role.Membership")
     uid = models.CharField(
         blank=True,
@@ -308,6 +315,7 @@ class Identifier(models.Model):
         ("eppn", _("eduPersonPrincipalName")),
         ("google", _("Google account")),
         ("microsoft", _("Microsoft account")),
+        ("kamu", _("Kamu identifier")),
     )
     type = models.CharField(max_length=10, choices=IDENTIFIER_CHOICES, verbose_name=_("Identifier type"))
     value = models.CharField(max_length=255, verbose_name=_("Identifier value"))
