@@ -116,3 +116,70 @@ class PurgeMembershipTests(ManagementCommandTestCase):
             membership.save()
         self.call_command("-v=0")
         self.assertEqual(Membership.objects.all().count(), 2)
+
+
+class PurgeIdentityTests(ManagementCommandTestCase):
+    command = "purge_data"
+
+    def setUp(self):
+        user = get_user_model()
+        self.users = [
+            user.objects.create_user(
+                username=f"testuser{i}",
+                password=f"test_pass{i}",
+                last_login=timezone.now() - datetime.timedelta(days=5 * i),
+            )
+            for i in range(4)
+        ]
+
+        self.identities = [
+            Identity.objects.create(
+                user=self.users[i] if i < len(self.users) else None,
+                given_names=f"Test Me {i}",
+                surname=f"User{i}",
+                given_name_display=f"Test {i}",
+                created_at=timezone.now() - datetime.timedelta(days=5 * i + 2),
+            )
+            for i in range(6)
+        ]
+
+        self.role = Role.objects.create(identifier="test", name_en=f"Test Role", maximum_duration=400)
+
+    def _create_test_membership(self, identity, days):
+        start = timezone.now().date() - datetime.timedelta(days=390)
+        end = timezone.now().date() - datetime.timedelta(days=days)
+        Membership.objects.create(
+            role=self.role,
+            identity=identity,
+            reason="Because",
+            start_date=start,
+            expire_date=end,
+        )
+
+    def test_purge_args(self):
+        with self.assertRaises(UsageError):
+            self.call_command("--type=foo")
+        out = self.call_command("-l")
+        self.assertIn("identity", out)
+
+    def test_purge_inactive_without_roles(self):
+        self.assertEqual(Identity.objects.all().count(), 6)
+        self.call_command("-v=0", "--days=11", "-t=membership")
+        self.assertEqual(Identity.objects.all().count(), 6)
+        self.call_command("-v=0", "--days=11", "-t=identity")
+        self.assertEqual(Identity.objects.all().count(), 3)
+        self.call_command("-v=0", "--days=11", "-t=identity")
+        self.assertEqual(Identity.objects.all().count(), 3)
+        self.call_command("-v=0", "--days=9", "-t=identity")
+        self.assertEqual(Identity.objects.all().count(), 2)
+
+    def test_purge_inactive_with_roles(self):
+        self._create_test_membership(self.identities[5], 100)
+        self._create_test_membership(self.identities[2], 100)
+        self.assertEqual(Identity.objects.all().count(), 6)
+        self.call_command("-v=0", "--days=11", "-t=identity")
+        self.assertEqual(Identity.objects.all().count(), 4)
+        self.call_command("-v=0", "--days=9", "-t=identity")
+        self.assertEqual(Identity.objects.all().count(), 4)
+        self.call_command("-v=0", "--days=4", "-t=identity")
+        self.assertEqual(Identity.objects.all().count(), 3)

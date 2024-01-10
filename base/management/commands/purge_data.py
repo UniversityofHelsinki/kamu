@@ -4,11 +4,12 @@ Remove expired data (currently just memberships) X days after expiry.
 Usage help: ./manage.py purge_data -h
 """
 
-from typing import Any
+from typing import Any, Type
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
+from identity.models import Identity
 from role.models import Membership
 
 
@@ -17,8 +18,9 @@ class UsageError(CommandError):
 
 
 class Command(BaseCommand):
-    types = {
+    types: dict[str, Type[Membership | Identity]] = {
         "membership": Membership,
+        "identity": Identity,
     }
 
     def add_arguments(self, parser: Any) -> None:
@@ -63,6 +65,6 @@ class Command(BaseCommand):
             action = "Deleting" if not options["dry_run"] else "Would delete"
             for obj in stale:
                 if options["verbosity"] > 0:
-                    self.stdout.write(f"{action} {t} {obj}: expiry {obj.expire_date}")
+                    self.stdout.write(f"{action} {t} {obj}")
                 if not options["dry_run"]:
                     obj.delete()

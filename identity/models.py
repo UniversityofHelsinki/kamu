@@ -1,11 +1,13 @@
 """
 Identity app models.
 """
+import datetime
 from typing import Any
 
 from django.conf import settings
 from django.core.validators import validate_email
 from django.db import models
+from django.db.models import Q, QuerySet
 from django.utils import timezone
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
@@ -45,6 +47,22 @@ class Nationality(models.Model):
             return self.name_sv
         else:
             return self.name_en
+
+
+class IdentityManager(models.Manager["Identity"]):
+    """
+    Manager methods for :model:`identity.Identity`.
+    """
+
+    def get_stale(self, grace_days: int | None = None) -> QuerySet["Identity"]:
+        """
+        Returns a list of identity objects that don't have any role
+        memberships and grace_days (defaulting to the PURGE_DELAY_DAYS
+        setting) have passed since creation and last login times.
+        """
+        delay = grace_days or int(getattr(settings, "PURGE_DELAY_DAYS", 730))
+        cutoff = timezone.now() - datetime.timedelta(days=delay)
+        return self.filter(Q(membership=None, created_at__lt=cutoff) & (Q(user=None) | Q(user__last_login__lt=cutoff)))
 
 
 class Identity(models.Model):
@@ -162,6 +180,8 @@ class Identity(models.Model):
     )
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
+
+    objects = IdentityManager()
 
     class Meta:
         permissions = [
