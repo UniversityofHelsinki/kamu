@@ -51,6 +51,44 @@ class LocalBaseBackend(BaseBackend):
     Local authentication backend base with some custom functions.
     """
 
+    def _get_identifier_type(self, request: HttpRequest) -> str:
+        """
+        Get identifier type. Values from the Identifier model choices.
+        """
+        return ""
+
+    @staticmethod
+    def _get_username_suffix() -> str:
+        """
+        Get username suffix.
+        """
+        return settings.AUTH_DEFAULT_USERNAME_SUFFIX
+
+    @staticmethod
+    def _get_assurance_level(request: HttpRequest) -> str:
+        """
+        Get assurance level for the login method. Values from the Identity model choices.
+        """
+        return settings.AUTH_DEFAULT_ASSURANCE_LEVEL
+
+    @staticmethod
+    def _get_verification_level(request: HttpRequest) -> int:
+        """
+        Get attribute verification level for the login method. Values from the Identity model choices.
+        """
+        return settings.AUTH_DEFAULT_VERIFICATION_LEVEL
+
+    def _get_request_data(self, request: HttpRequest) -> tuple[str, str, str, str | None, str | None]:
+        """
+        Get external login parameters from request.META.
+        """
+        unique_identifier = request.META.get("sub", "")
+        given_names = request.META.get("given_name", "")
+        surname = request.META.get("family_name", "")
+        email = request.META.get("email", None)
+        preferred_username = request.META.get("preferred_username", None)
+        return unique_identifier, given_names, surname, email, preferred_username
+
     def get_user(self, user_id: int) -> UserType | None:
         """
         Return user object if it exists and is active.
@@ -61,18 +99,26 @@ class LocalBaseBackend(BaseBackend):
             return None
         return user if user.is_active else None
 
-    @staticmethod
-    def create_identity(user: UserType) -> Identity:
+    def _create_identity(self, request: HttpRequest, user: UserType) -> Identity:
         """
         Create a new identity for user.
         """
-        identity = Identity.objects.create(user=user, given_names=user.first_name, surname=user.last_name)
+        verification_level = self._get_verification_level(request)
+        assurance_level = self._get_assurance_level(request)
+        identity = Identity.objects.create(
+            user=user,
+            assurance_level=assurance_level,
+            given_names=user.first_name,
+            given_names_verification=verification_level,
+            surname=user.last_name,
+            surname_verification=verification_level,
+        )
         if user.email:
             EmailAddress.objects.create(address=user.email, identity=identity)
         return identity
 
     @staticmethod
-    def create_user(username: str, email: str, given_names: str, surname: str) -> UserType:
+    def _create_user(username: str, email: str | None, given_names: str, surname: str) -> UserType:
         """
         Create a new user with unusable password.
         """
@@ -87,7 +133,9 @@ class LocalBaseBackend(BaseBackend):
         user.save()
         return user
 
-    def link_identifier(self, user: UserType, identifier_type: str, identifier_value: str) -> None:
+    def _link_identifier(
+        self, request: HttpRequest, user: UserType, identifier_type: str, identifier_value: str
+    ) -> None:
         """
         Link identifier to the current user identity. Create identity if the user is authenticated and
         doesn't have an identity.
@@ -95,51 +143,29 @@ class LocalBaseBackend(BaseBackend):
         if hasattr(user, "identity"):
             identity = user.identity
         else:
-            identity = self.create_identity(user)
-        Identifier.objects.get_or_create(type=identifier_type, value=identifier_value, identity=identity)
+            identity = self._create_identity(request, user)
+        Identifier.objects.get_or_create(
+            type=identifier_type, value=identifier_value, identity=identity, deactivated_at=None
+        )
         return None
 
+    def _get_username(self, preferred_username: str | None, unique_identifier: str) -> str:
+        """
+        Get username from preferred_username if it is available and not already in use.
 
-class ShibbolethBackend(LocalBaseBackend):
-    """
-    Backend for Shibboleth authentication.
-
-    If Shibboleth eduPersonPrincipalName attribute is found.
-    - Creates a new user if user does not exist.
-    - Updates groups with prefixes in SAML_ATTR_GROUPS.
-    """
-
-    def authenticate(self, request: HttpRequest | None, create_user: bool = False, **kwargs: Any) -> UserType | None:
-        if not request:
-            return None
-        username = request.META.get(settings.SAML_ATTR_EPPN, "")
-        given_names = request.META.get(settings.SAML_ATTR_GIVEN_NAMES, "")
-        surname = request.META.get(settings.SAML_ATTR_SURNAME, "")
-        email = request.META.get(settings.SAML_ATTR_EMAIL, "")
-        groups = request.META.get(settings.SAML_ATTR_GROUPS, "").split(";")
-
-        if not username:
-            return None
-        try:
-            # Check that username follows eduPersonPrincipalName syntax, similar to email.
-            validate_email(username)
-        except ValidationError:
-            return None
-        try:
-            user = UserModel.objects.get(username=username)
-        except UserModel.DoesNotExist:
-            if create_user:
-                user = self.create_user(username=username, email=email, given_names=given_names, surname=surname)
-            else:
-                return None
-        self.update_groups(user, groups, settings.SAML_GROUP_PREFIXES)
-        return user
+        Otherwise, use unique_identifier with a suffix.
+        """
+        suffix = self._get_username_suffix()
+        if preferred_username and not UserModel.objects.filter(username=preferred_username).exists():
+            username = preferred_username
+        else:
+            username = f"{unique_identifier}{suffix}"
+        return username
 
     @staticmethod
     def update_groups(user: UserType, groups: list, prefixes: list[str] | None = None) -> None:
         """
-        Set users groups to provided groups
-
+        Set users groups to provided groups.
         If list of prefixes is given, only groups with those prefixes are updated.
         """
         login_groups = set(Group.objects.filter(name__in=groups))
@@ -153,6 +179,129 @@ class ShibbolethBackend(LocalBaseBackend):
             if not prefixes or group.name.startswith(tuple(prefixes)):
                 user.groups.add(group)
 
+    def _post_tasks(self, request: HttpRequest, user: UserType) -> None:
+        """
+        Tasks to run after getting the user.
+        """
+        pass
+
+    def _identifier_validation(self, request: HttpRequest, identifier: str) -> bool:
+        """
+        Validates identifier.
+        """
+        if not identifier:
+            return False
+        return True
+
+    def authenticate(
+        self, request: HttpRequest | None, create_user: bool = False, link_identifier: bool = False, **kwargs: Any
+    ) -> UserType | None:
+        """
+        Set create_user True to create user if it does not exist.
+
+        Set link_identifier True to link a user account to the current user identity,
+        if same identifier does not already exist in the database for some other user.
+        """
+        if not request:
+            return None
+        unique_identifier, given_names, surname, email, preferred_username = self._get_request_data(request)
+        identifier_type = self._get_identifier_type(request)
+        if not self._identifier_validation(request, unique_identifier):
+            return None
+        try:
+            identity = Identifier.objects.get(
+                type=identifier_type, value=unique_identifier, deactivated_at=None
+            ).identity
+        except Identifier.DoesNotExist:
+            if link_identifier:
+                # Identifier does not exist, link if user is authenticated.
+                if isinstance(request.user, UserType) and request.user.is_authenticated:
+                    self._link_identifier(request, request.user, identifier_type, unique_identifier)
+                    self._post_tasks(request, request.user)
+                    return request.user
+            if create_user and not request.user.is_authenticated:
+                # Identifier and user do not exist. Create a new user with a linked identifier.
+                username = self._get_username(preferred_username, unique_identifier)
+                user = self._create_user(username=username, email=email, given_names=given_names, surname=surname)
+                self._link_identifier(request, user, identifier_type, unique_identifier)
+                self._post_tasks(request, user)
+                return user
+            return None
+        if identity.user:
+            # Identifier exists and is linked to a user.
+            self._post_tasks(request, identity.user)
+            return identity.user
+        elif create_user and not request.user.is_authenticated:
+            # Create a new user and link existing identifier to it.
+            username = self._get_username(preferred_username, unique_identifier)
+            user = self._create_user(username=username, email=email, given_names=given_names, surname=surname)
+            identity.user = user
+            identity.save()
+            self._post_tasks(request, user)
+            return user
+        return None
+
+
+class ShibbolethBackend(LocalBaseBackend):
+    """
+    Backend for Shibboleth authentication.
+
+    If Shibboleth eduPersonPrincipalName attribute is found.
+    - Creates a new user if user does not exist.
+    - Updates groups with prefixes in SAML_ATTR_GROUPS.
+    """
+
+    def _get_identifier_type(self, request: HttpRequest) -> str:
+        """
+        Get identifier type. Values from the Identifier model choices.
+        """
+        return "eppn"
+
+    @staticmethod
+    def _get_assurance_level(request: HttpRequest) -> str:
+        """
+        Get assurance level for the login method, using Identity model choices.
+        """
+        assurance_level = request.META.get(settings.SAML_ATTR_ASSURANCE, "").split(";")
+        if "https://refeds.org/assurance/IAP/high" in assurance_level:
+            return "high"
+        elif "https://refeds.org/assurance/IAP/medium" in assurance_level:
+            return "medium"
+        else:
+            return "low"
+
+    def _get_request_data(self, request: HttpRequest) -> tuple[str, str, str, str | None, str | None]:
+        """
+        Get META parameters for generic SAML authentication.
+        """
+        unique_identifier = request.META.get(settings.SAML_ATTR_EPPN, "")
+        given_names = request.META.get(settings.SAML_ATTR_GIVEN_NAMES, "")
+        surname = request.META.get(settings.SAML_ATTR_SURNAME, "")
+        email = request.META.get(settings.SAML_ATTR_EMAIL, None)
+        preferred_username = request.META.get(settings.SAML_ATTR_EPPN, None)
+        return unique_identifier, given_names, surname, email, preferred_username
+
+    def _identifier_validation(self, request: HttpRequest, identifier: str) -> bool:
+        """
+        Custom identifier validation. EPPN must be in email format.
+        """
+        if not identifier:
+            return False
+        try:
+            validate_email(identifier)
+        except ValidationError:
+            return False
+        return True
+
+    def _post_tasks(self, request: HttpRequest, user: UserType) -> None:
+        """
+        Set groups if user is using local authentication.
+        """
+        unique_identifier = request.META.get(settings.SAML_ATTR_EPPN, "")
+        if unique_identifier.endswith(settings.LOCAL_EPPN_SUFFIX):
+            groups = request.META.get(settings.SAML_ATTR_GROUPS, "").split(";")
+            self.update_groups(user, groups, settings.SAML_GROUP_PREFIXES)
+
 
 class GoogleBackend(LocalBaseBackend):
     """
@@ -164,42 +313,29 @@ class GoogleBackend(LocalBaseBackend):
     if same identifier does not already exist in the database for some other user.
     """
 
-    def authenticate(
-        self, request: HttpRequest | None, create_user: bool = False, link_identifier: bool = False, **kwargs: Any
-    ) -> UserType | None:
-        if not request:
-            return None
-        unique_identifier = request.META.get(settings.OIDC_GOOGLE_SUB, "")
-        given_names = request.META.get(settings.OIDC_GOOGLE_GIVEN_NAME, "")
-        surname = request.META.get(settings.OIDC_GOOGLE_FAMILY_NAME, "")
-        email = request.META.get(settings.OIDC_GOOGLE_EMAIL, None)
-        if not unique_identifier:
-            return None
-        try:
-            identity = Identifier.objects.get(type="google", value=unique_identifier).identity
-        except Identifier.DoesNotExist:
-            if link_identifier:
-                # Identifier does not exist, link if user is authenticated
-                if isinstance(request.user, UserType) and request.user.is_authenticated:
-                    self.link_identifier(request.user, "google", unique_identifier)
-                    return request.user
-            if create_user and not request.user.is_authenticated:
-                # Identifier and user do not exist. Create a new user with a linked identifier.
-                username = f"{unique_identifier}@accounts.google.com"
-                user = self.create_user(username=username, email=email, given_names=given_names, surname=surname)
-                self.link_identifier(user, "google", unique_identifier)
-                return user
-            return None
-        if identity.user:
-            return identity.user
-        if create_user and not request.user.is_authenticated:
-            # Create a new user and link existing identifier to it.
-            username = f"{unique_identifier}@accounts.google.com"
-            user = self.create_user(username=username, email=email, given_names=given_names, surname=surname)
-            identity.user = user
-            identity.save()
-            return user
-        return None
+    def _get_identifier_type(self, request: HttpRequest) -> str:
+        """
+        Get identifier type. Values from the Identifier model choices.
+        """
+        return "google"
+
+    @staticmethod
+    def _get_username_suffix() -> str:
+        """
+        Custom username suffix.
+        """
+        return settings.ACCOUNT_SUFFIX_GOOGLE
+
+    def _get_request_data(self, request: HttpRequest) -> tuple[str, str, str, str | None, str | None]:
+        """
+        Get META parameters for Google authentication.
+        """
+        unique_identifier = request.META.get(settings.OIDC_CLAIM_SUB, "")
+        given_names = request.META.get(settings.OIDC_CLAIM_GIVEN_NAME, "")
+        surname = request.META.get(settings.OIDC_CLAIM_FAMILY_NAME, "")
+        email = request.META.get(settings.OIDC_CLAIM_EMAIL, None)
+        preferred_username = request.META.get(settings.OIDC_CLAIM_EMAIL, None)
+        return unique_identifier, given_names, surname, email, preferred_username
 
 
 class EmailSMSBackend(LocalBaseBackend):
@@ -212,6 +348,8 @@ class EmailSMSBackend(LocalBaseBackend):
     def authenticate(
         self,
         request: HttpRequest | None,
+        create_user: bool = False,
+        link_identifier: bool = False,
         email_address: str | None = None,
         email_token: str | None = None,
         phone_number: str | None = None,

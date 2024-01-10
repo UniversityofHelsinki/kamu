@@ -39,7 +39,7 @@ class LoginViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(UserModel.objects.filter(username="newuser@example.org").count(), 1)
 
-    @override_settings(OIDC_GOOGLE_SUB="HTTP_SUB")
+    @override_settings(OIDC_CLAIM_SUB="HTTP_SUB")
     def test_google_login(self):
         url = reverse("login-google")
         Identifier.objects.create(type="google", value="1234567890", identity=self.identity)
@@ -47,7 +47,7 @@ class LoginViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User</h1>", response.content.decode("utf-8"))
 
-    @override_settings(OIDC_GOOGLE_SUB="HTTP_SUB")
+    @override_settings(OIDC_CLAIM_SUB="HTTP_SUB")
     def test_google_login_without_account(self):
         url = reverse("login-google")
         response = self.client.get(url, follow=True, headers={"SUB": "1234567890"})
@@ -286,7 +286,7 @@ class RegistrationViewTests(TestCase):
         self.assertTrue(hasattr(identity, "user"))
         self.assertEqual(response.url, reverse("identity-detail", kwargs={"pk": identity.pk}))
 
-    @override_settings(OIDC_GOOGLE_SUB="HTTP_SUB")
+    @override_settings(OIDC_CLAIM_SUB="HTTP_SUB")
     def test_register_with_external_account(self):
         url = reverse("login-google") + "?next=" + reverse("membership-claim")
         response = self.client.get(url, follow=True, headers={"SUB": "1234567890"})

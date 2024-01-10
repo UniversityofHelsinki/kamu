@@ -17,51 +17,77 @@ UserModel = get_user_model()
 class ShibbolethBackendTests(TestCase):
     def setUp(self):
         self.user = UserModel.objects.create(username="testuser@example.org")
-        self.test_group = Group.objects.create(name="test_group")
-        self.saml_group = Group.objects.create(name="saml_group")
-        self.sso_group = Group.objects.create(name="sso_group")
-        self.user.groups.add(self.test_group)
-        self.user.groups.add(self.saml_group)
+        self.identity = Identity.objects.create(user=self.user)
+        self.identifier = Identifier.objects.create(identity=self.identity, type="eppn", value="testuser@example.org")
         self.factory = RequestFactory()
+        self.request = self.factory.get(reverse("login-shibboleth"))
+        self.request.user = AnonymousUser()
 
     def test_login_with_existing_user(self):
-        request = self.factory.get(reverse("login-shibboleth"))
-        request.META = {settings.SAML_ATTR_EPPN: "testuser@example.org"}
+        self.request.META = {settings.SAML_ATTR_EPPN: "testuser@example.org"}
         backend = ShibbolethBackend()
-        user = backend.authenticate(request=request, create_user=True)
+        user = backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(user.username, "testuser@example.org")
 
     def test_login_create_user(self):
-        request = self.factory.get(reverse("login-shibboleth"))
-        request.META = {settings.SAML_ATTR_EPPN: "newuser@example.org"}
+        self.request.META = {settings.SAML_ATTR_EPPN: "newuser@example.org"}
         backend = ShibbolethBackend()
-        user = backend.authenticate(request=request, create_user=True)
+        user = backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(user.username, "newuser@example.org")
+        self.assertEqual(user.identity.assurance_level, "low")
+        self.assertEqual(Identifier.objects.get(type="eppn", value="newuser@example.org").identity, user.identity)
+
+    def test_login_create_user_assurance(self):
+        self.request.META = {
+            settings.SAML_ATTR_EPPN: "newuser@example.org",
+            settings.SAML_ATTR_ASSURANCE: "https://refeds.org/assurance/IAP/medium;https://refeds.org/assurance/IAP/high",
+        }
+        backend = ShibbolethBackend()
+        user = backend.authenticate(request=self.request, create_user=True)
+        self.assertEqual(user.username, "newuser@example.org")
+        self.assertEqual(user.identity.assurance_level, "high")
 
     def test_login_create_incorrect_user_name(self):
-        request = self.factory.get(reverse("login-shibboleth"))
-        request.META = {settings.SAML_ATTR_EPPN: "newuser"}
+        self.request.META = {settings.SAML_ATTR_EPPN: "newuser"}
         backend = ShibbolethBackend()
-        user = backend.authenticate(request=request, create_user=True)
+        user = backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(user, None)
 
     def test_login_no_user_creation(self):
-        request = self.factory.get(reverse("login-shibboleth"))
-        request.META = {settings.SAML_ATTR_EPPN: "newuser@example.org"}
+        self.request.META = {settings.SAML_ATTR_EPPN: "newuser@example.org"}
         backend = ShibbolethBackend()
-        user = backend.authenticate(request=request, create_user=False)
+        user = backend.authenticate(request=self.request, create_user=False)
         self.assertEqual(user, None)
 
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_GROUP_PREFIXES=["saml_", "sso_"])
     def test_login_update_groups(self):
-        request = self.factory.get(reverse("login-shibboleth"))
-        request.META = {
+        test_group = Group.objects.create(name="test_group")
+        saml_group = Group.objects.create(name="saml_group")
+        sso_group = Group.objects.create(name="sso_group")
+        self.user.groups.add(test_group)
+        self.user.groups.add(saml_group)
+        self.request.META = {
             settings.SAML_ATTR_EPPN: "testuser@example.org",
-            settings.SAML_ATTR_GROUPS: f"{self.sso_group.name};saml_nogroup",
+            settings.SAML_ATTR_GROUPS: f"{sso_group.name};saml_nogroup",
         }
         backend = ShibbolethBackend()
-        user = backend.authenticate(request=request, create_user=True)
+        user = backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(user.groups.count(), 2)
+        self.assertIn(test_group, user.groups.all())
+        self.assertIn(sso_group, user.groups.all())
+
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.com")
+    @override_settings(SAML_GROUP_PREFIXES=["saml_", "sso_"])
+    def test_login_do_not_update_groups_for_incorrect_suffix(self):
+        sso_group = Group.objects.create(name="sso_group")
+        self.request.META = {
+            settings.SAML_ATTR_EPPN: "testuser@example.org",
+            settings.SAML_ATTR_GROUPS: f"{sso_group.name};saml_nogroup",
+        }
+        backend = ShibbolethBackend()
+        user = backend.authenticate(request=self.request, create_user=True)
+        self.assertEqual(user.groups.count(), 0)
 
 
 class GoogleBackendTests(TestCase):
@@ -73,7 +99,7 @@ class GoogleBackendTests(TestCase):
 
     def test_login_google_with_existing_user(self):
         request = self.factory.get(reverse("login-google"))
-        request.META = {settings.OIDC_GOOGLE_SUB: "1234567890"}
+        request.META = {settings.OIDC_CLAIM_SUB: "1234567890"}
         backend = GoogleBackend()
         user = backend.authenticate(request=request, create_user=False)
         self.assertEqual(user.username, "testuser@example.org")
@@ -81,10 +107,10 @@ class GoogleBackendTests(TestCase):
     def test_login_google_create_user(self):
         request = self.factory.get(reverse("login-google"))
         request.user = AnonymousUser()
-        request.META = {settings.OIDC_GOOGLE_SUB: "0123456789"}
+        request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
         user = backend.authenticate(request=request, create_user=True)
-        self.assertEqual(user.username, "0123456789@accounts.google.com")
+        self.assertEqual(user.username, f"0123456789{ settings.ACCOUNT_SUFFIX_GOOGLE }")
         self.assertEqual(Identifier.objects.get(value="0123456789").identity.user, user)
 
     def test_login_google_create_user_existing_identifier(self):
@@ -92,17 +118,17 @@ class GoogleBackendTests(TestCase):
         identity = Identity.objects.create()
         identifier = Identifier.objects.create(identity=identity, value="0123456789", type="google")
         request.user = AnonymousUser()
-        request.META = {settings.OIDC_GOOGLE_SUB: "0123456789"}
+        request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
         user = backend.authenticate(request=request, create_user=True)
         identifier.refresh_from_db()
-        self.assertEqual(user.username, "0123456789@accounts.google.com")
+        self.assertEqual(user.username, f"0123456789{ settings.ACCOUNT_SUFFIX_GOOGLE }")
         self.assertEqual(identifier.identity.user, user)
 
     def test_login_google_create_user_with_existing_user(self):
         request = self.factory.get(reverse("login-google"))
         request.user = self.user
-        request.META = {settings.OIDC_GOOGLE_SUB: "0123456789"}
+        request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
         user = backend.authenticate(request=request, create_user=True)
         self.assertIsNone(user)
@@ -110,7 +136,7 @@ class GoogleBackendTests(TestCase):
     def test_login_google_link_user_anonymous(self):
         request = self.factory.get(reverse("login-google"))
         request.user = AnonymousUser()
-        request.META = {settings.OIDC_GOOGLE_SUB: "0123456789"}
+        request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
         user = backend.authenticate(request=request, link_identifier=True)
         self.assertIsNone(user)
@@ -119,7 +145,7 @@ class GoogleBackendTests(TestCase):
     def test_login_google_link_identifier(self):
         request = self.factory.get(reverse("login-google"))
         request.user = self.user
-        request.META = {settings.OIDC_GOOGLE_SUB: "0123456789"}
+        request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
         user = backend.authenticate(request=request, link_identifier=True)
         self.assertEqual(user.username, "testuser@example.org")
@@ -130,7 +156,7 @@ class GoogleBackendTests(TestCase):
         request.user = self.user
         identity = Identity.objects.create()
         Identifier.objects.create(identity=identity, value="0123456789", type="google")
-        request.META = {settings.OIDC_GOOGLE_SUB: "0123456789"}
+        request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
         user = backend.authenticate(request=request, link_identifier=True)
         self.assertIsNone(user)

@@ -167,18 +167,26 @@ MESSAGE_TAGS: dict[int, str] = {
 
 LOGIN_REDIRECT_URL: str = "/"
 
-SAML_GROUP_PREFIXES: list[str] = ["grp-", "hy-", "sys-"]
+AUTH_DEFAULT_ASSURANCE_LEVEL: str = "low"
+AUTH_DEFAULT_VERIFICATION_LEVEL: int = 2
+AUTH_DEFAULT_USERNAME_SUFFIX: str = "@global"
 
+LOCAL_EPPN_SUFFIX: str = "@helsinki.fi"
+
+SAML_GROUP_PREFIXES: list[str] = ["grp-", "hy-", "sys-"]
 SAML_ATTR_EPPN: str = "shib_eduPersonPrincipalName"
 SAML_ATTR_GIVEN_NAMES: str = "shib_givenName"
 SAML_ATTR_SURNAME: str = "shib_sn"
 SAML_ATTR_EMAIL: str = "shib_mail"
+SAML_ATTR_ASSURANCE: str = "shib_eduPersonAssurance"
 SAML_ATTR_GROUPS: str = "shib_hyGroupCn"
 
-OIDC_GOOGLE_SUB: str = "OIDC_CLAIM_sub"
-OIDC_GOOGLE_GIVEN_NAME: str = "OIDC_CLAIM_given_name"
-OIDC_GOOGLE_FAMILY_NAME: str = "OIDC_CLAIM_family_name"
-OIDC_GOOGLE_EMAIL: str = "OIDC_CLAIM_email"
+OIDC_CLAIM_SUB: str = "OIDC_CLAIM_sub"
+OIDC_CLAIM_GIVEN_NAME: str = "OIDC_CLAIM_given_name"
+OIDC_CLAIM_FAMILY_NAME: str = "OIDC_CLAIM_family_name"
+OIDC_CLAIM_EMAIL: str = "OIDC_CLAIM_email"
+
+ACCOUNT_SUFFIX_GOOGLE: str = "@google"
 
 # purge stale data this many days after expiry
 PURGE_DELAY_DAYS: int = 730
