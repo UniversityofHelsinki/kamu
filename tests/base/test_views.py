@@ -95,6 +95,15 @@ class LoginViewTests(BaseTestCase):
         response = self._test_microsoft_login(iss, oid)
         self.assertIn("Login failed", response.content.decode("utf-8"))
 
+    @override_settings(SAML_SUOMIFI_SSN="HTTP_SSN")
+    @override_settings(ALLOW_TEST_FPIC=True)
+    def test_suomifi_login(self):
+        url = reverse("login-suomifi")
+        Identifier.objects.create(type="hetu", value="010181-900C", identity=self.identity)
+        response = self.client.get(f"{url}?next=/identity/me", follow=True, headers={"SSN": "010181-900C"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Test User</h1>", response.content.decode("utf-8"))
+
     @override_settings(SMS_DEBUG=True)
     @mock.patch("base.connectors.sms.logger")
     def test_email_login(self, mock_logger):
@@ -341,6 +350,29 @@ class RegistrationViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Membership created", response.content.decode("utf-8"))
         self.assertEqual(Identity.objects.get(identifiers__value="haka@example.com").user.username, "haka@example.com")
+
+    @override_settings(SAML_EIDAS_IDENTIFIER="HTTP_IDENTIFIER")
+    @override_settings(SAML_EIDAS_GIVEN_NAMES="HTTP_GIVEN_NAMES")
+    @override_settings(SAML_EIDAS_SURNAME="HTTP_SURNAME")
+    @override_settings(SAML_SUOMIFI_ASSURANCE="HTTP_ASSURANCE")
+    @override_settings(ALLOW_TEST_FPIC=True)
+    def test_eidas_registration_login(self):
+        url = reverse("login-suomifi") + "?next=" + reverse("membership-claim")
+        response = self.client.get(
+            url,
+            follow=True,
+            headers={
+                "IDENTIFIER": "ES/FI/abcdefg",
+                "GIVEN_NAMES": "eIDAS",
+                "SURNAME": "User",
+                "ASSURANCE": "http://eidas.europa.eu/LoA/low",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        identity = Identity.objects.get(identifiers__value="ES/FI/abcdefg")
+        self.assertEqual(identity.assurance_level, "medium")
+        self.assertEqual(identity.given_names, "eIDAS")
+        self.assertEqual(identity.surname, "User")
 
 
 class ErrorViewTests(TestCase):

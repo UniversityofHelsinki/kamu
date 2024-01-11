@@ -3,7 +3,9 @@ Authentication backends
 """
 import logging
 import re
+from datetime import datetime
 from typing import Any
+from uuid import uuid4
 
 from django.conf import settings
 from django.contrib.auth import get_user_model, login
@@ -21,6 +23,7 @@ from django.http import HttpRequest
 
 from base.models import Token
 from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
+from identity.validators import validate_fpic
 from role.models import Role
 
 UserModel = get_user_model()
@@ -315,6 +318,145 @@ class ShibbolethBackend(LocalBaseBackend):
             groups = request.META.get(settings.SAML_ATTR_GROUPS, "").split(";")
             self.update_groups(user, groups, settings.SAML_GROUP_PREFIXES)
             self._set_uid(user, unique_identifier)
+
+
+class SuomiFiBackend(LocalBaseBackend):
+    """
+    Backend for Suomi.fi and eIDAS authentication.
+    """
+
+    @staticmethod
+    def _get_type(request: HttpRequest) -> str:
+        """
+        Get login type. Suomi.fi and eIDAS have different attributes.
+        """
+        suomi_fi_identifier = request.META.get(settings.SAML_SUOMIFI_SSN, "")
+        eidas_identifier = request.META.get(settings.SAML_EIDAS_IDENTIFIER, "")
+        if suomi_fi_identifier:
+            return "suomifi"
+        elif eidas_identifier:
+            return "eidas"
+        return ""
+
+    def _get_identifier_type(self, request: HttpRequest) -> str:
+        """
+        Get identifier type. Values from the Identifier model choices.
+        """
+        identifier_type = self._get_type(request)
+        if identifier_type == "suomifi":
+            return "hetu"
+        elif identifier_type == "eidas":
+            return "eidas"
+        return ""
+
+    @staticmethod
+    def _get_assurance_level(request: HttpRequest) -> str:
+        """
+        Get assurance level for  the login method. Values from the Identity model choices.
+        """
+        assurance_level = set(request.META.get(settings.SAML_SUOMIFI_ASSURANCE, "").split(";"))
+        if set(settings.SUOMIFI_ASSURANCE_HIGH).intersection(assurance_level):
+            return "high"
+        elif set(settings.SUOMIFI_ASSURANCE_MEDIUM).intersection(assurance_level):
+            return "medium"
+        else:
+            return "low"
+
+    @staticmethod
+    def _get_verification_level(request: HttpRequest) -> int:
+        """
+        Get attribute verification level for the login method. Values from the Identity model choices.
+        """
+        return 4
+
+    def _get_request_data(self, request: HttpRequest) -> tuple[str, str, str, str | None, str | None]:
+        """
+        Get user attributes from META. Suomi.fi and eIDAS have different attribute sets.
+        """
+        identifier_type = self._get_type(request)
+        email = None
+        if identifier_type == "suomifi":
+            unique_identifier = request.META.get(settings.SAML_SUOMIFI_SSN, "")
+            given_names = request.META.get(settings.SAML_SUOMIFI_GIVEN_NAMES, "")
+            surname = request.META.get(settings.SAML_SUOMIFI_SURNAME, "")
+        elif identifier_type == "eidas":
+            unique_identifier = request.META.get(settings.SAML_EIDAS_IDENTIFIER, "")
+            given_names = request.META.get(settings.SAML_EIDAS_GIVEN_NAMES, "")
+            surname = request.META.get(settings.SAML_EIDAS_SURNAME, "")
+        else:
+            unique_identifier = ""
+            given_names = ""
+            surname = ""
+        preferred_username = f"{ unique_identifier }@{ identifier_type }"
+        return unique_identifier, given_names, surname, email, preferred_username
+
+    def _get_username(self, preferred_username: str | None, unique_identifier: str) -> str:
+        """
+        Create username with UUID and prefix.
+
+        Preferred username is only used for suffix, when creating a new user with Suomi.fi or eIDAS.
+        """
+        identifier = uuid4()
+        suffix = preferred_username.split("@")[-1] if preferred_username else ""
+        return f"{identifier}@{suffix}"
+
+    def _identifier_validation(self, request: HttpRequest, identifier: str) -> bool:
+        """
+        Custom identifier validation.
+
+        Validate fpic for Suomi.fi and regex for eIDAS.
+        """
+        if not identifier:
+            return False
+        identifier_type = self._get_type(request)
+        if identifier_type == "suomifi":
+            try:
+                validate_fpic(identifier)
+            except ValidationError:
+                return False
+        elif identifier_type == "eidas":
+            if not re.match(settings.EIDAS_IDENTIFIER_REGEX, identifier):
+                return False
+        else:
+            return False
+        return True
+
+    def _post_tasks(self, request: HttpRequest, user: UserType) -> None:
+        """
+        Set fpic and date of birth if available.
+        """
+        identity = user.identity if hasattr(user, "identity") else None
+        if not identity:
+            return None
+        verification_level = self._get_verification_level(request)
+        identifier_type = self._get_type(request)
+        if identifier_type == "suomifi":
+            fpic = request.META.get(settings.SAML_SUOMIFI_SSN, "")
+            try:
+                validate_fpic(fpic)
+            except ValidationError:
+                return None
+            if fpic[6] == "+":
+                date_string = f"{ fpic[:4] }18{ fpic[4:6] }"
+            elif fpic[6] in "-YXWVU":
+                date_string = f"{ fpic[:4] }19{ fpic[4:6] }"
+            else:
+                date_string = f"{ fpic[:4] }20{ fpic[4:6] }"
+            identity.date_of_birth = datetime.strptime(date_string, "%d%m%Y")
+            identity.date_of_birth_verification = verification_level
+            identity.fpic = fpic
+            identity.fpic_verification = verification_level
+            identity.save()
+        elif identifier_type == "eidas":
+            date_string = request.META.get(settings.SAML_EIDAS_DATEOFBIRTH, None)
+            if date_string:
+                try:
+                    identity.date_of_birth = datetime.strptime(date_string, "%Y-%m-%d")
+                    identity.date_of_birth_verification = verification_level
+                    identity.save()
+                except ValueError:
+                    pass
+        return None
 
 
 class GoogleBackend(LocalBaseBackend):

@@ -28,6 +28,7 @@ from base.views import (
     RegisterView,
     ShibbolethExternalLoginView,
     ShibbolethLocalLoginView,
+    SuomiFiLoginView,
     VerifyEmailAddressView,
     VerifyPhoneNumberView,
 )
@@ -98,6 +99,7 @@ urlpatterns = [
     path("login/edugain/", ShibbolethExternalLoginView.as_view(), name="login-edugain"),
     path("login/google/", GoogleLoginView.as_view(), name="login-google"),
     path("login/microsoft/", MicrosoftLoginView.as_view(), name="login-microsoft"),
+    path("login/suomifi/", SuomiFiLoginView.as_view(), name="login-suomifi"),
     path("login/local/", LocalLoginView.as_view(), name="login-local"),
     path("login/email/", EmailPhoneLoginView.as_view(), name="login-email"),
     path("login/email/verify/", EmailPhoneLoginVerificationView.as_view(), name="login-email-verify"),

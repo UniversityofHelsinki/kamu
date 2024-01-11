@@ -8,7 +8,7 @@
   <h2 class="mb-5">{% trans "Register with an external identity" %}</h2>
   <div class="row">
     <div class="col-md-6 col-12 mb-3">
-      <a href="#"><img class="mb-3" src="{% static "images/suomifi-signin-logo.png" %}" height="40" alt="{% trans "Suomi.fi signin" %}"></a>
+      <a href="{% url 'login-suomifi' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/suomifi-signin-logo.png" %}" height="40" alt="{% trans "Suomi.fi signin" %}"></a>
       <p>{% trans "Register with a Suomi.fi e-Identification or eIDAS." %}</p>
     </div>
     <div class="col-md-6 col-12 mb-3">

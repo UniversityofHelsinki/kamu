@@ -99,6 +99,7 @@ AUTHENTICATION_BACKENDS: Sequence[str] = (
     "base.auth.ShibbolethBackend",
     "base.auth.GoogleBackend",
     "base.auth.MicrosoftBackend",
+    "base.auth.SuomiFiBackend",
     "base.auth.EmailSMSBackend",
 )
 
@@ -193,6 +194,26 @@ OIDC_MICROSOFT_FAMILY_NAME: str = "OIDC_CLAIM_familyname"
 OIDC_MICROSOFT_EMAIL: str = "OIDC_CLAIM_email"
 OIDC_MICROSOFT_ISSUER: str = "OIDC_CLAIM_iss"
 OIDC_MICROSOFT_PREFERRED_USERNAME: str = "OIDC_CLAIM_preferred_username"
+
+SAML_SUOMIFI_SSN: str = "shib_nationalIdentificationNumber"
+SAML_SUOMIFI_GIVEN_NAMES: str = "shib_givenName"
+SAML_SUOMIFI_SURNAME: str = "shib_sn"
+SAML_SUOMIFI_ASSURANCE: str = "Shib-AuthnContext-Class"
+SUOMIFI_ASSURANCE_HIGH: list[str] = [
+    "http://ftn.ficora.fi/2017/loa3",
+    "http://eidas.europa.eu/LoA/high",
+    "http://ftn.ficora.fi/2017/loa2",
+    "http://eidas.europa.eu/LoA/substantial",
+]
+SUOMIFI_ASSURANCE_MEDIUM: list[str] = [
+    "http://eidas.europa.eu/LoA/low",
+]
+
+SAML_EIDAS_IDENTIFIER: str = "shib_PersonIdentifier"
+SAML_EIDAS_GIVEN_NAMES: str = "shib_FirstName"
+SAML_EIDAS_SURNAME: str = "shib_FamilyName"
+SAML_EIDAS_DATEOFBIRTH: str = "shib_DateOfBirth"
+EIDAS_IDENTIFIER_REGEX: str = "^[A-Z]{2}/FI/.+$"
 
 ACCOUNT_SUFFIX_GOOGLE: str = "@google"
 ACCOUNT_SUFFIX_MICROSOFT: str = "@microsoft"

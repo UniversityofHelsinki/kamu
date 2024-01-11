@@ -8,7 +8,7 @@ from django.contrib.auth.models import AnonymousUser, Group
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 
-from base.auth import GoogleBackend, ShibbolethBackend
+from base.auth import GoogleBackend, ShibbolethBackend, SuomiFiBackend
 from identity.models import Identifier, Identity
 
 UserModel = get_user_model()
@@ -179,3 +179,47 @@ class GoogleBackendTests(TestCase):
         backend = GoogleBackend()
         user = backend.authenticate(request=request, link_identifier=True)
         self.assertIsNone(user)
+
+
+class SuomiFiBackendTests(TestCase):
+    def setUp(self):
+        self.user = UserModel.objects.create(username="testuser@example.org")
+        self.identity = Identity.objects.create(user=self.user)
+        self.identifier = Identifier.objects.create(identity=self.identity, value="010181-900C", type="hetu")
+        self.factory = RequestFactory()
+
+    @override_settings(ALLOW_TEST_FPIC=True)
+    def test_login_suomifi_with_existing_user(self):
+        request = self.factory.get(reverse("login-suomifi"))
+        request.META = {settings.SAML_SUOMIFI_SSN: self.identifier.value}
+        backend = SuomiFiBackend()
+        user = backend.authenticate(request=request, create_user=False)
+        self.assertEqual(user.username, "testuser@example.org")
+        self.assertEqual(user.identity.fpic, self.identifier.value)
+        self.assertEqual(user.identity.date_of_birth.strftime("%Y-%m-%d"), "1981-01-01")
+
+    @override_settings(EIDAS_IDENTIFIER_REGEX="^[A-Z]{2}/FI/.+$")
+    def test_login_with_eidas_identifier(self):
+        request = self.factory.get(reverse("login-suomifi"))
+        Identifier.objects.create(identity=self.identity, value="ES/FI/abcdefg", type="eidas")
+        request.META = {settings.SAML_EIDAS_IDENTIFIER: "ES/FI/abcdefg", settings.SAML_EIDAS_DATEOFBIRTH: "1982-03-04"}
+        backend = SuomiFiBackend()
+        user = backend.authenticate(request=request, create_user=False)
+        self.assertEqual(user.username, "testuser@example.org")
+        self.assertEqual(user.identity.date_of_birth.strftime("%Y-%m-%d"), "1982-03-04")
+
+    @override_settings(EIDAS_IDENTIFIER_REGEX="^[A-Z]{2}/FI/.+$")
+    def test_login_suomifi_with_eidas_identifier(self):
+        request = self.factory.get(reverse("login-suomifi"))
+        Identifier.objects.create(identity=self.identity, value="ES/ES/abcdefg", type="eidas")
+        request.META = {settings.SAML_EIDAS_IDENTIFIER: "ES/ES/abcdefg"}
+        backend = SuomiFiBackend()
+        user = backend.authenticate(request=request, create_user=False)
+        self.assertEqual(user, None)
+
+    def test_login_suomifi_with_incorrect_eidas_identifier(self):
+        request = self.factory.get(reverse("login-suomifi"))
+        request.META = {settings.SAML_EIDAS_IDENTIFIER: "010181-900C"}
+        backend = SuomiFiBackend()
+        user = backend.authenticate(request=request, create_user=False)
+        self.assertEqual(user, None)
