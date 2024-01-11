@@ -20,11 +20,11 @@
       <p>{% trans "Login with a Suomi.fi e-Identification or eIDAS." %}</p>
     </div>
     <div class="col-md-6 col-12 mb-3">
-      <a href="#"><img class="mb-3" src="{% static "images/haka-signin-logo.svg" %}" height="40" alt="{% trans "Haka signin" %}"></a>
+      <a href="{% url 'login-haka' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/haka-signin-logo.svg" %}" height="40" alt="{% trans "Haka signin" %}"></a>
       <p>{% trans "Haka federation login. Finnish universities, polytechnics and research institutions accounts." %}</p>
     </div>
     <div class="col-md-6 col-12 mb-3">
-      <a href="#"><img class="mb-3" src="{% static "images/edugain-signin-logo.png" %}" height="40" alt="{% trans "eduGAIN signin" %}"></a>
+      <a href="{% url 'login-edugain' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/edugain-signin-logo.png" %}" height="40" alt="{% trans "eduGAIN signin" %}"></a>
       <p>{% trans "eduGAIN federation login. Global research and education institution accounts." %}</p>
     </div>
     <div class="col-md-6 col-12 mb-3">

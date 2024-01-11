@@ -33,11 +33,27 @@ class LoginViewTests(BaseTestCase):
         self.assertIn("Test User</h1>", response.content.decode("utf-8"))
 
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
-    def test_shibboleth_login(self):
+    def test_shibboleth_local_login(self):
         url = reverse("login-shibboleth")
         response = self.client.get(url, follow=True, headers={"EPPN": "newuser@example.org"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(UserModel.objects.filter(username="newuser@example.org").count(), 1)
+
+    @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
+    def test_shibboleth_remote_login_no_user(self):
+        url = reverse("login-haka")
+        response = self.client.get(url, follow=True, headers={"EPPN": "newuser@example.org"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Login failed", response.content.decode("utf-8"))
+        self.assertFalse(Identifier.objects.filter(value="newuser@example.org").exists())
+
+    @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
+    def test_shibboleth_remote_login(self):
+        url = reverse("login-edugain")
+        Identifier.objects.create(type="eppn", value="newuser@example.org", identity=self.identity)
+        response = self.client.get(f"{url}?next=/identity/me", follow=True, headers={"EPPN": "newuser@example.org"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Test User</h1>", response.content.decode("utf-8"))
 
     @override_settings(OIDC_CLAIM_SUB="HTTP_SUB")
     def test_google_login(self):
@@ -317,6 +333,14 @@ class RegistrationViewTests(TestCase):
         response = self.client.get(url, follow=True, headers={"SUB": "1234567890"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Membership created", response.content.decode("utf-8"))
+
+    @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
+    def test_register_with_haka_account(self):
+        url = reverse("login-haka") + "?next=" + reverse("membership-claim")
+        response = self.client.get(url, follow=True, headers={"EPPN": "haka@example.com"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Membership created", response.content.decode("utf-8"))
+        self.assertEqual(Identity.objects.get(identifiers__value="haka@example.com").user.username, "haka@example.com")
 
 
 class ErrorViewTests(TestCase):

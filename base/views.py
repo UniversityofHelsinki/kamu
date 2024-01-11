@@ -328,15 +328,37 @@ class RemoteLoginView(View):
         return HttpResponseRedirect(reverse("login"))
 
 
-class ShibbolethLoginView(RemoteLoginView):
+class ShibbolethLocalLoginView(RemoteLoginView):
     """
-    LoginView to authenticate user with Shibboleth
+    LoginView to authenticate user with Shibboleth.
+    Create user if it does not exist yet.
     """
 
     @staticmethod
     def _authenticate_backend(request: HttpRequest) -> UserType | None:
         backend = ShibbolethBackend()
         user = backend.authenticate(request, create_user=True)
+        return user
+
+    @staticmethod
+    def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
+        auth_login(request, user, backend="base.auth.ShibbolethBackend")
+
+
+class ShibbolethExternalLoginView(RemoteLoginView):
+    """
+    LoginView to authenticate user with Shibboleth.
+
+    Create a new user if the user does not exist yet and user has an invitation code in the session.
+    """
+
+    @staticmethod
+    def _authenticate_backend(request: HttpRequest) -> UserType | None:
+        backend = ShibbolethBackend()
+        if "invitation_code" in request.session and "invitation_code_time" in request.session:
+            user = backend.authenticate(request, create_user=True)
+        else:
+            user = backend.authenticate(request, create_user=False)
         return user
 
     @staticmethod
