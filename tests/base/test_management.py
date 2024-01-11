@@ -39,7 +39,7 @@ class GenerateTestDataTests(ManagementCommandTestCase):
         self.assertGreaterEqual(Membership.objects.all().count(), 1)
 
 
-class PurgeDataTests(ManagementCommandTestCase):
+class PurgeMembershipTests(ManagementCommandTestCase):
     command = "purge_data"
 
     def setUp(self):
