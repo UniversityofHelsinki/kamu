@@ -7,7 +7,7 @@ from unittest import mock
 from django.core import mail
 from django.test import Client
 
-from identity.models import EmailAddress, PhoneNumber
+from identity.models import EmailAddress, Identity, PhoneNumber
 from tests.setup import BaseTestCase
 
 LDAP_RETURN_VALUE = [
@@ -35,9 +35,18 @@ class IdentityTests(BaseTestCase):
 
     def test_view_identity_without_identity(self):
         self.identity.delete()
+        self.user.first_name = "Test"
+        self.user.last_name = "User"
+        self.user.email = "test.user@example.org"
+        self.user.save()
         response = self.client.get(f"{self.url}me/", follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("New identity created.", response.content.decode("utf-8"))
+        self.assertTrue(
+            Identity.objects.filter(
+                user=self.user, given_names="Test", surname="User", email_addresses__address="test.user@example.org"
+            ).exists()
+        )
 
     def test_view_identity(self):
         response = self.client.get(f"{self.url}{self.identity.pk}/")

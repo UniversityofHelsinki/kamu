@@ -339,7 +339,15 @@ class IdentityMeView(LoginRequiredMixin, View):
         try:
             identity = Identity.objects.get(user=user)
         except Identity.DoesNotExist:
-            identity = Identity.objects.create(user=user)
+            identity = Identity.objects.create(
+                user=user,
+                given_names=user.first_name,
+                given_names_verification=2,
+                surname=user.last_name,
+                surname_verification=2,
+            )
+            if user.email:
+                EmailAddress.objects.create(address=user.email, identity=identity)
             messages.add_message(request, messages.WARNING, _("New identity created."))
         return redirect("identity-detail", pk=identity.pk)
 
