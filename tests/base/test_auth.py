@@ -89,6 +89,25 @@ class ShibbolethBackendTests(TestCase):
         user = backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(user.groups.count(), 0)
 
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    def test_uid_update(self):
+        self.request.META = {
+            settings.SAML_ATTR_EPPN: "testuser@example.org",
+        }
+        backend = ShibbolethBackend()
+        user = backend.authenticate(request=self.request, create_user=True)
+        self.assertEqual(user.identity.uid, "testuser")
+
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    @override_settings(LOCAL_UID_IGNORE_REGEX="^\dk\d{6}$")
+    def test_uid_update_ignore_regex(self):
+        self.request.META = {
+            settings.SAML_ATTR_EPPN: "0k123456@example.org",
+        }
+        backend = ShibbolethBackend()
+        user = backend.authenticate(request=self.request, create_user=True)
+        self.assertEqual(user.identity.uid, "")
+
 
 class GoogleBackendTests(TestCase):
     def setUp(self):

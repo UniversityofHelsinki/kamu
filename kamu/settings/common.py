@@ -173,7 +173,7 @@ AUTH_DEFAULT_VERIFICATION_LEVEL: int = 2
 AUTH_DEFAULT_USERNAME_SUFFIX: str = "@global"
 
 LOCAL_EPPN_SUFFIX: str = "@helsinki.fi"
-
+LOCAL_UID_IGNORE_REGEX: str = "^\dk\d{6}$"
 SAML_GROUP_PREFIXES: list[str] = ["grp-", "hy-", "sys-"]
 SAML_ATTR_EPPN: str = "shib_eduPersonPrincipalName"
 SAML_ATTR_GIVEN_NAMES: str = "shib_givenName"

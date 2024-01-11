@@ -2,6 +2,7 @@
 Authentication backends
 """
 import logging
+import re
 from typing import Any
 
 from django.conf import settings
@@ -293,6 +294,18 @@ class ShibbolethBackend(LocalBaseBackend):
             return False
         return True
 
+    @staticmethod
+    def _set_uid(user: UserType, unique_identifier: str) -> None:
+        """
+        Set identity uid if it is not set and uid is in correct format.
+        """
+        uid = unique_identifier.removesuffix(settings.LOCAL_EPPN_SUFFIX)
+        if uid and len(uid) < 12 and not re.match(settings.LOCAL_UID_IGNORE_REGEX, uid):
+            if hasattr(user, "identity"):
+                if not user.identity.uid:
+                    user.identity.uid = uid
+                    user.identity.save()
+
     def _post_tasks(self, request: HttpRequest, user: UserType) -> None:
         """
         Set groups if user is using local authentication.
@@ -301,6 +314,7 @@ class ShibbolethBackend(LocalBaseBackend):
         if unique_identifier.endswith(settings.LOCAL_EPPN_SUFFIX):
             groups = request.META.get(settings.SAML_ATTR_GROUPS, "").split(";")
             self.update_groups(user, groups, settings.SAML_GROUP_PREFIXES)
+            self._set_uid(user, unique_identifier)
 
 
 class GoogleBackend(LocalBaseBackend):
