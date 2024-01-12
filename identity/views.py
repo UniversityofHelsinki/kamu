@@ -15,9 +15,17 @@ from django.http import HttpRequest, HttpResponse, HttpResponseBase
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views import View
-from django.views.generic import DetailView, FormView, ListView, UpdateView
+from django.views.decorators.csrf import csrf_protect
+from django.views.generic import (
+    DetailView,
+    FormView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
 from ldap import SIZELIMIT_EXCEEDED
 from ldap.filter import escape_filter_chars
 
@@ -31,7 +39,7 @@ from identity.forms import (
     IdentitySearchForm,
     PhoneNumberVerificationForm,
 )
-from identity.models import EmailAddress, Identity, PhoneNumber
+from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
 from role.models import Membership
 
 
@@ -50,6 +58,7 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
         context["memberships"] = Membership.objects.filter(
             identity=self.object, expire_date__gte=timezone.now().date()
         )
+        context["identifiers"] = Identifier.objects.filter(identity=self.object, deactivated_at=None)
         return context
 
     def get_queryset(self) -> QuerySet[Identity]:
@@ -322,6 +331,74 @@ class ContactView(LoginRequiredMixin, FormView):
             self._change_contact_priority(PhoneNumber, pk, "down")
             return redirect("contact-change", pk=self.identity.pk)
         return super().post(request, *args, **kwargs)
+
+
+class IdentifierView(LoginRequiredMixin, TemplateView):
+    """
+    List and deactivate identifiers.
+    """
+
+    template_name = "identifier.html"
+
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        """
+        Check that user has view permissions to identifiers. Change permissions in case of
+        POST message.
+        """
+        user = self.request.user if self.request.user.is_authenticated else None
+        if not user:
+            raise PermissionDenied
+        try:
+            self.identity = Identity.objects.get(pk=self.kwargs.get("pk"))
+        except Identity.DoesNotExist:
+            raise PermissionDenied
+        if self.identity.user != user and not user.has_perms(["identity.view_identifiers"]):
+            raise PermissionDenied
+        if (
+            request.method
+            and request.method.lower() == "post"
+            and self.identity.user != user
+            and not user.has_perms(["identity.change_identifiers"])
+        ):
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Add lists of users email_addresses and phone_numbers to context.
+        """
+        context = super(IdentifierView, self).get_context_data(**kwargs)
+        identity = Identity.objects.get(pk=self.kwargs.get("pk"))
+        context["identifier_active_list"] = Identifier.objects.filter(identity=identity, deactivated_at=None)
+        context["identifier_deactivated_list"] = Identifier.objects.filter(
+            identity=identity, deactivated_at__isnull=False
+        )
+        context["identity"] = identity
+        return context
+
+    @method_decorator(csrf_protect)
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Check for identifier deactivation. Prevent deactivation of last active identifier,
+        if user does not have generic change_indentifier permission.
+        """
+        data = self.request.POST
+        if "identifier_deactivate" in data:
+            pk = int(data["identifier_deactivate"])
+            if not self.request.user.has_perms(["identity.change_identifiers"]) and (
+                not Identifier.objects.filter(identity=self.identity, deactivated_at__isnull=True)
+                .exclude(pk=pk)
+                .exists()
+            ):
+                messages.add_message(self.request, messages.WARNING, _("Cannot deactivate last active identifier."))
+            else:
+                try:
+                    identifier = Identifier.objects.get(pk=pk, identity=self.identity, deactivated_at__isnull=True)
+                    identifier.deactivated_at = timezone.now()
+                    identifier.save()
+                except Identifier.DoesNotExist:
+                    pass
+        return redirect("identity-identifier", pk=self.identity.pk)
 
 
 class IdentityMeView(LoginRequiredMixin, View):

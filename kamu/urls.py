@@ -35,6 +35,7 @@ from base.views import (
 from identity.views import (
     ContactView,
     EmailAddressVerificationView,
+    IdentifierView,
     IdentityDetailView,
     IdentityMeView,
     IdentitySearchView,
@@ -77,6 +78,7 @@ urlpatterns = [
     path("identity/<int:pk>/contacts/", ContactView.as_view(), name="contact-change"),
     path("identity/search/", IdentitySearchView.as_view(), name="identity-search"),
     path("identity/<int:pk>/change/", IdentityUpdateView.as_view(), name="identity-change"),
+    path("identity/<int:pk>/identifiers/", IdentifierView.as_view(), name="identity-identifier"),
     path("email/<int:pk>/verify/", EmailAddressVerificationView.as_view(), name="email-verify"),
     path("phone/<int:pk>/verify/", PhoneNumberVerificationView.as_view(), name="phone-verify"),
     path("membership/", MembershipListView.as_view(), name="membership-list"),

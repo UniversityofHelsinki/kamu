@@ -4,11 +4,12 @@ View tests for identity app.
 
 from unittest import mock
 
+from django.contrib.auth import get_user_model
 from django.core import mail
 from django.test import Client
 from ldap import SIZELIMIT_EXCEEDED
 
-from identity.models import EmailAddress, Identity, PhoneNumber
+from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
 from tests.setup import BaseTestCase
 
 LDAP_RETURN_VALUE = [
@@ -239,6 +240,54 @@ class ContactTests(BaseTestCase):
         self.assertNotIn("+1234567890", response.content.decode("utf-8"))
         with self.assertRaises(PhoneNumber.DoesNotExist):
             self.number.refresh_from_db()
+
+
+class IdentifierTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.url = f"/identity/{self.identity.pk}/identifiers/"
+        self.identifier = Identifier.objects.create(
+            identity=self.identity,
+            type="eppn",
+            value="identifier@example.org",
+        )
+        self.client = Client()
+        self.client.force_login(self.user)
+
+    def test_view_identifiers(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("identifier@example.org", response.content.decode("utf-8"))
+
+    def test_deactivate_identifier(self):
+        Identifier.objects.create(
+            identity=self.identity,
+            type="eppn",
+            value="identifier@example.com",
+        )
+        self.assertIsNone(self.identifier.deactivated_at)
+        data = {"identifier_deactivate": self.identifier.pk}
+        self.client.post(self.url, data, follow=True)
+        self.identifier.refresh_from_db()
+        self.assertIsNotNone(self.identifier.deactivated_at)
+
+    def test_deactivate_last_identifier(self):
+        self.assertIsNone(self.identifier.deactivated_at)
+        data = {"identifier_deactivate": self.identifier.pk}
+        response = self.client.post(self.url, data, follow=True)
+        self.assertIn("Cannot deactivate", response.content.decode("utf-8"))
+        self.identifier.refresh_from_db()
+        self.assertIsNone(self.identifier.deactivated_at)
+
+    def test_deactivate_identifier_with_another_user(self):
+        user = get_user_model().objects.create_user(username="another")
+        self.client.force_login(user)
+        self.assertIsNone(self.identifier.deactivated_at)
+        data = {"identifier_deactivate": self.identifier.pk}
+        response = self.client.post(self.url, data, follow=True)
+        self.assertIn("Permission denied", response.content.decode("utf-8"))
+        self.identifier.refresh_from_db()
+        self.assertIsNone(self.identifier.deactivated_at)
 
 
 class VerificationTests(BaseTestCase):

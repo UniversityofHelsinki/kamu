@@ -23,15 +23,19 @@
     {% endif %}
     {% if user == object.user or perms.identity.view_contacts %}
       <dt class="col-sm-3">{% trans "E-mail addresses" %}</dt>
-      <dd class="col-sm-9">{% for address in object.email_addresses.all %}{{ address.address }}{% if address.verified %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+      <dd class="col-sm-9">{% for address in object.email_addresses.all %}{{ address.address }}{% if address.verified %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
       <dt class="col-sm-3">{% trans "Phone numbers" %}</dt>
-      <dd class="col-sm-9">{% for number in object.phone_numbers.all %}{{ number.number }}{% if number.verified %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+      <dd class="col-sm-9">{% for number in object.phone_numbers.all %}{{ number.number }}{% if number.verified %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
     {% endif %}
-  </dl>
+    {% if user == object.user or perms.identity.view_identifiers %}
+      <dt class="col-sm-3">{% trans "Identifiers" %}</dt>
+      <dd class="col-sm-9">{% for identifier in identifiers %}{{ identifier.get_type_display }}{% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
+    {% endif %}  </dl>
   <p><span class="text-success"> *</span> {% trans "verified" %}</p>
   {% if user == object.user or perms.identity.change_basic_information %}
-    <a href="{% url 'identity-change' object.pk %}" class="btn btn-primary me-2">{% trans "Update information" %}</a>
-    <a href="{% url 'contact-change' object.pk %}" class="btn btn-primary">{% trans "Update contact information" %}</a>
+    <a href="{% url 'identity-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Update information" %}</a>
+    <a href="{% url 'contact-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Update contact information" %}</a>
+    <a href="{% url 'identity-identifier' object.pk %}" class="btn btn-primary mb-2">{% trans "Update identifiers" %}</a>
   {% endif %}
   <h2 id="roles-list" class="mt-4">{% trans "Roles" %}</h2>
   {% if memberships %}
