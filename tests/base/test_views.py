@@ -355,7 +355,6 @@ class RegistrationViewTests(TestCase):
     @override_settings(SAML_EIDAS_GIVEN_NAMES="HTTP_GIVEN_NAMES")
     @override_settings(SAML_EIDAS_SURNAME="HTTP_SURNAME")
     @override_settings(SAML_SUOMIFI_ASSURANCE="HTTP_ASSURANCE")
-    @override_settings(ALLOW_TEST_FPIC=True)
     def test_eidas_registration_login(self):
         url = reverse("login-suomifi") + "?next=" + reverse("membership-claim")
         response = self.client.get(

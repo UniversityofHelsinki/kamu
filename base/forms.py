@@ -17,7 +17,7 @@ from django.core.validators import validate_email
 from django.http import HttpRequest
 from django.utils.translation import gettext as _
 
-from base.auth import EmailSMSBackend
+from base.auth import AuthenticationError, EmailSMSBackend
 from base.connectors.email import send_verification_email
 from base.connectors.sms import SmsConnector
 from base.models import TimeLimitError, Token
@@ -146,13 +146,16 @@ class EmailPhoneVerificationForm(AuthenticationForm):
         if not self.email_address or not self.phone_number:
             raise ValidationError(_("Error when logging in, please try again."))
         backend = EmailSMSBackend()
-        self.user_cache = backend.authenticate(
-            self.request,
-            email_address=self.email_address,
-            email_token=email_token,
-            phone_number=self.phone_number,
-            phone_token=phone_token,
-        )
+        try:
+            self.user_cache = backend.authenticate(
+                self.request,
+                email_address=self.email_address,
+                email_token=email_token,
+                phone_number=self.phone_number,
+                phone_token=phone_token,
+            )
+        except AuthenticationError:
+            raise ValidationError(_("Error when logging in, please try again."))
         if self.user_cache is None:
             raise ValidationError(_("Error when logging in, please try again."))
         if not self.user_cache.is_active:

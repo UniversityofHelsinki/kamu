@@ -20,6 +20,7 @@ from django.core.exceptions import (
 )
 from django.core.validators import validate_email
 from django.http import HttpRequest
+from django.utils.translation import gettext as _
 
 from base.models import Token
 from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
@@ -28,6 +29,14 @@ from role.models import Role
 
 UserModel = get_user_model()
 logger = logging.getLogger(__name__)
+
+
+class AuthenticationError(Exception):
+    """
+    Custom Exception for failed Authentication.
+    """
+
+    pass
 
 
 def post_login_tasks(request: HttpRequest) -> None:
@@ -54,6 +63,16 @@ class LocalBaseBackend(BaseBackend):
     """
     Local authentication backend base with some custom functions.
     """
+
+    error_messages = {
+        "identifier_not_found": _("Identifier not found."),
+        "identifier_missing": _("Valid identifier not found. This is probably a configuration error."),
+        "invalid_identifier_format": _("Invalid identifier format."),
+        "generic": _("Could not authenticate. Please try again."),
+        "unexpected": _("Unexpected error."),
+        "invalid_parameters": _("Missing required parameters. Please try again with an another browser."),
+        "invalid_email_or_phone": _("Invalid email address or phone number."),
+    }
 
     def _get_identifier_type(self, request: HttpRequest) -> str:
         """
@@ -189,17 +208,16 @@ class LocalBaseBackend(BaseBackend):
         """
         pass
 
-    def _identifier_validation(self, request: HttpRequest, identifier: str) -> bool:
+    def _identifier_validation(self, request: HttpRequest, identifier: str) -> None:
         """
         Validates identifier.
         """
         if not identifier:
-            return False
-        return True
+            raise AuthenticationError(self.error_messages["identifier_missing"])
 
     def authenticate(
         self, request: HttpRequest | None, create_user: bool = False, link_identifier: bool = False, **kwargs: Any
-    ) -> UserType | None:
+    ) -> UserType:
         """
         Set create_user True to create user if it does not exist.
 
@@ -207,11 +225,10 @@ class LocalBaseBackend(BaseBackend):
         if same identifier does not already exist in the database for some other user.
         """
         if not request:
-            return None
+            raise AuthenticationError(self.error_messages["unexpected"])
         unique_identifier, given_names, surname, email, preferred_username = self._get_request_data(request)
         identifier_type = self._get_identifier_type(request)
-        if not self._identifier_validation(request, unique_identifier):
-            return None
+        self._identifier_validation(request, unique_identifier)
         try:
             identity = Identifier.objects.get(
                 type=identifier_type, value=unique_identifier, deactivated_at=None
@@ -230,7 +247,7 @@ class LocalBaseBackend(BaseBackend):
                 self._link_identifier(request, user, identifier_type, unique_identifier)
                 self._post_tasks(request, user)
                 return user
-            return None
+            raise AuthenticationError(self.error_messages["identifier_not_found"])
         if identity.user:
             # Identifier exists and is linked to a user.
             self._post_tasks(request, identity.user)
@@ -243,7 +260,7 @@ class LocalBaseBackend(BaseBackend):
             identity.save()
             self._post_tasks(request, user)
             return user
-        return None
+        raise AuthenticationError(self.error_messages["identifier_not_found"])
 
 
 class ShibbolethBackend(LocalBaseBackend):
@@ -285,17 +302,16 @@ class ShibbolethBackend(LocalBaseBackend):
         preferred_username = request.META.get(settings.SAML_ATTR_EPPN, None)
         return unique_identifier, given_names, surname, email, preferred_username
 
-    def _identifier_validation(self, request: HttpRequest, identifier: str) -> bool:
+    def _identifier_validation(self, request: HttpRequest, identifier: str) -> None:
         """
         Custom identifier validation. EPPN must be in email format.
         """
         if not identifier:
-            return False
+            raise AuthenticationError(self.error_messages["identifier_missing"])
         try:
             validate_email(identifier)
         except ValidationError:
-            return False
-        return True
+            raise AuthenticationError(self.error_messages["invalid_identifier_format"])
 
     @staticmethod
     def _set_uid(user: UserType, unique_identifier: str) -> None:
@@ -325,8 +341,7 @@ class SuomiFiBackend(LocalBaseBackend):
     Backend for Suomi.fi and eIDAS authentication.
     """
 
-    @staticmethod
-    def _get_type(request: HttpRequest) -> str:
+    def _get_type(self, request: HttpRequest) -> str:
         """
         Get login type. Suomi.fi and eIDAS have different attributes.
         """
@@ -336,7 +351,7 @@ class SuomiFiBackend(LocalBaseBackend):
             return "suomifi"
         elif eidas_identifier:
             return "eidas"
-        return ""
+        raise AuthenticationError(self.error_messages["identifier_missing"])
 
     def _get_identifier_type(self, request: HttpRequest) -> str:
         """
@@ -345,9 +360,8 @@ class SuomiFiBackend(LocalBaseBackend):
         identifier_type = self._get_type(request)
         if identifier_type == "suomifi":
             return "hetu"
-        elif identifier_type == "eidas":
-            return "eidas"
-        return ""
+        else:
+            return identifier_type
 
     @staticmethod
     def _get_assurance_level(request: HttpRequest) -> str:
@@ -375,6 +389,7 @@ class SuomiFiBackend(LocalBaseBackend):
         """
         identifier_type = self._get_type(request)
         email = None
+        username_identifier = uuid4()
         if identifier_type == "suomifi":
             unique_identifier = request.META.get(settings.SAML_SUOMIFI_SSN, "")
             given_names = request.META.get(settings.SAML_SUOMIFI_GIVEN_NAMES, "")
@@ -384,42 +399,27 @@ class SuomiFiBackend(LocalBaseBackend):
             given_names = request.META.get(settings.SAML_EIDAS_GIVEN_NAMES, "")
             surname = request.META.get(settings.SAML_EIDAS_SURNAME, "")
         else:
-            unique_identifier = ""
-            given_names = ""
-            surname = ""
-        preferred_username = f"{ unique_identifier }@{ identifier_type }"
+            raise AuthenticationError(self.error_messages["identifier_missing"])
+        preferred_username = f"{ username_identifier }@{ identifier_type }"
         return unique_identifier, given_names, surname, email, preferred_username
 
-    def _get_username(self, preferred_username: str | None, unique_identifier: str) -> str:
-        """
-        Create username with UUID and prefix.
-
-        Preferred username is only used for suffix, when creating a new user with Suomi.fi or eIDAS.
-        """
-        identifier = uuid4()
-        suffix = preferred_username.split("@")[-1] if preferred_username else ""
-        return f"{identifier}@{suffix}"
-
-    def _identifier_validation(self, request: HttpRequest, identifier: str) -> bool:
+    def _identifier_validation(self, request: HttpRequest, identifier: str) -> None:
         """
         Custom identifier validation.
 
         Validate fpic for Suomi.fi and regex for eIDAS.
         """
         if not identifier:
-            return False
+            raise AuthenticationError(self.error_messages["identifier_missing"])
         identifier_type = self._get_type(request)
         if identifier_type == "suomifi":
             try:
                 validate_fpic(identifier)
             except ValidationError:
-                return False
-        elif identifier_type == "eidas":
-            if not re.match(settings.EIDAS_IDENTIFIER_REGEX, identifier):
-                return False
+                raise AuthenticationError(self.error_messages["invalid_identifier_format"])
         else:
-            return False
-        return True
+            if not re.match(settings.EIDAS_IDENTIFIER_REGEX, identifier):
+                raise AuthenticationError(self.error_messages["invalid_identifier_format"])
 
     def _post_tasks(self, request: HttpRequest, user: UserType) -> None:
         """
@@ -544,17 +544,17 @@ class EmailSMSBackend(LocalBaseBackend):
         phone_number: str | None = None,
         phone_token: str | None = None,
         **kwargs: Any,
-    ) -> UserType | None:
+    ) -> UserType:
         if not email_address or not email_token or not phone_number or not phone_token:
-            return None
+            raise AuthenticationError(self.error_messages["invalid_parameters"])
         try:
             email_obj = EmailAddress.objects.get(address=email_address, verified=True)
             phone_obj = PhoneNumber.objects.get(number=phone_number, verified=True)
-        except (ObjectDoesNotExist, MultipleObjectsReturned):
-            return None
+        except (ObjectDoesNotExist, MultipleObjectsReturned) as e:
+            raise AuthenticationError(self.error_messages["invalid_email_or_phone"]) from e
         if email_obj.identity.user and email_obj.identity.user == phone_obj.identity.user:
             if Token.objects.validate_email_object_verification_token(
                 email_token, email_obj
             ) and Token.objects.validate_phone_object_verification_token(phone_token, phone_obj):
                 return email_obj.identity.user
-        return None
+        raise AuthenticationError(self.error_messages["invalid_email_or_phone"])

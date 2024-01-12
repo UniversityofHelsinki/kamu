@@ -8,7 +8,12 @@ from django.contrib.auth.models import AnonymousUser, Group
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 
-from base.auth import GoogleBackend, ShibbolethBackend, SuomiFiBackend
+from base.auth import (
+    AuthenticationError,
+    GoogleBackend,
+    ShibbolethBackend,
+    SuomiFiBackend,
+)
 from identity.models import Identifier, Identity
 
 UserModel = get_user_model()
@@ -50,14 +55,16 @@ class ShibbolethBackendTests(TestCase):
     def test_login_create_incorrect_user_name(self):
         self.request.META = {settings.SAML_ATTR_EPPN: "newuser"}
         backend = ShibbolethBackend()
-        user = backend.authenticate(request=self.request, create_user=True)
-        self.assertEqual(user, None)
+        with self.assertRaises(AuthenticationError) as e:
+            backend.authenticate(request=self.request, create_user=True)
+        self.assertEqual(str(e.exception), "Invalid identifier format.")
 
     def test_login_no_user_creation(self):
         self.request.META = {settings.SAML_ATTR_EPPN: "newuser@example.org"}
         backend = ShibbolethBackend()
-        user = backend.authenticate(request=self.request, create_user=False)
-        self.assertEqual(user, None)
+        with self.assertRaises(AuthenticationError) as e:
+            backend.authenticate(request=self.request, create_user=False)
+        self.assertEqual(str(e.exception), "Identifier not found.")
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_GROUP_PREFIXES=["saml_", "sso_"])
@@ -149,16 +156,18 @@ class GoogleBackendTests(TestCase):
         request.user = self.user
         request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
-        user = backend.authenticate(request=request, create_user=True)
-        self.assertIsNone(user)
+        with self.assertRaises(AuthenticationError) as e:
+            backend.authenticate(request=request, create_user=True)
+        self.assertEqual(str(e.exception), "Identifier not found.")
 
     def test_login_google_link_user_anonymous(self):
         request = self.factory.get(reverse("login-google"))
         request.user = AnonymousUser()
         request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
-        user = backend.authenticate(request=request, link_identifier=True)
-        self.assertIsNone(user)
+        with self.assertRaises(AuthenticationError) as e:
+            backend.authenticate(request=request, link_identifier=True)
+        self.assertEqual(str(e.exception), "Identifier not found.")
         self.assertEqual(Identifier.objects.filter(value="0123456789").count(), 0)
 
     def test_login_google_link_identifier(self):
@@ -177,8 +186,9 @@ class GoogleBackendTests(TestCase):
         Identifier.objects.create(identity=identity, value="0123456789", type="google")
         request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
-        user = backend.authenticate(request=request, link_identifier=True)
-        self.assertIsNone(user)
+        with self.assertRaises(AuthenticationError) as e:
+            backend.authenticate(request=request, link_identifier=True)
+        self.assertEqual(str(e.exception), "Identifier not found.")
 
 
 class SuomiFiBackendTests(TestCase):
@@ -209,17 +219,26 @@ class SuomiFiBackendTests(TestCase):
         self.assertEqual(user.identity.date_of_birth.strftime("%Y-%m-%d"), "1982-03-04")
 
     @override_settings(EIDAS_IDENTIFIER_REGEX="^[A-Z]{2}/FI/.+$")
-    def test_login_suomifi_with_eidas_identifier(self):
+    def test_login_eidas_with_invalid_identifier(self):
         request = self.factory.get(reverse("login-suomifi"))
         Identifier.objects.create(identity=self.identity, value="ES/ES/abcdefg", type="eidas")
         request.META = {settings.SAML_EIDAS_IDENTIFIER: "ES/ES/abcdefg"}
         backend = SuomiFiBackend()
-        user = backend.authenticate(request=request, create_user=False)
-        self.assertEqual(user, None)
+        with self.assertRaises(AuthenticationError) as e:
+            backend.authenticate(request=request, create_user=False)
+        self.assertEqual(str(e.exception), "Invalid identifier format.")
 
     def test_login_suomifi_with_incorrect_eidas_identifier(self):
         request = self.factory.get(reverse("login-suomifi"))
         request.META = {settings.SAML_EIDAS_IDENTIFIER: "010181-900C"}
         backend = SuomiFiBackend()
-        user = backend.authenticate(request=request, create_user=False)
-        self.assertEqual(user, None)
+        with self.assertRaises(AuthenticationError) as e:
+            backend.authenticate(request=request, create_user=False)
+        self.assertEqual(str(e.exception), "Invalid identifier format.")
+
+    def test_login_suomifi_without_request_params(self):
+        request = self.factory.get(reverse("login-suomifi"))
+        backend = SuomiFiBackend()
+        with self.assertRaises(AuthenticationError) as e:
+            backend.authenticate(request=request, create_user=False)
+        self.assertIn("Valid identifier not found.", str(e.exception))

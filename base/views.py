@@ -31,6 +31,7 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import FormView
 
 from base.auth import (
+    AuthenticationError,
     GoogleBackend,
     MicrosoftBackend,
     ShibbolethBackend,
@@ -293,14 +294,14 @@ class RemoteLoginView(View):
     """
 
     @staticmethod
-    def _authenticate_backend(request: HttpRequest) -> None | UserType:
+    def _authenticate_backend(request: HttpRequest) -> UserType:
         """
         Authentication user against a backend.
         # backend = ShibbolethBackend()
         # user = backend.authenticate(request, create_user=True)
         # return user
         """
-        return None
+        raise AuthenticationError(_("Authentication backend not set"))
 
     @staticmethod
     def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
@@ -313,25 +314,25 @@ class RemoteLoginView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         redirect_to = request.GET.get("next", settings.LOGIN_REDIRECT_URL)
-        user = self._authenticate_backend(request)
-        if user:
-            if not user.is_active:
-                info_message = _("This account is inactive.")
-                logger.warning(f"User {user} with inactive account tried to log in")
-                return render(request, "info.html", {"message": info_message})
-            if redirect_to == request.path:
-                error_message = _("Redirection loop for authenticated user detected. Please contact service admins.")
-                logger.error(
-                    "Redirection loop detected in user authentication. Check that your LOGIN_REDIRECT_URL doesn't "
-                    "point to the login page."
-                )
-                return render(request, "error.html", {"message": error_message})
-            self._remote_auth_login(request, user)
-            return HttpResponseRedirect(redirect_to)
-        else:
-            messages.error(request, _("Login failed."))
-            logger.debug("Failed login")
-        return HttpResponseRedirect(reverse("login"))
+        try:
+            user = self._authenticate_backend(request)
+        except AuthenticationError as e:
+            messages.error(request, _("Login failed: ") + str(e))
+            logger.debug("Login failed: " + str(e))
+            return HttpResponseRedirect(reverse("login"))
+        if not user.is_active:
+            info_message = _("This account is inactive.")
+            logger.warning(f"User {user} with inactive account tried to log in")
+            return render(request, "info.html", {"message": info_message})
+        if redirect_to == request.path:
+            error_message = _("Redirection loop for authenticated user detected. Please contact service admins.")
+            logger.error(
+                "Redirection loop detected in user authentication. Check that your LOGIN_REDIRECT_URL doesn't "
+                "point to the login page."
+            )
+            return render(request, "error.html", {"message": error_message})
+        self._remote_auth_login(request, user)
+        return HttpResponseRedirect(redirect_to)
 
 
 class ShibbolethLocalLoginView(RemoteLoginView):
@@ -341,7 +342,7 @@ class ShibbolethLocalLoginView(RemoteLoginView):
     """
 
     @staticmethod
-    def _authenticate_backend(request: HttpRequest) -> UserType | None:
+    def _authenticate_backend(request: HttpRequest) -> UserType:
         backend = ShibbolethBackend()
         user = backend.authenticate(request, create_user=True)
         return user
@@ -359,7 +360,7 @@ class ShibbolethExternalLoginView(RemoteLoginView):
     """
 
     @staticmethod
-    def _authenticate_backend(request: HttpRequest) -> UserType | None:
+    def _authenticate_backend(request: HttpRequest) -> UserType:
         backend = ShibbolethBackend()
         if "invitation_code" in request.session and "invitation_code_time" in request.session:
             user = backend.authenticate(request, create_user=True)
@@ -380,7 +381,7 @@ class SuomiFiLoginView(RemoteLoginView):
     """
 
     @staticmethod
-    def _authenticate_backend(request: HttpRequest) -> UserType | None:
+    def _authenticate_backend(request: HttpRequest) -> UserType:
         backend = SuomiFiBackend()
         if "invitation_code" in request.session and "invitation_code_time" in request.session:
             user = backend.authenticate(request, create_user=True)
@@ -401,7 +402,7 @@ class GoogleLoginView(RemoteLoginView):
     """
 
     @staticmethod
-    def _authenticate_backend(request: HttpRequest) -> UserType | None:
+    def _authenticate_backend(request: HttpRequest) -> UserType:
         backend = GoogleBackend()
         if "invitation_code" in request.session and "invitation_code_time" in request.session:
             user = backend.authenticate(request, create_user=True)
@@ -422,7 +423,7 @@ class MicrosoftLoginView(RemoteLoginView):
     """
 
     @staticmethod
-    def _authenticate_backend(request: HttpRequest) -> UserType | None:
+    def _authenticate_backend(request: HttpRequest) -> UserType:
         backend = MicrosoftBackend()
         if "invitation_code" in request.session and "invitation_code_time" in request.session:
             user = backend.authenticate(request, create_user=True)
