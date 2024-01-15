@@ -6,6 +6,8 @@ from typing import Any
 from uuid import uuid4
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User as UserType
 from django.core.validators import validate_email
 from django.db import models
 from django.db.models import Q, QuerySet
@@ -48,6 +50,28 @@ class Nationality(models.Model):
             return self.name_sv
         else:
             return self.name_en
+
+
+class CustomUserManager:
+    """
+    Custom manager methods for User. As the user model is dynamically
+    determined, this is not the real manager class, just a place to
+    hold the methods. They need to be explicitly called.
+    """
+
+    @staticmethod
+    def get_stale(grace_days: int | None = None) -> QuerySet["UserType"]:
+        """
+        Returns a list of user objects that don't have a linked identity,
+        own no roles, are not involved in any active memberships, and
+        and grace_days (defaulting to the PURGE_DELAY_DAYS setting)
+        have passed since last login time.
+        """
+        delay = grace_days or int(getattr(settings, "PURGE_DELAY_DAYS", 730))
+        cutoff = timezone.now() - datetime.timedelta(days=delay)
+        return get_user_model().objects.filter(
+            identity=None, role__owner=None, membership_inviter=None, membership_approver=None, last_login__lt=cutoff
+        )
 
 
 class IdentityManager(models.Manager["Identity"]):

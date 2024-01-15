@@ -9,8 +9,8 @@ from typing import Any, Type
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
-from identity.models import Identity
-from role.models import Membership
+from identity.models import CustomUserManager, Identity, IdentityManager
+from role.models import Membership, MembershipManager
 
 
 class UsageError(CommandError):
@@ -18,9 +18,10 @@ class UsageError(CommandError):
 
 
 class Command(BaseCommand):
-    types: dict[str, Type[Membership | Identity]] = {
-        "membership": Membership,
-        "identity": Identity,
+    types: dict[str, MembershipManager | IdentityManager | CustomUserManager] = {
+        "membership": Membership.objects,
+        "identity": Identity.objects,
+        "user": CustomUserManager(),
     }
 
     def add_arguments(self, parser: Any) -> None:
@@ -55,8 +56,8 @@ class Command(BaseCommand):
         for t in types:
             if options["verbosity"] > 1:
                 self.stdout.write(f"Purging {t} data")
-            data_class = self.types[t]
-            stale = data_class.objects.get_stale(grace_days=options.get("grace_days"))
+            manager_class = self.types[t]
+            stale = manager_class.get_stale(grace_days=options.get("grace_days"))
             if not stale.exists():
                 if options["verbosity"] > 1:
                     self.stdout.write(f"Skipping {t}: nothing to purge")
