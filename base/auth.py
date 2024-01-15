@@ -67,6 +67,7 @@ class LocalBaseBackend(BaseBackend):
     error_messages = {
         "identifier_not_found": _("Identifier not found."),
         "identifier_missing": _("Valid identifier not found. This is probably a configuration error."),
+        "identity_already_exists": _("Identifier is already linked to another user."),
         "invalid_identifier_format": _("Invalid identifier format."),
         "generic": _("Could not authenticate. Please try again."),
         "unexpected": _("Unexpected error."),
@@ -248,6 +249,13 @@ class LocalBaseBackend(BaseBackend):
                 self._post_tasks(request, user)
                 return user
             raise AuthenticationError(self.error_messages["identifier_not_found"])
+        if request.user.is_authenticated and request.user == identity.user:
+            # Identifier exists and is linked to the current user.
+            self._post_tasks(request, identity.user)
+            return identity.user
+        if request.user.is_authenticated and request.user != identity.user:
+            # Identifier exists for different user.
+            raise AuthenticationError(self.error_messages["identity_already_exists"])
         if identity.user:
             # Identifier exists and is linked to a user.
             self._post_tasks(request, identity.user)

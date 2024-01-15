@@ -125,6 +125,7 @@ class GoogleBackendTests(TestCase):
 
     def test_login_google_with_existing_user(self):
         request = self.factory.get(reverse("login-google"))
+        request.user = AnonymousUser()
         request.META = {settings.OIDC_CLAIM_SUB: "1234567890"}
         backend = GoogleBackend()
         user = backend.authenticate(request=request, create_user=False)
@@ -188,7 +189,7 @@ class GoogleBackendTests(TestCase):
         backend = GoogleBackend()
         with self.assertRaises(AuthenticationError) as e:
             backend.authenticate(request=request, link_identifier=True)
-        self.assertEqual(str(e.exception), "Identifier not found.")
+        self.assertEqual(str(e.exception), "Identifier is already linked to another user.")
 
 
 class SuomiFiBackendTests(TestCase):
@@ -201,6 +202,7 @@ class SuomiFiBackendTests(TestCase):
     @override_settings(ALLOW_TEST_FPIC=True)
     def test_login_suomifi_with_existing_user(self):
         request = self.factory.get(reverse("login-suomifi"))
+        request.user = AnonymousUser()
         request.META = {settings.SAML_SUOMIFI_SSN: self.identifier.value}
         backend = SuomiFiBackend()
         user = backend.authenticate(request=request, create_user=False)
@@ -211,6 +213,7 @@ class SuomiFiBackendTests(TestCase):
     @override_settings(EIDAS_IDENTIFIER_REGEX="^[A-Z]{2}/FI/.+$")
     def test_login_with_eidas_identifier(self):
         request = self.factory.get(reverse("login-suomifi"))
+        request.user = AnonymousUser()
         Identifier.objects.create(identity=self.identity, value="ES/FI/abcdefg", type="eidas")
         request.META = {settings.SAML_EIDAS_IDENTIFIER: "ES/FI/abcdefg", settings.SAML_EIDAS_DATEOFBIRTH: "1982-03-04"}
         backend = SuomiFiBackend()
