@@ -195,7 +195,7 @@ class SuomiFiBackendTests(TestCase):
     def setUp(self):
         self.user = UserModel.objects.create(username="testuser@example.org")
         self.identity = Identity.objects.create(user=self.user)
-        self.identifier = Identifier.objects.create(identity=self.identity, value="010181-900C", type="hetu")
+        self.identifier = Identifier.objects.create(identity=self.identity, value="010181-900C", type="fpic")
         self.factory = RequestFactory()
 
     @override_settings(ALLOW_TEST_FPIC=True)

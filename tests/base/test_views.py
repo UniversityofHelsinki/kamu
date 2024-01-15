@@ -99,7 +99,7 @@ class LoginViewTests(BaseTestCase):
     @override_settings(ALLOW_TEST_FPIC=True)
     def test_suomifi_login(self):
         url = reverse("login-suomifi")
-        Identifier.objects.create(type="hetu", value="010181-900C", identity=self.identity)
+        Identifier.objects.create(type="fpic", value="010181-900C", identity=self.identity)
         response = self.client.get(f"{url}?next=/identity/me", follow=True, headers={"SSN": "010181-900C"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User</h1>", response.content.decode("utf-8"))

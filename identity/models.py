@@ -310,7 +310,7 @@ class Identifier(models.Model):
     )
 
     IDENTIFIER_CHOICES = (
-        ("hetu", _("Finnish national identification number")),
+        ("fpic", _("Finnish national identification number")),
         ("eidas", _("eIDAS identifier")),
         ("eppn", _("eduPersonPrincipalName")),
         ("google", _("Google account")),

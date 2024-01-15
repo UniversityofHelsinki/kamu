@@ -359,7 +359,7 @@ class SuomiFiBackend(LocalBaseBackend):
         """
         identifier_type = self._get_type(request)
         if identifier_type == "suomifi":
-            return "hetu"
+            return "fpic"
         else:
             return identifier_type
 
