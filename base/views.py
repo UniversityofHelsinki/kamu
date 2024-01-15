@@ -3,6 +3,7 @@ Base views, shared between apps.
 """
 
 import logging
+from datetime import datetime, timedelta
 from typing import Any
 
 from django.conf import settings
@@ -33,6 +34,7 @@ from django.views.generic import FormView
 from base.auth import (
     AuthenticationError,
     GoogleBackend,
+    LocalBaseBackend,
     MicrosoftBackend,
     ShibbolethBackend,
     SuomiFiBackend,
@@ -293,8 +295,45 @@ class RemoteLoginView(View):
     correct backend settings.
     """
 
-    @staticmethod
-    def _authenticate_backend(request: HttpRequest) -> UserType:
+    def _remove_session_parameters(self, request: HttpRequest) -> None:
+        """
+        Remove session parameters used in login process.
+        """
+        for item in ["link_identifier", "link_identifier_time"]:
+            if item in request.session:
+                del request.session[item]
+
+    def _validate_link_identifier_time(self, request: HttpRequest) -> bool:
+        """
+        Check that link identifier has not expired.
+        """
+        if "link_identifier_time" not in request.session:
+            self._remove_session_parameters(request)
+            raise AuthenticationError(_("Link identifier not found"))
+        link_identifier_time_limit = getattr(settings, "LINK_IDENTIFIER_TIME_LIMIT", 300)
+        try:
+            link_identifier_time = datetime.fromisoformat(request.session["link_identifier_time"])
+        except ValueError:
+            self._remove_session_parameters(request)
+            raise AuthenticationError(_("Link identifier time not valid"))
+        if timezone.now() - link_identifier_time > timedelta(seconds=link_identifier_time_limit):
+            self._remove_session_parameters(request)
+            raise AuthenticationError(_("Link identifier expired"))
+        return True
+
+    def _authenticate(self, request: HttpRequest, backend: LocalBaseBackend) -> UserType:
+        """
+        Call backend function with correct parameters, based on session variables.
+        """
+        if "invitation_code" in request.session and "invitation_code_time" in request.session:
+            user = backend.authenticate(request, create_user=True)
+        elif "link_identifier" in request.session and self._validate_link_identifier_time(request):
+            user = backend.authenticate(request, link_identifier=True)
+        else:
+            user = backend.authenticate(request, create_user=False)
+        return user
+
+    def _authenticate_backend(self, request: HttpRequest) -> UserType:
         """
         Authentication user against a backend.
         # backend = ShibbolethBackend()
@@ -341,10 +380,15 @@ class ShibbolethLocalLoginView(RemoteLoginView):
     Create user if it does not exist yet.
     """
 
-    @staticmethod
-    def _authenticate_backend(request: HttpRequest) -> UserType:
+    def _authenticate_backend(self, request: HttpRequest) -> UserType:
+        """
+        Shibboleth Local does not require invitation code to create a new user.
+        """
         backend = ShibbolethBackend()
-        user = backend.authenticate(request, create_user=True)
+        if "link_identifier" in request.session and self._validate_link_identifier_time(request):
+            user = backend.authenticate(request, link_identifier=True)
+        else:
+            user = backend.authenticate(request, create_user=True)
         return user
 
     @staticmethod
@@ -359,14 +403,9 @@ class ShibbolethExternalLoginView(RemoteLoginView):
     Create a new user if the user does not exist yet and user has an invitation code in the session.
     """
 
-    @staticmethod
-    def _authenticate_backend(request: HttpRequest) -> UserType:
+    def _authenticate_backend(self, request: HttpRequest) -> UserType:
         backend = ShibbolethBackend()
-        if "invitation_code" in request.session and "invitation_code_time" in request.session:
-            user = backend.authenticate(request, create_user=True)
-        else:
-            user = backend.authenticate(request, create_user=False)
-        return user
+        return self._authenticate(request, backend)
 
     @staticmethod
     def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
@@ -380,14 +419,9 @@ class SuomiFiLoginView(RemoteLoginView):
     Create a new user if the user does not exist yet and user has an invitation code in the session.
     """
 
-    @staticmethod
-    def _authenticate_backend(request: HttpRequest) -> UserType:
+    def _authenticate_backend(self, request: HttpRequest) -> UserType:
         backend = SuomiFiBackend()
-        if "invitation_code" in request.session and "invitation_code_time" in request.session:
-            user = backend.authenticate(request, create_user=True)
-        else:
-            user = backend.authenticate(request, create_user=False)
-        return user
+        return self._authenticate(request, backend)
 
     @staticmethod
     def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
@@ -401,14 +435,9 @@ class GoogleLoginView(RemoteLoginView):
     Create a new user if the user does not exist yet and user has an invitation code in the session.
     """
 
-    @staticmethod
-    def _authenticate_backend(request: HttpRequest) -> UserType:
+    def _authenticate_backend(self, request: HttpRequest) -> UserType:
         backend = GoogleBackend()
-        if "invitation_code" in request.session and "invitation_code_time" in request.session:
-            user = backend.authenticate(request, create_user=True)
-        else:
-            user = backend.authenticate(request, create_user=False)
-        return user
+        return self._authenticate(request, backend)
 
     @staticmethod
     def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
@@ -422,14 +451,9 @@ class MicrosoftLoginView(RemoteLoginView):
     Create a new user if the user does not exist yet and user has an invitation code in the session.
     """
 
-    @staticmethod
-    def _authenticate_backend(request: HttpRequest) -> UserType:
+    def _authenticate_backend(self, request: HttpRequest) -> UserType:
         backend = MicrosoftBackend()
-        if "invitation_code" in request.session and "invitation_code_time" in request.session:
-            user = backend.authenticate(request, create_user=True)
-        else:
-            user = backend.authenticate(request, create_user=False)
-        return user
+        return self._authenticate(request, backend)
 
     @staticmethod
     def _remote_auth_login(request: HttpRequest, user: UserType) -> None:

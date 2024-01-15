@@ -82,6 +82,8 @@ TOKEN_LIFETIME: int = 30 * 60  # 30 minutes
 TOKEN_LIFETIME_INVITE: int = 30 * 24 * 60 * 60  # 30 days
 # How long registration process can take (in seconds)
 INVITATION_PROCESS_TIME: int = 60 * 60  # 1 hour
+# How long link identifier session variable is valid (in seconds)
+LINK_IDENTIFIER_TIME_LIMIT: int = 5 * 60  # 5 minutes
 
 SMS_API_URL: str = "https://api-gateway.example.org/sms/send"
 SMS_AUTH_HEADER: str = "X-Api-Key"

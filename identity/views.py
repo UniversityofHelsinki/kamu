@@ -11,7 +11,12 @@ from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.db.models import Q, QuerySet
 from django.forms import BaseForm
-from django.http import HttpRequest, HttpResponse, HttpResponseBase
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBase,
+    HttpResponseRedirect,
+)
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils import timezone
@@ -376,11 +381,25 @@ class IdentifierView(LoginRequiredMixin, TemplateView):
         context["identity"] = identity
         return context
 
+    @staticmethod
+    def _get_linking_view(backend: str) -> str | None:
+        linking = {
+            "hy": "login-shibboleth",
+            "haka": "login-haka",
+            "edugain": "login-edugain",
+            "suomifi": "login-suomifi",
+            "google": "login-google",
+            "microsoft": "login-microsoft",
+        }
+        return linking.get(backend)
+
     @method_decorator(csrf_protect)
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """
         Check for identifier deactivation. Prevent deactivation of last active identifier,
         if user does not have generic change_indentifier permission.
+
+        If linking identifier, set session parameters and redirect to correct linking view.
         """
         data = self.request.POST
         if "identifier_deactivate" in data:
@@ -398,6 +417,15 @@ class IdentifierView(LoginRequiredMixin, TemplateView):
                     identifier.save()
                 except Identifier.DoesNotExist:
                     pass
+        elif "link_identifier" in data:
+            identifier_type = str(data["link_identifier"])
+            linking_view = self._get_linking_view(identifier_type)
+            if linking_view:
+                self.request.session["link_identifier"] = True
+                self.request.session["link_identifier_time"] = timezone.now().isoformat()
+                return HttpResponseRedirect(
+                    reverse(linking_view) + "?next=" + reverse("identity-identifier", kwargs={"pk": self.identity.pk})
+                )
         return redirect("identity-identifier", pk=self.identity.pk)
 
 

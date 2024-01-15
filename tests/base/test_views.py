@@ -374,6 +374,43 @@ class RegistrationViewTests(TestCase):
         self.assertEqual(identity.surname, "User")
 
 
+class LinkIdentifierTests(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        user = get_user_model()
+        self.user = user.objects.create_user(username="testuser", password="test_pass")
+        self.identity = Identity.objects.create(user=self.user, given_names="Test", surname="User")
+        self.client = Client()
+        self.session = self.client.session
+        self.session["link_identifier"] = True
+        self.session["link_identifier_time"] = timezone.now().isoformat()
+        self.session.save()
+        self.client.force_login(self.user)
+
+    @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
+    def test_link_haka_identifier(self):
+        url = reverse("login-haka") + "?next=" + reverse("identity-identifier", kwargs={"pk": self.identity.pk})
+        response = self.client.get(url, follow=True, headers={"EPPN": "haka@example.com"})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Identifier.objects.filter(identity=self.identity, value="haka@example.com").exists())
+
+    @override_settings(LINK_IDENTIFIER_TIME_LIMIT=-1)
+    def test_link_identifier_with_expired_link_identifier(self):
+        url = reverse("login-haka") + "?next=" + reverse("identity-identifier", kwargs={"pk": self.identity.pk})
+        response = self.client.get(url, follow=True, headers={"EPPN": "haka@example.com"})
+        self.assertIn("Link identifier expired", response.content.decode("utf-8"))
+
+    @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    def test_link_local_shibboleth_identifier(self):
+        url = reverse("login-shibboleth") + "?next=" + reverse("identity-identifier", kwargs={"pk": self.identity.pk})
+        response = self.client.get(url, follow=True, headers={"EPPN": "localtest@example.org"})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Identifier.objects.filter(identity=self.identity, value="localtest@example.org").exists())
+        self.identity.refresh_from_db()
+        self.assertEqual(self.identity.uid, "localtest")
+
+
 class ErrorViewTests(TestCase):
     def setUp(self):
         self.client = Client()
