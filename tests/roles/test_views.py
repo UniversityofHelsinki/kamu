@@ -5,12 +5,13 @@ View tests for role app.
 import datetime
 from unittest import mock
 
+from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core import mail
 from django.test import Client, override_settings
 from django.utils import timezone
 
-from identity.models import Identity
+from identity.models import Identifier, Identity
 from role.models import Membership, Role
 from role.views import RoleListApproverView, RoleListInviterView, RoleListOwnerView
 from tests.setup import BaseTestCase
@@ -211,7 +212,7 @@ class RoleInviteTests(BaseTestCase):
 
     @mock.patch("role.views.ldap_search")
     @override_settings(ALLOW_TEST_FPIC=True)
-    def test_join_role_with_ldap(self, mock_ldap):
+    def test_add_role_with_ldap(self, mock_ldap):
         mock_ldap.return_value = LDAP_RETURN_VALUE
         url = f"{self.url}ldap/ldapuser/"
         response = self.client.post(
@@ -228,6 +229,29 @@ class RoleInviteTests(BaseTestCase):
         self.assertTrue(Membership.objects.filter(role=self.role, identity=identity).exists())
         self.assertEqual(identity.fpic, "010181-900C")
         self.assertEqual(identity.display_name(), "Ldap User")
+        self.assertTrue(
+            Identifier.objects.filter(
+                identity=identity, type="eppn", value=f"ldapuser{settings.LOCAL_EPPN_SUFFIX}"
+            ).exists()
+        )
+
+    @mock.patch("role.views.ldap_search")
+    @override_settings(ALLOW_TEST_FPIC=True)
+    def test_join_role_with_ldap_existing_identity(self, mock_ldap):
+        mock_ldap.return_value = LDAP_RETURN_VALUE
+        Identifier.objects.create(identity=self.identity, type="fpic", value="010181-900C")
+        url = f"{self.url}ldap/ldapuser/"
+        response = self.client.post(
+            url,
+            {
+                "start_date": timezone.now().date(),
+                "expire_date": timezone.now().date() + datetime.timedelta(days=7),
+                "reason": "Because",
+            },
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Membership.objects.filter(role=self.role, identity=self.identity).exists())
 
     def test_join_role_send_email_invite(self):
         url = f"{self.url}email/"

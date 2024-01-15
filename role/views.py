@@ -22,7 +22,7 @@ from ldap.filter import escape_filter_chars
 from base.connectors.email import send_invite_email
 from base.connectors.ldap import ldap_search
 from base.models import Token
-from identity.models import EmailAddress, Identity
+from identity.models import EmailAddress, Identifier, Identity
 from identity.validators import validate_fpic
 from identity.views import IdentitySearchView
 from role.forms import MembershipCreateForm, MembershipEmailCreateForm, TextSearchForm
@@ -321,6 +321,8 @@ class RoleInviteLdapView(BaseRoleInviteView):
     def _create_identity_from_ldap(self, user: dict) -> Identity:
         """
         Create identity from LDAP attributes.
+
+        Use get_or_create to create eppn and fpic identifiers, to avoid duplicates.
         """
         identity = Identity.objects.create(
             uid=user["uid"],
@@ -341,17 +343,48 @@ class RoleInviteLdapView(BaseRoleInviteView):
             identity.fpic = fpic
             identity.fpic_verification = 2
         identity.save()
+        Identifier.objects.get_or_create(
+            type="eppn",
+            value=f"{user['uid']}{settings.LOCAL_EPPN_SUFFIX}",
+            identity=identity,
+            deactivated_at=None,
+        )
+        if fpic:
+            Identifier.objects.get_or_create(type="fpic", value=fpic, identity=identity, deactivated_at=None)
         return identity
 
     def _check_existing_identity(self, user: dict) -> Identity | None:
         """
         Check if identity already exists.
+        - uid or fpic
+        - Identifier with type eppn or fpic
         """
-        if Identity.objects.filter(uid=user["uid"]).exists():
+        try:
             return Identity.objects.get(uid=user["uid"])
+        except Identity.DoesNotExist:
+            pass
+        try:
+            return Identifier.objects.get(
+                type="eppn",
+                value=f"{user['uid']}{settings.LOCAL_EPPN_SUFFIX}",
+                deactivated_at=None,
+            ).identity
+        except Identifier.DoesNotExist:
+            pass
         fpic = self._parse_fpic(user)
-        if fpic and Identity.objects.filter(fpic=fpic).exists():
-            return Identity.objects.get(fpic=fpic)
+        if fpic:
+            try:
+                return Identity.objects.get(fpic=fpic)
+            except Identity.DoesNotExist:
+                pass
+            try:
+                return Identifier.objects.get(
+                    type="fpic",
+                    value=fpic,
+                    deactivated_at=None,
+                ).identity
+            except Identifier.DoesNotExist:
+                pass
         return None
 
     def form_valid(self, form: MembershipCreateForm | MembershipEmailCreateForm) -> HttpResponse:
