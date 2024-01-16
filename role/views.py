@@ -265,6 +265,8 @@ class RoleInviteView(BaseRoleInviteView):
         if not user:
             raise PermissionDenied
         form.instance.inviter = user
+        if form.instance.role.is_approver(user=user):
+            form.instance.approver = user
         return super().form_valid(form)
 
 
@@ -425,6 +427,8 @@ class RoleInviteLdapView(BaseRoleInviteView):
         if not inviter:
             raise PermissionDenied
         form.instance.inviter = inviter
+        if form.instance.role.is_approver(user=inviter):
+            form.instance.approver = inviter
         return super().form_valid(form)
 
 
@@ -464,6 +468,8 @@ class RoleInviteEmailView(BaseRoleInviteView):
             raise PermissionDenied
         invite_email_address = form.instance.invite_email_address
         form.instance.inviter = user
+        if form.instance.role.is_approver(user=user):
+            form.instance.approver = user
         if hasattr(form, "cleaned_data") and "invite_language" in form.cleaned_data:
             invite_language = form.cleaned_data["invite_language"]
         else:

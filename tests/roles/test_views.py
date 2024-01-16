@@ -175,9 +175,9 @@ class RoleInviteTests(BaseTestCase):
         self.url = "/role/1/invite/"
         self.client = Client()
         self.client.force_login(self.user)
-        group = Group.objects.create(name="InviterGroup")
-        self.role.inviters.add(group)
-        self.user.groups.add(group)
+        self.group = Group.objects.create(name="InviterGroup")
+        self.role.inviters.add(self.group)
+        self.user.groups.add(self.group)
 
     @mock.patch("identity.views.ldap_search")
     def test_search_user(self, mock_ldap):
@@ -253,9 +253,9 @@ class RoleInviteTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Membership.objects.filter(role=self.role, identity=self.identity).exists())
 
-    def test_join_role_send_email_invite(self):
+    def _test_join_role_send_email_invite(self):
         url = f"{self.url}email/"
-        response = self.client.post(
+        return self.client.post(
             url,
             {
                 "start_date": timezone.now().date(),
@@ -266,13 +266,21 @@ class RoleInviteTests(BaseTestCase):
             },
             follow=True,
         )
+
+    def test_join_role_send_email_invite(self):
+        response = self._test_join_role_send_email_invite()
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(
-            Membership.objects.filter(
-                role=self.role, identity=None, invite_email_address="invite@example.org"
-            ).exists()
-        )
+        membership = Membership.objects.get(role=self.role, identity=None, invite_email_address="invite@example.org")
+        self.assertEqual(membership.inviter, self.user)
+        self.assertIsNone(membership.approver)
         self.assertIn("Your invite code is", mail.outbox[0].body)
+
+    def test_join_role_invite_as_approver(self):
+        self.role.approvers.add(self.group)
+        self._test_join_role_send_email_invite()
+        membership = Membership.objects.get(role=self.role, identity=None, invite_email_address="invite@example.org")
+        self.assertEqual(membership.inviter, self.user)
+        self.assertEqual(membership.approver, self.user)
 
 
 class AdminSiteTests(BaseTestCase):
