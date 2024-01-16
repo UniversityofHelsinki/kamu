@@ -6,6 +6,7 @@ from unittest import mock
 
 from django.core import mail
 from django.test import Client
+from ldap import SIZELIMIT_EXCEEDED
 
 from identity.models import EmailAddress, Identity, PhoneNumber
 from tests.setup import BaseTestCase
@@ -83,6 +84,13 @@ class IdentityTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User", response.content.decode("utf-8"))
         self.assertEqual(response.content.decode("utf-8").count("ldap.user@example.org"), 1)
+
+    @mock.patch("identity.views.ldap_search")
+    def test_search_ldap_sizelimit_exceeded(self, mock_ldap):
+        mock_ldap.side_effect = SIZELIMIT_EXCEEDED()
+        url = f"{self.url}search/?uid=testuser&given_names=test"
+        response = self.client.get(url)
+        self.assertIn("search returned too many results", response.content.decode("utf-8"))
 
 
 class IdentityEditTests(BaseTestCase):

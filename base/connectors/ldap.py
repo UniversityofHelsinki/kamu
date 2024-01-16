@@ -103,6 +103,8 @@ def ldap_search(search_filter: str, ldap_attributes: list[str] | None = None) ->
     Search LDAP
 
     Returns a list of dictionaries with LDAP attributes, or None if error.
+
+    Raises ldap.SIZELIMIT_EXCEEDED if either server or local limit is exceeded.
     """
     if not ldap_attributes:
         ldap_attributes = getattr(settings, "LDAP_ATTRIBUTES")
@@ -116,13 +118,16 @@ def ldap_search(search_filter: str, ldap_attributes: list[str] | None = None) ->
         log_msg = f"LDAP NO SUCH OBJECT: { search_base }"
         logger.error(log_msg)
         return None
-    result_list = []
-    if result and len(result) > 0:
-        for entry in result:
-            obj = {}
-            for key in ldap_attributes:
-                obj["dn"] = entry[0]
-                if key in entry[1]:
-                    obj[key] = entry[1][key][0].decode("utf-8")
-            result_list.append(obj)
+    result_list: list = []
+    if not result:
+        return result_list
+    if len(result) > getattr(settings, "LDAP_SEARCH_LIMIT", 50):
+        raise ldap.SIZELIMIT_EXCEEDED
+    for entry in result:
+        obj = {}
+        for key in ldap_attributes:
+            obj["dn"] = entry[0]
+            if key in entry[1]:
+                obj[key] = entry[1][key][0].decode("utf-8")
+        result_list.append(obj)
     return result_list

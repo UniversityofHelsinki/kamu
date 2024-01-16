@@ -18,6 +18,7 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views import View
 from django.views.generic import DetailView, FormView, ListView, UpdateView
+from ldap import SIZELIMIT_EXCEEDED
 from ldap.filter import escape_filter_chars
 
 from base.connectors.ldap import ldap_search
@@ -381,7 +382,15 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
                 ldap_parameters.append("(" + ldap_name + "=" + escape_filter_chars(value) + ")")
         if not ldap_parameters:
             return []
-        ldap_result = ldap_search("(&" + "".join(ldap_parameters) + ")")
+        try:
+            ldap_result = ldap_search("(&" + "".join(ldap_parameters) + ")")
+        except SIZELIMIT_EXCEEDED:
+            messages.add_message(
+                self.request,
+                messages.WARNING,
+                _("LDAP search returned too many results, please refine your search parameters."),
+            )
+            return []
         return ldap_result if isinstance(ldap_result, list) else None
 
     def _get_ldap_results(self) -> list | None:

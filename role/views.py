@@ -17,6 +17,7 @@ from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from django.views.generic import DetailView, ListView, View
 from django.views.generic.edit import CreateView
+from ldap import SIZELIMIT_EXCEEDED
 from ldap.filter import escape_filter_chars
 
 from base.connectors.email import send_invite_email
@@ -290,7 +291,10 @@ class RoleInviteLdapView(BaseRoleInviteView):
         """
         context = super(RoleInviteLdapView, self).get_context_data(**kwargs)
         uid = escape_filter_chars(self.kwargs.get("uid"))
-        ldap_user = ldap_search(search_filter=f"(uid={uid})", ldap_attributes=["uid", "cn", "mail"])
+        try:
+            ldap_user = ldap_search(search_filter=f"(uid={uid})", ldap_attributes=["uid", "cn", "mail"])
+        except SIZELIMIT_EXCEEDED:
+            raise PermissionDenied
         if not ldap_user or len(ldap_user) != 1:
             raise PermissionDenied
         user = ldap_user[0]
@@ -394,18 +398,21 @@ class RoleInviteLdapView(BaseRoleInviteView):
         If identity already exists with the same uid or fpic, use it instead.
         """
         uid = escape_filter_chars(self.kwargs.get("uid"))
-        ldap_user = ldap_search(
-            search_filter=f"(uid={uid})",
-            ldap_attributes=[
-                "uid",
-                "givenName",
-                "sn",
-                "mail",
-                "schacDateOfBirth",
-                "preferredLanguage",
-                "schacPersonalUniqueID",
-            ],
-        )
+        try:
+            ldap_user = ldap_search(
+                search_filter=f"(uid={uid})",
+                ldap_attributes=[
+                    "uid",
+                    "givenName",
+                    "sn",
+                    "mail",
+                    "schacDateOfBirth",
+                    "preferredLanguage",
+                    "schacPersonalUniqueID",
+                ],
+            )
+        except SIZELIMIT_EXCEEDED:
+            raise PermissionDenied
         if not ldap_user or len(ldap_user) != 1:
             raise PermissionDenied
         user = ldap_user[0]

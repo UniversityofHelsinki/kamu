@@ -101,3 +101,5 @@ LDAP_SETTINGS: dict[str, Any] = {
     "IGNORE_TLS_CHECK": False,
     "SEARCH_BASE": "ou=users,dc=example,dc=org",
 }
+# If LDAP search would return more results, ask users to refine search.
+LDAP_SEARCH_LIMIT: int = 50
