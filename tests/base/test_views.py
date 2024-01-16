@@ -3,6 +3,7 @@ Tests for base views.
 """
 import datetime
 from unittest import mock
+from urllib.parse import unquote_plus
 
 from django.contrib.auth import get_user_model
 from django.core import mail
@@ -386,6 +387,30 @@ class LinkIdentifierTests(TestCase):
         self.session["link_identifier_time"] = timezone.now().isoformat()
         self.session.save()
         self.client.force_login(self.user)
+
+    @override_settings(SERVICE_LINK_URL="https://example.org")
+    @override_settings(OIDC_LOGOUT_PATH="/login/redirecturi?logout=")
+    @override_settings(OIDC_VIEWS=["login-google"])
+    def test_logout_redirect_before_linking_oidc(self):
+        url = reverse("identity-identifier", kwargs={"pk": self.identity.pk})
+        response = self.client.post(url, follow=False, data={"link_identifier": "google"})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            unquote_plus(response.url),
+            "/login/redirecturi?logout=https://example.org/login/google/?next=/identity/1/identifiers/",
+        )
+
+    @override_settings(SERVICE_LINK_URL=None)
+    @override_settings(OIDC_LOGOUT_PATH="/login/redirecturi?logout=")
+    @override_settings(OIDC_VIEWS=["login-google"])
+    def test_logout_redirect_without_link_url_before_linking_oidc(self):
+        url = reverse("identity-identifier", kwargs={"pk": self.identity.pk})
+        response = self.client.post(url, follow=False, data={"link_identifier": "google"})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            unquote_plus(response.url),
+            "/login/redirecturi?logout=/login/google/?next=/identity/1/identifiers/",
+        )
 
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
     def test_link_haka_identifier(self):

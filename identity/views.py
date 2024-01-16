@@ -2,6 +2,7 @@
 Identity app views for the UI.
 """
 from typing import Any
+from urllib.parse import quote_plus
 
 from django.conf import settings
 from django.contrib import messages
@@ -393,6 +394,30 @@ class IdentifierView(LoginRequiredMixin, TemplateView):
         }
         return linking.get(backend)
 
+    def _get_linking_url(self, linking_view: str) -> str:
+        """
+        Get url for linking identifier.
+
+        If linking view is in OIDC_VIEWS and OIDC_LOGOUT_PATH is given, redirect user
+        to logout url, with a redirect to linking url.
+
+        If SERVICE_LINK_URL is given, use it in redirection. This may be needed for
+        external logout.
+        """
+        linking_url = (
+            reverse(linking_view) + "?next=" + reverse("identity-identifier", kwargs={"pk": self.identity.pk})
+        )
+        oidc_views = getattr(settings, "OIDC_VIEWS", [])
+        oidc_logout_path = getattr(settings, "OIDC_LOGOUT_PATH", None)
+        service_link_url = getattr(settings, "SERVICE_LINK_URL", None)
+        if linking_view in oidc_views and oidc_logout_path:
+            if service_link_url:
+                logout_url = f"{ oidc_logout_path }{ quote_plus(service_link_url)}{ quote_plus(linking_url) }"
+            else:
+                logout_url = f"{ oidc_logout_path }{ quote_plus(linking_url) }"
+            return logout_url
+        return linking_url
+
     @method_decorator(csrf_protect)
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """
@@ -423,9 +448,8 @@ class IdentifierView(LoginRequiredMixin, TemplateView):
             if linking_view:
                 self.request.session["link_identifier"] = True
                 self.request.session["link_identifier_time"] = timezone.now().isoformat()
-                return HttpResponseRedirect(
-                    reverse(linking_view) + "?next=" + reverse("identity-identifier", kwargs={"pk": self.identity.pk})
-                )
+                linking_url = self._get_linking_url(linking_view)
+                return HttpResponseRedirect(linking_url)
         return redirect("identity-identifier", pk=self.identity.pk)
 
 
