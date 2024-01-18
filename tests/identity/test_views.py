@@ -16,6 +16,7 @@ from tests.setup import BaseTestCase
 class MockLdapConn:
     def __init__(self, size_exceeded=False):
         self.size_exceeded = size_exceeded
+        self.search_args = []
 
     LDAP_RETURN_VALUE = [
         (
@@ -29,6 +30,7 @@ class MockLdapConn:
     ]
 
     def search_s(self, *args, **kwargs):
+        self.search_args.append(args)
         if self.size_exceeded:
             raise SIZELIMIT_EXCEEDED
         return self.LDAP_RETURN_VALUE
@@ -104,6 +106,15 @@ class IdentityTests(BaseTestCase):
         url = f"{self.url}search/?uid=testuser&given_names=test"
         response = self.client.get(url)
         self.assertIn("search returned too many results", response.content.decode("utf-8"))
+
+    @mock.patch("base.connectors.ldap._get_connection")
+    def test_search_ldap_escaping(self, mock_ldap):
+        conn = MockLdapConn()
+        mock_ldap.return_value = conn
+        url = f"{self.url}search/?given_names=t*est"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("(givenName=*t\\2aest*)", conn.search_args[0][2])
 
 
 class IdentityEditTests(BaseTestCase):
