@@ -2,6 +2,8 @@
 Tests for base views.
 """
 
+from unittest.mock import ANY, call, patch
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser, Group
@@ -34,13 +36,25 @@ class ShibbolethBackendTests(TestCase):
         user = backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(user.username, "testuser@example.org")
 
-    def test_login_create_user(self):
-        self.request.META = {settings.SAML_ATTR_EPPN: "newuser@example.org"}
+    @patch("base.utils.logger_audit")
+    def test_login_create_user(self, mock_logger):
+        self.request.META = {
+            settings.SAML_ATTR_EPPN: "newuser@example.org",
+            settings.SAML_ATTR_GIVEN_NAMES: "New",
+            settings.SAML_ATTR_SURNAME: "User",
+        }
         backend = ShibbolethBackend()
         user = backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(user.username, "newuser@example.org")
         self.assertEqual(user.identity.assurance_level, "low")
         self.assertEqual(Identifier.objects.get(type="eppn", value="newuser@example.org").identity, user.identity)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Created user newuser@example.org", extra=ANY),
+                call(20, "Identity created for newuser@example.org", extra=ANY),
+                call(20, "Linked eppn identifier to identity New User", extra=ANY),
+            ]
+        )
 
     def test_login_create_user_assurance(self):
         self.request.META = {
@@ -68,7 +82,8 @@ class ShibbolethBackendTests(TestCase):
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_GROUP_PREFIXES=["saml_", "sso_"])
-    def test_login_update_groups(self):
+    @patch("base.utils.logger_audit")
+    def test_login_update_groups(self, mock_logger):
         test_group = Group.objects.create(name="test_group")
         saml_group = Group.objects.create(name="saml_group")
         sso_group = Group.objects.create(name="sso_group")
@@ -83,6 +98,12 @@ class ShibbolethBackendTests(TestCase):
         self.assertEqual(user.groups.count(), 2)
         self.assertIn(test_group, user.groups.all())
         self.assertIn(sso_group, user.groups.all())
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Group saml_group removed from user testuser@example.org", extra=ANY),
+                call(20, "Group sso_group added to user testuser@example.org", extra=ANY),
+            ]
+        )
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.com")
     @override_settings(SAML_GROUP_PREFIXES=["saml_", "sso_"])
@@ -180,7 +201,8 @@ class GoogleBackendTests(TestCase):
         self.assertEqual(user.username, "testuser@example.org")
         self.assertEqual(Identifier.objects.get(value="0123456789").identity, self.identity)
 
-    def test_login_google_link_existing_identifier(self):
+    @patch("base.utils.logger_audit")
+    def test_login_google_link_existing_identifier(self, mock_logger):
         request = self.factory.get(reverse("login-google"))
         request.user = self.user
         identity = Identity.objects.create()
@@ -190,6 +212,11 @@ class GoogleBackendTests(TestCase):
         with self.assertRaises(AuthenticationError) as e:
             backend.authenticate(request=request, link_identifier=True)
         self.assertEqual(str(e.exception), "Identifier is already linked to another user.")
+        mock_logger.log.assert_has_calls(
+            [
+                call(10, "Identifier exists for different user.", extra=ANY),
+            ]
+        )
 
 
 class SuomiFiBackendTests(TestCase):

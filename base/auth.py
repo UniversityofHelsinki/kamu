@@ -23,12 +23,14 @@ from django.http import HttpRequest
 from django.utils.translation import gettext as _
 
 from base.models import Token
+from base.utils import AuditLog
 from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
 from identity.validators import validate_fpic
 from role.models import Role
 
-UserModel = get_user_model()
+audit_log = AuditLog()
 logger = logging.getLogger(__name__)
+UserModel = get_user_model()
 
 
 class AuthenticationError(Exception):
@@ -56,6 +58,15 @@ def auth_login(request: HttpRequest, user: AbstractBaseUser | None, backend: typ
     Custom login function with post login tasks
     """
     login(request, user, backend)
+    audit_log.info(
+        f"User { request.user } logged in with { backend }",
+        category="authentication",
+        action="login",
+        outcome="success",
+        backend=backend,
+        request=request,
+        objects=[request.user],
+    )
     post_login_tasks(request)
 
 
@@ -137,8 +148,24 @@ class LocalBaseBackend(BaseBackend):
             surname=user.last_name,
             surname_verification=verification_level,
         )
+        audit_log.info(
+            f"Identity created for { user }",
+            category="identity",
+            action="create",
+            outcome="success",
+            request=request,
+            objects=[identity, user],
+        )
         if user.email:
-            EmailAddress.objects.create(address=user.email, identity=identity)
+            email_address = EmailAddress.objects.create(address=user.email, identity=identity)
+            audit_log.info(
+                f"Email address added to identity { identity }",
+                category="email_address",
+                action="create",
+                outcome="success",
+                request=request,
+                objects=[identity, email_address],
+            )
         return identity
 
     @staticmethod
@@ -155,6 +182,13 @@ class LocalBaseBackend(BaseBackend):
         )
         user.set_unusable_password()
         user.save()
+        audit_log.info(
+            f"Created user { user }",
+            category="user",
+            action="create",
+            outcome="success",
+            objects=[user],
+        )
         return user
 
     def _link_identifier(
@@ -168,9 +202,18 @@ class LocalBaseBackend(BaseBackend):
             identity = user.identity
         else:
             identity = self._create_identity(request, user)
-        Identifier.objects.get_or_create(
+        identifier, created = Identifier.objects.get_or_create(
             type=identifier_type, value=identifier_value, identity=identity, deactivated_at=None
         )
+        if created:
+            audit_log.info(
+                f"Linked { identifier.type } identifier to identity { identity }",
+                category="identifier",
+                action="create",
+                outcome="success",
+                request=request,
+                objects=[identifier, identity],
+            )
         return None
 
     def _get_username(self, preferred_username: str | None, unique_identifier: str) -> str:
@@ -199,9 +242,23 @@ class LocalBaseBackend(BaseBackend):
         for group in removed:
             if not prefixes or group.name.startswith(tuple(prefixes)):
                 user.groups.remove(group)
+                audit_log.info(
+                    f"Group { group } removed from user { user }",
+                    category="group",
+                    action="unlink",
+                    outcome="success",
+                    objects=[group, user],
+                )
         for group in added:
             if not prefixes or group.name.startswith(tuple(prefixes)):
                 user.groups.add(group)
+                audit_log.info(
+                    f"Group { group } added to user { user }",
+                    category="group",
+                    action="link",
+                    outcome="success",
+                    objects=[group, user],
+                )
 
     def _post_tasks(self, request: HttpRequest, user: UserType) -> None:
         """
@@ -248,6 +305,13 @@ class LocalBaseBackend(BaseBackend):
                 self._link_identifier(request, user, identifier_type, unique_identifier)
                 self._post_tasks(request, user)
                 return user
+            audit_log.debug(
+                f"Identifier not found: { identifier_type} { unique_identifier }",
+                category="identifier",
+                action="read",
+                outcome="not found",
+                request=request,
+            )
             raise AuthenticationError(self.error_messages["identifier_not_found"])
         if request.user.is_authenticated and request.user == identity.user:
             # Identifier exists and is linked to the current user.
@@ -255,6 +319,14 @@ class LocalBaseBackend(BaseBackend):
             return identity.user
         if request.user.is_authenticated and request.user != identity.user:
             # Identifier exists for different user.
+            audit_log.debug(
+                "Identifier exists for different user.",
+                category="identifier",
+                action="info",
+                outcome="failure",
+                request=request,
+                objects=[identity],
+            )
             raise AuthenticationError(self.error_messages["identity_already_exists"])
         if identity.user:
             # Identifier exists and is linked to a user.
@@ -264,8 +336,22 @@ class LocalBaseBackend(BaseBackend):
             # Create a new user and link existing identifier to it.
             username = self._get_username(preferred_username, unique_identifier)
             user = self._create_user(username=username, email=email, given_names=given_names, surname=surname)
+            audit_log.info(
+                f"Created user { user }",
+                category="user",
+                action="create",
+                objects=[user],
+            )
             identity.user = user
             identity.save()
+            audit_log.info(
+                f"Linked identity { identity } to user { user }",
+                category="identity",
+                action="link",
+                outcome="success",
+                request=request,
+                objects=[identity, user],
+            )
             self._post_tasks(request, user)
             return user
         raise AuthenticationError(self.error_messages["identifier_not_found"])

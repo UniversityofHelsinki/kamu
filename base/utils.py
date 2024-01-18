@@ -129,6 +129,7 @@ class AuditLog:
         - update
         - delete
         - link (identity to user, membership to identity etc.)
+        - unlink
         - login
         - logout
         - info (generic messages, mostly used in debug logging)

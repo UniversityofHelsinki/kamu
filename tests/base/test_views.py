@@ -3,6 +3,7 @@ Tests for base views.
 """
 import datetime
 from unittest import mock
+from unittest.mock import ANY, call
 from urllib.parse import unquote_plus
 
 from django.contrib.auth import get_user_model
@@ -413,11 +414,18 @@ class LinkIdentifierTests(TestCase):
         )
 
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
-    def test_link_haka_identifier(self):
+    @mock.patch("base.utils.logger_audit")
+    def test_link_haka_identifier(self, mock_logger):
         url = reverse("login-haka") + "?next=" + reverse("identity-identifier", kwargs={"pk": self.identity.pk})
         response = self.client.get(url, follow=True, headers={"EPPN": "haka@example.com"})
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Identifier.objects.filter(identity=self.identity, value="haka@example.com").exists())
+        mock_logger.log.assert_has_calls(
+            [
+                call(10, "Started identifier linking process", extra=ANY),
+                call(20, "Linked eppn identifier to identity Test User", extra=ANY),
+            ]
+        )
 
     @override_settings(LINK_IDENTIFIER_TIME_LIMIT=-1)
     def test_link_identifier_with_expired_link_identifier(self):

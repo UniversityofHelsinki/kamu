@@ -53,11 +53,12 @@ from base.forms import (
     RegistrationForm,
 )
 from base.models import TimeLimitError, Token
+from base.utils import AuditLog
 from identity.models import EmailAddress, Identity, PhoneNumber
 from role.utils import claim_membership, get_invitation_session_parameters
 
+audit_log = AuditLog()
 logger = logging.getLogger(__name__)
-
 UserModel = get_user_model()
 
 
@@ -82,7 +83,6 @@ class InviteView(FormView):
         """
         Set invitation code to session and forward to either login or registration process.
         """
-
         code = form.cleaned_data["code"]
         self.request.session["invitation_code"] = code
         self.request.session["invitation_code_time"] = timezone.now().isoformat()
@@ -269,6 +269,14 @@ class VerifyPhoneNumberView(BaseRegisterView, FormView):
         identity = Identity.objects.create(
             given_names=given_names, surname=surname, assurance_level="low", preferred_language=get_language()
         )
+        audit_log.info(
+            f"Identity created.",
+            category="identity",
+            action="create",
+            outcome="success",
+            request=self.request,
+            objects=[identity],
+        )
         identity_suffix = getattr(settings, "LOCAL_IDENTITY_SUFFIX", "@local_identity")
         user = UserModel.objects.create_user(
             username=f"{identity.id}{identity_suffix}",
@@ -276,10 +284,42 @@ class VerifyPhoneNumberView(BaseRegisterView, FormView):
             first_name=given_names,
             last_name=surname,
         )
+        audit_log.info(
+            f"Created user { user }",
+            category="user",
+            action="create",
+            outcome="success",
+            request=self.request,
+            objects=[user],
+        )
         identity.user = user
         identity.save()
-        EmailAddress.objects.create(address=email_address, identity=identity, verified=True)
-        PhoneNumber.objects.create(number=phone_number, identity=identity, verified=True)
+        audit_log.info(
+            f"Identity linked to user { user }",
+            category="identity",
+            action="link",
+            outcome="success",
+            request=self.request,
+            objects=[identity, user],
+        )
+        email_object = EmailAddress.objects.create(address=email_address, identity=identity, verified=True)
+        audit_log.info(
+            f"Email address added to identity { identity }",
+            category="email_address",
+            action="create",
+            outcome="success",
+            request=self.request,
+            objects=[email_object, identity],
+        )
+        phone_object = PhoneNumber.objects.create(number=phone_number, identity=identity, verified=True)
+        audit_log.info(
+            f"Phone number added to identity { identity }",
+            category="phone_number",
+            action="create",
+            outcome="success",
+            request=self.request,
+            objects=[phone_object, identity],
+        )
         auth_login(self.request, user, backend="base.auth.EmailSMSBackend")
         claim_membership(self.request, identity)
         del self.request.session["verified_email_address"]
@@ -326,10 +366,31 @@ class RemoteLoginView(View):
         Call backend function with correct parameters, based on session variables.
         """
         if "invitation_code" in request.session and "invitation_code_time" in request.session:
+            audit_log.debug(
+                "Started registration process",
+                category="registration",
+                action="info",
+                backend=backend,
+                request=request,
+            )
             user = backend.authenticate(request, create_user=True)
         elif "link_identifier" in request.session and self._validate_link_identifier_time(request):
+            audit_log.debug(
+                "Started identifier linking process",
+                category="identifier",
+                action="info",
+                backend=backend,
+                request=request,
+            )
             user = backend.authenticate(request, link_identifier=True)
         else:
+            audit_log.debug(
+                "Started login process",
+                category="authentication",
+                action="info",
+                backend=backend,
+                request=request,
+            )
             user = backend.authenticate(request, create_user=False)
         return user
 
@@ -386,8 +447,22 @@ class ShibbolethLocalLoginView(RemoteLoginView):
         """
         backend = ShibbolethBackend()
         if "link_identifier" in request.session and self._validate_link_identifier_time(request):
+            audit_log.info(
+                "Started local identifier linking process",
+                category="identifier",
+                action="info",
+                backend=backend,
+                request=request,
+            )
             user = backend.authenticate(request, link_identifier=True)
         else:
+            audit_log.info(
+                "Started local login process",
+                category="authentication",
+                action="info",
+                backend=backend,
+                request=request,
+            )
             user = backend.authenticate(request, create_user=True)
         return user
 
