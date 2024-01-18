@@ -18,7 +18,6 @@ from django.utils.translation import gettext as _
 from django.views.generic import DetailView, ListView, View
 from django.views.generic.edit import CreateView
 from ldap import SIZELIMIT_EXCEEDED
-from ldap.filter import escape_filter_chars
 
 from base.connectors.email import send_invite_email
 from base.connectors.ldap import ldap_search
@@ -292,9 +291,11 @@ class RoleInviteLdapView(BaseRoleInviteView):
         Add user to context. Add identity to context if found.
         """
         context = super(RoleInviteLdapView, self).get_context_data(**kwargs)
-        uid = escape_filter_chars(self.kwargs.get("uid"))
+        uid = self.kwargs.get("uid")
         try:
-            ldap_user = ldap_search(search_filter=f"(uid={uid})", ldap_attributes=["uid", "cn", "mail"])
+            ldap_user = ldap_search(
+                search_filter="(uid={})", search_values=[uid], ldap_attributes=["uid", "cn", "mail"]
+            )
         except SIZELIMIT_EXCEEDED:
             raise PermissionDenied
         if not ldap_user or len(ldap_user) != 1:
@@ -399,10 +400,11 @@ class RoleInviteLdapView(BaseRoleInviteView):
 
         If identity already exists with the same uid or fpic, use it instead.
         """
-        uid = escape_filter_chars(self.kwargs.get("uid"))
+        uid = self.kwargs.get("uid")
         try:
             ldap_user = ldap_search(
-                search_filter=f"(uid={uid})",
+                search_filter="(uid={})",
+                search_values=[uid],
                 ldap_attributes=[
                     "uid",
                     "givenName",

@@ -5,6 +5,7 @@ import logging
 
 import ldap
 from django.conf import settings
+from ldap.filter import escape_filter_chars
 from ldap.ldapobject import LDAPObject
 
 logger = logging.getLogger(__name__)
@@ -98,9 +99,14 @@ def _get_search_base() -> str | None:
     return search_base
 
 
-def ldap_search(search_filter: str, ldap_attributes: list[str] | None = None) -> list | None:
+def ldap_search(
+    search_filter: str, search_values: list[str] | None = None, ldap_attributes: list[str] | None = None
+) -> list | None:
     """
     Search LDAP
+
+    If search_values is provided, its contents will be escaped for LDAP special
+    characters and interpolated into search_filter with str.format().
 
     Returns a list of dictionaries with LDAP attributes, or None if error.
 
@@ -112,6 +118,9 @@ def ldap_search(search_filter: str, ldap_attributes: list[str] | None = None) ->
     search_base = _get_search_base()
     if not ldap_connection or not search_base or not search_filter or not ldap_attributes:
         return None
+    if search_values:
+        escaped_values = [escape_filter_chars(val) for val in search_values]
+        search_filter = search_filter.format(*escaped_values)
     try:
         result = ldap_connection.search_s(search_base, ldap.SCOPE_SUBTREE, search_filter, ldap_attributes)
     except ldap.NO_SUCH_OBJECT:

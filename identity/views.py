@@ -33,7 +33,6 @@ from django.views.generic import (
     UpdateView,
 )
 from ldap import SIZELIMIT_EXCEEDED
-from ldap.filter import escape_filter_chars
 
 from base.connectors.ldap import ldap_search
 from base.connectors.sms import SmsConnector
@@ -500,19 +499,21 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         Return None if LDAP search does not succeed.
         """
         ldap_parameters = []
+        ldap_values = []
         for attr in attribute:
             ldap_name, param_name, wildcard = attr
             value = self.request.GET.get(param_name)
             if not value:
                 continue
             if wildcard:
-                ldap_parameters.append("(" + ldap_name + "=*" + escape_filter_chars(value) + "*)")
+                ldap_parameters.append("(" + ldap_name + "=*{}*)")
             else:
-                ldap_parameters.append("(" + ldap_name + "=" + escape_filter_chars(value) + ")")
+                ldap_parameters.append("(" + ldap_name + "={})")
+            ldap_values.append(value)
         if not ldap_parameters:
             return []
         try:
-            ldap_result = ldap_search("(&" + "".join(ldap_parameters) + ")")
+            ldap_result = ldap_search(search_filter="(&" + "".join(ldap_parameters) + ")", search_values=ldap_values)
         except SIZELIMIT_EXCEEDED:
             messages.add_message(
                 self.request,
