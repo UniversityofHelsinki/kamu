@@ -11,7 +11,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from base.management.commands.purge_data import UsageError
-from identity.models import Identity
+from identity.models import Identifier, Identity
 from role.models import Membership, Role
 
 
@@ -116,6 +116,55 @@ class PurgeMembershipTests(ManagementCommandTestCase):
             membership.save()
         self.call_command("-v=0")
         self.assertEqual(Membership.objects.all().count(), 2)
+
+
+class PurgeIdentifierTests(ManagementCommandTestCase):
+    command = "purge_data"
+
+    def setUp(self):
+        self.identities = [
+            Identity.objects.create(
+                user=None,
+                given_names=f"Test Me {i}",
+                surname=f"User{i}",
+                given_name_display=f"Test {i}",
+                created_at=timezone.now() - datetime.timedelta(days=5 * i + 2),
+            )
+            for i in range(10)
+        ]
+
+        self.identifiers = [
+            Identifier.objects.create(
+                identity=self.identities[i],
+                type=Identifier.IDENTIFIER_CHOICES[i % 3],
+                value="whatever",
+                verified=bool(i % 3),
+                deactivated_at=None if i % 2 == 1 else timezone.now() - datetime.timedelta(days=5 * i),
+            )
+            for i in range(10)
+        ]
+
+    def test_purge_args(self):
+        with self.assertRaises(UsageError):
+            self.call_command("--type=foo")
+        out = self.call_command("-l")
+        self.assertIn("identifier", out)
+
+    def test_purge_deactivated(self):
+        self.assertEqual(Identifier.objects.all().count(), 10)
+        self.call_command("-v=0", "--days=61", "-t=identifier")
+        self.assertEqual(Identifier.objects.all().count(), 10)
+        self.call_command("-v=0", "--days=26", "-t=identifier")
+        self.assertEqual(Identifier.objects.all().count(), 8)  # 0 1 2 3 4 5 7 9
+        self.call_command("-v=0", "--days=11", "-t=identifier")
+        self.assertEqual(Identifier.objects.all().count(), 7)  # 0 1 2 3 5 7 9
+        self.assertTrue(all(ident.deactivated_at is None for ident in Identifier.objects.all()[3:]))
+        self.assertFalse(all(ident.deactivated_at is None for ident in Identifier.objects.all()))
+
+    def test_purge_cascade(self):
+        self.assertEqual(Identifier.objects.all().count(), 10)
+        self.call_command("-v=0", "--days=41", "-t=identity")
+        self.assertEqual(Identifier.objects.all().count(), 8)  # 0 1 2 3 4 5 6 7
 
 
 class PurgeIdentityTests(ManagementCommandTestCase):

@@ -322,6 +322,21 @@ class PhoneNumber(models.Model):
         return f"{self.number}"
 
 
+class IdentifierManager(models.Manager["Identifier"]):
+    """
+    Manager methods for :model:`identity.Identifier`.
+    """
+
+    def get_stale(self, grace_days: int | None = None) -> QuerySet["Identifier"]:
+        """
+        Returns a list of identifier objects that were deactivated at
+        least grace_days (defaulting to the PURGE_DELAY_DAYS setting) ago.
+        """
+        delay = grace_days or int(getattr(settings, "PURGE_DELAY_DAYS", 730))
+        cutoff = timezone.now() - datetime.timedelta(days=delay)
+        return self.filter(deactivated_at__lt=cutoff)
+
+
 class Identifier(models.Model):
     """
     Stores a unique identifier, related to :model:`identity.Identity`.
@@ -348,6 +363,8 @@ class Identifier(models.Model):
     deactivated_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Deactivated at"))
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
+
+    objects = IdentifierManager()
 
     class Meta:
         verbose_name = _("Identifier")

@@ -9,7 +9,13 @@ from typing import Any, Type
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
-from identity.models import CustomUserManager, Identity, IdentityManager
+from identity.models import (
+    CustomUserManager,
+    Identifier,
+    IdentifierManager,
+    Identity,
+    IdentityManager,
+)
 from role.models import Membership, MembershipManager
 
 
@@ -18,8 +24,9 @@ class UsageError(CommandError):
 
 
 class Command(BaseCommand):
-    types: dict[str, MembershipManager | IdentityManager | CustomUserManager] = {
+    types: dict[str, MembershipManager | IdentifierManager | IdentityManager | CustomUserManager] = {
         "membership": Membership.objects,
+        "identifier": Identifier.objects,
         "identity": Identity.objects,
         "user": CustomUserManager(),
     }
