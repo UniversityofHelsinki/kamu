@@ -12,14 +12,26 @@ from ldap import SIZELIMIT_EXCEEDED
 from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
 from tests.setup import BaseTestCase
 
-LDAP_RETURN_VALUE = [
-    {
-        "uid": "ldapuser",
-        "cn": "Ldap User",
-        "mail": "ldap.user@example.org",
-        "dn": "uid=ldapuser,ou=users,dc=example,dc=org",
-    }
-]
+
+class MockLdapConn:
+    def __init__(self, size_exceeded=False):
+        self.size_exceeded = size_exceeded
+
+    LDAP_RETURN_VALUE = [
+        (
+            "uid=ldapuser,ou=users,dc=example,dc=org",
+            {
+                "uid": [b"ldapuser"],
+                "cn": [b"Ldap User"],
+                "mail": [b"ldap.user@example.org"],
+            },
+        )
+    ]
+
+    def search_s(self, *args, **kwargs):
+        if self.size_exceeded:
+            raise SIZELIMIT_EXCEEDED
+        return self.LDAP_RETURN_VALUE
 
 
 class IdentityTests(BaseTestCase):
@@ -56,9 +68,9 @@ class IdentityTests(BaseTestCase):
         self.assertNotIn("alert", response.content.decode("utf-8"))
         self.assertIn("Test User</h1>", response.content.decode("utf-8"))
 
-    @mock.patch("identity.views.ldap_search")
+    @mock.patch("base.connectors.ldap._get_connection")
     def test_search_identity(self, mock_ldap):
-        mock_ldap.return_value = []
+        mock_ldap.return_value = MockLdapConn()
         EmailAddress.objects.create(
             identity=self.superidentity,
             address="super@example.org",
@@ -77,18 +89,18 @@ class IdentityTests(BaseTestCase):
         self.assertIn("LDAP search failed", response.content.decode("utf-8"))
         mock_logger.error.assert_called_once()
 
-    @mock.patch("identity.views.ldap_search")
+    @mock.patch("base.connectors.ldap._get_connection")
     def test_search_ldap(self, mock_ldap):
-        mock_ldap.return_value = LDAP_RETURN_VALUE
+        mock_ldap.return_value = MockLdapConn()
         url = f"{self.url}search/?uid=testuser&given_names=test"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User", response.content.decode("utf-8"))
         self.assertEqual(response.content.decode("utf-8").count("ldap.user@example.org"), 1)
 
-    @mock.patch("identity.views.ldap_search")
+    @mock.patch("base.connectors.ldap._get_connection")
     def test_search_ldap_sizelimit_exceeded(self, mock_ldap):
-        mock_ldap.side_effect = SIZELIMIT_EXCEEDED()
+        mock_ldap.return_value = MockLdapConn(size_exceeded=True)
         url = f"{self.url}search/?uid=testuser&given_names=test"
         response = self.client.get(url)
         self.assertIn("search returned too many results", response.content.decode("utf-8"))
