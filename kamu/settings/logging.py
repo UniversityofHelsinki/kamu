@@ -12,22 +12,27 @@ LOGGING: dict = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "console": {
+        "text": {
             "format": "%(asctime)s %(name)-12s %(levelname)-8s %(message)s",
         },
-        "file": {
+        "json": {
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
             "format": "%(asctime)s %(name)-12s %(levelname)-8s %(message)s",
         },
     },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "formatter": "console",
+            "formatter": "text",
         },
-        #        'file': {
+        "json": {
+            "class": "logging.StreamHandler",
+            "formatter": "json",
+        },
+        #        'json': {
         #            'class': 'logging.FileHandler',
         #            'filename': 'production.log',
-        #            'formatter': 'file',
+        #            'formatter': 'json',
         #        },
     },
     "root": {
@@ -38,6 +43,11 @@ LOGGING: dict = {
         "django": {
             "handlers": ["console"],
             "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+            "propagate": False,
+        },
+        "audit": {
+            "handlers": ["json"],
+            "level": "INFO",
             "propagate": False,
         },
     },

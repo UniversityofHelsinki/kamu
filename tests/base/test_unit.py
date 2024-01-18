@@ -3,13 +3,96 @@ Unit tests for base app.
 """
 
 import datetime
+from unittest.mock import patch
 
-from django.test import TestCase
+from django.test import RequestFactory, TestCase, override_settings
 from django.utils import timezone
 
 from base.models import TimeLimitError, Token
+from base.utils import AuditLog, get_client_ip
 from identity.models import EmailAddress, Identity, PhoneNumber
 from role.models import Membership, Role
+from tests.setup import BaseTestCase
+
+audit_log = AuditLog()
+
+
+class GetIPChecks(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.request = self.factory.get("/")
+        self.request.META = {"REMOTE_ADDR": "10.1.2.3", "HTTP_X_FORWARDED_FOR": "10.0.0.1, 10.0.0.2"}
+
+    def test_ip_without_forwarding_header(self):
+        self.request.META = {"REMOTE_ADDR": "10.1.2.3"}
+        response = get_client_ip(self.request)
+        self.assertEqual(response, "10.1.2.3")
+
+    def test_ip_forwarding(self):
+        response = get_client_ip(self.request)
+        self.assertEqual(response, "10.0.0.1")
+
+    @override_settings(HTTP_FORWARDING_IP_FIRST=False)
+    def test_ip_forwarding_get_last(self):
+        response = get_client_ip(self.request)
+        self.assertEqual(response, "10.0.0.2")
+
+    @override_settings(HTTP_CHECK_FORWARDING_HEADER=False)
+    def test_ip_no_forwarding_check(self):
+        response = get_client_ip(self.request)
+        self.assertEqual(response, "10.1.2.3")
+
+
+class AuditLogTests(BaseTestCase):
+    @patch("base.utils.logger_audit.log")
+    def test_logging(self, mock_logger):
+        audit_log.info("TestMsg", category="TestCat", action="TestAct", outcome="success", objects={self.identity})
+        mock_logger.assert_called_with(
+            20,
+            "TestMsg",
+            extra={
+                "category": "TestCat",
+                "action": "TestAct",
+                "outcome": "success",
+                "identity": "Test User",
+                "identity_id": self.identity.pk,
+                "user": "testuser",
+                "user_id": self.user.pk,
+            },
+        )
+
+    @patch("base.utils.logger_audit.log")
+    def test_logging_request(self, mock_logger):
+        headers = {"REMOTE_ADDR": "10.1.2.3", "HTTP_USER_AGENT": "TestAgent"}
+        request = self.factory.get("/", **headers)
+        request.user = self.superuser
+        audit_log.debug(
+            "TestMsg",
+            category="TestCat",
+            action="TestAct",
+            outcome="success",
+            request=request,
+            objects={self.user},
+            extra={"test": "test"},
+        )
+        mock_logger.assert_called_with(
+            10,
+            "TestMsg",
+            extra={
+                "category": "TestCat",
+                "action": "TestAct",
+                "outcome": "success",
+                "identity": "Test User",
+                "identity_id": self.identity.pk,
+                "user": "testuser",
+                "user_id": self.user.pk,
+                "ip": "10.1.2.3",
+                "user_agent": "TestAgent",
+                "actor": "admin",
+                "actor_id": self.superuser.pk,
+                "test": "test",
+            },
+        )
 
 
 class TokenModelTests(TestCase):

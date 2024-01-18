@@ -51,6 +51,15 @@ class Nationality(models.Model):
         else:
             return self.name_en
 
+    def log_values(self) -> dict[str, str | int]:
+        """
+        Return values for audit log.
+        """
+        return {
+            "nationality_id": self.pk,
+            "nationality_code": self.code,
+        }
+
 
 class CustomUserManager:
     """
@@ -234,6 +243,15 @@ class Identity(models.Model):
     def display_name(self) -> str:
         return f"{self.given_name_display} {self.surname_display}"
 
+    def log_values(self) -> dict[str, str | int]:
+        """
+        Return values for audit log.
+        """
+        return {
+            "identity_id": self.pk,
+            "identity": self.display_name(),
+        }
+
     @staticmethod
     def basic_fields() -> list[str]:
         return ["given_names", "surname", "given_name_display", "surname_display", "preferred_language"]
@@ -295,6 +313,15 @@ class EmailAddress(models.Model):
     def __str__(self) -> str:
         return f"{self.address}"
 
+    def log_values(self) -> dict[str, str | int]:
+        """
+        Return values for audit log.
+        """
+        return {
+            "email_address_id": self.pk,
+            "email_address": self.address,
+        }
+
 
 class PhoneNumber(models.Model):
     """
@@ -320,6 +347,15 @@ class PhoneNumber(models.Model):
 
     def __str__(self) -> str:
         return f"{self.number}"
+
+    def log_values(self) -> dict[str, str | int]:
+        """
+        Return values for audit log.
+        """
+        return {
+            "phone_number_id": self.pk,
+            "phone_number": self.number,
+        }
 
 
 class IdentifierManager(models.Manager["Identifier"]):
@@ -372,3 +408,12 @@ class Identifier(models.Model):
 
     def __str__(self) -> str:
         return f"{self.identity.display_name()}-{self.type}"
+
+    def log_values(self) -> dict[str, str | int]:
+        """
+        Return values for audit log.
+        """
+        return {
+            "identifier_id": self.pk,
+            "identifier_type": self.type,
+        }

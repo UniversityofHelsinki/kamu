@@ -223,3 +223,8 @@ PURGE_DELAY_DAYS: int = 730
 
 LDAP_SETTINGS: dict[str, Any] = {}
 LDAP_ATTRIBUTES: list[str] = ["cn", "mail", "uid"]
+
+HTTP_CHECK_FORWARDING_HEADER: bool = True
+HTTP_FORWARDING_HEADER: str = "HTTP_X_FORWARDED_FOR"
+# True: use first IP in the HEADER, False: use last IP in the HEADER
+HTTP_FORWARDING_IP_FIRST: bool = True

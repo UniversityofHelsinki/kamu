@@ -92,6 +92,15 @@ class Role(models.Model):
         else:
             return self.description_en
 
+    def log_values(self) -> dict[str, str | int]:
+        """
+        Return values for audit log.
+        """
+        return {
+            "role_id": self.pk,
+            "role": self.identifier,
+        }
+
     def clean(self) -> None:
         """
         Validates role data.
@@ -233,6 +242,15 @@ class Permission(models.Model):
         else:
             return self.description_en
 
+    def log_values(self) -> dict[str, str | int]:
+        """
+        Return values for audit log.
+        """
+        return {
+            "permission_id": self.pk,
+            "permission": self.identifier,
+        }
+
 
 class MembershipManager(models.Manager["Membership"]):
     """
@@ -296,6 +314,15 @@ class Membership(models.Model):
         if self.identity:
             return f"{self.role.name()} - {self.identity.display_name()}"
         return f"{self.role.name()} - {self.invite_email_address}"
+
+    def log_values(self) -> dict[str, str | int]:
+        """
+        Return values for audit log.
+        """
+        return {
+            "role_id": self.pk,
+            "role": self.__str__(),
+        }
 
     def get_absolute_url(self) -> str:
         """

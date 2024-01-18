@@ -20,3 +20,4 @@ DATABASES: dict[str, dict[str, Any]] = {
     "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}
 }
 LOGGING["loggers"]["django.request"] = {"level": "ERROR"}
+LOGGING["loggers"]["audit"] = {"level": "WARNING"}

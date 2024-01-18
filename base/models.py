@@ -293,3 +293,12 @@ class Token(models.Model):
 
     def __str__(self) -> str:
         return f"{self.token_type}: {self.created_at}"
+
+    def log_values(self) -> dict[str, str | int]:
+        """
+        Return values for audit log.
+        """
+        return {
+            "token_id": self.pk,
+            "token_type": self.token_type,
+        }
