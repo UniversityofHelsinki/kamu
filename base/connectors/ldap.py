@@ -11,6 +11,10 @@ from ldap.ldapobject import LDAPObject
 logger = logging.getLogger(__name__)
 
 
+class LDAP_SIZELIMIT_EXCEEDED(Exception):
+    pass
+
+
 def _ldap_initialize(
     remote: str,
     port: int,
@@ -110,7 +114,7 @@ def ldap_search(
 
     Returns a list of dictionaries with LDAP attributes, or None if error.
 
-    Raises ldap.SIZELIMIT_EXCEEDED if either server or local limit is exceeded.
+    Raises LDAP_SIZELIMIT_EXCEEDED if either server or local limit is exceeded.
     """
     if not ldap_attributes:
         ldap_attributes = getattr(settings, "LDAP_ATTRIBUTES")
@@ -127,11 +131,13 @@ def ldap_search(
         log_msg = f"LDAP NO SUCH OBJECT: { search_base }"
         logger.error(log_msg)
         return None
+    except ldap.SIZELIMIT_EXCEEDED as e:
+        raise LDAP_SIZELIMIT_EXCEEDED from e
     result_list: list = []
     if not result:
         return result_list
     if len(result) > getattr(settings, "LDAP_SEARCH_LIMIT", 50):
-        raise ldap.SIZELIMIT_EXCEEDED
+        raise LDAP_SIZELIMIT_EXCEEDED
     for entry in result:
         obj = {}
         for key in ldap_attributes:

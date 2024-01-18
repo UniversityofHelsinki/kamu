@@ -32,9 +32,8 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
 )
-from ldap import SIZELIMIT_EXCEEDED
 
-from base.connectors.ldap import ldap_search
+from base.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
 from base.connectors.sms import SmsConnector
 from base.models import TimeLimitError, Token
 from identity.forms import (
@@ -514,7 +513,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
             return []
         try:
             ldap_result = ldap_search(search_filter="(&" + "".join(ldap_parameters) + ")", search_values=ldap_values)
-        except SIZELIMIT_EXCEEDED:
+        except LDAP_SIZELIMIT_EXCEEDED:
             messages.add_message(
                 self.request,
                 messages.WARNING,

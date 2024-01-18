@@ -17,10 +17,9 @@ from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from django.views.generic import DetailView, ListView, View
 from django.views.generic.edit import CreateView
-from ldap import SIZELIMIT_EXCEEDED
 
 from base.connectors.email import send_invite_email
-from base.connectors.ldap import ldap_search
+from base.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
 from base.models import Token
 from identity.models import EmailAddress, Identifier, Identity
 from identity.validators import validate_fpic
@@ -296,7 +295,7 @@ class RoleInviteLdapView(BaseRoleInviteView):
             ldap_user = ldap_search(
                 search_filter="(uid={})", search_values=[uid], ldap_attributes=["uid", "cn", "mail"]
             )
-        except SIZELIMIT_EXCEEDED:
+        except LDAP_SIZELIMIT_EXCEEDED:
             raise PermissionDenied
         if not ldap_user or len(ldap_user) != 1:
             raise PermissionDenied
@@ -415,7 +414,7 @@ class RoleInviteLdapView(BaseRoleInviteView):
                     "schacPersonalUniqueID",
                 ],
             )
-        except SIZELIMIT_EXCEEDED:
+        except LDAP_SIZELIMIT_EXCEEDED:
             raise PermissionDenied
         if not ldap_user or len(ldap_user) != 1:
             raise PermissionDenied
