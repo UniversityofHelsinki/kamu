@@ -60,6 +60,9 @@ class Role(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
     class Meta:
+        permissions = [
+            ("search_roles", "Can search roles"),
+        ]
         verbose_name = _("Role")
         verbose_name_plural = _("Roles")
 

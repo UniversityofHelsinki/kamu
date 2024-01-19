@@ -6,11 +6,13 @@ import datetime
 from unittest.mock import patch
 
 from django.contrib.admin.models import LogEntry
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.test import RequestFactory, TestCase, override_settings
 from django.utils import timezone
 
 from base.models import TimeLimitError, Token
-from base.utils import AuditLog, get_client_ip
+from base.utils import AuditLog, get_client_ip, set_default_permissions
 from identity.models import EmailAddress, Identity, PhoneNumber
 from role.models import Membership, Role
 from tests.setup import BaseTestCase
@@ -96,6 +98,28 @@ class AuditLogTests(BaseTestCase):
             },
         )
         self.assertEqual(LogEntry.objects.filter(change_message="TestMsg").count(), 1)
+
+
+class SetPermissionTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(username="testuser")
+        self.group = Group.objects.create(name="Test Group")
+
+    def test_set_default_permissions_for_user(self):
+        set_default_permissions(self.user)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.user_permissions.count(), 2)
+        set_default_permissions(self.user, remove=True)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.user_permissions.count(), 0)
+
+    def test_set_default_permissions_for_group(self):
+        set_default_permissions(self.group)
+        self.group.refresh_from_db()
+        self.assertEqual(self.group.permissions.count(), 2)
+        set_default_permissions(self.group, remove=True)
+        self.group.refresh_from_db()
+        self.assertEqual(self.group.permissions.count(), 0)
 
 
 class TokenModelTests(TestCase):

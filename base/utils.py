@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 from django.conf import settings
 from django.contrib.admin.models import ADDITION, CHANGE, DELETION, LogEntry
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import AbstractBaseUser, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 
 from identity.models import Identity
@@ -233,3 +233,26 @@ class AuditLog:
         Check _log method for parameters.
         """
         self._log(level=logging.WARNING, message=message, **kwargs)
+
+
+def set_default_permissions(instance: AbstractBaseUser | Group, remove: bool = False) -> None:
+    """
+    Set default permissions for a group or user.
+    """
+
+    for model, codename in [
+        ("role", "search_roles"),
+        ("identity", "search_identities"),
+    ]:
+        content_type = ContentType.objects.get(app_label=model, model=model)
+        permission = Permission.objects.get(content_type=content_type, codename=codename)
+        if remove:
+            if hasattr(instance, "permissions"):
+                instance.permissions.remove(permission)
+            elif hasattr(instance, "user_permissions"):
+                instance.user_permissions.remove(permission)
+        else:
+            if hasattr(instance, "permissions"):
+                instance.permissions.add(permission)
+            elif hasattr(instance, "user_permissions"):
+                instance.user_permissions.add(permission)
