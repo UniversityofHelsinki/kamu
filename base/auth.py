@@ -23,7 +23,7 @@ from django.http import HttpRequest
 from django.utils.translation import gettext as _
 
 from base.models import Token
-from base.utils import AuditLog
+from base.utils import AuditLog, set_default_permissions
 from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
 from identity.validators import validate_fpic
 from role.models import Role
@@ -43,14 +43,15 @@ class AuthenticationError(Exception):
 
 def post_login_tasks(request: HttpRequest) -> None:
     """
-    Checks user information and sets certain session parameters.
+    Tasks to do after user has logged in.
+
+    Give user default permissions if user owns at least one role, remove them otherwise.
     """
-    if not request.user.is_authenticated:
-        return
-    request.session["is_owner"] = (
-        True if request.user.is_superuser or Role.objects.filter(owner=request.user).exists() else False
-    )
-    request.session["has_groups"] = True if request.user.is_superuser or request.user.groups.all().exists() else False
+    if request.user and request.user.is_authenticated:
+        if Role.objects.filter(owner=request.user).exists():
+            set_default_permissions(request.user)
+        else:
+            set_default_permissions(request.user, remove=True)
 
 
 def auth_login(request: HttpRequest, user: AbstractBaseUser | None, backend: type[ModelBackend] | str | None) -> None:
