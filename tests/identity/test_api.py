@@ -20,8 +20,13 @@ class IdentityAPITests(BaseAPITestCase):
         client = APIClient()
         client.force_authenticate(user=self.user)
         response = client.get(f"{self.url}identities/")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_identity(self):
+        client = APIClient()
+        client.force_authenticate(user=self.user)
+        response = client.get(f"{self.url}identities/1/")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_list_identities_superuser(self):
         client = APIClient()
@@ -59,20 +64,20 @@ class EmailAddressAPITests(BaseAPITestCase):
 
     def test_create_email(self):
         client = APIClient()
-        client.force_authenticate(user=self.user)
+        client.force_authenticate(user=self.superuser)
         response = client.post(self.url, self.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_update_email(self):
         client = APIClient()
-        client.force_authenticate(user=self.user)
+        client.force_authenticate(user=self.superuser)
         data = {"address": "updated.email@example.org"}
         response = client.patch(f"{self.url}{self.email_address.pk}/", data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_create_email_missing_address(self):
         client = APIClient()
-        client.force_authenticate(user=self.user)
+        client.force_authenticate(user=self.superuser)
         self.data.pop("address")
         response = client.post(self.url, self.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -80,7 +85,7 @@ class EmailAddressAPITests(BaseAPITestCase):
 
     def test_create_email_incorrect_address(self):
         client = APIClient()
-        client.force_authenticate(user=self.user)
+        client.force_authenticate(user=self.superuser)
         self.data["address"] = "incorrect_email"
         response = client.post(self.url, self.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -88,7 +93,7 @@ class EmailAddressAPITests(BaseAPITestCase):
 
     def test_create_email_duplicate(self):
         client = APIClient()
-        client.force_authenticate(user=self.user)
+        client.force_authenticate(user=self.superuser)
         self.data["address"] = self.email_address.address
         response = client.post(self.url, self.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

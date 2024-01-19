@@ -2,10 +2,9 @@
 Identity app views for API endpoints.
 """
 
-from django.db.models import QuerySet
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
 
+from base.api import CustomDjangoModelPermissions
 from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
 from identity.serializers import (
     EmailAddressSerializer,
@@ -21,17 +20,8 @@ class EmailAddressViewSet(viewsets.ModelViewSet):
     """
 
     queryset = EmailAddress.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [CustomDjangoModelPermissions]
     serializer_class = EmailAddressSerializer
-
-    def get_queryset(self) -> QuerySet[EmailAddress]:
-        """
-        Restricts queryset to authenticated user if user is not a superuser.
-        """
-        user = self.request.user if self.request.user.is_authenticated else None
-        if user and user.is_superuser:
-            return EmailAddress.objects.all()
-        return EmailAddress.objects.filter(identity__user=user)
 
 
 class PhoneNumberViewSet(viewsets.ModelViewSet):
@@ -40,17 +30,8 @@ class PhoneNumberViewSet(viewsets.ModelViewSet):
     """
 
     queryset = PhoneNumber.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [CustomDjangoModelPermissions]
     serializer_class = PhoneNumberSerializer
-
-    def get_queryset(self) -> QuerySet[PhoneNumber]:
-        """
-        Restricts queryset to authenticated user if user is not a superuser.
-        """
-        user = self.request.user if self.request.user.is_authenticated else None
-        if user and user.is_superuser:
-            return PhoneNumber.objects.all()
-        return PhoneNumber.objects.filter(identity__user=user)
 
 
 class IdentifierViewSet(viewsets.ModelViewSet):
@@ -59,17 +40,8 @@ class IdentifierViewSet(viewsets.ModelViewSet):
     """
 
     queryset = Identifier.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [CustomDjangoModelPermissions]
     serializer_class = IdentifierSerializer
-
-    def get_queryset(self) -> QuerySet[Identifier]:
-        """
-        Restricts queryset to authenticated user, if user is not a superuser.
-        """
-        user = self.request.user if self.request.user.is_authenticated else None
-        if user and user.is_superuser:
-            return Identifier.objects.all()
-        return Identifier.objects.filter(identity__user=user)
 
 
 class IdentityViewSet(viewsets.ModelViewSet):
@@ -78,14 +50,5 @@ class IdentityViewSet(viewsets.ModelViewSet):
     """
 
     queryset = Identity.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [CustomDjangoModelPermissions]
     serializer_class = IdentitySerializer
-
-    def get_queryset(self) -> QuerySet[Identity]:
-        """
-        Restricts queryset to authenticated user, if user is not a superuser.
-        """
-        user = self.request.user if self.request.user.is_authenticated else None
-        if user and user.is_superuser:
-            return Identity.objects.all()
-        return Identity.objects.filter(user=user)

@@ -19,9 +19,15 @@ class RoleAPITests(BaseAPITestCase):
         response = client.get(f"{self.url}roles/")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_list_roles(self):
+    def test_list_roles_without_permission(self):
         client = APIClient()
         client.force_authenticate(user=self.user)
+        response = client.get(f"{self.url}roles/")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_list_roles(self):
+        client = APIClient()
+        client.force_authenticate(user=self.superuser)
         response = client.get(f"{self.url}roles/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
@@ -42,9 +48,15 @@ class PermissionAPITests(BaseAPITestCase):
         response = client.get(f"{self.url}permissions/")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_list_permissions(self):
+    def test_list_permissions_without_access(self):
         client = APIClient()
         client.force_authenticate(user=self.user)
+        response = client.get(f"{self.url}permissions/")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_list_permissions(self):
+        client = APIClient()
+        client.force_authenticate(user=self.superuser)
         response = client.get(f"{self.url}permissions/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
@@ -74,12 +86,11 @@ class MembershipAPITests(BaseAPITestCase):
         response = client.get(f"{self.url}")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_list_membership(self):
+    def test_list_membership_without_access(self):
         client = APIClient()
         client.force_authenticate(user=self.user)
         response = client.get(f"{self.url}")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_list_membership_superuser(self):
         client = APIClient()
@@ -90,7 +101,7 @@ class MembershipAPITests(BaseAPITestCase):
 
     def test_create_membership(self):
         client = APIClient()
-        client.force_authenticate(user=self.user)
+        client.force_authenticate(user=self.superuser)
         response = client.post(
             f"{self.url}",
             {
@@ -105,7 +116,7 @@ class MembershipAPITests(BaseAPITestCase):
 
     def test_create_membership_invalid_date(self):
         client = APIClient()
-        client.force_authenticate(user=self.user)
+        client.force_authenticate(user=self.superuser)
         response = client.post(
             f"{self.url}",
             {
@@ -121,7 +132,7 @@ class MembershipAPITests(BaseAPITestCase):
 
     def test_create_membership_invalid_duration(self):
         client = APIClient()
-        client.force_authenticate(user=self.user)
+        client.force_authenticate(user=self.superuser)
         response = client.post(
             f"{self.url}",
             {
