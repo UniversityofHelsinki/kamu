@@ -11,6 +11,7 @@ from django.core import mail
 from django.test import Client, override_settings
 from django.utils import timezone
 
+from base.utils import set_default_permissions
 from identity.models import Identifier, Identity
 from role.models import Membership, Role
 from role.views import RoleListApproverView, RoleListInviterView, RoleListOwnerView
@@ -75,11 +76,18 @@ class RoleListTests(BaseTestCase):
         self.assertEqual(response.context_data["object_list"].count(), 2)
 
     def test_view_role_search(self):
+        set_default_permissions(self.user)
         url = f"{self.url}search/?search=anoth"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Another Role", response.content.decode("utf-8"))
         self.assertNotIn("Test Role", response.content.decode("utf-8"))
+
+    def test_view_role_search_without_permission(self):
+        set_default_permissions(self.user, remove=True)
+        url = f"{self.url}search/?search=anoth"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
 
 
 class RoleJoinTests(BaseTestCase):
@@ -175,6 +183,7 @@ class RoleInviteTests(BaseTestCase):
         self.url = "/role/1/invite/"
         self.client = Client()
         self.client.force_login(self.user)
+        set_default_permissions(self.user)
         self.group = Group.objects.create(name="InviterGroup")
         self.role.inviters.add(self.group)
         self.user.groups.add(self.group)

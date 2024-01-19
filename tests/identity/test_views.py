@@ -9,6 +9,7 @@ from django.core import mail
 from django.test import Client
 from ldap import SIZELIMIT_EXCEEDED
 
+from base.utils import set_default_permissions
 from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
 from tests.setup import BaseTestCase
 
@@ -41,6 +42,7 @@ class IdentityTests(BaseTestCase):
         super().setUp()
         self.url = "/identity/"
         self.client = Client()
+        set_default_permissions(self.user)
         self.client.force_login(self.user)
 
     def test_anonymous_view_redirects_to_login(self):
@@ -82,6 +84,12 @@ class IdentityTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User", response.content.decode("utf-8"))
         self.assertIn("Super User", response.content.decode("utf-8"))
+
+    def test_search_identity_without_permission(self):
+        set_default_permissions(self.user, remove=True)
+        url = f"{self.url}search/?given_names=test&email=super@example.org"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
 
     @mock.patch("base.connectors.ldap.logger")
     def test_search_ldap_fail(self, mock_logger):

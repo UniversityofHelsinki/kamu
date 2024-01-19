@@ -488,6 +488,11 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
     template_name = "identity/identity_search.html"
     model = Identity
 
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        if not self.request.user.has_perm("identity.search_identities"):
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
     def _ldap_search_attribute(self, attribute: list[tuple[str, str, bool]]) -> list | None:
         """
         Search LDAP for attribute(s).
