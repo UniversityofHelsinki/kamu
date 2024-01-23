@@ -6,6 +6,7 @@ from unittest import mock
 from unittest.mock import ANY, call
 from urllib.parse import unquote_plus
 
+from django.contrib.admin.models import LogEntry
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.test import Client, RequestFactory, TestCase, override_settings
@@ -425,6 +426,9 @@ class LinkIdentifierTests(TestCase):
                 call(10, "Started identifier linking process", extra=ANY),
                 call(20, "Linked eppn identifier to identity Test User", extra=ANY),
             ]
+        )
+        self.assertEqual(
+            LogEntry.objects.filter(change_message="Linked eppn identifier to identity Test User").count(), 1
         )
 
     @override_settings(LINK_IDENTIFIER_TIME_LIMIT=-1)

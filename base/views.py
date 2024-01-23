@@ -301,6 +301,7 @@ class VerifyPhoneNumberView(BaseRegisterView, FormView):
             outcome="success",
             request=self.request,
             objects=[identity, user],
+            log_to_db=True,
         )
         email_object = EmailAddress.objects.create(address=email_address, identity=identity, verified=True)
         audit_log.info(
@@ -310,6 +311,7 @@ class VerifyPhoneNumberView(BaseRegisterView, FormView):
             outcome="success",
             request=self.request,
             objects=[email_object, identity],
+            log_to_db=True,
         )
         phone_object = PhoneNumber.objects.create(number=phone_number, identity=identity, verified=True)
         audit_log.info(
@@ -319,6 +321,7 @@ class VerifyPhoneNumberView(BaseRegisterView, FormView):
             outcome="success",
             request=self.request,
             objects=[phone_object, identity],
+            log_to_db=True,
         )
         auth_login(self.request, user, backend="base.auth.EmailSMSBackend")
         claim_membership(self.request, identity)

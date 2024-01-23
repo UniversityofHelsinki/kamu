@@ -5,6 +5,7 @@ Unit tests for base app.
 import datetime
 from unittest.mock import patch
 
+from django.contrib.admin.models import LogEntry
 from django.test import RequestFactory, TestCase, override_settings
 from django.utils import timezone
 
@@ -74,6 +75,7 @@ class AuditLogTests(BaseTestCase):
             request=request,
             objects={self.user},
             extra={"test": "test"},
+            log_to_db=True,
         )
         mock_logger.assert_called_with(
             10,
@@ -93,6 +95,7 @@ class AuditLogTests(BaseTestCase):
                 "test": "test",
             },
         )
+        self.assertEqual(LogEntry.objects.filter(change_message="TestMsg").count(), 1)
 
 
 class TokenModelTests(TestCase):

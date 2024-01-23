@@ -155,6 +155,7 @@ class LocalBaseBackend(BaseBackend):
             outcome="success",
             request=request,
             objects=[identity, user],
+            log_to_db=True,
         )
         if user.email:
             email_address = EmailAddress.objects.create(address=user.email, identity=identity)
@@ -165,6 +166,7 @@ class LocalBaseBackend(BaseBackend):
                 outcome="success",
                 request=request,
                 objects=[identity, email_address],
+                log_to_db=True,
             )
         return identity
 
@@ -213,6 +215,7 @@ class LocalBaseBackend(BaseBackend):
                 outcome="success",
                 request=request,
                 objects=[identifier, identity],
+                log_to_db=True,
             )
         return None
 
@@ -351,6 +354,7 @@ class LocalBaseBackend(BaseBackend):
                 outcome="success",
                 request=request,
                 objects=[identity, user],
+                log_to_db=True,
             )
             self._post_tasks(request, user)
             return user

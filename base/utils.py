@@ -7,14 +7,16 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 from django.conf import settings
+from django.contrib.admin.models import ADDITION, CHANGE, DELETION, LogEntry
 from django.contrib.auth import get_user_model
-from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
 
 from identity.models import Identity
 
 if TYPE_CHECKING:
     from django.contrib.auth.backends import ModelBackend
+    from django.contrib.auth.base_user import AbstractBaseUser
     from django.http import HttpRequest
 
     from base.auth import LocalBaseBackend
@@ -95,6 +97,39 @@ class AuditLog:
                 entry["actor_id"] = request.user.pk
         return entry
 
+    def _get_identity(self, identity: Identity | None, user: AbstractBaseUser | None) -> Identity | None:
+        """
+        Get identity from identity or linked user.
+        """
+        if identity:
+            return identity
+        if user and user.is_authenticated and hasattr(user, "identity"):
+            return user.identity
+        return None
+
+    def _add_to_admin_log(
+        self, actor_id: int | str | None, identity: Identity | None, message: str, category: str, action: str
+    ) -> None:
+        """
+        Create a log entry for add or change messages, if actor and identity are given.
+        """
+        if not actor_id or not identity or not isinstance(actor_id, int):
+            return None
+        if category == "identity" and action == "create":
+            action_flag = ADDITION
+        elif category == "identity" and action == "delete":
+            action_flag = DELETION
+        else:
+            action_flag = CHANGE
+        LogEntry.objects.log_action(
+            user_id=actor_id,
+            content_type_id=ContentType.objects.get_for_model(identity).pk,
+            object_id=identity.pk,
+            object_repr=str(identity),
+            action_flag=action_flag,
+            change_message=message,
+        )
+
     def _log(
         self,
         level: int,
@@ -106,6 +141,7 @@ class AuditLog:
         backend: type[ModelBackend] | LocalBaseBackend | str | None = None,
         objects: tuple[object] | tuple[()] = (),
         extra: dict[str, str | int | None] | None = None,
+        log_to_db: bool = False,
     ) -> None:
         """
         Add entry to audit log.
@@ -142,6 +178,8 @@ class AuditLog:
         Additional information, like actor user and IP address are parsed from the request, if given.
 
         Other parameters are linked objects. If given, certain fields like id and name are parsed from them.
+
+        Log message also to Identity admin log if actor and identity can be parsed.
         """
         params: dict[str, str | int | None] = {
             "category": category,
@@ -168,6 +206,9 @@ class AuditLog:
         if extra:
             params.update(extra)
         logger_audit.log(level, message, extra=params)
+        if log_to_db:
+            identity = self._get_identity(identity, user)
+            self._add_to_admin_log(params.get("actor_id"), identity, message, category, action)
 
     def info(self, message: str, **kwargs: Any) -> None:
         """
