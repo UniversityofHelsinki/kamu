@@ -34,6 +34,9 @@ from base.views import (
 )
 from identity.views import (
     ContactView,
+    ContractDetailView,
+    ContractListView,
+    ContractSignView,
     EmailAddressVerificationView,
     IdentifierView,
     IdentityDetailView,
@@ -76,6 +79,13 @@ urlpatterns = [
     path("identity/me/", IdentityMeView.as_view(), name="identity-me"),
     path("identity/<int:pk>/", IdentityDetailView.as_view(), name="identity-detail"),
     path("identity/<int:pk>/contacts/", ContactView.as_view(), name="contact-change"),
+    path("identity/<int:pk>/contracts/", ContractListView.as_view(), name="contract-list"),
+    path("contract/<int:pk>/", ContractDetailView.as_view(), name="contract-detail"),
+    path(
+        "identity/<int:identity_pk>/contracts/<int:template_pk>/sign/",
+        ContractSignView.as_view(),
+        name="contract-sign",
+    ),
     path("identity/search/", IdentitySearchView.as_view(), name="identity-search"),
     path("identity/<int:pk>/change/", IdentityUpdateView.as_view(), name="identity-change"),
     path("identity/<int:pk>/identifiers/", IdentifierView.as_view(), name="identity-identifier"),

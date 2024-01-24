@@ -4,7 +4,43 @@ Django admin site configuration for the identity app.
 
 from django.contrib import admin
 
-from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
+from identity.models import (
+    Contract,
+    ContractTemplate,
+    EmailAddress,
+    Identifier,
+    Identity,
+    PhoneNumber,
+)
+
+
+class ContractAdmin(admin.ModelAdmin):
+    list_display = ["identity", "template"]
+    search_fields = [
+        "identity__given_names",
+        "identity__surname",
+        "identity__given_name_display",
+        "identity__surname_display",
+        "identity__user__username",
+        "template__type",
+    ]
+    autocomplete_fields = ["identity"]
+
+
+admin.site.register(Contract, ContractAdmin)
+
+
+class ContractTemplateAdmin(admin.ModelAdmin):
+    list_display = ["type", "name", "version"]
+    search_fields = [
+        "type",
+        "name_en",
+        "name_fi",
+        "name_sv",
+    ]
+
+
+admin.site.register(ContractTemplate, ContractTemplateAdmin)
 
 
 class EmailAddressAdmin(admin.ModelAdmin):

@@ -9,9 +9,10 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.mail import send_mail
-from django.db.models import Q, QuerySet
+from django.db import IntegrityError
+from django.db.models import OuterRef, Q, QuerySet, Subquery
 from django.forms import BaseForm
 from django.http import (
     HttpRequest,
@@ -37,6 +38,7 @@ from django.views.generic import (
 from base.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
 from base.connectors.sms import SmsConnector
 from base.models import TimeLimitError, Token
+from base.utils import AuditLog
 from identity.forms import (
     ContactForm,
     EmailAddressVerificationForm,
@@ -44,8 +46,17 @@ from identity.forms import (
     IdentitySearchForm,
     PhoneNumberVerificationForm,
 )
-from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
+from identity.models import (
+    Contract,
+    ContractTemplate,
+    EmailAddress,
+    Identifier,
+    Identity,
+    PhoneNumber,
+)
 from role.models import Membership
+
+audit_log = AuditLog()
 
 
 class IdentityDetailView(LoginRequiredMixin, DetailView):
@@ -336,6 +347,156 @@ class ContactView(LoginRequiredMixin, FormView):
             self._change_contact_priority(PhoneNumber, pk, "down")
             return redirect("contact-change", pk=self.identity.pk)
         return super().post(request, *args, **kwargs)
+
+
+class ContractListView(LoginRequiredMixin, ListView[Contract]):
+    """
+    List contracts for an identity.
+    """
+
+    template_name = "contract/contract_list.html"
+    success_url = "#"
+
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        """
+        Restricts identity to logged-in user unless user has permission to view all contracts.
+        """
+        user = self.request.user if self.request.user.is_authenticated else None
+        if not user:
+            raise PermissionDenied
+        try:
+            identity = Identity.objects.get(pk=self.kwargs.get("pk"))
+        except Identity.DoesNotExist:
+            raise PermissionDenied
+        if identity.user != user and not user.has_perms(["identity.view_contracts"]):
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Add identity and the list of signable contracts to context.
+
+        Signable contracts are the latest version of each public contract type, that the user has not signed.
+        """
+        context = super(ContractListView, self).get_context_data(**kwargs)
+        context["identity"] = Identity.objects.get(pk=self.kwargs.get("pk"))
+        type_query = ContractTemplate.objects.filter(public=True, type=OuterRef("type")).order_by("-version")
+        context["signable_list"] = (
+            ContractTemplate.objects.filter(pk=Subquery(type_query.values("pk")[:1]))
+            .exclude(pk__in=context["contract_list"].values_list("template__pk"))
+            .order_by("type")
+        )
+        return context
+
+    def get_queryset(self) -> QuerySet[Contract]:
+        """
+        List user's contracts. If list_all is given as a GET parameter, list all contracts,
+        otherwise list only the latest version of each contract type.
+        """
+        list_all = self.request.GET.get("list_all")
+        if list_all:
+            queryset = Contract.objects.filter(identity__pk=self.kwargs.get("pk")).order_by(
+                "template__type", "-template__version"
+            )
+        else:
+            type_query = Contract.objects.filter(
+                identity__pk=self.kwargs.get("pk"), template__type=OuterRef("template__type")
+            ).order_by("-template__version")
+            queryset = (
+                Contract.objects.filter(identity__pk=self.kwargs.get("pk"))
+                .filter(pk=Subquery(type_query.values("pk")[:1]))
+                .order_by("template__type")
+            )
+        return queryset
+
+
+class ContractSignView(LoginRequiredMixin, TemplateView):
+    """
+    Sign contract.
+    """
+
+    template_name = "contract/contract_sign.html"
+
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        """
+        Restricts identity to logged-in user.
+        """
+        user = self.request.user if self.request.user.is_authenticated else None
+        if not user:
+            raise PermissionDenied
+        try:
+            identity = Identity.objects.get(pk=self.kwargs.get("identity_pk"))
+            ContractTemplate.objects.get(pk=self.kwargs.get("template_pk"))
+        except ObjectDoesNotExist:
+            raise PermissionDenied
+        if identity.user != user:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Add contract template and identity to context data.
+        """
+        context = super(ContractSignView, self).get_context_data(**kwargs)
+        context["identity"] = Identity.objects.get(pk=self.kwargs.get("identity_pk"))
+        context["template"] = ContractTemplate.objects.get(pk=self.kwargs.get("template_pk"))
+        context["date"] = timezone.now().date()
+        return context
+
+    @method_decorator(csrf_protect)
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Signs a contract.
+        """
+        data = self.request.POST
+        identity = Identity.objects.get(pk=self.kwargs.get("identity_pk"))
+        if "sign_contract" in data:
+            template_pk = int(data["sign_contract"])
+            template = ContractTemplate.objects.get(pk=self.kwargs.get("template_pk"))
+            if template_pk != template.pk:
+                raise PermissionDenied
+            try:
+                contract = Contract.objects.sign_contract(template=template, identity=identity)
+                audit_log.info(
+                    f"Contract { contract.template.type }-{ contract.template.version } signed.",
+                    category="contract",
+                    action="create",
+                    outcome="success",
+                    request=self.request,
+                    objects=[contract, identity, template, request.user],
+                    log_to_db=True,
+                )
+            except IntegrityError:
+                messages.add_message(self.request, messages.WARNING, _("Contract already signed."))
+                return redirect("contract-list", pk=identity.pk)
+            except ValueError:
+                messages.add_message(
+                    self.request,
+                    messages.WARNING,
+                    _("Contract version has changed. Please try again."),
+                )
+                return redirect("contract-list", pk=identity.pk)
+            messages.add_message(self.request, messages.INFO, _("Contract signed."))
+            return redirect("contract-detail", pk=contract.pk)
+        return redirect("contract-list", pk=identity.pk)
+
+
+class ContractDetailView(LoginRequiredMixin, DetailView):
+    """
+    View for the contract details.
+    """
+
+    model = Contract
+    template_name = "contract/contract_detail.html"
+
+    def get_queryset(self) -> QuerySet[Identity]:
+        """
+        Restrict access to user's own contracts, unless user has permission to view all contracts,
+        """
+        queryset = super(ContractDetailView, self).get_queryset()
+        if not self.request.user.has_perms(["identity.view_contracts"]):
+            queryset = queryset.filter(identity__user=self.request.user)
+        return queryset
 
 
 class IdentifierView(LoginRequiredMixin, TemplateView):

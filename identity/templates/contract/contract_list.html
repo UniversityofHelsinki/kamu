@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <h1 id="contract-list" class="mb-4">{% trans "Contracts" %}</h1>
+  {% if object_list %}
+    <table class="table" aria-describedby="contract-list">
+      <thead>
+      <tr>
+        <th scope="col">{% trans "Name" %}</th>
+        <th scope="col">{% trans "Version" %}</th>
+        <th scope="col" class="d-none d-md-table-cell">{% trans "Sign date" %}</th>
+        <th scope="col" class="d-none d-xl-table-cell">{% trans "Checksum" %}</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for contract in object_list %}
+        <tr>
+          <th scope="row"><a href="{% url 'contract-detail' contract.pk %}">{{ contract.template.name }}</a></th>
+          <td>{{ contract.template.version }} ({{ contract.template.created_at.date }})</td>
+          <td class="d-none d-md-table-cell">{{ contract.created_at.date }}</td>
+          <td class="d-none d-xl-table-cell">{{ contract.checksum }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>{% trans "You do not have any signed contracts." %}</p>
+  {% endif %}
+  {% if not request.GET.list_all %}{% trans "Hiding old contract versions by default." %}
+  <a href="{% url 'contract-list' pk=identity.pk %}?list_all=1">{% trans "List all versions." %}</a>{% endif %}
+  <h2 id="signable-list" class="mt-4 mb-4">{% trans "Signable contracts" %}</h2>
+  {% if signable_list %}
+    <table class="table" aria-describedby="signable-list">
+      <thead>
+      <tr>
+        <th scope="col">{% trans "Name" %}</th>
+        <th scope="col">{% trans "Version" %}</th>
+        <th scope="col">{% trans "Sign" %}</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for template in signable_list %}
+        <tr>
+          <th scope="row">{{ template.name }}</th>
+          <td>{{ template.version }} ({{ template.created_at.date }})</td>
+          <td><a href="{% url 'contract-sign' identity_pk=identity.pk template_pk=template.pk %}" class="btn btn-primary mb-2">{% trans "Sign" %}</a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>{% trans "You do not have any signable contracts." %}</p>
+  {% endif %}
+{% endblock %}

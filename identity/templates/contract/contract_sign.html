@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <form method='POST'>
+    {% csrf_token %}
+    <h1 class="mb-4">{% trans "Sign contract" %}</h1>
+    <h2 class="mt-5">{{ template.name }}</h2>
+    {{ template.text|safe }}
+    <h2 class="mt-5">{% trans "Details" %}</h2>
+    <dl class="row">
+      <dt class="col-sm-3">{% trans "Name" %}</dt>
+      <dd class="col-sm-9">{{ identity.display_name }}</dd>
+      <dt class="col-sm-3">{% trans "Date" %}</dt>
+      <dd class="col-sm-9">{{ date }}</dd>
+    </dl>
+    <button type="submit" name="sign_contract" value="{{ template.pk }}" class="btn btn-success me-2 mb-2">{% trans "Sign contract" %}</button>
+    <a href="{% url 'contract-list' identity.pk %}" class="btn btn-danger me-2 mb-2">{% trans "Cancel" %}</a>
+  </form>
+{% endblock %}

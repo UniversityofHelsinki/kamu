@@ -3,14 +3,25 @@ View tests for identity app.
 """
 
 from unittest import mock
+from unittest.mock import ANY, call
 
+from django.contrib.admin.models import LogEntry
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.test import Client
 from ldap import SIZELIMIT_EXCEEDED
 
 from base.utils import set_default_permissions
-from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
+from identity.models import (
+    Contract,
+    ContractTemplate,
+    EmailAddress,
+    Identifier,
+    Identity,
+    PhoneNumber,
+)
 from tests.setup import BaseTestCase
 
 
@@ -391,3 +402,171 @@ class AdminSiteTests(BaseTestCase):
         response = self.client.get(f"{self.url}identifier/")
         self.assertEqual(response.status_code, 200)
         self.assertIn("0 Identifiers", response.content.decode("utf-8"))
+
+
+class ContractTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.contract_template = ContractTemplate.objects.create(
+            type="testtemplate",
+            version=1,
+            name_en="Test Contract en",
+            name_fi="Test Contract fi",
+            name_sv="Test Contract sv",
+            text_en="Test Content en",
+            text_fi="Test Content fi",
+            text_sv="Test Content sv",
+        )
+        self.client = Client()
+        self.client.force_login(self.user)
+
+    def _create_templates(self):
+        self.contract_templates = [
+            ContractTemplate.objects.create(
+                type=f"testtemplate {i}",
+                version=1,
+                name_en=f"Test Contract en {i}",
+                name_fi=f"Test Contract fi {i}",
+                name_sv=f"Test Contract sv {i}",
+                text_en=f"Test Content en {i}",
+                text_fi=f"Test Content fi {i}",
+                text_sv=f"Test Content sv {i}",
+                public=bool(i % 2),
+            )
+            for i in range(2)
+        ]
+
+    def test_modify_contract_creates_new_version(self):
+        self.contract_template.name_en = "New name"
+        self.contract_template.save()
+        self.assertTrue(ContractTemplate.objects.filter(type="testtemplate", version=2).exists())
+
+    def test_contract_sign_page(self):
+        response = self.client.get(f"/identity/{self.identity.pk}/contracts/{self.contract_template.pk}/sign/")
+        self.assertIn(self.contract_template.name(), response.content.decode("utf-8"))
+        self.assertIn(self.contract_template.text(), response.content.decode("utf-8"))
+        self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
+
+    @mock.patch("base.utils.logger_audit")
+    def test_contract_sign_contract(self, mock_logger):
+        response = self.client.post(
+            f"/identity/{self.identity.pk}/contracts/{self.contract_template.pk}/sign/",
+            {"sign_contract": self.contract_template.pk},
+            follow=True,
+        )
+        self.assertTrue(Contract.objects.filter(identity=self.identity, template=self.contract_template).exists())
+        self.assertIn("Contract signed", response.content.decode("utf-8"))
+        self.assertIn(self.contract_template.name(), response.content.decode("utf-8"))
+        self.assertEqual(
+            LogEntry.objects.filter(
+                change_message=f"Contract {self.contract_template.type}-{self.contract_template.version} signed."
+            ).count(),
+            1,
+        )
+        mock_logger.log.assert_has_calls(
+            [
+                call(
+                    20, f"Contract {self.contract_template.type}-{self.contract_template.version} signed.", extra=ANY
+                ),
+            ]
+        )
+        self.assertEqual(
+            mock_logger.log.call_args_list[0][1]["extra"]["contract_checksum"], Contract.objects.last().checksum
+        )
+
+    def test_contract_sign_old_version(self):
+        template_pk = self.contract_template.pk
+        self.test_modify_contract_creates_new_version()
+        response = self.client.post(
+            f"/identity/{self.identity.pk}/contracts/{template_pk}/sign/",
+            {"sign_contract": template_pk},
+            follow=True,
+        )
+        self.assertFalse(Contract.objects.filter(identity=self.identity, template=self.contract_template).exists())
+        self.assertIn("Contract version has changed", response.content.decode("utf-8"))
+
+    def test_view_contract_list(self):
+        self._create_templates()
+        contract = Contract.objects.sign_contract(
+            identity=self.identity,
+            template=self.contract_template,
+        )
+        super_contract = Contract.objects.sign_contract(
+            identity=self.superidentity,
+            template=self.contract_template,
+        )
+        response = self.client.get(f"/identity/{self.identity.pk}/contracts/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(contract.checksum, response.content.decode("utf-8"))
+        self.assertNotIn(super_contract.checksum, response.content.decode("utf-8"))
+        self.assertNotIn(self.contract_templates[0].name(), response.content.decode("utf-8"))
+        self.assertIn(self.contract_templates[1].name(), response.content.decode("utf-8"))
+
+    def test_view_contract(self):
+        self._create_templates()
+        contract = Contract.objects.sign_contract(
+            identity=self.identity,
+            template=self.contract_template,
+        )
+        super_contract = Contract.objects.sign_contract(
+            identity=self.superidentity,
+            template=self.contract_template,
+        )
+        response = self.client.get(f"/contract/{contract.pk}/")
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(f"/contract/{super_contract.pk}/")
+        self.assertEqual(response.status_code, 404)
+        content_type = ContentType.objects.get(app_label="identity", model="identity")
+        permission = Permission.objects.get(content_type=content_type, codename="view_contracts")
+        self.user.user_permissions.add(permission)
+        self.client.force_login(self.user)
+        response = self.client.get(f"/contract/{super_contract.pk}/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_contracts_list_only_latest(self):
+        self._create_templates()
+        contract = Contract.objects.sign_contract(
+            identity=self.identity,
+            template=self.contract_template,
+        )
+        self.contract_template.save()
+        contract2 = Contract.objects.sign_contract(
+            identity=self.identity,
+            template=self.contract_template,
+        )
+        response = self.client.get(f"/identity/{self.identity.pk}/contracts/")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(contract.checksum, response.content.decode("utf-8"))
+        self.assertIn(contract2.checksum, response.content.decode("utf-8"))
+
+    def test_view_contracts_list_all(self):
+        self._create_templates()
+        contract = Contract.objects.sign_contract(
+            identity=self.identity,
+            template=self.contract_template,
+        )
+        self.contract_template.save()
+        contract2 = Contract.objects.sign_contract(
+            identity=self.identity,
+            template=self.contract_template,
+        )
+        response = self.client.get(f"/identity/{self.identity.pk}/contracts/?list_all=1")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(contract.checksum, response.content.decode("utf-8"))
+        self.assertIn(contract2.checksum, response.content.decode("utf-8"))
+
+    def test_validate_contract(self):
+        from uuid import uuid4
+
+        self._create_templates()
+        contract = Contract.objects.sign_contract(
+            identity=self.identity,
+            template=self.contract_template,
+        )
+        self.assertTrue(contract.validate())
+        kamu_id = contract.identity.kamu_id
+        contract.identity.kamu_id = uuid4()
+        contract.identity.save()
+        self.assertFalse(contract.validate())
+        Identifier.objects.create(identity=contract.identity, type="kamu", value=kamu_id)
+        self.assertTrue(contract.validate())

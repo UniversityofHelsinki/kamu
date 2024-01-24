@@ -34,8 +34,9 @@
   <p><span class="text-success"> *</span> {% trans "verified" %}</p>
   {% if user == object.user or perms.identity.change_basic_information %}
     <a href="{% url 'identity-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Update information" %}</a>
-    <a href="{% url 'contact-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Update contact information" %}</a>
-    <a href="{% url 'identity-identifier' object.pk %}" class="btn btn-primary mb-2">{% trans "Update identifiers" %}</a>
+    <a href="{% url 'contact-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Contact information" %}</a>
+    <a href="{% url 'identity-identifier' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Identifiers" %}</a>
+    <a href="{% url 'contract-list' object.pk %}" class="btn btn-primary mb-2">{% trans "Contracts" %}</a>
   {% endif %}
   <h2 id="roles-list" class="mt-4">{% trans "Roles" %}</h2>
   {% if memberships %}
