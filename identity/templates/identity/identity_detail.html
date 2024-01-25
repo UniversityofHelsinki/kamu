@@ -30,12 +30,19 @@
     {% if user == object.user or perms.identity.view_identifiers %}
       <dt class="col-sm-3">{% trans "Identifiers" %}</dt>
       <dd class="col-sm-9">{% for identifier in identifiers %}{{ identifier.get_type_display }}{% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
-    {% endif %}  </dl>
+    {% endif %}
+  </dl>
   <p><span class="text-success"> *</span> {% trans "verified" %}</p>
   {% if user == object.user or perms.identity.change_basic_information %}
     <a href="{% url 'identity-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Update information" %}</a>
+  {% endif %}
+  {% if user == object.user or perms.identity.change_contacts %}
     <a href="{% url 'contact-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Contact information" %}</a>
+  {% endif %}
+  {% if user == object.user or perms.identity.change_identifiers %}
     <a href="{% url 'identity-identifier' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Identifiers" %}</a>
+  {% endif %}
+  {% if user == object.user or perms.identity.view_contracts %}
     <a href="{% url 'contract-list' object.pk %}" class="btn btn-primary mb-2">{% trans "Contracts" %}</a>
   {% endif %}
   <h2 id="roles-list" class="mt-4">{% trans "Roles" %}</h2>
