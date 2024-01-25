@@ -83,6 +83,7 @@ class LocalBaseBackend(BaseBackend):
         "identity_already_exists": _("Identifier is already linked to another user."),
         "invalid_identifier_format": _("Invalid identifier format."),
         "generic": _("Could not authenticate. Please try again."),
+        "invalid_issuer": _("Identity provider is not authorized."),
         "unexpected": _("Unexpected error."),
         "invalid_parameters": _("Missing required parameters. Please try again with an another browser."),
         "invalid_email_or_phone": _("Invalid email address or phone number."),
@@ -240,6 +241,12 @@ class LocalBaseBackend(BaseBackend):
             username = f"{unique_identifier}{suffix}"
         return username
 
+    def _validate_issuer(self, request: HttpRequest) -> bool:
+        """
+        Validates authentication data issuer.
+        """
+        return True
+
     @staticmethod
     def update_groups(user: UserType, groups: list, prefixes: list[str] | None = None) -> None:
         """
@@ -295,6 +302,8 @@ class LocalBaseBackend(BaseBackend):
         """
         if not request:
             raise AuthenticationError(self.error_messages["unexpected"])
+        if not self._validate_issuer(request):
+            raise AuthenticationError(self.error_messages["invalid_issuer"])
         unique_identifier = self._get_meta_unique_identifier(request)
         given_names, surname, email, preferred_username = self._get_meta_user_info(request)
         identifier_type = self._get_identifier_type(request)
@@ -642,13 +651,19 @@ class MicrosoftBackend(LocalBaseBackend):
         """
         return settings.ACCOUNT_SUFFIX_MICROSOFT
 
+    def _validate_issuer(self, request: HttpRequest) -> bool:
+        """
+        Validates authentication data issuer.
+        """
+        issuer = request.META.get(settings.OIDC_MICROSOFT_ISSUER, "")
+        if not issuer.startswith("https://login.microsoftonline.com/"):
+            return False
+        return True
+
     def _get_meta_unique_identifier(self, request: HttpRequest) -> str:
         """
         Get unique identifier from request.META.
         """
-        issuer = request.META.get(settings.OIDC_MICROSOFT_ISSUER, "")
-        if not issuer.startswith("https://login.microsoftonline.com/"):
-            return ""
         unique_identifier = request.META.get(settings.OIDC_MICROSOFT_IDENTIFIER, "")
         return unique_identifier
 

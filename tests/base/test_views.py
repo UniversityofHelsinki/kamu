@@ -114,7 +114,7 @@ class LoginViewTests(BaseTestCase):
         oid = "00000000-0000-0000-0123-456789abcdef"
         iss = "https://login.example.org/"
         response = self._test_microsoft_login(iss, oid)
-        self.assertIn("Login failed", response.content.decode("utf-8"))
+        self.assertIn("Identity provider is not authorized", response.content.decode("utf-8"))
 
     @override_settings(SAML_SUOMIFI_SSN="HTTP_SSN")
     @override_settings(ALLOW_TEST_FPIC=True)
