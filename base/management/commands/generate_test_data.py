@@ -18,7 +18,14 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from faker import Faker
 
-from identity.models import EmailAddress, Identity, Nationality, PhoneNumber
+from identity.models import (
+    Contract,
+    ContractTemplate,
+    EmailAddress,
+    Identity,
+    Nationality,
+    PhoneNumber,
+)
 from role.models import Membership, Permission, Role
 
 fake = Faker()
@@ -123,6 +130,42 @@ ROLES: list = [
     },
 ]
 
+CONTRACTS: list = [
+    {
+        "type": "nda",
+        "name_en": "Non-disclosure agreement",
+        "name_fi": "Salassapitosopimus",
+        "name_sv": "Sekretessavtal",
+        "text_en": "Non-disclosure agreement text.",
+        "text_fi": "Salassapitosopimuksen teksti.",
+        "text_sv": "Texten om sekretessavtal.",
+        "public": True,
+        "version": "1",
+    },
+    {
+        "type": "textcontract",
+        "name_en": "Test contract",
+        "name_fi": "Testisopimus",
+        "name_sv": "Testkontrakt",
+        "text_en": "Test contract test.",
+        "text_fi": "Salassapitosopimuksen teksti.",
+        "text_sv": "Testkontrakttext.",
+        "public": True,
+        "version": "1",
+    },
+    {
+        "type": "secretcontract",
+        "name_en": "Secret contract",
+        "name_fi": "Salainen sopimus",
+        "name_sv": "Hemligt kontrakt",
+        "text_en": "Secret contract test.",
+        "text_fi": "Salaisen sopimuksen teksti.",
+        "text_sv": "Hemlig kontraktstext.",
+        "public": False,
+        "version": "1",
+    },
+]
+
 
 class Command(BaseCommand):
     def add_arguments(self, parser: Any) -> None:
@@ -133,6 +176,22 @@ class Command(BaseCommand):
     def load_fixtures(self) -> None:
         if Nationality.objects.count() == 0:
             call_command("loaddata", "nationality.json", app="identity", verbosity=(0 if self.silent else 1))
+
+    def create_contracts(self) -> None:
+        if not self.silent:
+            print("Creating contracts...")
+        for contract in CONTRACTS:
+            ContractTemplate.objects.get_or_create(
+                type=contract["type"],
+                name_en=contract["name_en"],
+                name_fi=contract["name_fi"],
+                name_sv=contract["name_sv"],
+                text_en=contract["text_en"],
+                text_fi=contract["text_fi"],
+                text_sv=contract["text_sv"],
+                version=contract["version"],
+                public=contract["public"],
+            )
 
     def create_users(self) -> None:
         """
@@ -246,6 +305,7 @@ class Command(BaseCommand):
             print("Creating identities...")
         start_time = datetime.datetime.now()
         finnish_nationality = Nationality.objects.get(code="FI")
+        contract_template = ContractTemplate.objects.filter(type="nda").order_by("-version").first()
         for n in range(number_of_identities):
             if not self.silent and n > 0 and n % 100 == 0:
                 time_elapsed = datetime.datetime.now() - start_time
@@ -355,6 +415,8 @@ class Command(BaseCommand):
                 add_membership()
             if random.randint(0, 100) < 10:
                 add_membership()
+            if contract_template and random.randint(0, 100) < 50:
+                Contract.objects.sign_contract(contract_template, identity)
 
     def set_user_identities(self) -> None:
         """
@@ -374,5 +436,6 @@ class Command(BaseCommand):
         self.create_users()
         self.create_permissions()
         self.create_roles()
+        self.create_contracts()
         self.create_identities(number_of_identities)
         self.set_user_identities()
