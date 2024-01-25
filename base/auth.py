@@ -87,6 +87,8 @@ class LocalBaseBackend(BaseBackend):
         "unexpected": _("Unexpected error."),
         "invalid_parameters": _("Missing required parameters. Please try again with an another browser."),
         "invalid_email_or_phone": _("Invalid email address or phone number."),
+        "user_authenticated": _("You are already logged in."),
+        "link_user_not_authenticated": _("User must be authenticated to link identifier."),
     }
 
     def _get_identifier_type(self, request: HttpRequest) -> str:
@@ -291,6 +293,98 @@ class LocalBaseBackend(BaseBackend):
         if not identifier:
             raise AuthenticationError(self.error_messages["identifier_missing"])
 
+    def _authenticate_login(self, request: HttpRequest, identifier_type: str, unique_identifier: str) -> UserType:
+        """
+        Log in with existing user.
+        """
+        try:
+            identifier = Identifier.objects.get(type=identifier_type, value=unique_identifier, deactivated_at=None)
+        except Identifier.DoesNotExist:
+            raise AuthenticationError(self.error_messages["identifier_not_found"])
+        if not identifier.identity.user:
+            # Identifier exists but is not linked to a user. Should not happen.
+            raise AuthenticationError(self.error_messages["unexpected"])
+        if not isinstance(request.user, UserType) or not request.user.is_authenticated:
+            # Identifier exists and is linked to an unauthenticated user.
+            self._post_tasks(request, identifier.identity.user)
+            return identifier.identity.user
+        if request.user == identifier.identity.user:
+            # Identifier exists and is linked to the current user.
+            self._post_tasks(request, request.user)
+            return request.user
+        # Identifier exists for different user.
+        audit_log.debug(
+            "Identifier exists for different user.",
+            category="identifier",
+            action="info",
+            outcome="failure",
+            request=request,
+            objects=[identifier, identifier.identity],
+        )
+        raise AuthenticationError(self.error_messages["identity_already_exists"])
+
+    def _authenticate_create_user(
+        self, request: HttpRequest, identifier_type: str, unique_identifier: str
+    ) -> UserType:
+        """
+        Creating a new user, or logging in with an existing user.
+        - User must be unauthenticated.
+        """
+        given_names, surname, email, preferred_username = self._get_meta_user_info(request)
+        username = self._get_username(preferred_username, unique_identifier)
+        if isinstance(request.user, UserType) and request.user.is_authenticated:
+            raise AuthenticationError(self.error_messages["user_authenticated"])
+        try:
+            identity = Identifier.objects.get(
+                type=identifier_type, value=unique_identifier, deactivated_at=None
+            ).identity
+        except Identifier.DoesNotExist:
+            # Identifier does not exist. Create user and link identifier.
+            user = self._create_user(username=username, email=email, given_names=given_names, surname=surname)
+            self._link_identifier(request, user, identifier_type, unique_identifier)
+            self._post_tasks(request, user)
+            return user
+        if identity.user:
+            # Identifier exists and is linked to a user. Log in.
+            self._post_tasks(request, identity.user)
+            return identity.user
+        # Identifier exists but is not linked to a user. Should not happen.
+        raise AuthenticationError(self.error_messages["unexpected"])
+
+    def _authenticate_link_identifier(
+        self, request: HttpRequest, identifier_type: str, unique_identifier: str
+    ) -> UserType:
+        """
+        Link identifier to user
+        - User must be authenticated.
+        - Identifier must not exist for another user.
+
+        Return current user if trying to link an identifier that already exists for the current user.
+        """
+        if not isinstance(request.user, UserType) or not request.user.is_authenticated:
+            raise AuthenticationError(self.error_messages["link_user_not_authenticated"])
+        try:
+            identifier = Identifier.objects.get(type=identifier_type, value=unique_identifier, deactivated_at=None)
+        except Identifier.DoesNotExist:
+            # Identifier does not exist. Link it to the current user.
+            self._link_identifier(request, request.user, identifier_type, unique_identifier)
+            self._post_tasks(request, request.user)
+            return request.user
+        if identifier.identity.user == request.user:
+            # Identifier exists for the current user. Run post login tasks and continue with the current user.
+            self._post_tasks(request, request.user)
+            return request.user
+        # Identifier exists for different user.
+        audit_log.debug(
+            "Identifier exists for different user.",
+            category="identifier",
+            action="info",
+            outcome="failure",
+            objects=[identifier, identifier.identity],
+            request=request,
+        )
+        raise AuthenticationError(self.error_messages["identity_already_exists"])
+
     def authenticate(
         self, request: HttpRequest | None, create_user: bool = False, link_identifier: bool = False, **kwargs: Any
     ) -> UserType:
@@ -305,78 +399,16 @@ class LocalBaseBackend(BaseBackend):
         if not self._validate_issuer(request):
             raise AuthenticationError(self.error_messages["invalid_issuer"])
         unique_identifier = self._get_meta_unique_identifier(request)
-        given_names, surname, email, preferred_username = self._get_meta_user_info(request)
         identifier_type = self._get_identifier_type(request)
         self._identifier_validation(request, unique_identifier)
-        try:
-            identity = Identifier.objects.get(
-                type=identifier_type, value=unique_identifier, deactivated_at=None
-            ).identity
-        except Identifier.DoesNotExist:
-            if link_identifier:
-                # Identifier does not exist, link if user is authenticated.
-                if isinstance(request.user, UserType) and request.user.is_authenticated:
-                    self._link_identifier(request, request.user, identifier_type, unique_identifier)
-                    self._post_tasks(request, request.user)
-                    return request.user
-            if create_user and not request.user.is_authenticated:
-                # Identifier and user do not exist. Create a new user with a linked identifier.
-                username = self._get_username(preferred_username, unique_identifier)
-                user = self._create_user(username=username, email=email, given_names=given_names, surname=surname)
-                self._link_identifier(request, user, identifier_type, unique_identifier)
-                self._post_tasks(request, user)
-                return user
-            audit_log.debug(
-                f"Identifier not found: { identifier_type} { unique_identifier }",
-                category="identifier",
-                action="read",
-                outcome="not found",
-                request=request,
-            )
-            raise AuthenticationError(self.error_messages["identifier_not_found"])
-        if request.user.is_authenticated and request.user == identity.user:
-            # Identifier exists and is linked to the current user.
-            self._post_tasks(request, identity.user)
-            return identity.user
-        if request.user.is_authenticated and request.user != identity.user:
-            # Identifier exists for different user.
-            audit_log.debug(
-                "Identifier exists for different user.",
-                category="identifier",
-                action="info",
-                outcome="failure",
-                request=request,
-                objects=[identity],
-            )
-            raise AuthenticationError(self.error_messages["identity_already_exists"])
-        if identity.user:
-            # Identifier exists and is linked to a user.
-            self._post_tasks(request, identity.user)
-            return identity.user
-        elif create_user and not request.user.is_authenticated:
-            # Create a new user and link existing identifier to it.
-            username = self._get_username(preferred_username, unique_identifier)
-            user = self._create_user(username=username, email=email, given_names=given_names, surname=surname)
-            audit_log.info(
-                f"Created user { user }",
-                category="user",
-                action="create",
-                objects=[user],
-            )
-            identity.user = user
-            identity.save()
-            audit_log.info(
-                f"Linked identity { identity } to user { user }",
-                category="identity",
-                action="link",
-                outcome="success",
-                request=request,
-                objects=[identity, user],
-                log_to_db=True,
-            )
-            self._post_tasks(request, user)
+        if link_identifier:
+            user = self._authenticate_link_identifier(request, identifier_type, unique_identifier)
             return user
-        raise AuthenticationError(self.error_messages["identifier_not_found"])
+        if create_user:
+            user = self._authenticate_create_user(request, identifier_type, unique_identifier)
+            return user
+        user = self._authenticate_login(request, identifier_type, unique_identifier)
+        return user
 
 
 class ShibbolethBackend(LocalBaseBackend):

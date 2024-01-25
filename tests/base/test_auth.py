@@ -168,19 +168,18 @@ class GoogleBackendTests(TestCase):
         request.user = AnonymousUser()
         request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
-        user = backend.authenticate(request=request, create_user=True)
-        identifier.refresh_from_db()
-        self.assertEqual(user.username, f"0123456789{ settings.ACCOUNT_SUFFIX_GOOGLE }")
-        self.assertEqual(identifier.identity.user, user)
+        with self.assertRaises(AuthenticationError) as e:
+            user = backend.authenticate(request=request, create_user=True)
+        self.assertEqual(str(e.exception), "Unexpected error.")
 
-    def test_login_google_create_user_with_existing_user(self):
+    def test_login_google_create_user_with_logged_in_user(self):
         request = self.factory.get(reverse("login-google"))
         request.user = self.user
         request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
         with self.assertRaises(AuthenticationError) as e:
             backend.authenticate(request=request, create_user=True)
-        self.assertEqual(str(e.exception), "Identifier not found.")
+        self.assertEqual(str(e.exception), "You are already logged in.")
 
     def test_login_google_link_user_anonymous(self):
         request = self.factory.get(reverse("login-google"))
@@ -189,7 +188,7 @@ class GoogleBackendTests(TestCase):
         backend = GoogleBackend()
         with self.assertRaises(AuthenticationError) as e:
             backend.authenticate(request=request, link_identifier=True)
-        self.assertEqual(str(e.exception), "Identifier not found.")
+        self.assertEqual(str(e.exception), "User must be authenticated to link identifier.")
         self.assertEqual(Identifier.objects.filter(value="0123456789").count(), 0)
 
     def test_login_google_link_identifier(self):
