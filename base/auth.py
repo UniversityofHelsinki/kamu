@@ -115,16 +115,22 @@ class LocalBaseBackend(BaseBackend):
         """
         return settings.AUTH_DEFAULT_VERIFICATION_LEVEL
 
-    def _get_request_data(self, request: HttpRequest) -> tuple[str, str, str, str | None, str | None]:
+    def _get_meta_unique_identifier(self, request: HttpRequest) -> str:
+        """
+        Get unique identifier from request.META.
+        """
+        unique_identifier = request.META.get("sub", "")
+        return unique_identifier
+
+    def _get_meta_user_info(self, request: HttpRequest) -> tuple[str, str, str | None, str | None]:
         """
         Get external login parameters from request.META.
         """
-        unique_identifier = request.META.get("sub", "")
         given_names = request.META.get("given_name", "")
         surname = request.META.get("family_name", "")
         email = request.META.get("email", None)
         preferred_username = request.META.get("preferred_username", None)
-        return unique_identifier, given_names, surname, email, preferred_username
+        return given_names, surname, email, preferred_username
 
     def get_user(self, user_id: int) -> UserType | None:
         """
@@ -289,7 +295,8 @@ class LocalBaseBackend(BaseBackend):
         """
         if not request:
             raise AuthenticationError(self.error_messages["unexpected"])
-        unique_identifier, given_names, surname, email, preferred_username = self._get_request_data(request)
+        unique_identifier = self._get_meta_unique_identifier(request)
+        given_names, surname, email, preferred_username = self._get_meta_user_info(request)
         identifier_type = self._get_identifier_type(request)
         self._identifier_validation(request, unique_identifier)
         try:
@@ -391,16 +398,22 @@ class ShibbolethBackend(LocalBaseBackend):
         else:
             return "low"
 
-    def _get_request_data(self, request: HttpRequest) -> tuple[str, str, str, str | None, str | None]:
+    def _get_meta_unique_identifier(self, request: HttpRequest) -> str:
         """
-        Get META parameters for generic SAML authentication.
+        Get unique identifier from request.META.
         """
         unique_identifier = request.META.get(settings.SAML_ATTR_EPPN, "")
+        return unique_identifier
+
+    def _get_meta_user_info(self, request: HttpRequest) -> tuple[str, str, str | None, str | None]:
+        """
+        Get external login parameters from request.META.
+        """
         given_names = request.META.get(settings.SAML_ATTR_GIVEN_NAMES, "")
         surname = request.META.get(settings.SAML_ATTR_SURNAME, "")
         email = request.META.get(settings.SAML_ATTR_EMAIL, None)
         preferred_username = request.META.get(settings.SAML_ATTR_EPPN, None)
-        return unique_identifier, given_names, surname, email, preferred_username
+        return given_names, surname, email, preferred_username
 
     def _identifier_validation(self, request: HttpRequest, identifier: str) -> None:
         """
@@ -483,7 +496,20 @@ class SuomiFiBackend(LocalBaseBackend):
         """
         return 4
 
-    def _get_request_data(self, request: HttpRequest) -> tuple[str, str, str, str | None, str | None]:
+    def _get_meta_unique_identifier(self, request: HttpRequest) -> str:
+        """
+        Get unique identifier from request.META.
+        """
+        identifier_type = self._get_type(request)
+        if identifier_type == "suomifi":
+            unique_identifier = request.META.get(settings.SAML_SUOMIFI_SSN, "")
+        elif identifier_type == "eidas":
+            unique_identifier = request.META.get(settings.SAML_EIDAS_IDENTIFIER, "")
+        else:
+            raise AuthenticationError(self.error_messages["identifier_missing"])
+        return unique_identifier
+
+    def _get_meta_user_info(self, request: HttpRequest) -> tuple[str, str, str | None, str | None]:
         """
         Get user attributes from META. Suomi.fi and eIDAS have different attribute sets.
         """
@@ -491,17 +517,15 @@ class SuomiFiBackend(LocalBaseBackend):
         email = None
         username_identifier = uuid4()
         if identifier_type == "suomifi":
-            unique_identifier = request.META.get(settings.SAML_SUOMIFI_SSN, "")
             given_names = request.META.get(settings.SAML_SUOMIFI_GIVEN_NAMES, "")
             surname = request.META.get(settings.SAML_SUOMIFI_SURNAME, "")
         elif identifier_type == "eidas":
-            unique_identifier = request.META.get(settings.SAML_EIDAS_IDENTIFIER, "")
             given_names = request.META.get(settings.SAML_EIDAS_GIVEN_NAMES, "")
             surname = request.META.get(settings.SAML_EIDAS_SURNAME, "")
         else:
             raise AuthenticationError(self.error_messages["identifier_missing"])
         preferred_username = f"{ username_identifier }@{ identifier_type }"
-        return unique_identifier, given_names, surname, email, preferred_username
+        return given_names, surname, email, preferred_username
 
     def _identifier_validation(self, request: HttpRequest, identifier: str) -> None:
         """
@@ -582,16 +606,22 @@ class GoogleBackend(LocalBaseBackend):
         """
         return settings.ACCOUNT_SUFFIX_GOOGLE
 
-    def _get_request_data(self, request: HttpRequest) -> tuple[str, str, str, str | None, str | None]:
+    def _get_meta_unique_identifier(self, request: HttpRequest) -> str:
         """
-        Get META parameters for Google authentication.
+        Get unique identifier from request.META.
         """
         unique_identifier = request.META.get(settings.OIDC_CLAIM_SUB, "")
+        return unique_identifier
+
+    def _get_meta_user_info(self, request: HttpRequest) -> tuple[str, str, str | None, str | None]:
+        """
+        Get external login parameters from request.META.
+        """
         given_names = request.META.get(settings.OIDC_CLAIM_GIVEN_NAME, "")
         surname = request.META.get(settings.OIDC_CLAIM_FAMILY_NAME, "")
         email = request.META.get(settings.OIDC_CLAIM_EMAIL, None)
         preferred_username = request.META.get(settings.OIDC_CLAIM_EMAIL, None)
-        return unique_identifier, given_names, surname, email, preferred_username
+        return given_names, surname, email, preferred_username
 
 
 class MicrosoftBackend(LocalBaseBackend):
@@ -612,19 +642,25 @@ class MicrosoftBackend(LocalBaseBackend):
         """
         return settings.ACCOUNT_SUFFIX_MICROSOFT
 
-    def _get_request_data(self, request: HttpRequest) -> tuple[str, str, str, str | None, str | None]:
+    def _get_meta_unique_identifier(self, request: HttpRequest) -> str:
         """
-        Get META parameters for Microsoft authentication.
+        Get unique identifier from request.META.
         """
         issuer = request.META.get(settings.OIDC_MICROSOFT_ISSUER, "")
         if not issuer.startswith("https://login.microsoftonline.com/"):
-            return "", "", "", None, None
+            return ""
         unique_identifier = request.META.get(settings.OIDC_MICROSOFT_IDENTIFIER, "")
+        return unique_identifier
+
+    def _get_meta_user_info(self, request: HttpRequest) -> tuple[str, str, str | None, str | None]:
+        """
+        Get external login parameters from request.META.
+        """
         given_names = request.META.get(settings.OIDC_MICROSOFT_GIVEN_NAME, "")
         surname = request.META.get(settings.OIDC_MICROSOFT_FAMILY_NAME, "")
         email = request.META.get(settings.OIDC_MICROSOFT_EMAIL, None)
         preferred_username = request.META.get(settings.OIDC_MICROSOFT_PREFERRED_USERNAME, None)
-        return unique_identifier, given_names, surname, email, preferred_username
+        return given_names, surname, email, preferred_username
 
 
 class EmailSMSBackend(LocalBaseBackend):
