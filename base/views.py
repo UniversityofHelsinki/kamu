@@ -89,7 +89,7 @@ class InviteView(FormView):
         if "register" in form.data:
             return HttpResponseRedirect(reverse("login-register"))
         if "login" in form.data:
-            return HttpResponseRedirect(reverse("login") + "?next=" + reverse("membership-claim"))
+            return HttpResponseRedirect(reverse("login"))
         return super().form_valid(form)
 
 
@@ -435,6 +435,12 @@ class RemoteLoginView(View):
             )
             return render(request, "error.html", {"message": error_message})
         self._remote_auth_login(request, user)
+        if (
+            user.is_authenticated
+            and "invitation_code" in request.session
+            and "invitation_code_time" in request.session
+        ):
+            return HttpResponseRedirect(reverse("membership-claim"))
         return HttpResponseRedirect(redirect_to)
 
 

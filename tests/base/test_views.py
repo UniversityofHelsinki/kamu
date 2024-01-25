@@ -359,14 +359,21 @@ class RegistrationViewTests(TestCase):
 
     @override_settings(OIDC_CLAIM_SUB="HTTP_SUB")
     def test_register_with_external_account(self):
-        url = reverse("login-google") + "?next=" + reverse("membership-claim")
+        url = reverse("login-google")
+        response = self.client.get(url, follow=True, headers={"SUB": "1234567890"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Membership created", response.content.decode("utf-8"))
+
+    @override_settings(OIDC_CLAIM_SUB="HTTP_SUB")
+    def test_register_redirect_to_membership_claim(self):
+        url = reverse("login-google") + "?next=" + reverse("identity-me")
         response = self.client.get(url, follow=True, headers={"SUB": "1234567890"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Membership created", response.content.decode("utf-8"))
 
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
     def test_register_with_haka_account(self):
-        url = reverse("login-haka") + "?next=" + reverse("membership-claim")
+        url = reverse("login-haka")
         response = self.client.get(url, follow=True, headers={"EPPN": "haka@example.com"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Membership created", response.content.decode("utf-8"))
