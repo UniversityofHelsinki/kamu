@@ -5,6 +5,8 @@ Router configuration for the API endpoints.
 from rest_framework import routers
 
 from identity.api import (
+    ContractTemplateViewSet,
+    ContractViewSet,
     EmailAddressViewSet,
     IdentifierViewSet,
     IdentityViewSet,
@@ -13,6 +15,8 @@ from identity.api import (
 from role.api import MembershipViewSet, PermissionViewSet, RoleViewSet
 
 router = routers.DefaultRouter()
+router.register(r"contracts", ContractViewSet)
+router.register(r"contracttemplates", ContractTemplateViewSet)
 router.register(r"emailaddresses", EmailAddressViewSet)
 router.register(r"identifiers", IdentifierViewSet)
 router.register(r"identities", IdentityViewSet)

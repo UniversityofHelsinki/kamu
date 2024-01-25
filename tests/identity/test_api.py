@@ -6,6 +6,7 @@ from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from identity.models import Contract, ContractTemplate
 from tests.setup import BaseAPITestCase
 
 
@@ -98,3 +99,81 @@ class EmailAddressAPITests(BaseAPITestCase):
         response = client.post(self.url, self.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("identity already has the given email address", response.data["non_field_errors"][0])
+
+
+class ContractAPITestCase(BaseAPITestCase):
+    """
+    APITestCase class with contract test data.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.contract_template = ContractTemplate.objects.create(
+            type="testtemplate",
+            version=1,
+            name_en="Test Contract en",
+            name_fi="Test Contract fi",
+            name_sv="Test Contract sv",
+            text_en="Test Content en",
+            text_fi="Test Content fi",
+            text_sv="Test Content sv",
+        )
+
+
+class ContractTemplateAPITests(ContractAPITestCase):
+    def setUp(self):
+        super().setUp()
+        self.url = f"{self.url}contracttemplates/"
+        self.data = {
+            "type": "newtemplate",
+            "version": 1,
+            "name_en": "Test Contract en",
+            "name_fi": "Test Contract fi",
+            "name_sv": "Test Contract sv",
+            "text_en": "Test Content en",
+            "text_fi": "Test Content fi",
+            "text_sv": "Test Content sv",
+        }
+        self.client = APIClient()
+
+    def test_list_without_permission(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_list(self):
+        self.client.force_authenticate(user=self.superuser)
+        response = self.client.get(self.url)
+        self.assertEqual(len(response.data), 1)
+
+    def test_create_without_permission(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post(self.url, self.data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_create(self):
+        self.client.force_authenticate(user=self.superuser)
+        response = self.client.post(self.url, self.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+
+class ContractAPITests(ContractAPITestCase):
+    def setUp(self):
+        super().setUp()
+        self.url = f"{self.url}contracts/"
+        Contract.objects.sign_contract(self.contract_template, self.identity)
+
+    def test_list_without_permission(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_list(self):
+        self.client.force_authenticate(user=self.superuser)
+        response = self.client.get(self.url)
+        self.assertEqual(len(response.data), 1)
+
+    def test_create(self):
+        self.client.force_authenticate(user=self.superuser)
+        response = self.client.post(self.url, {"template": self.contract_template.pk, "identity": self.identity.pk})
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)

@@ -8,8 +8,76 @@ from rest_framework import serializers
 from rest_framework.fields import Field
 from rest_framework.validators import UniqueTogetherValidator
 
-from identity.models import EmailAddress, Identifier, Identity, PhoneNumber
+from identity.models import (
+    Contract,
+    ContractTemplate,
+    EmailAddress,
+    Identifier,
+    Identity,
+    PhoneNumber,
+)
 from identity.validators import FpicValidator
+
+
+class ContractTemplateSerializer(serializers.ModelSerializer[Contract]):
+    """
+    Serializer for :model:`identity.ContractTemplate`.
+    """
+
+    class Meta:
+        model = ContractTemplate
+        fields = [
+            "id",
+            "type",
+            "version",
+            "name_en",
+            "name_fi",
+            "name_sv",
+            "text_en",
+            "text_fi",
+            "text_sv",
+            "public",
+            "created_at",
+        ]
+        read_only_fields = [
+            "created_at",
+        ]
+
+
+class ContractSerializer(serializers.ModelSerializer[Contract]):
+    """
+    Serializer for :model:`identity.Contract`.
+    """
+
+    class Meta:
+        model = Contract
+        fields = [
+            "id",
+            "identity",
+            "template",
+            "checksum",
+            "lang",
+            "created_at",
+        ]
+        read_only_fields = fields
+
+
+class ContractLimitedSerializer(serializers.ModelSerializer[Contract]):
+    """
+    Serializer for :model:`identity.Contract`.
+    Limited information to use with IdentitySerializer.
+    """
+
+    template: Field = serializers.SlugRelatedField(read_only=True, slug_field="type")
+
+    class Meta:
+        model = Contract
+        fields = [
+            "id",
+            "template",
+            "created_at",
+        ]
+        read_only_fields = fields
 
 
 class EmailAddressSerializer(serializers.ModelSerializer[EmailAddress]):
@@ -94,6 +162,7 @@ class IdentitySerializer(serializers.ModelSerializer[Identity]):
     Serializer for :model:`identity.Identity`.
     """
 
+    contracts: Field = ContractLimitedSerializer(many=True, read_only=True)
     email_addresses: Field = serializers.SlugRelatedField(many=True, read_only=True, slug_field="address")
     phone_numbers: Field = serializers.SlugRelatedField(many=True, read_only=True, slug_field="number")
     roles: Field = serializers.SlugRelatedField(many=True, read_only=True, slug_field="identifier")
@@ -119,6 +188,7 @@ class IdentitySerializer(serializers.ModelSerializer[Identity]):
             "roles",
             "email_addresses",
             "phone_numbers",
+            "contracts",
         ]
         read_only_fields = [
             "created_at",
