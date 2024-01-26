@@ -3,6 +3,7 @@ Common settings file used by Kamu service
 
 Loaded by environment specific settings files
 """
+
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Any

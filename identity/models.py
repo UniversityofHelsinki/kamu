@@ -1,6 +1,7 @@
 """
 Identity app models.
 """
+
 import datetime
 from typing import Any
 from uuid import uuid4

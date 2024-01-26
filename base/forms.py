@@ -1,6 +1,7 @@
 """
 Base forms, shared between apps.
 """
+
 from typing import Any
 
 from crispy_forms.helper import FormHelper

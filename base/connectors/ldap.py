@@ -1,6 +1,7 @@
 """
 LDAP connector
 """
+
 import logging
 
 import ldap

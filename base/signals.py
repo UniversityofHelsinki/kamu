@@ -1,6 +1,7 @@
 """
 Signals for base app
 """
+
 from typing import Any, Type
 
 from django.contrib.auth.models import Group

@@ -3,6 +3,7 @@ Generic production settings for Kamu service.
 
 Requires local_settings.py, check local_settings_example.py for more information.
 """
+
 # mypy: disable-error-code="no-redef"
 
 from kamu.settings.common import *

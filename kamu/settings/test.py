@@ -3,6 +3,7 @@ Test configuration for Kamu service.
 
 Uses local_settings_example configuration with SQLite database, and disables browser security features.
 """
+
 # mypy: disable-error-code="no-redef"
 
 from typing import Any

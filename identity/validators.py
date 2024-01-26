@@ -1,6 +1,7 @@
 """
 Validators for the identity app
 """
+
 import string
 from datetime import datetime
 

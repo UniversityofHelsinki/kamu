@@ -1,6 +1,7 @@
 """
 Tests for base views.
 """
+
 import datetime
 from unittest import mock
 from unittest.mock import ANY, call

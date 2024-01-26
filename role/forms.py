@@ -1,6 +1,7 @@
 """
 Role app forms.
 """
+
 from datetime import date
 from typing import Any
 

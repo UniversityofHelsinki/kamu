@@ -1,6 +1,7 @@
 """
 Identity app views for the UI.
 """
+
 from typing import Any
 from urllib.parse import quote_plus
 
