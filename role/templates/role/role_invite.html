@@ -25,15 +25,15 @@
         <dt class="col-sm-3">{% trans "Preferred language" %}</dt>
         <dd class="col-sm-9 mb-5">{{ identity.get_preferred_language_display }}</dd>
       </dl>
-    </div>{% elif user %}<div class="col-md-6">
+    </div>{% elif ldapuser %}<div class="col-md-6">
       <h2>{% trans "Identity" %}</h2>
       <dl class="row">
         <dt class="col-sm-3">{% trans "Name" %}</dt>
-        <dd class="col-sm-9">{{ user.cn }}</dd>
+        <dd class="col-sm-9">{{ ldapuser.cn }}</dd>
         <dt class="col-sm-3">{% trans "User account" %}</dt>
-        <dd class="col-sm-9">{{ user.uid }}</dd>
+        <dd class="col-sm-9">{{ ldapuser.uid }}</dd>
         <dt class="col-sm-3">{% trans "Email" %}</dt>
-        <dd class="col-sm-9">{{ user.mail }}</dd>
+        <dd class="col-sm-9">{{ ldapuser.mail }}</dd>
       </dl>
     </div>{% endif %}
   </div>

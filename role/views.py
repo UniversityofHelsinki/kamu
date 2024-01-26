@@ -307,7 +307,7 @@ class RoleInviteLdapView(BaseRoleInviteView):
             pass
         except Identity.MultipleObjectsReturned:
             raise PermissionDenied
-        context["user"] = user
+        context["ldapuser"] = user
         return context
 
     @staticmethod
