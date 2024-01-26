@@ -342,7 +342,7 @@ class RemoteLoginView(View):
         """
         Remove session parameters used in login process.
         """
-        for item in ["link_identifier", "link_identifier_time"]:
+        for item in ["invitation_code", "invitation_code_time", "link_identifier", "link_identifier_time"]:
             if item in request.session:
                 del request.session[item]
 
@@ -351,16 +351,13 @@ class RemoteLoginView(View):
         Check that link identifier has not expired.
         """
         if "link_identifier_time" not in request.session:
-            self._remove_session_parameters(request)
             raise AuthenticationError(_("Link identifier not found"))
         link_identifier_time_limit = getattr(settings, "LINK_IDENTIFIER_TIME_LIMIT", 300)
         try:
             link_identifier_time = datetime.fromisoformat(request.session["link_identifier_time"])
         except ValueError:
-            self._remove_session_parameters(request)
             raise AuthenticationError(_("Link identifier time not valid"))
         if timezone.now() - link_identifier_time > timedelta(seconds=link_identifier_time_limit):
-            self._remove_session_parameters(request)
             raise AuthenticationError(_("Link identifier expired"))
         return True
 
@@ -415,14 +412,31 @@ class RemoteLoginView(View):
         """
         pass
 
+    def _handle_error(self, request: HttpRequest, error: Exception) -> str:
+        """
+        Add error messages, remove session parameters and return redirection url to correct page.
+        """
+        if "link_identifier" in request.session:
+            self._remove_session_parameters(request)
+            messages.error(request, _("Identifier linking failed: ") + str(error))
+            logger.debug("Identifier linking failed: " + str(error))
+            if request.user and request.user.is_authenticated and hasattr(request.user, "identity"):
+                return reverse("identity-identifier", kwargs={"pk": request.user.identity.id})
+        if "invitation_code" in request.session:
+            self._remove_session_parameters(request)
+            messages.error(request, _("Invitation claiming failed: ") + str(error))
+            logger.debug("Invitation claiming failed: " + str(error))
+            return reverse("front-page")
+        messages.error(request, _("Login failed: ") + str(error))
+        logger.debug("Login failed: " + str(error))
+        return reverse("login")
+
     def get(self, request: HttpRequest) -> HttpResponse:
         redirect_to = request.GET.get("next", settings.LOGIN_REDIRECT_URL)
         try:
             user = self._authenticate_backend(request)
         except AuthenticationError as e:
-            messages.error(request, _("Login failed: ") + str(e))
-            logger.debug("Login failed: " + str(e))
-            return HttpResponseRedirect(reverse("login"))
+            return HttpResponseRedirect(self._handle_error(request, e))
         if not user.is_active:
             info_message = _("This account is inactive.")
             logger.warning(f"User {user} with inactive account tried to log in")

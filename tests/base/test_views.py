@@ -364,6 +364,13 @@ class RegistrationViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Membership created", response.content.decode("utf-8"))
 
+    @override_settings(OIDC_MICROSOFT_ISSUER="HTTP_ISSUER")
+    def test_register_fail_with_invalid_issuer(self):
+        url = reverse("login-microsoft")
+        response = self.client.get(url, follow=True, headers={"ISSUER": "invalid"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Invitation claiming failed", response.content.decode("utf-8"))
+
     @override_settings(OIDC_CLAIM_SUB="HTTP_SUB")
     def test_register_redirect_to_membership_claim(self):
         url = reverse("login-google") + "?next=" + reverse("identity-me")
@@ -460,6 +467,7 @@ class LinkIdentifierTests(TestCase):
     def test_link_identifier_with_expired_link_identifier(self):
         url = reverse("login-haka") + "?next=" + reverse("identity-identifier", kwargs={"pk": self.identity.pk})
         response = self.client.get(url, follow=True, headers={"EPPN": "haka@example.com"})
+        self.assertIn("Identifier linking failed", response.content.decode("utf-8"))
         self.assertIn("Link identifier expired", response.content.decode("utf-8"))
 
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
