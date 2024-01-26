@@ -15,7 +15,7 @@
     <tbody>
     {% for membership in object_list %}
       <tr>
-        <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{{ membership.identity }}</a></th>
+        <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{% if membership.identity %}{{ membership.identity }}{% else %}{% trans "Invite" %}: {{ membership.invite_email_address }}{% endif %}</a></th>
         <td>{{ membership.role }}</td>
         <td>{{ membership.status }}</td>
         <td>{{ membership.expire_date }}</td>
