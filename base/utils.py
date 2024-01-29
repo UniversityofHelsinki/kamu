@@ -179,6 +179,7 @@ class AuditLog:
         objects: Sequence[object] = (),
         extra: dict[str, str | int | None] | None = None,
         log_to_db: bool = False,
+        db_message: Any = None,
     ) -> None:
         """
         Add entry to audit log.
@@ -196,7 +197,7 @@ class AuditLog:
 
         Other parameters are linked objects. If given, certain fields like id and name are parsed from them.
 
-        Log message also to Identity admin log if actor and identity can be parsed.
+        Optionally log message also to Identity admin log if actor and identity can be parsed.
         """
         params: dict[str, str | int | None] = {
             "category": category,
@@ -225,6 +226,8 @@ class AuditLog:
         logger_audit.log(level, message, extra=params)
         if log_to_db:
             identity = self._get_identity(identity, user)
+            if db_message:
+                message = db_message
             self._add_to_admin_log(params.get("actor_id"), identity, message, category, action)
 
     def info(
@@ -238,6 +241,7 @@ class AuditLog:
         objects: Sequence[object] = (),
         extra: dict[str, str | int | None] | None = None,
         log_to_db: bool = False,
+        db_message: Any = None,
     ) -> None:
         """
         Add info entry to audit log.
@@ -255,6 +259,7 @@ class AuditLog:
             objects=objects,
             extra=extra,
             log_to_db=log_to_db,
+            db_message=db_message,
         )
 
     def debug(
@@ -268,6 +273,7 @@ class AuditLog:
         objects: Sequence[object] = (),
         extra: dict[str, str | int | None] | None = None,
         log_to_db: bool = False,
+        db_message: Any = None,
     ) -> None:
         """
         Add debug entry to audit log.
@@ -285,6 +291,7 @@ class AuditLog:
             objects=objects,
             extra=extra,
             log_to_db=log_to_db,
+            db_message=db_message,
         )
 
     def warning(
@@ -298,6 +305,7 @@ class AuditLog:
         objects: Sequence[object] = (),
         extra: dict[str, str | int | None] | None = None,
         log_to_db: bool = False,
+        db_message: Any = None,
     ) -> None:
         """
         Add warning entry to audit log.
@@ -315,6 +323,7 @@ class AuditLog:
             objects=objects,
             extra=extra,
             log_to_db=log_to_db,
+            db_message=db_message,
         )
 
 
