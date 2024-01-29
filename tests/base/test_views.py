@@ -455,7 +455,7 @@ class LinkIdentifierTests(TestCase):
         self.assertTrue(Identifier.objects.filter(identity=self.identity, value="haka@example.com").exists())
         mock_logger.log.assert_has_calls(
             [
-                call(10, "Started identifier linking process", extra=ANY),
+                call(20, "Started identifier linking process", extra=ANY),
                 call(20, "Linked eppn identifier to identity Test User", extra=ANY),
             ]
         )

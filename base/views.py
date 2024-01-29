@@ -366,7 +366,7 @@ class RemoteLoginView(View):
         Call backend function with correct parameters, based on session variables.
         """
         if "invitation_code" in request.session and "invitation_code_time" in request.session:
-            audit_log.debug(
+            audit_log.info(
                 "Started registration process",
                 category="registration",
                 action="info",
@@ -375,7 +375,7 @@ class RemoteLoginView(View):
             )
             user = backend.authenticate(request, create_user=True)
         elif "link_identifier" in request.session and self._validate_link_identifier_time(request):
-            audit_log.debug(
+            audit_log.info(
                 "Started identifier linking process",
                 category="identifier",
                 action="info",
@@ -384,7 +384,7 @@ class RemoteLoginView(View):
             )
             user = backend.authenticate(request, link_identifier=True)
         else:
-            audit_log.debug(
+            audit_log.info(
                 "Started login process",
                 category="authentication",
                 action="info",
