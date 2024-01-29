@@ -137,7 +137,7 @@ class AuditLog:
         message: str,
         category: str = "",
         action: str = "",
-        outcome: str = "",
+        outcome: str = "none",
         request: HttpRequest | None = None,
         backend: type[ModelBackend] | LocalBaseBackend | str | None = None,
         objects: tuple[object] | tuple[()] = (),
@@ -174,7 +174,7 @@ class AuditLog:
         outcome is the result of the action:
         - success
         - failure
-        - not found
+        - none (if the outcome is not relevant or is missing)
 
         Additional information, like actor user and IP address are parsed from the request, if given.
 
