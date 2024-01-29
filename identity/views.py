@@ -7,6 +7,7 @@ from urllib.parse import quote_plus
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.admin.utils import construct_change_message
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
@@ -91,13 +92,54 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
             ).distinct()
         return queryset
 
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Log viewing identity information.
+
+        Add permissions used to view information as an extra log parameter.
+        """
+        get = super().get(request, *args, **kwargs)
+        permissions = set(self.request.user.get_all_permissions()).intersection(
+            {
+                "identity.view_basic_information",
+                "identity.view_restricted_information",
+                "identity.view_contacts",
+                "identity.view_contracts",
+                "identity.view_identifiers",
+            }
+        )
+        audit_log.info(
+            "Read identity information",
+            category="identity",
+            action="read",
+            outcome="success",
+            request=self.request,
+            objects=[self.object],
+            extra={"permissions": str(permissions)},
+        )
+        return get
+
 
 class IdentityUpdateView(UpdateView):
     model = Identity
     form_class = IdentityForm
 
     def form_valid(self, form: IdentityForm) -> HttpResponse:
-        return super().form_valid(form)
+        valid = super().form_valid(form)
+        if form.changed_data:
+            # construct_change_message is used for all models in admin, but limited to single form in django-stubs.
+            change_message = construct_change_message(form, [], False)  # type: ignore[arg-type]
+            audit_log.info(
+                "Changed identity information",
+                category="identity",
+                action="update",
+                outcome="success",
+                request=self.request,
+                objects=[self.object],
+                log_to_db=True,
+                db_message=change_message,
+            )
+        return valid
 
     def get_form_kwargs(self) -> dict[str, Any]:
         """
@@ -161,6 +203,26 @@ class BaseVerificationView(LoginRequiredMixin, UpdateView):
         """
         self.object.verified = True
         self.object.save()
+        if isinstance(self.object, EmailAddress):
+            audit_log.info(
+                "Verified email address",
+                category="email_address",
+                action="update",
+                outcome="success",
+                request=self.request,
+                objects=[self.object, self.object.identity],
+                log_to_db=True,
+            )
+        elif isinstance(self.object, PhoneNumber):
+            audit_log.info(
+                "Verified phone number",
+                category="phone_number",
+                action="update",
+                outcome="success",
+                request=self.request,
+                objects=[self.object, self.object.identity],
+                log_to_db=True,
+            )
         return super().form_valid(form)
 
 
@@ -260,6 +322,21 @@ class ContactView(LoginRequiredMixin, FormView):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Log listing contact information.
+        """
+        get = super().get(request, *args, **kwargs)
+        audit_log.info(
+            "Listed contact information",
+            category="contact",
+            action="read",
+            outcome="success",
+            request=self.request,
+            objects=[self.identity],
+        )
+        return get
+
     def get_form_kwargs(self) -> dict[str, Any]:
         """
         Add identity object to the form class.
@@ -287,13 +364,33 @@ class ContactView(LoginRequiredMixin, FormView):
         if form.cleaned_data["contact_type"] == "email":
             last_email = EmailAddress.objects.filter(identity=form.identity).order_by("priority").last()
             priority = last_email.priority + 1 if last_email else 0
-            EmailAddress.objects.create(
+            email_object = EmailAddress.objects.create(
                 identity=form.identity, address=form.cleaned_data["contact"], priority=priority
+            )
+            audit_log.info(
+                "Added email address",
+                category="email_address",
+                action="create",
+                outcome="success",
+                request=self.request,
+                objects=[email_object, form.identity],
+                log_to_db=True,
             )
         if form.cleaned_data["contact_type"] == "phone":
             last_phone = PhoneNumber.objects.filter(identity=form.identity).order_by("priority").last()
             priority = last_phone.priority + 1 if last_phone else 0
-            PhoneNumber.objects.create(identity=form.identity, number=form.cleaned_data["contact"], priority=priority)
+            phone_object = PhoneNumber.objects.create(
+                identity=form.identity, number=form.cleaned_data["contact"], priority=priority
+            )
+            audit_log.info(
+                "Added phone number",
+                category="phone_number",
+                action="create",
+                outcome="success",
+                request=self.request,
+                objects=[phone_object, form.identity],
+                log_to_db=True,
+            )
         return super().form_valid(form)
 
     def _change_contact_priority(self, model: type[EmailAddress] | type[PhoneNumber], pk: int, direction: str) -> None:
@@ -324,11 +421,37 @@ class ContactView(LoginRequiredMixin, FormView):
         data = self.request.POST
         if "phone_remove" in data:
             pk = int(data["phone_remove"])
-            PhoneNumber.objects.filter(pk=pk, identity=self.identity).delete()
+            try:
+                phone_number = PhoneNumber.objects.get(pk=pk, identity=self.identity)
+                audit_log.info(
+                    "Deleted phone number",
+                    category="phone_number",
+                    action="delete",
+                    outcome="success",
+                    request=self.request,
+                    objects=[phone_number, self.identity],
+                    log_to_db=True,
+                )
+                phone_number.delete()
+            except PhoneNumber.DoesNotExist:
+                pass
             return redirect("contact-change", pk=self.identity.pk)
         if "email_remove" in data:
             pk = int(data["email_remove"])
-            EmailAddress.objects.filter(pk=pk, identity=self.identity).delete()
+            try:
+                email_address = EmailAddress.objects.filter(pk=pk, identity=self.identity)
+                audit_log.info(
+                    "Deleted email address",
+                    category="email_address",
+                    action="delete",
+                    outcome="success",
+                    request=self.request,
+                    objects=[email_address, self.identity],
+                    log_to_db=True,
+                )
+                email_address.delete()
+            except EmailAddress.DoesNotExist:
+                pass
             return redirect("contact-change", pk=self.identity.pk)
         if "email_up" in data:
             pk = int(data["email_up"])
@@ -365,12 +488,27 @@ class ContractListView(LoginRequiredMixin, ListView[Contract]):
         if not user:
             raise PermissionDenied
         try:
-            identity = Identity.objects.get(pk=self.kwargs.get("pk"))
+            self.identity = Identity.objects.get(pk=self.kwargs.get("pk"))
         except Identity.DoesNotExist:
             raise PermissionDenied
-        if identity.user != user and not user.has_perms(["identity.view_contracts"]):
+        if self.identity.user != user and not user.has_perms(["identity.view_contracts"]):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Log listing contract information.
+        """
+        get = super().get(request, *args, **kwargs)
+        audit_log.info(
+            "Listed contract information",
+            category="contract",
+            action="read",
+            outcome="success",
+            request=self.request,
+            objects=[self.identity],
+        )
+        return get
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
@@ -458,7 +596,7 @@ class ContractSignView(LoginRequiredMixin, TemplateView):
             try:
                 contract = Contract.objects.sign_contract(template=template, identity=identity)
                 audit_log.info(
-                    f"Contract { contract.template.type }-{ contract.template.version } signed.",
+                    f"Contract { contract.template.type }-{ contract.template.version } signed",
                     category="contract",
                     action="create",
                     outcome="success",
@@ -488,6 +626,21 @@ class ContractDetailView(LoginRequiredMixin, DetailView):
 
     model = Contract
     template_name = "contract/contract_detail.html"
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Log viewing contract information.
+        """
+        get = super().get(request, *args, **kwargs)
+        audit_log.info(
+            "Read contract information",
+            category="contract",
+            action="read",
+            outcome="success",
+            request=self.request,
+            objects=[self.object, self.object.identity],
+        )
+        return get
 
     def get_queryset(self) -> QuerySet[Identity]:
         """
@@ -528,6 +681,21 @@ class IdentifierView(LoginRequiredMixin, TemplateView):
         ):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Log listing identifier information.
+        """
+        get = super().get(request, *args, **kwargs)
+        audit_log.info(
+            "Listed identifier information",
+            category="identifier",
+            action="read",
+            outcome="success",
+            request=self.request,
+            objects=[self.identity],
+        )
+        return get
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
@@ -600,6 +768,15 @@ class IdentifierView(LoginRequiredMixin, TemplateView):
                     identifier = Identifier.objects.get(pk=pk, identity=self.identity, deactivated_at__isnull=True)
                     identifier.deactivated_at = timezone.now()
                     identifier.save()
+                    audit_log.info(
+                        "Deactivated identifier",
+                        category="identifier",
+                        action="unlink",
+                        outcome="success",
+                        request=self.request,
+                        objects=[identifier, self.identity],
+                        log_to_db=True,
+                    )
                 except Identifier.DoesNotExist:
                     pass
         elif "link_identifier" in data:
@@ -748,19 +925,33 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         email = self.request.GET.get("email")
         phone = self.request.GET.get("phone")
         uid = self.request.GET.get("uid")
+        search_terms = {}
         if not given_names and not surname:
             queryset = queryset.none()
         if given_names:
             queryset = queryset.filter(
                 Q(given_names__icontains=given_names) | Q(given_name_display__icontains=given_names)
             )
+            search_terms["given_names"] = given_names
         if surname:
             queryset = queryset.filter(Q(surname__icontains=surname) | Q(surname_display__icontains=surname))
+            search_terms["surname"] = surname
         if email:
             queryset = queryset.union(Identity.objects.filter(email_addresses__address__iexact=email))
+            search_terms["email"] = email
         if uid:
             queryset = queryset.union(Identity.objects.filter(uid=uid))
+            search_terms["uid"] = uid
         if phone:
             phone = phone.replace(" ", "")
             queryset = queryset.union(Identity.objects.filter(phone_numbers__number__exact=phone))
+            search_terms["phone"] = phone
+        audit_log.info(
+            "Searched identities",
+            category="identity",
+            action="search",
+            outcome="success",
+            request=self.request,
+            extra={"search_terms": str(search_terms)},
+        )
         return queryset

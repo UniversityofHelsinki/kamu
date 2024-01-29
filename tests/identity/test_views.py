@@ -77,14 +77,21 @@ class IdentityTests(BaseTestCase):
             ).exists()
         )
 
-    def test_view_identity(self):
+    @mock.patch("base.utils.logger_audit")
+    def test_view_identity(self, mock_logger):
         response = self.client.get(f"{self.url}{self.identity.pk}/")
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("alert", response.content.decode("utf-8"))
         self.assertIn("Test User</h1>", response.content.decode("utf-8"))
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Read identity information", extra=ANY),
+            ]
+        )
 
     @mock.patch("base.connectors.ldap._get_connection")
-    def test_search_identity(self, mock_ldap):
+    @mock.patch("base.utils.logger_audit")
+    def test_search_identity(self, mock_logger, mock_ldap):
         mock_ldap.return_value = MockLdapConn()
         EmailAddress.objects.create(
             identity=self.superidentity,
@@ -95,6 +102,15 @@ class IdentityTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User", response.content.decode("utf-8"))
         self.assertIn("Super User", response.content.decode("utf-8"))
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Searched identities", extra=ANY),
+            ]
+        )
+        self.assertEqual(
+            mock_logger.log.call_args_list[0][1]["extra"]["search_terms"],
+            str({"given_names": "test", "email": "super@example.org"}),
+        )
 
     def test_search_identity_without_permission(self):
         set_default_permissions(self.user, remove=True)
@@ -174,12 +190,18 @@ class IdentityEditTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('disabled id="id_given_names"', response.content.decode("utf-8"))
 
-    def test_edit_own_information(self):
+    @mock.patch("base.utils.logger_audit")
+    def test_edit_own_information(self, mock_logger):
         self.client.force_login(self.user)
         response = self.client.post(self.url, self.data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User</h1>", response.content.decode("utf-8"))
         self.assertIn("Jan. 1, 1999", response.content.decode("utf-8"))
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Changed identity information", extra=ANY),
+            ]
+        )
 
     def test_edit_identity_view_with_superuser(self):
         self.client.force_login(self.superuser)
@@ -220,24 +242,43 @@ class ContactTests(BaseTestCase):
         self.client = Client()
         self.client.force_login(self.user)
 
-    def test_view_contacts(self):
+    @mock.patch("base.utils.logger_audit")
+    def test_view_contacts(self, mock_logger):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("+1234567890", response.content.decode("utf-8"))
         self.assertIn("test@example.org", response.content.decode("utf-8"))
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Listed contact information", extra=ANY),
+            ]
+        )
 
-    def test_post_new_email_contact(self):
+    @mock.patch("base.utils.logger_audit")
+    def test_post_new_email_contact(self, mock_logger):
         data = {"contact": "test@example.com"}
         response = self.client.post(self.url, data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("test@example.org", response.content.decode("utf-8"))
         self.assertIn("test@example.com</th>", response.content.decode("utf-8"))
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Added email address", extra=ANY),
+            ]
+        )
 
-    def test_post_new_phone_contact(self):
+    @mock.patch("base.utils.logger_audit")
+    def test_post_new_phone_contact(self, mock_logger):
         data = {"contact": "+358123456789"}
         response = self.client.post(self.url, data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("+1234567890</th>", response.content.decode("utf-8"))
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Added phone number", extra=ANY),
+            ]
+        )
+        self.assertEqual(LogEntry.objects.filter(change_message="Added phone number").count(), 1)
 
     def test_post_incorrect_contact(self):
         data = {"contact": "incorrect"}
@@ -276,12 +317,18 @@ class ContactTests(BaseTestCase):
         self.assertEqual(new_number.priority, 0)
         self.assertEqual(self.number.priority, 1)
 
-    def test_remove_phone(self):
+    @mock.patch("base.utils.logger_audit")
+    def test_remove_phone(self, mock_logger):
         data = {"phone_remove": self.number.pk}
         response = self.client.post(self.url, data, follow=True)
         self.assertNotIn("+1234567890", response.content.decode("utf-8"))
         with self.assertRaises(PhoneNumber.DoesNotExist):
             self.number.refresh_from_db()
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Deleted phone number", extra=ANY),
+            ]
+        )
 
 
 class IdentifierTests(BaseTestCase):
@@ -296,12 +343,19 @@ class IdentifierTests(BaseTestCase):
         self.client = Client()
         self.client.force_login(self.user)
 
-    def test_view_identifiers(self):
+    @mock.patch("base.utils.logger_audit")
+    def test_view_identifiers(self, mock_logger):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("identifier@example.org", response.content.decode("utf-8"))
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Listed identifier information", extra=ANY),
+            ]
+        )
 
-    def test_deactivate_identifier(self):
+    @mock.patch("base.utils.logger_audit")
+    def test_deactivate_identifier(self, mock_logger):
         Identifier.objects.create(
             identity=self.identity,
             type="eppn",
@@ -312,6 +366,11 @@ class IdentifierTests(BaseTestCase):
         self.client.post(self.url, data, follow=True)
         self.identifier.refresh_from_db()
         self.assertIsNotNone(self.identifier.deactivated_at)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Deactivated identifier", extra=ANY),
+            ]
+        )
 
     def test_deactivate_last_identifier(self):
         self.assertIsNone(self.identifier.deactivated_at)
@@ -344,7 +403,8 @@ class VerificationTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Verification code sent", response.content.decode("utf-8"))
 
-    def test_verify_address(self):
+    @mock.patch("base.utils.logger_audit")
+    def test_verify_address(self, mock_logger):
         self.client.get(self.url)
         code = mail.outbox[0].body.split(" ")[-1]
         data = {"code": code}
@@ -353,6 +413,11 @@ class VerificationTests(BaseTestCase):
         self.assertIn("Verified", response.content.decode("utf-8"))
         self.email_address.refresh_from_db()
         self.assertTrue(self.email_address.verified)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Verified email address", extra=ANY),
+            ]
+        )
 
     def test_verify_address_invalid_address(self):
         data = {"code": "invalid_code"}
@@ -360,7 +425,8 @@ class VerificationTests(BaseTestCase):
         self.assertIn("Invalid verification code", response.content.decode("utf-8"))
 
     @mock.patch("identity.views.SmsConnector")
-    def test_verify_sms(self, mock_connector):
+    @mock.patch("base.utils.logger_audit")
+    def test_verify_sms(self, mock_logger, mock_connector):
         number = PhoneNumber.objects.create(identity=self.identity, number="+1234567890", priority=0, verified=False)
         mock_connector.return_value.send_sms.return_value = True
         url = f"/phone/{number.pk}/verify/"
@@ -370,6 +436,11 @@ class VerificationTests(BaseTestCase):
         self.client.post(url, data, follow=True)
         number.refresh_from_db()
         self.assertTrue(number.verified)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Verified phone number", extra=ANY),
+            ]
+        )
 
 
 class AdminSiteTests(BaseTestCase):
@@ -459,15 +530,13 @@ class ContractTests(BaseTestCase):
         self.assertIn(self.contract_template.name(), response.content.decode("utf-8"))
         self.assertEqual(
             LogEntry.objects.filter(
-                change_message=f"Contract {self.contract_template.type}-{self.contract_template.version} signed."
+                change_message=f"Contract {self.contract_template.type}-{self.contract_template.version} signed"
             ).count(),
             1,
         )
         mock_logger.log.assert_has_calls(
             [
-                call(
-                    20, f"Contract {self.contract_template.type}-{self.contract_template.version} signed.", extra=ANY
-                ),
+                call(20, f"Contract {self.contract_template.type}-{self.contract_template.version} signed", extra=ANY),
             ]
         )
         self.assertEqual(
@@ -485,7 +554,8 @@ class ContractTests(BaseTestCase):
         self.assertFalse(Contract.objects.filter(identity=self.identity, template=self.contract_template).exists())
         self.assertIn("Contract version has changed", response.content.decode("utf-8"))
 
-    def test_view_contract_list(self):
+    @mock.patch("base.utils.logger_audit")
+    def test_view_contract_list(self, mock_logger):
         self._create_templates()
         contract = Contract.objects.sign_contract(
             identity=self.identity,
@@ -501,8 +571,14 @@ class ContractTests(BaseTestCase):
         self.assertNotIn(super_contract.checksum, response.content.decode("utf-8"))
         self.assertNotIn(self.contract_templates[0].name(), response.content.decode("utf-8"))
         self.assertIn(self.contract_templates[1].name(), response.content.decode("utf-8"))
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Listed contract information", extra=ANY),
+            ]
+        )
 
-    def test_view_contract(self):
+    @mock.patch("base.utils.logger_audit")
+    def test_view_contract(self, mock_logger):
         self._create_templates()
         contract = Contract.objects.sign_contract(
             identity=self.identity,
@@ -514,6 +590,11 @@ class ContractTests(BaseTestCase):
         )
         response = self.client.get(f"/contract/{contract.pk}/")
         self.assertEqual(response.status_code, 200)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Read contract information", extra=ANY),
+            ]
+        )
         response = self.client.get(f"/contract/{super_contract.pk}/")
         self.assertEqual(response.status_code, 404)
         content_type = ContentType.objects.get(app_label="identity", model="identity")
