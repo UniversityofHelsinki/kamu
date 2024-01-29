@@ -3,7 +3,7 @@ Unit tests for base app.
 """
 
 import datetime
-from unittest.mock import patch
+from unittest.mock import ANY, call, patch
 
 from django.contrib.admin.models import LogEntry
 from django.contrib.auth import get_user_model
@@ -47,16 +47,17 @@ class GetIPChecks(TestCase):
 
 
 class AuditLogTests(BaseTestCase):
+    @patch("base.utils.logger")
     @patch("base.utils.logger_audit.log")
-    def test_logging(self, mock_logger):
-        audit_log.info("TestMsg", category="TestCat", action="TestAct", outcome="success", objects={self.identity})
-        mock_logger.assert_called_with(
+    def test_logging(self, mock_audit_logger, mock_logger):
+        audit_log.info("TestMsg", category="role", action="info", objects=[self.identity])
+        mock_audit_logger.assert_called_with(
             20,
             "TestMsg",
             extra={
-                "category": "TestCat",
-                "action": "TestAct",
-                "outcome": "success",
+                "category": "role",
+                "action": "info",
+                "outcome": "none",
                 "identity": "Test User",
                 "identity_id": self.identity.pk,
                 "user": "testuser",
@@ -64,27 +65,28 @@ class AuditLogTests(BaseTestCase):
             },
         )
 
+    @patch("base.utils.logger")
     @patch("base.utils.logger_audit.log")
-    def test_logging_request(self, mock_logger):
+    def test_logging_request(self, mock_audit_logger, mock_logger):
         headers = {"REMOTE_ADDR": "10.1.2.3", "HTTP_USER_AGENT": "TestAgent"}
         request = self.factory.get("/", **headers)
         request.user = self.superuser
         audit_log.debug(
             "TestMsg",
-            category="TestCat",
-            action="TestAct",
+            category="identity",
+            action="info",
             outcome="success",
             request=request,
-            objects={self.user},
+            objects=[self.user],
             extra={"test": "test"},
             log_to_db=True,
         )
-        mock_logger.assert_called_with(
+        mock_audit_logger.assert_called_with(
             10,
             "TestMsg",
             extra={
-                "category": "TestCat",
-                "action": "TestAct",
+                "category": "identity",
+                "action": "info",
                 "outcome": "success",
                 "identity": "Test User",
                 "identity_id": self.identity.pk,
@@ -98,6 +100,7 @@ class AuditLogTests(BaseTestCase):
             },
         )
         self.assertEqual(LogEntry.objects.filter(change_message="TestMsg").count(), 1)
+        mock_logger.warning.assert_not_called()
 
 
 class SetPermissionTests(TestCase):

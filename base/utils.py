@@ -5,7 +5,7 @@ Helper functions
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal, Sequence
 
 from django.conf import settings
 from django.contrib.admin.models import ADDITION, CHANGE, DELETION, LogEntry
@@ -23,7 +23,43 @@ if TYPE_CHECKING:
     from base.auth import LocalBaseBackend
 
 UserModel = get_user_model()
+logger = logging.getLogger(__name__)
 logger_audit = logging.getLogger("audit")
+
+
+CategoryTypes = Literal[
+    "authentication",
+    "contact",
+    "contract",
+    "email_address",
+    "group",
+    "identifier",
+    "identity",
+    "membership",
+    "phone_number",
+    "registration",
+    "role",
+    "user",
+]
+
+ActionTypes = Literal[
+    "create",
+    "delete",
+    "info",
+    "link",
+    "login",
+    "logout",
+    "read",
+    "unlink",
+    "update",
+    "search",
+]
+
+OutcomeTypes = Literal[
+    "failure",
+    "success",
+    "none",
+]
 
 
 def get_client_ip(request: HttpRequest) -> str | None:
@@ -135,12 +171,12 @@ class AuditLog:
         self,
         level: int,
         message: str,
-        category: str = "",
-        action: str = "",
-        outcome: str = "none",
+        category: CategoryTypes,
+        action: ActionTypes,
+        outcome: OutcomeTypes = "none",
         request: HttpRequest | None = None,
         backend: type[ModelBackend] | LocalBaseBackend | str | None = None,
-        objects: tuple[object] | tuple[()] = (),
+        objects: Sequence[object] = (),
         extra: dict[str, str | int | None] | None = None,
         log_to_db: bool = False,
     ) -> None:
@@ -154,27 +190,7 @@ class AuditLog:
         - objects are linked objects, like user, identity or membership.
         - extra is a dict of additional parameters.
 
-        Please add new values to the docstring below.
-
-        category values:
-        - authentication
-        - models in the app like user, identity, membership etc.
-
-        action values:
-        - create
-        - read
-        - update
-        - delete
-        - link (identity to user, membership to identity etc.)
-        - unlink
-        - login
-        - logout
-        - info (generic messages, mostly used in debug logging)
-
-        outcome is the result of the action:
-        - success
-        - failure
-        - none (if the outcome is not relevant or is missing)
+        Logs warning if category, action or outcome are not in the type lists.
 
         Additional information, like actor user and IP address are parsed from the request, if given.
 
@@ -211,29 +227,95 @@ class AuditLog:
             identity = self._get_identity(identity, user)
             self._add_to_admin_log(params.get("actor_id"), identity, message, category, action)
 
-    def info(self, message: str, **kwargs: Any) -> None:
+    def info(
+        self,
+        message: str,
+        category: CategoryTypes,
+        action: ActionTypes,
+        outcome: OutcomeTypes = "none",
+        request: HttpRequest | None = None,
+        backend: type[ModelBackend] | LocalBaseBackend | str | None = None,
+        objects: Sequence[object] = (),
+        extra: dict[str, str | int | None] | None = None,
+        log_to_db: bool = False,
+    ) -> None:
         """
         Add info entry to audit log.
 
         Check _log method for parameters.
         """
-        self._log(level=logging.INFO, message=message, **kwargs)
+        self._log(
+            level=logging.INFO,
+            message=message,
+            category=category,
+            action=action,
+            outcome=outcome,
+            request=request,
+            backend=backend,
+            objects=objects,
+            extra=extra,
+            log_to_db=log_to_db,
+        )
 
-    def debug(self, message: str, **kwargs: Any) -> None:
+    def debug(
+        self,
+        message: str,
+        category: CategoryTypes,
+        action: ActionTypes,
+        outcome: OutcomeTypes = "none",
+        request: HttpRequest | None = None,
+        backend: type[ModelBackend] | LocalBaseBackend | str | None = None,
+        objects: Sequence[object] = (),
+        extra: dict[str, str | int | None] | None = None,
+        log_to_db: bool = False,
+    ) -> None:
         """
         Add debug entry to audit log.
 
         Check _log method for parameters.
         """
-        self._log(level=logging.DEBUG, message=message, **kwargs)
+        self._log(
+            level=logging.DEBUG,
+            message=message,
+            category=category,
+            action=action,
+            outcome=outcome,
+            request=request,
+            backend=backend,
+            objects=objects,
+            extra=extra,
+            log_to_db=log_to_db,
+        )
 
-    def warning(self, message: str, **kwargs: Any) -> None:
+    def warning(
+        self,
+        message: str,
+        category: CategoryTypes,
+        action: ActionTypes,
+        outcome: OutcomeTypes = "none",
+        request: HttpRequest | None = None,
+        backend: type[ModelBackend] | LocalBaseBackend | str | None = None,
+        objects: Sequence[object] = (),
+        extra: dict[str, str | int | None] | None = None,
+        log_to_db: bool = False,
+    ) -> None:
         """
         Add warning entry to audit log.
 
         Check _log method for parameters.
         """
-        self._log(level=logging.WARNING, message=message, **kwargs)
+        self._log(
+            level=logging.WARNING,
+            message=message,
+            category=category,
+            action=action,
+            outcome=outcome,
+            request=request,
+            backend=backend,
+            objects=objects,
+            extra=extra,
+            log_to_db=log_to_db,
+        )
 
 
 def set_default_permissions(instance: AbstractBaseUser | Group, remove: bool = False) -> None:
