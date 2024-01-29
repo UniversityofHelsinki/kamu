@@ -4,6 +4,7 @@ View tests for role app.
 
 import datetime
 from unittest import mock
+from unittest.mock import ANY, call
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -109,7 +110,8 @@ class RoleJoinTests(BaseTestCase):
             follow=True,
         )
 
-    def test_join_role(self):
+    @mock.patch("base.utils.logger_audit")
+    def test_join_role(self, mock_logger):
         group = Group.objects.create(name="approver")
         self.user.groups.add(group)
         self.role.approvers.add(group)
@@ -117,6 +119,12 @@ class RoleJoinTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Role membership", response.content.decode("utf-8"))
         self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Membership to Test Role added to identity: Test User", extra=ANY),
+                call(20, "Read membership information", extra=ANY),
+            ]
+        )
 
     def test_join_role_without_approver_status(self):
         response = self._test_join_role()
@@ -220,8 +228,9 @@ class RoleInviteTests(BaseTestCase):
         self.assertTrue(Membership.objects.filter(role=self.role, identity=self.identity).exists())
 
     @mock.patch("role.views.ldap_search")
+    @mock.patch("base.utils.logger_audit")
     @override_settings(ALLOW_TEST_FPIC=True)
-    def test_add_role_with_ldap(self, mock_ldap):
+    def test_add_role_with_ldap(self, mock_logger, mock_ldap):
         mock_ldap.return_value = LDAP_RETURN_VALUE
         url = f"{self.url}ldap/ldapuser/"
         response = self.client.post(
@@ -242,6 +251,14 @@ class RoleInviteTests(BaseTestCase):
             Identifier.objects.filter(
                 identity=identity, type="eppn", value=f"ldapuser{settings.LOCAL_EPPN_SUFFIX}"
             ).exists()
+        )
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Identity created.", extra=ANY),
+                call(20, "Email address added to identity Ldap User", extra=ANY),
+                call(20, "Linked eppn identifier to identity Ldap User", extra=ANY),
+                call(20, "Membership to testrole added to identity: Ldap User", extra=ANY),
+            ]
         )
 
     @mock.patch("role.views.ldap_search")
@@ -276,13 +293,19 @@ class RoleInviteTests(BaseTestCase):
             follow=True,
         )
 
-    def test_join_role_send_email_invite(self):
+    @mock.patch("base.utils.logger_audit")
+    def test_join_role_send_email_invite(self, mock_logger):
         response = self._test_join_role_send_email_invite()
         self.assertEqual(response.status_code, 200)
         membership = Membership.objects.get(role=self.role, identity=None, invite_email_address="invite@example.org")
         self.assertEqual(membership.inviter, self.user)
         self.assertIsNone(membership.approver)
         self.assertIn("Your invite code is", mail.outbox[0].body)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Invited invite@example.org to role testrole", extra=ANY),
+            ]
+        )
 
     def test_join_role_invite_as_approver(self):
         self.role.approvers.add(self.group)

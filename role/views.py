@@ -21,12 +21,15 @@ from django.views.generic.edit import CreateView
 from base.connectors.email import send_invite_email
 from base.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
 from base.models import Token
+from base.utils import AuditLog
 from identity.models import EmailAddress, Identifier, Identity
 from identity.validators import validate_fpic
 from identity.views import IdentitySearchView
 from role.forms import MembershipCreateForm, MembershipEmailCreateForm, TextSearchForm
 from role.models import Membership, Role
 from role.utils import claim_membership
+
+audit_log = AuditLog()
 
 
 class RoleJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateForm]):
@@ -94,7 +97,18 @@ class RoleJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateFo
         form.instance.role = role
         form.instance.approver = user
         form.instance.inviter = user
-        return super().form_valid(form)
+        valid = super().form_valid(form)
+        if self.object:
+            audit_log.info(
+                f"Membership to {self.object.role} added to identity: {self.object.identity}",
+                category="membership",
+                action="create",
+                outcome="success",
+                request=self.request,
+                objects=[self.object, self.object.identity, self.object.role],
+                log_to_db=True,
+            )
+        return valid
 
 
 class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
@@ -103,6 +117,21 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
     """
 
     model = Membership
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Log viewing membership information.
+        """
+        get = super().get(request, *args, **kwargs)
+        audit_log.info(
+            "Read membership information",
+            category="membership",
+            action="read",
+            outcome="success",
+            request=self.request,
+            objects=[self.object, self.object.role, self.object.identity],
+        )
+        return get
 
     def get_queryset(self) -> QuerySet[Membership]:
         """
@@ -129,6 +158,20 @@ class MembershipListView(LoginRequiredMixin, ListView[Membership]):
     """
 
     model = Membership
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Log listing membership information.
+        """
+        get = super().get(request, *args, **kwargs)
+        audit_log.info(
+            "List membership information",
+            category="membership",
+            action="read",
+            outcome="success",
+            request=self.request,
+        )
+        return get
 
     def get_queryset(self) -> QuerySet[Membership]:
         """
@@ -173,6 +216,14 @@ class RoleDetailView(LoginRequiredMixin, DetailView[Role]):
             context["memberships"] = Membership.objects.filter(
                 role=self.object, expire_date__gte=timezone.now().date()
             ).prefetch_related("identity")
+            audit_log.info(
+                "List role memberships",
+                category="role",
+                action="read",
+                outcome="success",
+                request=self.request,
+                objects=[self.object],
+            )
             context["is_inviter"] = True
         if self.object.is_approver(user):
             context["is_approver"] = True
@@ -265,7 +316,18 @@ class RoleInviteView(BaseRoleInviteView):
         form.instance.inviter = user
         if form.instance.role.is_approver(user=user):
             form.instance.approver = user
-        return super().form_valid(form)
+        valid = super().form_valid(form)
+        if self.object:
+            audit_log.info(
+                f"Membership to {self.object.role} added to identity: {self.object.identity}",
+                category="membership",
+                action="create",
+                outcome="success",
+                request=self.request,
+                objects=[self.object, self.object.identity, self.object.role],
+                log_to_db=True,
+            )
+        return valid
 
 
 class RoleInviteLdapView(BaseRoleInviteView):
@@ -337,8 +399,26 @@ class RoleInviteLdapView(BaseRoleInviteView):
             surname=user["sn"],
             surname_verification=2,
         )
+        audit_log.info(
+            "Identity created.",
+            category="identity",
+            action="create",
+            outcome="success",
+            request=self.request,
+            objects=[identity],
+            log_to_db=True,
+        )
         if "mail" in user:
-            EmailAddress.objects.create(address=user["mail"], identity=identity)
+            email_object = EmailAddress.objects.create(address=user["mail"], identity=identity)
+            audit_log.info(
+                f"Email address added to identity { identity }",
+                category="email_address",
+                action="create",
+                outcome="success",
+                request=self.request,
+                objects=[email_object, identity],
+                log_to_db=True,
+            )
         if "schacDateOfBirth" in user:
             identity.date_of_birth = datetime.datetime.strptime(user["schacDateOfBirth"], "%Y%m%d").date()
             identity.date_of_birth_verification = 2
@@ -349,12 +429,22 @@ class RoleInviteLdapView(BaseRoleInviteView):
             identity.fpic = fpic
             identity.fpic_verification = 2
         identity.save()
-        Identifier.objects.get_or_create(
+        identifier, created = Identifier.objects.get_or_create(
             type="eppn",
             value=f"{user['uid']}{settings.LOCAL_EPPN_SUFFIX}",
             identity=identity,
             deactivated_at=None,
         )
+        if created:
+            audit_log.info(
+                f"Linked { identifier.type } identifier to identity { identity }",
+                category="identifier",
+                action="create",
+                outcome="success",
+                request=self.request,
+                objects=[identifier, identity],
+                log_to_db=True,
+            )
         if fpic:
             Identifier.objects.get_or_create(type="fpic", value=fpic, identity=identity, deactivated_at=None)
         return identity
@@ -430,7 +520,18 @@ class RoleInviteLdapView(BaseRoleInviteView):
         form.instance.inviter = inviter
         if form.instance.role.is_approver(user=inviter):
             form.instance.approver = inviter
-        return super().form_valid(form)
+        valid = super().form_valid(form)
+        if self.object:
+            audit_log.info(
+                f"Membership to {self.object.role.identifier} added to identity: {self.object.identity}",
+                category="membership",
+                action="create",
+                outcome="success",
+                request=self.request,
+                objects=[self.object, self.object.identity, self.object.role],
+                log_to_db=True,
+            )
+        return valid
 
 
 class RoleInviteEmailView(BaseRoleInviteView):
@@ -476,6 +577,15 @@ class RoleInviteEmailView(BaseRoleInviteView):
         else:
             invite_language = "en"
         membership = form.save()
+        audit_log.info(
+            f"Invited {membership.invite_email_address} to role {membership.role.identifier}",
+            category="membership",
+            action="create",
+            outcome="success",
+            request=self.request,
+            objects=[membership, membership.role],
+            log_to_db=True,
+        )
         token = Token.objects.create_invite_token(membership=membership)
         send_invite_email(membership, token, invite_email_address, lang=invite_language, request=self.request)
         messages.add_message(self.request, messages.INFO, _("Invite email sent."))
@@ -551,7 +661,16 @@ class MembershipClaimView(LoginRequiredMixin, View):
         if not user.is_authenticated:
             raise PermissionDenied
         if not hasattr(user, "identity"):
-            Identity.objects.create(user=user, given_names=user.first_name, surname=user.last_name)
+            identity = Identity.objects.create(user=user, given_names=user.first_name, surname=user.last_name)
+            audit_log.info(
+                "Identity created.",
+                category="identity",
+                action="create",
+                outcome="success",
+                request=self.request,
+                objects=[identity],
+                log_to_db=True,
+            )
         membership_pk = claim_membership(request, user.identity)
         if membership_pk == -1:
             return redirect("front-page")

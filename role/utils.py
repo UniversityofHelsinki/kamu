@@ -8,8 +8,11 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from base.models import Token
+from base.utils import AuditLog
 from identity.models import Identity
 from role.models import Membership
+
+audit_log = AuditLog()
 
 
 def get_invitation_session_parameters(request: HttpRequest) -> tuple[str, datetime]:
@@ -83,4 +86,13 @@ def claim_membership(request: HttpRequest, identity: Identity) -> int:
     messages.add_message(request, messages.INFO, _("Membership created."))
     membership.save()
     _remove_session_parameters(request)
+    audit_log.info(
+        f"Membership to role {membership.role.identifier} linked to identity: {identity}",
+        category="membership",
+        action="link",
+        outcome="success",
+        request=request,
+        objects=[membership, identity, membership.role],
+        log_to_db=True,
+    )
     return membership.pk
