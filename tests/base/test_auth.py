@@ -164,12 +164,12 @@ class GoogleBackendTests(TestCase):
     def test_login_google_create_user_existing_identifier(self):
         request = self.factory.get(reverse("login-google"))
         identity = Identity.objects.create()
-        identifier = Identifier.objects.create(identity=identity, value="0123456789", type="google")
+        Identifier.objects.create(identity=identity, value="0123456789", type="google")
         request.user = AnonymousUser()
         request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
         with self.assertRaises(AuthenticationError) as e:
-            user = backend.authenticate(request=request, create_user=True)
+            backend.authenticate(request=request, create_user=True)
         self.assertEqual(str(e.exception), "Unexpected error.")
 
     def test_login_google_create_user_with_logged_in_user(self):
@@ -213,7 +213,7 @@ class GoogleBackendTests(TestCase):
         self.assertEqual(str(e.exception), "Identifier is already linked to another user.")
         mock_logger.log.assert_has_calls(
             [
-                call(10, "Identifier exists for different user.", extra=ANY),
+                call(30, "Suspected duplicate user. Identifier already exists for another identity.", extra=ANY),
             ]
         )
 

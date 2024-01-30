@@ -20,6 +20,7 @@ from django.core.exceptions import (
     ValidationError,
 )
 from django.core.validators import validate_email
+from django.db import transaction
 from django.http import HttpRequest
 from django.utils.translation import gettext as _
 
@@ -215,9 +216,16 @@ class LocalBaseBackend(BaseBackend):
             identity = user.identity
         else:
             identity = self._create_identity(request, user)
-        identifier, created = Identifier.objects.get_or_create(
-            type=identifier_type, value=identifier_value, identity=identity, deactivated_at=None
-        )
+        created = False
+        with transaction.atomic():
+            identifier = Identifier.objects.filter(
+                type=identifier_type, value=identifier_value, deactivated_at=None
+            ).first()
+            if not identifier:
+                identifier = Identifier.objects.create(
+                    type=identifier_type, value=identifier_value, identity=identity, deactivated_at=None
+                )
+                created = True
         if created:
             audit_log.info(
                 f"Linked { identifier.type } identifier to identity { identity }",
@@ -228,6 +236,17 @@ class LocalBaseBackend(BaseBackend):
                 objects=[identifier, identity],
                 log_to_db=True,
             )
+        if identifier.identity != identity:
+            audit_log.warning(
+                "Suspected duplicate user. Identifier already exists for another identity.",
+                category="identifier",
+                action="create",
+                outcome="failure",
+                request=request,
+                objects=[identifier, identity],
+                extra={"sensitive": f"{identifier_type}: {identifier_value}"},
+            )
+            raise AuthenticationError(self.error_messages["identity_already_exists"])
         return None
 
     def _get_username(self, preferred_username: str | None, unique_identifier: str) -> str:
@@ -313,13 +332,14 @@ class LocalBaseBackend(BaseBackend):
             self._post_tasks(request, request.user)
             return request.user
         # Identifier exists for different user.
-        audit_log.debug(
-            "Identifier exists for different user.",
-            category="identifier",
-            action="info",
+        audit_log.warning(
+            "User tried to login with different user's identifier.",
+            category="authentication",
+            action="login",
             outcome="failure",
             request=request,
-            objects=[identifier, identifier.identity],
+            objects=[identifier],
+            extra={"sensitive": f"{identifier.type}: {identifier.value}"},
         )
         raise AuthenticationError(self.error_messages["identity_already_exists"])
 
@@ -375,13 +395,14 @@ class LocalBaseBackend(BaseBackend):
             self._post_tasks(request, request.user)
             return request.user
         # Identifier exists for different user.
-        audit_log.debug(
-            "Identifier exists for different user.",
+        audit_log.warning(
+            "Suspected duplicate user. Identifier already exists for another identity.",
             category="identifier",
-            action="info",
+            action="link",
             outcome="failure",
-            objects=[identifier, identifier.identity],
             request=request,
+            objects=[identifier],
+            extra={"sensitive": f"{identifier.type}: {identifier.value}"},
         )
         raise AuthenticationError(self.error_messages["identity_already_exists"])
 
