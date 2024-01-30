@@ -12,7 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.mail import send_mail
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.db.models import OuterRef, Q, QuerySet, Subquery
 from django.forms import BaseForm
 from django.http import (
@@ -201,28 +201,58 @@ class BaseVerificationView(LoginRequiredMixin, UpdateView):
         """
         Verify a contact if code was correct.
         """
-        self.object.verified = True
-        self.object.save()
-        if isinstance(self.object, EmailAddress):
-            audit_log.info(
-                "Verified email address",
-                category="email_address",
-                action="update",
-                outcome="success",
-                request=self.request,
-                objects=[self.object, self.object.identity],
-                log_to_db=True,
-            )
-        elif isinstance(self.object, PhoneNumber):
-            audit_log.info(
-                "Verified phone number",
-                category="phone_number",
-                action="update",
-                outcome="success",
-                request=self.request,
-                objects=[self.object, self.object.identity],
-                log_to_db=True,
-            )
+        if not self.object.verified:
+            with transaction.atomic():
+                self.object.verified = True
+                self.object.save()
+                if isinstance(self.object, EmailAddress):
+                    audit_log.info(
+                        "Verified email address",
+                        category="email_address",
+                        action="update",
+                        outcome="success",
+                        request=self.request,
+                        objects=[self.object, self.object.identity],
+                        log_to_db=True,
+                    )
+                    for email_obj in EmailAddress.objects.filter(address=self.object.address, verified=True).exclude(
+                        pk=self.object.pk
+                    ):
+                        email_obj.verified = False
+                        email_obj.save()
+                        audit_log.info(
+                            "Removed verification from the email address as the address was verified elsewhere",
+                            category="email_address",
+                            action="update",
+                            outcome="success",
+                            request=self.request,
+                            objects=[email_obj, email_obj.identity],
+                            log_to_db=True,
+                        )
+                if isinstance(self.object, PhoneNumber):
+                    audit_log.info(
+                        "Verified phone number",
+                        category="phone_number",
+                        action="update",
+                        outcome="success",
+                        request=self.request,
+                        objects=[self.object, self.object.identity],
+                        log_to_db=True,
+                    )
+                    for phone_obj in PhoneNumber.objects.filter(number=self.object.number, verified=True).exclude(
+                        pk=self.object.pk
+                    ):
+                        phone_obj.verified = False
+                        phone_obj.save()
+                        audit_log.info(
+                            "Removed verification from the phone number as the number was verified elsewhere",
+                            category="phone_number",
+                            action="update",
+                            outcome="success",
+                            request=self.request,
+                            objects=[phone_obj, phone_obj.identity],
+                            log_to_db=True,
+                        )
         return super().form_valid(form)
 
 

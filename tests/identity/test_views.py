@@ -403,12 +403,15 @@ class VerificationTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Verification code sent", response.content.decode("utf-8"))
 
-    @mock.patch("base.utils.logger_audit")
-    def test_verify_address(self, mock_logger):
+    def _verify_address(self):
         self.client.get(self.url)
         code = mail.outbox[0].body.split(" ")[-1]
         data = {"code": code}
-        response = self.client.post(self.url, data, follow=True)
+        return self.client.post(self.url, data, follow=True)
+
+    @mock.patch("base.utils.logger_audit")
+    def test_verify_address(self, mock_logger):
+        response = self._verify_address()
         self.assertIn("test@example.org", response.content.decode("utf-8"))
         self.assertIn("Verified", response.content.decode("utf-8"))
         self.email_address.refresh_from_db()
@@ -419,26 +422,74 @@ class VerificationTests(BaseTestCase):
             ]
         )
 
+    @mock.patch("base.utils.logger_audit")
+    def test_verify_already_verified_address(self, mock_logger):
+        email = EmailAddress.objects.create(identity=self.superidentity, address="test@example.org", verified=True)
+        self._verify_address()
+        self.email_address.refresh_from_db()
+        self.assertTrue(self.email_address.verified)
+        email.refresh_from_db()
+        self.assertFalse(email.verified)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, f"Verified email address", extra=ANY),
+                call(
+                    20, "Removed verification from the email address as the address was verified elsewhere", extra=ANY
+                ),
+            ]
+        )
+        self.assertTrue(
+            LogEntry.objects.filter(
+                change_message="Verified email address", object_id=str(self.email_address.pk)
+            ).exists()
+        )
+        self.assertTrue(
+            LogEntry.objects.filter(
+                change_message="Removed verification from the email address as the address was verified elsewhere",
+                object_id=str(email.pk),
+            ).exists()
+        )
+
     def test_verify_address_invalid_address(self):
         data = {"code": "invalid_code"}
         response = self.client.post(self.url, data, follow=True)
         self.assertIn("Invalid verification code", response.content.decode("utf-8"))
 
-    @mock.patch("identity.views.SmsConnector")
-    @mock.patch("base.utils.logger_audit")
-    def test_verify_sms(self, mock_logger, mock_connector):
-        number = PhoneNumber.objects.create(identity=self.identity, number="+1234567890", priority=0, verified=False)
+    def _verify_sms(self, mock_connector, number):
         mock_connector.return_value.send_sms.return_value = True
         url = f"/phone/{number.pk}/verify/"
         self.client.get(url)
         code = mock_connector.return_value.send_sms.call_args.args[1].split(" ")[-1]
         data = {"code": code}
         self.client.post(url, data, follow=True)
+
+    @mock.patch("identity.views.SmsConnector")
+    @mock.patch("base.utils.logger_audit")
+    def test_verify_sms(self, mock_logger, mock_connector):
+        number = PhoneNumber.objects.create(identity=self.identity, number="+1234567890", priority=0, verified=False)
+        self._verify_sms(mock_connector, number)
         number.refresh_from_db()
         self.assertTrue(number.verified)
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Verified phone number", extra=ANY),
+            ]
+        )
+
+    @mock.patch("identity.views.SmsConnector")
+    @mock.patch("base.utils.logger_audit")
+    def test_verify_existing_sms(self, mock_logger, mock_connector):
+        verified_number = PhoneNumber.objects.create(identity=self.superidentity, number="+1234567890", verified=True)
+        number = PhoneNumber.objects.create(identity=self.identity, number="+1234567890", priority=0, verified=False)
+        self._verify_sms(mock_connector, number)
+        verified_number.refresh_from_db()
+        self.assertFalse(verified_number.verified)
+        number.refresh_from_db()
+        self.assertTrue(number.verified)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, f"Verified phone number", extra=ANY),
+                call(20, "Removed verification from the phone number as the number was verified elsewhere", extra=ANY),
             ]
         )
 
