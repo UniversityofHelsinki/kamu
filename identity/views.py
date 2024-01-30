@@ -220,7 +220,7 @@ class BaseVerificationView(LoginRequiredMixin, UpdateView):
                     ):
                         email_obj.verified = False
                         email_obj.save()
-                        audit_log.info(
+                        audit_log.warning(
                             "Removed verification from the email address as the address was verified elsewhere",
                             category="email_address",
                             action="update",
@@ -244,7 +244,7 @@ class BaseVerificationView(LoginRequiredMixin, UpdateView):
                     ):
                         phone_obj.verified = False
                         phone_obj.save()
-                        audit_log.info(
+                        audit_log.warning(
                             "Removed verification from the phone number as the number was verified elsewhere",
                             category="phone_number",
                             action="update",

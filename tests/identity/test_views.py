@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core import mail
-from django.test import Client
+from django.test import Client, override_settings
 from ldap import SIZELIMIT_EXCEEDED
 
 from base.utils import set_default_permissions
@@ -165,13 +165,12 @@ class IdentityEditTests(BaseTestCase):
             "preferred_language": self.identity.preferred_language,
             "date_of_birth": "1999-01-01",
             "gender": self.identity.gender,
-            "fpic": self.identity.fpic,
             "nationality": 1,
             "given_names_verification": self.identity.given_names_verification,
             "surname_verification": self.identity.surname_verification,
             "date_of_birth_verification": self.identity.date_of_birth_verification,
-            "fpic_verification": self.identity.fpic_verification,
             "nationality_verification": self.identity.nationality_verification,
+            "fpic_verification": self.identity.fpic_verification,
         }
 
     def test_edit_own_information_listed_fields(self):
@@ -190,13 +189,16 @@ class IdentityEditTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('disabled id="id_given_names"', response.content.decode("utf-8"))
 
+    @override_settings(ALLOW_TEST_FPIC=True)
     @mock.patch("base.utils.logger_audit")
     def test_edit_own_information(self, mock_logger):
         self.client.force_login(self.user)
+        self.data["fpic"] = "010181-900C"
         response = self.client.post(self.url, self.data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User</h1>", response.content.decode("utf-8"))
         self.assertIn("Jan. 1, 1999", response.content.decode("utf-8"))
+        self.assertIn("010181-900C", response.content.decode("utf-8"))
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Changed identity information", extra=ANY),
@@ -220,7 +222,7 @@ class IdentityEditTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Cannot set strong electrical verification by hand", response.content.decode("utf-8"))
 
-    def test_edit_other_user(self):
+    def test_edit_lower_verification_level(self):
         self.identity.given_names_verification = 4
         self.identity.save()
         self.data["given_names"] = "New Name"
@@ -432,9 +434,9 @@ class VerificationTests(BaseTestCase):
         self.assertFalse(email.verified)
         mock_logger.log.assert_has_calls(
             [
-                call(20, f"Verified email address", extra=ANY),
+                call(20, "Verified email address", extra=ANY),
                 call(
-                    20, "Removed verification from the email address as the address was verified elsewhere", extra=ANY
+                    30, "Removed verification from the email address as the address was verified elsewhere", extra=ANY
                 ),
             ]
         )
@@ -488,8 +490,8 @@ class VerificationTests(BaseTestCase):
         self.assertTrue(number.verified)
         mock_logger.log.assert_has_calls(
             [
-                call(20, f"Verified phone number", extra=ANY),
-                call(20, "Removed verification from the phone number as the number was verified elsewhere", extra=ANY),
+                call(20, "Verified phone number", extra=ANY),
+                call(30, "Removed verification from the phone number as the number was verified elsewhere", extra=ANY),
             ]
         )
 

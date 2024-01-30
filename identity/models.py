@@ -140,7 +140,9 @@ class Identity(models.Model):
     )
     roles = models.ManyToManyField("role.Role", through="role.Membership")
     uid = models.CharField(
+        unique=True,
         blank=True,
+        null=True,
         max_length=11,
         verbose_name=_("HY user account name"),
         help_text=_("University of Helsinki user account name."),
@@ -205,7 +207,9 @@ class Identity(models.Model):
         choices=VERIFICATION_CHOICES, default=0, verbose_name=_("Nationality verification method")
     )
     fpic = models.CharField(
+        unique=True,
         blank=True,
+        null=True,
         max_length=11,
         verbose_name=_("Finnish personal identity code"),
         validators=[validate_fpic],

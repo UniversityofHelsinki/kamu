@@ -487,10 +487,24 @@ class LinkIdentifierTests(TestCase):
         user2 = user.objects.create_user(username="testuser2", password="test_pass")
         identity2 = Identity.objects.create(user=user2, given_names="Test2", surname="User2")
         Identifier.objects.create(type="eppn", value="localtest@example.org", identity=identity2, deactivated_at=None)
-        url = reverse("login-shibboleth") + "?next=" + reverse("identity-identifier", kwargs={"pk": self.identity.pk})
+        url = reverse("login-shibboleth")
         response = self.client.get(url, follow=True, headers={"EPPN": "localtest@example.org"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Identifier is already linked to another user", response.content.decode("utf-8"))
+
+    @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    def test_link_local_shibboleth_uid_changed(self):
+        url = reverse("login-shibboleth")
+        self.identity.uid = "oldtest"
+        self.identity.save()
+        response = self.client.get(url, follow=True, headers={"EPPN": "localtest@example.org"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "Suspected duplicate user. Identity already has a different username", response.content.decode("utf-8")
+        )
+        self.identity.refresh_from_db()
+        self.assertEqual(self.identity.uid, "oldtest")
 
 
 class ErrorViewTests(TestCase):

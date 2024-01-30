@@ -7,6 +7,7 @@ from unittest.mock import ANY, call, patch
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser, Group
+from django.contrib.messages.storage.fallback import FallbackStorage
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 
@@ -127,6 +128,29 @@ class ShibbolethBackendTests(TestCase):
         self.assertEqual(user.identity.uid, "testuser")
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    @patch("base.utils.logger_audit")
+    def test_update_uid_already_exists(self, mock_logger):
+        user2 = UserModel.objects.create(username="testuser2@example.org")
+        Identity.objects.create(user=user2, uid="testuser")
+        self.request.META = {
+            settings.SAML_ATTR_EPPN: "testuser@example.org",
+        }
+        backend = ShibbolethBackend()
+        setattr(self.request, "session", "session")
+        messages = FallbackStorage(self.request)
+        setattr(self.request, "_messages", messages)
+        backend.authenticate(request=self.request, create_user=True)
+        mock_logger.log.assert_has_calls(
+            [
+                call(30, "UID already exists in the database", extra=ANY),
+            ]
+        )
+        self.assertIn(
+            "Suspected duplicate user. Username already exists in the database: testuser",
+            messages._queued_messages[0].message,
+        )
+
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(LOCAL_UID_IGNORE_REGEX="^\dk\d{6}$")
     def test_uid_update_ignore_regex(self):
         self.request.META = {
@@ -134,7 +158,7 @@ class ShibbolethBackendTests(TestCase):
         }
         backend = ShibbolethBackend()
         user = backend.authenticate(request=self.request, create_user=True)
-        self.assertEqual(user.identity.uid, "")
+        self.assertIsNone(user.identity.uid)
 
 
 class GoogleBackendTests(TestCase):

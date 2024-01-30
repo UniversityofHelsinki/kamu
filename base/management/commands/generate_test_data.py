@@ -377,8 +377,12 @@ class Command(BaseCommand):
                 numeric_part = str(random.randint(900, 999)).zfill(3)
                 checksum_characters = "0123456789ABCDEFHJKLMNPRSTUVWXY"
                 checksum = checksum_characters[int(year_part + numeric_part) % 31]
-                identity.fpic = f"{year_part}{intermediate}{numeric_part}{checksum}"
                 identity.save()
+                try:
+                    identity.fpic = f"{year_part}{intermediate}{numeric_part}{checksum}"
+                    identity.save()
+                except django.db.utils.IntegrityError:
+                    pass
             for r in range(random.randint(0, 2)):
                 PhoneNumber.objects.create(
                     identity=identity,

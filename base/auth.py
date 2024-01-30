@@ -9,6 +9,7 @@ from typing import Any
 from uuid import uuid4
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.backends import BaseBackend, ModelBackend
 from django.contrib.auth.base_user import AbstractBaseUser
@@ -20,7 +21,7 @@ from django.core.exceptions import (
     ValidationError,
 )
 from django.core.validators import validate_email
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.http import HttpRequest
 from django.utils.translation import gettext as _
 
@@ -488,8 +489,7 @@ class ShibbolethBackend(LocalBaseBackend):
         except ValidationError:
             raise AuthenticationError(self.error_messages["invalid_identifier_format"])
 
-    @staticmethod
-    def _set_uid(user: UserType, unique_identifier: str) -> None:
+    def _set_uid(self, request: HttpRequest, user: UserType, unique_identifier: str) -> None:
         """
         Set identity uid if it is not set and uid is in correct format.
         """
@@ -497,8 +497,37 @@ class ShibbolethBackend(LocalBaseBackend):
         if uid and len(uid) < 12 and not re.match(settings.LOCAL_UID_IGNORE_REGEX, uid):
             if hasattr(user, "identity"):
                 if not user.identity.uid:
-                    user.identity.uid = uid
-                    user.identity.save()
+                    try:
+                        user.identity.uid = uid
+                        user.identity.save()
+                    except IntegrityError:
+                        audit_log.warning(
+                            "UID already exists in the database",
+                            category="identity",
+                            action="update",
+                            outcome="failure",
+                            request=request,
+                            objects=[user.identity],
+                            extra={"sensitive": uid},
+                        )
+                        messages.error(
+                            request,
+                            _("Suspected duplicate user. Username already exists in the database: ") + uid,
+                        )
+                elif user.identity.uid != uid:
+                    audit_log.warning(
+                        "User UID has changed",
+                        category="identity",
+                        action="update",
+                        outcome="failure",
+                        request=request,
+                        objects=[user.identity],
+                        extra={"sensitive": uid},
+                    )
+                    messages.error(
+                        request,
+                        _("Suspected duplicate user. Identity already has a different username: ") + uid,
+                    )
 
     def _post_tasks(self, request: HttpRequest, user: UserType) -> None:
         """
@@ -508,7 +537,7 @@ class ShibbolethBackend(LocalBaseBackend):
         if unique_identifier.endswith(settings.LOCAL_EPPN_SUFFIX):
             groups = request.META.get(settings.SAML_ATTR_GROUPS, "").split(";")
             self.update_groups(user, groups, settings.SAML_GROUP_PREFIXES)
-            self._set_uid(user, unique_identifier)
+            self._set_uid(request, user, unique_identifier)
 
 
 class SuomiFiBackend(LocalBaseBackend):
@@ -607,6 +636,18 @@ class SuomiFiBackend(LocalBaseBackend):
             if not re.match(settings.EIDAS_IDENTIFIER_REGEX, identifier):
                 raise AuthenticationError(self.error_messages["invalid_identifier_format"])
 
+    def _parse_date_from_fpic(self, fpic: str) -> datetime | None:
+        if fpic[6] == "+":
+            date_string = f"{ fpic[:4] }18{ fpic[4:6] }"
+        elif fpic[6] in "-YXWVU":
+            date_string = f"{ fpic[:4] }19{ fpic[4:6] }"
+        else:
+            date_string = f"{ fpic[:4] }20{ fpic[4:6] }"
+        try:
+            return datetime.strptime(date_string, "%d%m%Y")
+        except ValueError:
+            return None
+
     def _post_tasks(self, request: HttpRequest, user: UserType) -> None:
         """
         Set fpic and date of birth if available.
@@ -622,17 +663,27 @@ class SuomiFiBackend(LocalBaseBackend):
                 validate_fpic(fpic)
             except ValidationError:
                 return None
-            if fpic[6] == "+":
-                date_string = f"{ fpic[:4] }18{ fpic[4:6] }"
-            elif fpic[6] in "-YXWVU":
-                date_string = f"{ fpic[:4] }19{ fpic[4:6] }"
-            else:
-                date_string = f"{ fpic[:4] }20{ fpic[4:6] }"
-            identity.date_of_birth = datetime.strptime(date_string, "%d%m%Y")
+            identity.date_of_birth = self._parse_date_from_fpic(fpic)
             identity.date_of_birth_verification = verification_level
             identity.fpic = fpic
             identity.fpic_verification = verification_level
-            identity.save()
+            try:
+                identity.save()
+            except IntegrityError:
+                audit_log.warning(
+                    "FPIC already exists in the database",
+                    category="identity",
+                    action="update",
+                    outcome="failure",
+                    request=request,
+                    objects=[identity],
+                    extra={"sensitive": fpic},
+                )
+                messages.error(
+                    request,
+                    _("Suspected duplicate user. Finnish Personal Identity Code already exists in the database: ")
+                    + fpic,
+                )
         elif identifier_type == "eidas":
             date_string = request.META.get(settings.SAML_EIDAS_DATEOFBIRTH, None)
             if date_string:
