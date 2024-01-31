@@ -43,6 +43,7 @@ from base.utils import AuditLog
 from identity.forms import (
     ContactForm,
     EmailAddressVerificationForm,
+    IdentityCombineForm,
     IdentityForm,
     IdentitySearchForm,
     PhoneNumberVerificationForm,
@@ -55,6 +56,7 @@ from identity.models import (
     Identity,
     PhoneNumber,
 )
+from identity.utils import combine_identities, combine_identities_requirements
 from role.models import Membership
 
 audit_log = AuditLog()
@@ -985,3 +987,83 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
             extra={"search_terms": str(search_terms)},
         )
         return queryset
+
+
+class IdentityCombineView(LoginRequiredMixin, TemplateView):
+    """
+    Combines two identities.
+    """
+
+    template_name = "identity/identity_combine.html"
+
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        user = self.request.user if self.request.user.is_authenticated else None
+        if not user or not user.has_perms(["identity.combine_identities"]):
+            raise PermissionDenied
+        try:
+            self.primary_identity = Identity.objects.get(pk=self.kwargs.get("primary_pk"))
+            self.secondary_identity = Identity.objects.get(pk=self.kwargs.get("secondary_pk"))
+        except Identity.DoesNotExist:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Add identities to context data.
+        """
+        context = super().get_context_data(**kwargs)
+        context["primary_identity"] = self.primary_identity
+        context["secondary_identity"] = self.secondary_identity
+        context["form"] = IdentityCombineForm()
+        return context
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Test requirements for combining identities.
+        """
+        permissions = set(self.request.user.get_all_permissions()).intersection(
+            {
+                "identity.view_basic_information",
+                "identity.view_restricted_information",
+                "identity.view_contacts",
+                "identity.view_contracts",
+                "identity.view_identifiers",
+            }
+        )
+        for identity in [self.primary_identity, self.secondary_identity]:
+            audit_log.info(
+                "Read identity information",
+                category="identity",
+                action="read",
+                outcome="success",
+                request=self.request,
+                objects=[identity],
+                extra={"permissions": str(permissions)},
+            )
+        combine_identities_requirements(self.request, self.primary_identity, self.secondary_identity)
+        return super().get(request, *args, **kwargs)
+
+    @method_decorator(csrf_protect)
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Combine identities.
+        """
+        data = self.request.POST
+        if "combine" in data and combine_identities_requirements(
+            request, self.primary_identity, self.secondary_identity
+        ):
+            primary = int(data["primary_identity"])
+            secondary = int(data["secondary_identity"])
+            if primary != self.primary_identity.pk or secondary != self.secondary_identity.pk:
+                messages.add_message(
+                    self.request,
+                    messages.WARNING,
+                    _("Incorrect primary keys."),
+                )
+                return redirect(
+                    "identity-combine", primary_pk=self.primary_identity.pk, secondary_pk=self.secondary_identity.pk
+                )
+            combine_identities(self.request, self.primary_identity, self.secondary_identity)
+            messages.add_message(self.request, messages.INFO, _("Identities combined."))
+            return redirect("identity-detail", pk=self.primary_identity.pk)
+        raise PermissionDenied

@@ -19,6 +19,23 @@ from identity.models import EmailAddress, Identity, PhoneNumber
 from identity.validators import validate_phone_number
 
 
+class IdentityCombineForm(forms.Form):
+    """
+    Form for combining two identities.
+    """
+
+    primary_identity = forms.IntegerField(label=_("Target primary key"))
+    secondary_identity = forms.IntegerField(label=_("Source primary key"))
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """
+        Crispy Forms helper to set form styles, configuration and buttons.
+        """
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("combine", _("Combine")))
+
+
 class IdentitySearchForm(forms.Form):
     """
     Form to search identities.

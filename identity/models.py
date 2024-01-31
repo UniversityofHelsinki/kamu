@@ -242,6 +242,7 @@ class Identity(models.Model):
             ("view_identifiers", "Can view identifiers"),
             ("change_identifiers", "Can change identifiers"),
             ("search_identities", "Can search identities"),
+            ("combine_identities", "Can combine identities"),
         ]
         verbose_name = _("Identity")
         verbose_name_plural = _("Identities")

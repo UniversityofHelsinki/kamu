@@ -39,6 +39,7 @@ from identity.views import (
     ContractSignView,
     EmailAddressVerificationView,
     IdentifierView,
+    IdentityCombineView,
     IdentityDetailView,
     IdentityMeView,
     IdentitySearchView,
@@ -78,6 +79,9 @@ urlpatterns = [
     path("", FrontPageView.as_view(), name="front-page"),
     path("identity/me/", IdentityMeView.as_view(), name="identity-me"),
     path("identity/<int:pk>/", IdentityDetailView.as_view(), name="identity-detail"),
+    path(
+        "identity/combine/<int:primary_pk>/<int:secondary_pk>/", IdentityCombineView.as_view(), name="identity-combine"
+    ),
     path("identity/<int:pk>/contacts/", ContactView.as_view(), name="contact-change"),
     path("identity/<int:pk>/contracts/", ContractListView.as_view(), name="contract-list"),
     path("contract/<int:pk>/", ContractDetailView.as_view(), name="contract-detail"),

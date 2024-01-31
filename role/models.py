@@ -324,8 +324,8 @@ class Membership(models.Model):
         Return values for audit log.
         """
         return {
-            "role_id": self.pk,
-            "role": self.__str__(),
+            "membership_id": self.pk,
+            "membership": self.__str__(),
         }
 
     def get_absolute_url(self) -> str:

@@ -2,15 +2,17 @@
 View tests for identity app.
 """
 
+import datetime
 from unittest import mock
 from unittest.mock import ANY, call
 
 from django.contrib.admin.models import LogEntry
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.test import Client, override_settings
+from django.utils import timezone
 from ldap import SIZELIMIT_EXCEEDED
 
 from base.utils import set_default_permissions
@@ -22,6 +24,7 @@ from identity.models import (
     Identity,
     PhoneNumber,
 )
+from role.models import Membership, Role
 from tests.setup import BaseTestCase
 
 
@@ -704,3 +707,188 @@ class ContractTests(BaseTestCase):
         self.assertFalse(contract.validate())
         Identifier.objects.create(identity=contract.identity, type="kamu", value=kamu_id)
         self.assertTrue(contract.validate())
+
+
+class IdentityCombineTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.client = Client()
+        self.client.force_login(self.superuser)
+        self.url = f"/identity/combine/{self.superidentity.pk}/{self.identity.pk}/"
+        self.data = {
+            "combine": True,
+            "primary_identity": self.superidentity.pk,
+            "secondary_identity": self.identity.pk,
+        }
+
+    def _create_test_data(self):
+        self.contract_templates = [
+            ContractTemplate.objects.create(
+                type=f"testtemplate {i}",
+                version=1,
+                name_en=f"Test Contract en {i}",
+                name_fi=f"Test Contract fi {i}",
+                name_sv=f"Test Contract sv {i}",
+                text_en=f"Test Content en {i}",
+                text_fi=f"Test Content fi {i}",
+                text_sv=f"Test Content sv {i}",
+                public=bool(i % 2),
+            )
+            for i in range(4)
+        ]
+        Contract.objects.sign_contract(identity=self.identity, template=self.contract_templates[0])
+        Contract.objects.sign_contract(identity=self.identity, template=self.contract_templates[1])
+        Contract.objects.sign_contract(identity=self.superidentity, template=self.contract_templates[2])
+        PhoneNumber.objects.create(identity=self.identity, number="+358123456789")
+        PhoneNumber.objects.create(identity=self.identity, number="+358012345678")
+        PhoneNumber.objects.create(identity=self.superidentity, number="+358001234567")
+        EmailAddress.objects.create(identity=self.identity, address="test1@example.org", verified=True)
+        EmailAddress.objects.create(identity=self.superidentity, address="supertest@example.org")
+        EmailAddress.objects.create(identity=self.superidentity, address="test2@example.org")
+        Identifier.objects.create(identity=self.identity, type="eppn", value="test2@example.org")
+        Identifier.objects.create(identity=self.superidentity, type="eppn", value="super@example.org")
+        role2 = Role.objects.create(identifier="anotherrole", name_en="Another Role", maximum_duration=10)
+        Membership.objects.create(
+            role=self.role,
+            identity=self.superidentity,
+            reason="Because",
+            start_date=timezone.now().date(),
+            expire_date=timezone.now().date() + datetime.timedelta(days=1),
+        )
+        Membership.objects.create(
+            role=role2,
+            identity=self.identity,
+            reason="Because",
+            start_date=timezone.now().date() + datetime.timedelta(days=1),
+            expire_date=timezone.now().date() + datetime.timedelta(days=2),
+        )
+        Membership.objects.create(
+            role=self.role,
+            identity=self.superidentity,
+            reason="Because",
+            start_date=timezone.now().date(),
+            expire_date=timezone.now().date() + datetime.timedelta(days=5),
+        )
+
+    def test_view_combine_identities_without_access(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
+
+    @mock.patch("base.utils.logger_audit")
+    def test_view_combine_identities(self, mock_logger):
+        self._create_test_data()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "Transfer information from the source identity to the target identity", response.content.decode("utf-8")
+        )
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Read identity information", extra=ANY),
+                call(20, "Read identity information", extra=ANY),
+            ],
+        )
+
+    @mock.patch("base.utils.logger_audit")
+    def test_combine_identities(self, mock_logger):
+        self._create_test_data()
+        self.identity.date_of_birth = datetime.date(1999, 1, 1)
+        self.identity.gender = "O"
+        self.identity.uid = "tester"
+        self.identity.save()
+        kamu_id = self.identity.kamu_id
+        response = self.client.post(self.url, self.data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Identities combined.", response.content.decode("utf-8"))
+        self.superidentity.refresh_from_db()
+        self.assertEqual(self.superidentity.given_names, "Super")
+        self.assertEqual(self.superidentity.gender, "O")
+        self.assertEqual(self.superidentity.date_of_birth, datetime.date(1999, 1, 1))
+        self.assertEqual(self.superidentity.membership_set.all().count(), 3)
+        self.assertEqual(self.superidentity.phone_numbers.all().count(), 3)
+        self.assertEqual(self.superidentity.email_addresses.all().count(), 4)
+        self.assertEqual(self.superidentity.contracts.all().count(), 3)
+        self.assertEqual(self.superidentity.identifiers.all().count(), 3)
+        self.assertTrue(Identifier.objects.filter(identity=self.superidentity, type="kamu", value=kamu_id).exists())
+        with self.assertRaises(Identity.DoesNotExist):
+            self.identity.refresh_from_db()
+        with self.assertRaises(User.DoesNotExist):
+            self.user.refresh_from_db()
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, f"Identity transfer: membership from identity: {self.identity.pk}", extra=ANY),
+                call(20, f"Identity transfer: contract from identity: {self.identity.pk}", extra=ANY),
+                call(20, f"Identity transfer: phone number from identity: {self.identity.pk}", extra=ANY),
+                call(20, f"Identity transfer: email address from identity: {self.identity.pk}", extra=ANY),
+                call(20, f"Identity transfer: identifier from identity: {self.identity.pk}", extra=ANY),
+                call(20, f"Identity transfer: gender from identity: {self.identity.pk}", extra=ANY),
+                call(20, f"Identity transfer: date_of_birth from identity: {self.identity.pk}", extra=ANY),
+                call(20, "User removed", extra=ANY),
+                call(20, "Identity removed", extra=ANY),
+            ],
+            any_order=True,
+        )
+
+    @mock.patch("base.utils.logger_audit")
+    def test_combine_identities_identity_names(self, mock_logger):
+        self.superidentity.given_names = ""
+        self.superidentity.surname = ""
+        self.superidentity.save()
+        self.client.post(self.url, self.data)
+        self.superidentity.refresh_from_db()
+        self.assertEqual(self.superidentity.given_names, "Test Me")
+        self.assertEqual(self.superidentity.surname, "User")
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, f"Identity transfer: given_names from identity: {self.identity.pk}", extra=ANY),
+                call(20, f"Identity transfer: surname from identity: {self.identity.pk}", extra=ANY),
+            ],
+            any_order=True,
+        )
+
+    def test_combine_invalid_higher_assurance_level(self):
+        self.identity.assurance_level = "high"
+        self.identity.save()
+        response = self.client.post(self.url, self.data, follow=True)
+        self.assertIn(
+            "Source identity cannot have higher assurance level than target.", response.content.decode("utf-8")
+        )
+
+    def test_combine_invalid_to_current_user(self):
+        url = f"/identity/combine/{self.identity.pk}/{self.superidentity.pk}/"
+        data = {
+            "combine": True,
+            "primary_identity": self.identity.pk,
+            "secondary_identity": self.superidentity.pk,
+        }
+        response = self.client.post(url, data, follow=True)
+        self.assertIn("cannot be the source identity", response.content.decode("utf-8"))
+
+    def test_combine_invalid_primary_keys(self):
+        data = {
+            "combine": True,
+            "primary_identity": self.identity.pk,
+            "secondary_identity": self.superidentity.pk,
+        }
+        response = self.client.post(self.url, data, follow=True)
+        self.assertIn("Incorrect primary keys", response.content.decode("utf-8"))
+
+    def test_combine_two_uid(self):
+        self.identity.uid = "test"
+        self.identity.save()
+        self.superidentity.uid = "super"
+        self.superidentity.save()
+        response = self.client.post(self.url, self.data, follow=True)
+        self.assertIn("Cannot combine two identities with uid", response.content.decode("utf-8"))
+
+    @override_settings(ALLOW_TEST_FPIC=True)
+    def test_combine_two_fpic(self):
+        self.identity.fpic = "010181-900C"
+        self.identity.save()
+        self.superidentity.fpic = "010866-9260"
+        self.superidentity.save()
+        response = self.client.post(self.url, self.data, follow=True)
+        self.assertIn(
+            "Cannot combine two identities with Finnish Personal Identity Code", response.content.decode("utf-8")
+        )
