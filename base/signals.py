@@ -6,10 +6,12 @@ from typing import Any, Type
 
 from django.contrib.auth.models import Group
 from django.db import transaction
-from django.db.models.signals import post_save
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
 from base.utils import set_default_permissions
+from identity.models import Contract, EmailAddress, Identifier, Identity, PhoneNumber
+from role.models import Membership
 
 
 @receiver(post_save, sender=Group)
@@ -25,3 +27,29 @@ def post_group_create(sender: Type[Group], instance: Group, created: bool, **kwa
             set_default_permissions(instance)
 
     transaction.on_commit(add_groups)
+
+
+@receiver(post_save, sender=Contract)
+@receiver(post_save, sender=EmailAddress)
+@receiver(post_save, sender=Membership)
+@receiver(post_save, sender=Identifier)
+@receiver(post_save, sender=PhoneNumber)
+def identity_update_on_save(instance: object, **kwargs: Any) -> None:
+    """
+    Update identity's modified timestamp after related objects are saved.
+    """
+    if instance and hasattr(instance, "identity") and isinstance(instance.identity, Identity):
+        instance.identity.save()
+
+
+@receiver(post_delete, sender=Contract)
+@receiver(post_delete, sender=EmailAddress)
+@receiver(post_delete, sender=Membership)
+@receiver(post_delete, sender=Identifier)
+@receiver(post_delete, sender=PhoneNumber)
+def identity_update_on_delete(instance: object, **kwargs: Any) -> None:
+    """
+    Update identity's modified timestamp after related objects are deleted.
+    """
+    if instance and hasattr(instance, "identity") and isinstance(instance.identity, Identity):
+        instance.identity.save()
