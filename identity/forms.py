@@ -147,7 +147,7 @@ class EmailAddressVerificationForm(forms.ModelForm):
     Verify an email address
     """
 
-    code = forms.CharField(label=_("Verify code"), max_length=32, required=False)
+    code = forms.CharField(label=_("E-mail verification code"), max_length=32, required=False)
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -182,7 +182,7 @@ class PhoneNumberVerificationForm(forms.ModelForm):
     Verify a phone number
     """
 
-    code = forms.CharField(label=_("Verify code"), max_length=32, required=False)
+    code = forms.CharField(label=_("SMS verification code"), max_length=32, required=False)
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """

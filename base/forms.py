@@ -85,8 +85,8 @@ class EmailPhoneVerificationForm(AuthenticationForm):
     Form for e-mail and SMS login verification.
     """
 
-    email_verification_token = forms.CharField(label=_("E-mail token"), max_length=32, required=False)
-    phone_verification_token = forms.CharField(label=_("Phone token"), max_length=32, required=False)
+    email_verification_token = forms.CharField(label=_("E-mail verification code"), max_length=32, required=False)
+    phone_verification_token = forms.CharField(label=_("SMS verification code"), max_length=32, required=False)
 
     def __init__(self, request: HttpRequest | None = None, *args: Any, **kwargs: Any) -> None:
         """
@@ -213,7 +213,7 @@ class EmailAddressVerificationForm(forms.Form):
     Email address verification form
     """
 
-    code = forms.CharField(label=_("E-mail address verification code"), max_length=20)
+    code = forms.CharField(label=_("E-mail verification code"), max_length=20)
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -264,7 +264,7 @@ class PhoneNumberVerificationForm(forms.Form):
     Phone number verification form
     """
 
-    code = forms.CharField(label=_("Phone number verification code"), max_length=20)
+    code = forms.CharField(label=_("SMS verification code"), max_length=20)
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
