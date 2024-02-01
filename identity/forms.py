@@ -306,6 +306,8 @@ class IdentityForm(forms.ModelForm):
         self.helper = FormHelper()
         restricted_fields = True
         verification_fields = True
+        self.fields["gender"].required = False
+        self.fields["nationality"].required = False
         if not self.instance or self.instance.user == self.request.user:
             verification_fields = False
             for field in self.instance.basic_verification_fields() + self.instance.restricted_verification_fields():
