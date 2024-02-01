@@ -3,9 +3,16 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-  <h1>{% trans "Identity search" %}</h1>
+  <h1>{% trans "Invite to role" %} {{ role.name }}</h1>
+  <div class="alert alert-success" role="alert">
+  <p>{% trans "To invite a new member, first check if the identity already exists." %}</p>
+  <p>{% trans "You may add role to members already found from the Kamu or the HY user directory." %}</p>
+  <p>{% trans "You can only send an invite by email, if the email address is not found from the Kamu or the user directory." %}</p>
+  </div>
   {% crispy form form.helper %}
+  {% if object_list %}
   <h2 id="results-list">{% trans "Kamu results" %}</h2>
+  <p>{% trans "To protect user privacy, email addresses and phone numbers are only listed when exactly matching the search parameter." %}</p>
   <table class="table" aria-describedby="results-list">
     <thead>
     <tr>
@@ -28,13 +35,14 @@
     {% endfor %}
     </tbody>
   </table>
+  {% endif %}
   {% if email and not email_found %}
     <h3>{% trans "Email invitation" %}</h3>
     <p>{% trans "Email address not found" %}: {{ email }}</p>
     <a href="{% url 'role-invite-details-email' role.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Send invitation" %}</a>
   {% endif %}
   {% if ldap_results %}
-  <h2 id="ldap-results-list" class="mt-4">{% trans "LDAP results" %}</h2>
+  <h2 id="ldap-results-list" class="mt-4">{% trans "User directory results" %}</h2>
   <table class="table" aria-describedby="ldap-results-list">
     <thead>
     <tr>

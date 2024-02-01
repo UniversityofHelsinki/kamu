@@ -43,12 +43,28 @@ class IdentitySearchForm(forms.Form):
         self.helper.add_input(Submit("submit", _("Search")))
         self.helper.layout = Layout(
             HTML("<h2 class='mb-3'>" + _("Name search") + "</h2>"),
+            HTML(
+                "<p>"
+                + _(
+                    "Name search returns partial matches from the Kamu and names starting with the search parameters "
+                    "from the user directory."
+                )
+                + "</p>"
+            ),
             Div(
                 Div("given_names", css_class="col-md-6"),
                 Div("surname", css_class="col-md-6"),
                 css_class="row mb-3",
             ),
-            HTML("<h2 class='mb-3'>" + _("Exact identifiers") + "</h2>"),
+            HTML("<h2 class='mb-3'>" + _("Identifiers") + "</h2>"),
+            HTML(
+                "<p>"
+                + _(
+                    "Identifier search matches only exact identifiers. Each identifier is searched separately "
+                    "and the results are added to the final search results."
+                )
+                + "</p>"
+            ),
             Div(
                 Div("uid", css_class="col-md-6"),
                 Div("email", css_class="col-md-6"),
