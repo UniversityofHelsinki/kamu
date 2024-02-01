@@ -33,7 +33,7 @@
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans "Close" %}"></button>
                     </div>
                     <div class="modal-body">
-                      <p>{% trans "You are deactivating" %} {{ identifier.get_type_display }} {% trans "with value" %} {{ identifier.value }}.</p>
+                      <p class="text-break">{% trans "You are deactivating" %} {{ identifier.get_type_display }} {% trans "with value" %} {{ identifier.value }}.</p>
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
