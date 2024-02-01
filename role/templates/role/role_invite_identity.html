@@ -6,8 +6,8 @@
   <h1>{% trans "Invite to role" %} {{ role.name }}</h1>
   <div class="alert alert-success" role="alert">
   <p>{% trans "To invite a new member, first check if the identity already exists." %}</p>
-  <p>{% trans "You may add role to members already found from the Kamu or the HY user directory." %}</p>
-  <p>{% trans "You can only send an invite by email, if the email address is not found from the Kamu or the user directory." %}</p>
+  <p>{% trans "You can add a role directly to identities in the Kamu or the organization user directory." %}</p>
+  <p>{% trans "If the user is not listed in the directory, you can invite them by email." %}</p>
   </div>
   {% crispy form form.helper %}
   {% if object_list %}
