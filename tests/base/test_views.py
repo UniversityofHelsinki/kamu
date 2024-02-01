@@ -326,6 +326,16 @@ class RegistrationViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("login-register-phone"))
 
+    def test_verify_email_address_resend_code(self):
+        url = reverse("login-register-email-verify")
+        email_address = "tester@example.org"
+        self.session["register_email_address"] = email_address
+        self.session.save()
+        response = self.client.post(url, data={"resend_email_code": True})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("login-register-email-verify"))
+        self.assertTrue(Token.objects.filter(email_address=email_address).exists())
+
     def test_registration_phone_number_without_verified_email(self):
         url = reverse("login-register-phone")
         response = self.client.post(url, data={"phone_number": "+123456789"}, follow=True)
@@ -356,6 +366,21 @@ class RegistrationViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(hasattr(identity, "user"))
         self.assertEqual(response.url, reverse("identity-detail", kwargs={"pk": identity.pk}))
+
+    @mock.patch("base.views.SmsConnector")
+    def test_verify_phone_number_resend_code(self, mock_connector):
+        mock_connector.return_value.send_sms.return_value = True
+        url = reverse("login-register-phone-verify")
+        phone_number = "+123456789"
+        self.session["verified_email_address"] = "tester@example.org"
+        self.session["register_phone_number"] = phone_number
+        self.session["register_given_names"] = "New"
+        self.session["register_surname"] = "User"
+        self.session.save()
+        response = self.client.post(url, data={"resend_phone_code": True})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("login-register-phone-verify"))
+        self.assertTrue(Token.objects.filter(phone_number=phone_number).exists())
 
     @override_settings(OIDC_CLAIM_SUB="HTTP_SUB")
     def test_register_with_external_account(self):

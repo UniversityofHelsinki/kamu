@@ -111,16 +111,7 @@ class BaseRegisterView(View):
         get_invitation_session_parameters(request)
         return super().dispatch(request, *args, **kwargs)
 
-
-class RegisterView(BaseRegisterView, FormView):
-    """
-    Registration view. Start Email and SMS registration process or forward to external methods.
-    """
-
-    template_name = "register.html"
-    form_class = RegistrationForm
-
-    def _create_verification_token(self, email_address: str) -> bool:
+    def _create_email_verification_token(self, email_address: str) -> bool:
         """
         Create and send a verification token.
         """
@@ -138,6 +129,35 @@ class RegisterView(BaseRegisterView, FormView):
             messages.add_message(self.request, messages.ERROR, _("Failed to send verification code."))
             return False
 
+    def _create_phone_verification_token(self, phone_number: str) -> bool:
+        """
+        Create and send a verification token.
+        """
+        try:
+            token = Token.objects.create_phone_number_verification_token(phone_number)
+        except TimeLimitError:
+            messages.add_message(
+                self.request, messages.WARNING, _("Tried to send a new code too soon. Please try again in one minute.")
+            )
+            return False
+        sms_connector = SmsConnector()
+        success = sms_connector.send_sms(phone_number, _("Kamu verification code: %(token)s") % {"token": token})
+        if success:
+            messages.add_message(self.request, messages.INFO, _("Verification code sent."))
+            return True
+        else:
+            messages.add_message(self.request, messages.ERROR, _("Could not send an SMS message."))
+            return False
+
+
+class RegisterView(BaseRegisterView, FormView):
+    """
+    Registration view. Start Email and SMS registration process or forward to external methods.
+    """
+
+    template_name = "register.html"
+    form_class = RegistrationForm
+
     def form_valid(self, form: RegistrationForm) -> HttpResponse:
         """
         Create and send a code when loading a page.
@@ -145,7 +165,7 @@ class RegisterView(BaseRegisterView, FormView):
         email_address = form.cleaned_data["email_address"]
         given_names = form.cleaned_data["given_names"]
         surname = form.cleaned_data["surname"]
-        if not self._create_verification_token(email_address):
+        if not self._create_email_verification_token(email_address):
             return redirect("login-register")
         self.request.session["register_email_address"] = email_address
         self.request.session["register_given_names"] = given_names
@@ -177,6 +197,16 @@ class VerifyEmailAddressView(BaseRegisterView, FormView):
         kwargs["email_address"] = self.request.session["register_email_address"]
         return kwargs
 
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Check for resend button.
+        """
+        if "resend_email_code" in self.request.POST:
+            email_address = self.request.session["register_email_address"]
+            self._create_email_verification_token(email_address)
+            return redirect("login-register-email-verify")
+        return super().post(request, *args, **kwargs)
+
     def form_valid(self, form: EmailAddressVerificationForm) -> HttpResponse:
         """
         Create and send a code when loading a page.
@@ -202,32 +232,12 @@ class RegisterPhoneNumberView(BaseRegisterView, FormView):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
-    def _create_verification_token(self, phone_number: str) -> bool:
-        """
-        Create and send a verification token.
-        """
-        try:
-            token = Token.objects.create_phone_number_verification_token(phone_number)
-        except TimeLimitError:
-            messages.add_message(
-                self.request, messages.WARNING, _("Tried to send a new code too soon. Please try again in one minute.")
-            )
-            return False
-        sms_connector = SmsConnector()
-        success = sms_connector.send_sms(phone_number, _("Kamu verification code: %(token)s") % {"token": token})
-        if success:
-            messages.add_message(self.request, messages.INFO, _("Verification code sent."))
-            return True
-        else:
-            messages.add_message(self.request, messages.ERROR, _("Could not send an SMS message."))
-            return False
-
     def form_valid(self, form: PhoneNumberForm) -> HttpResponse:
         """
         Create and send a code when loading a page.
         """
         phone_number = form.cleaned_data["phone_number"]
-        if not self._create_verification_token(phone_number):
+        if not self._create_phone_verification_token(phone_number):
             return redirect("login-register-phone")
         self.request.session["register_phone_number"] = phone_number
         return redirect("login-register-phone-verify")
@@ -257,6 +267,16 @@ class VerifyPhoneNumberView(BaseRegisterView, FormView):
         kwargs = super(VerifyPhoneNumberView, self).get_form_kwargs()
         kwargs["phone_number"] = self.request.session["register_phone_number"]
         return kwargs
+
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Check for resend button.
+        """
+        if "resend_phone_code" in self.request.POST:
+            phone_number = self.request.session["register_phone_number"]
+            self._create_phone_verification_token(phone_number)
+            return redirect("login-register-phone-verify")
+        return super().post(request, *args, **kwargs)
 
     def form_valid(self, form: PhoneNumberVerificationForm) -> HttpResponse:
         """

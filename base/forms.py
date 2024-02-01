@@ -213,7 +213,7 @@ class EmailAddressVerificationForm(forms.Form):
     Email address verification form
     """
 
-    code = forms.CharField(label=_("E-mail verification code"), max_length=20)
+    code = forms.CharField(label=_("E-mail verification code"), max_length=20, required=False)
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -224,6 +224,7 @@ class EmailAddressVerificationForm(forms.Form):
         super(EmailAddressVerificationForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Verify")))
+        self.helper.add_input(Submit("resend_email_code", _("Resend verification code"), css_class="btn-warning"))
 
     def clean_code(self) -> str:
         """
@@ -264,7 +265,7 @@ class PhoneNumberVerificationForm(forms.Form):
     Phone number verification form
     """
 
-    code = forms.CharField(label=_("SMS verification code"), max_length=20)
+    code = forms.CharField(label=_("SMS verification code"), max_length=20, required=False)
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -275,6 +276,7 @@ class PhoneNumberVerificationForm(forms.Form):
         super(PhoneNumberVerificationForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Verify")))
+        self.helper.add_input(Submit("resend_phone_code", _("Resend verification code"), css_class="btn-warning"))
 
     def clean_code(self) -> str:
         """
