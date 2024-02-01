@@ -128,7 +128,7 @@ class MembershipAPITests(BaseAPITestCase):
             },
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn(response.data["non_field_errors"][0], "Role expire date cannot be earlier than start date")
+        self.assertIn(response.data["expire_date"][0], "Role expire date cannot be earlier than start date")
 
     def test_create_membership_invalid_duration(self):
         client = APIClient()
@@ -144,4 +144,4 @@ class MembershipAPITests(BaseAPITestCase):
             },
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn(response.data["non_field_errors"][0], "Role duration cannot be more than maximum duration")
+        self.assertIn(response.data["expire_date"][0], "Role duration cannot be more than maximum duration")

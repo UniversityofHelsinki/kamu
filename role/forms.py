@@ -117,9 +117,9 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
         start_date = cleaned_data.get("start_date")
         expire_date = cleaned_data.get("expire_date")
         if not start_date or not isinstance(start_date, date):
-            raise ValidationError(_("Invalid start date format"))
+            raise ValidationError({"start_date": [_("Invalid start date format")]})
         if not expire_date or not isinstance(expire_date, date):
-            raise ValidationError(_("Invalid expire date format"))
+            raise ValidationError({"expire_date": [_("Invalid expire date format")]})
         invite_email_address = cleaned_data.get("invite_email_address")
         validate_membership(ValidationError, self.role, start_date, expire_date)
         if Membership.objects.filter(
