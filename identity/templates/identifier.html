@@ -80,4 +80,5 @@
   <button type="submit" name="link_identifier" value="microsoft" class="btn btn-primary me-2 mb-2">{% trans "Microsoft" %}</button>
   <button type="submit" name="link_identifier" value="suomifi" class="btn btn-primary me-2 mb-2">{% trans "Suomi.fi and eIDAS" %}</button>
   </form>
+  <a class="btn btn-secondary" href="{% url 'identity-detail' pk=identity.pk %}">{% trans "Return" %}</a>
 {% endblock %}

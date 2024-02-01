@@ -4,12 +4,14 @@ Identity app forms.
 
 from typing import Any
 
+from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Div, Layout, Submit
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from base.models import Token
@@ -91,7 +93,20 @@ class ContactForm(forms.Form):
         self.identity = kwargs.pop("identity")
         super(ContactForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", _("Add")))
+        layout = Layout(
+            Div("contact"),
+            FormActions(
+                Submit("submit", _("Add")),
+                HTML(
+                    '<a class="btn btn-secondary ms-2" href="'
+                    + reverse("identity-detail", kwargs={"pk": self.identity.pk})
+                    + '">'
+                    + _("Return")
+                    + "</a>"
+                ),
+            ),
+        )
+        self.helper.add_layout(layout)
 
     def clean_contact(self) -> str:
         """
@@ -206,8 +221,7 @@ class IdentityForm(forms.ModelForm):
     Create or update user identity
     """
 
-    @staticmethod
-    def _create_layout(include_restricted_fields: bool, include_verification_fields: bool) -> Layout:
+    def _create_layout(self, include_restricted_fields: bool, include_verification_fields: bool) -> Layout:
         """
         Create layout for IdentityForm.
         """
@@ -263,6 +277,18 @@ class IdentityForm(forms.ModelForm):
                 layout[7].append(Div("date_of_birth_verification", css_class="col-md-4"))
                 layout[9].append(Div("nationality_verification", css_class="col-md-4"))
                 layout[10].append(Div("fpic_verification", css_class="col-md-4"))
+            layout.append(
+                FormActions(
+                    Submit("submit", _("Save")),
+                    HTML(
+                        '<a class="btn btn-secondary ms-2" href="'
+                        + reverse("identity-detail", kwargs={"pk": self.instance.pk})
+                        + '">'
+                        + _("Return")
+                        + "</a>"
+                    ),
+                )
+            )
         return layout
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -278,7 +304,6 @@ class IdentityForm(forms.ModelForm):
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", _("Save")))
         restricted_fields = True
         verification_fields = True
         if not self.instance or self.instance.user == self.request.user:

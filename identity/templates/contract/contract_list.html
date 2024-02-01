@@ -53,4 +53,5 @@
   {% else %}
     <p>{% trans "You do not have any signable contracts." %}</p>
   {% endif %}
+  <a class="btn btn-secondary" href="{% url 'identity-detail' pk=identity.pk %}">{% trans "Return" %}</a>
 {% endblock %}
