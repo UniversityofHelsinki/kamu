@@ -84,7 +84,13 @@ class ContactForm(forms.Form):
     Create or update contact addresses
     """
 
-    contact = forms.CharField(label=_("E-mail address or phone number"), max_length=320, required=False)
+    contact = forms.CharField(
+        label=_("E-mail address or phone number"),
+        help_text="Phone number in international format, e.g. +358123456789. "
+        "Values containing @ are treated as e-mail addresses.",
+        max_length=320,
+        required=False,
+    )
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -115,34 +121,24 @@ class ContactForm(forms.Form):
         Add contact_type to form data.
         """
         contact = self.cleaned_data["contact"]
-        email = True
-        phone = True
         if not contact:
             raise ValidationError(_("E-mail address or phone number is required"))
-        try:
-            validate_email(contact)
-        except ValidationError:
-            email = False
-        try:
-            contact = contact.replace(" ", "")
-            validate_phone_number(contact)
-        except ValidationError:
-            phone = False
-        if not email and not phone:
-            raise ValidationError(_("Invalid e-mail address or phone number"))
         contact_limit = getattr(settings, "CONTACT_LIMIT", 3)
-        if phone:
-            self.cleaned_data["contact_type"] = "phone"
-            if PhoneNumber.objects.filter(identity=self.identity, number=contact).exists():
-                raise ValidationError(_("Phone number already exists"))
-            if PhoneNumber.objects.filter(identity=self.identity).count() >= contact_limit:
-                raise ValidationError(_("Maximum number of phone numbers reached"))
-        if email:
+        if "@" in contact:
+            validate_email(contact)
             self.cleaned_data["contact_type"] = "email"
             if EmailAddress.objects.filter(identity=self.identity, address=contact).exists():
                 raise ValidationError(_("E-mail address already exists"))
             if EmailAddress.objects.filter(identity=self.identity).count() >= contact_limit:
                 raise ValidationError(_("Maximum number of e-mail addresses reached"))
+        else:
+            contact = contact.replace(" ", "")
+            validate_phone_number(contact)
+            self.cleaned_data["contact_type"] = "phone"
+            if PhoneNumber.objects.filter(identity=self.identity, number=contact).exists():
+                raise ValidationError(_("Phone number already exists"))
+            if PhoneNumber.objects.filter(identity=self.identity).count() >= contact_limit:
+                raise ValidationError(_("Maximum number of phone numbers reached"))
         return contact
 
 

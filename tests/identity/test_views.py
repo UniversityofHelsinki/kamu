@@ -285,7 +285,7 @@ class ContactTests(BaseTestCase):
     def test_post_incorrect_contact(self):
         data = {"contact": "incorrect"}
         response = self.client.post(self.url, data, follow=True)
-        self.assertIn("Invalid e-mail address or phone number", response.content.decode("utf-8"))
+        self.assertIn("Phone number must start with a plus sign", response.content.decode("utf-8"))
 
     def test_post_contact_over_limit(self):
         data = {"contact": "test@example.com"}
