@@ -775,6 +775,13 @@ class IdentityCombineTests(BaseTestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 403)
 
+    def test_view_combine_selection(self):
+        self.client.force_login(self.superuser)
+        self.client.post(f"/identity/{self.identity.pk}/", {"combine_source": True})
+        response = self.client.post(f"/identity/{self.superidentity.pk}/", {"combine_target": True})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, f"/identity/combine/{self.superidentity.pk}/{self.identity.pk}/")
+
     @mock.patch("base.utils.logger_audit")
     def test_view_combine_identities(self, mock_logger):
         self._create_test_data()

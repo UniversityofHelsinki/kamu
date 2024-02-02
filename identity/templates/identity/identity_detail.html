@@ -77,4 +77,11 @@
   {% else %}
     <p>{% trans "You do not have any roles." %}</p>
   {% endif %}
+  {% if perms.identity.combine_identities %}
+    <h2>{% trans "Combine identities" %}</h2>
+    <form method="post">{% csrf_token %}
+      <input type="submit" name="combine_target" value="{% trans "Set as target" %}" class="btn btn-primary" id="combine_identity_target" />
+      <input type="submit" name="combine_source" value="{% trans "Set as source" %}" class="btn btn-warning" id="combine_identity_source" />
+    </form>
+  {% endif %}
 {% endblock %}

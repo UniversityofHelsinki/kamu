@@ -121,6 +121,43 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
         )
         return get
 
+    @method_decorator(csrf_protect)
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Check for combine identity posts.
+        """
+        self.object = self.get_object()
+        if (
+            "combine_target" in self.request.POST or "combine_source" in self.request.POST
+        ) and self.request.user.has_perms(["identity.combine_identities"]):
+            if "combine_target" in self.request.POST:
+                self.request.session["combine_identity_target"] = self.object.pk
+                if "combine_identity_source" not in self.request.session:
+                    messages.add_message(
+                        self.request, messages.INFO, _("Selected as the target identity for identity combining.")
+                    )
+            if "combine_source" in self.request.POST:
+                self.request.session["combine_identity_source"] = self.object.pk
+                if "combine_identity_target" not in self.request.session:
+                    messages.add_message(
+                        self.request, messages.INFO, _("Selected as the source identity for identity combining.")
+                    )
+            if (
+                "combine_identity_target" in self.request.session
+                and "combine_identity_source" in self.request.session
+                and self.request.session["combine_identity_target"] != self.request.session["combine_identity_source"]
+            ):
+                target = self.request.session["combine_identity_target"]
+                source = self.request.session["combine_identity_source"]
+                del request.session["combine_identity_target"]
+                del request.session["combine_identity_source"]
+                return redirect(
+                    "identity-combine",
+                    primary_pk=target,
+                    secondary_pk=source,
+                )
+        return redirect("identity-detail", pk=self.object.pk)
+
 
 class IdentityUpdateView(UpdateView):
     model = Identity
