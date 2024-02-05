@@ -317,6 +317,7 @@ class EmailAddress(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["identity", "address"], name="unique_email_address")]
+        ordering = ["identity", "verified", "priority"]
         verbose_name = _("E-mail address")
         verbose_name_plural = _("E-mail addresses")
 
@@ -352,6 +353,7 @@ class PhoneNumber(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["identity", "number"], name="unique_phone_number")]
+        ordering = ["identity", "verified", "priority"]
         verbose_name = _("Phone number")
         verbose_name_plural = _("Phone numbers")
 
