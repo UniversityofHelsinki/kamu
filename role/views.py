@@ -244,6 +244,17 @@ class RoleInviteIdentitySearch(IdentitySearchView):
         """
         return True
 
+    def _check_email(self, context: dict[str, Any], email: str | None) -> bool:
+        """
+        Check if email is found in the registry.
+        """
+        if not email:
+            return False
+        if "ldap_results" in context:
+            if any(obj["mail"] == email for obj in context["ldap_results"]):
+                return True
+        return Identity.objects.filter(email_addresses__address__iexact=email).exists()
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add form and role to the context data.
@@ -251,9 +262,7 @@ class RoleInviteIdentitySearch(IdentitySearchView):
         """
         context = super(RoleInviteIdentitySearch, self).get_context_data(**kwargs)
         email = self.request.GET.get("email")
-        context["email_found"] = (
-            Identity.objects.filter(email_addresses__address__iexact=email).exists() if email else ""
-        )
+        context["email_found"] = self._check_email(context, email)
         self.request.session["invitation_email_address"] = email
         context["role"] = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
         return context

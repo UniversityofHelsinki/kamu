@@ -233,6 +233,22 @@ class RoleInviteTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Email address not found", response.content.decode("utf-8"))
 
+    @mock.patch("identity.views.ldap_search")
+    def test_search_email_found_kamu(self, mock_ldap):
+        mock_ldap.return_value = []
+        url = f"{self.url}?email=test@example.org"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Email address not found", response.content.decode("utf-8"))
+
+    @mock.patch("base.connectors.ldap._get_connection")
+    def test_search_email_found_ldap(self, mock_ldap):
+        mock_ldap.return_value = MockLdapConn()
+        url = f"{self.url}?email=ldap.user@example.org"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Email address not found", response.content.decode("utf-8"))
+
     def test_join_role_with_identity(self):
         url = f"{self.url}{self.identity.pk}/"
         response = self.client.post(
