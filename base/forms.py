@@ -34,7 +34,11 @@ class EmailPhoneForm(forms.Form):
     """
 
     email_address = forms.CharField(label=_("E-mail address"), max_length=320, validators=[validate_email])
-    phone_number = forms.CharField(label=_("Phone number"), max_length=32)
+    phone_number = forms.CharField(
+        label=_("Phone number"),
+        max_length=32,
+        help_text=_("Phone number in international format, e.g. +358123456789."),
+    )
 
     error_messages = {
         "invalid_login": _("Invalid email address or phone number."),
@@ -248,7 +252,11 @@ class PhoneNumberForm(forms.Form):
     Phone number form
     """
 
-    phone_number = forms.CharField(label=_("Phone number"), max_length=20)
+    phone_number = forms.CharField(
+        label=_("Phone number"),
+        max_length=20,
+        help_text=_("Phone number in international format, e.g. +358123456789."),
+    )
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """

@@ -119,8 +119,9 @@ class ContactForm(forms.Form):
 
     contact = forms.CharField(
         label=_("E-mail address or phone number"),
-        help_text="Phone number in international format, e.g. +358123456789. "
-        "Values containing @ are treated as e-mail addresses.",
+        help_text=_("Phone number in international format, e.g. +358123456789.")
+        + " "
+        + _("Values containing @ are treated as e-mail addresses."),
         max_length=320,
         required=False,
     )
