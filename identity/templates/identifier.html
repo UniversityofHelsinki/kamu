@@ -71,6 +71,7 @@
         </tbody>
       </table>
     {% endif %}
+  {% if user == identity.user %}
   <h2>{% trans "Link a new identifier" %}</h2>
   <p>{% trans "Link a new identifier to your identity. After linking a new identifier, you can use it to manage your information in Kamu, or when using light accounts." %}</p>
   <button type="submit" name="link_identifier" value="hy" class="btn btn-primary me-2 mb-2">{% trans "University of Helsinki account" %}</button>
@@ -80,5 +81,6 @@
   <button type="submit" name="link_identifier" value="microsoft" class="btn btn-primary me-2 mb-2">{% trans "Microsoft" %}</button>
   <button type="submit" name="link_identifier" value="suomifi" class="btn btn-primary me-2 mb-2">{% trans "Suomi.fi and eIDAS" %}</button>
   </form>
+  {% endif %}
   <a class="btn btn-secondary" href="{% url 'identity-detail' pk=identity.pk %}">{% trans "Return" %}</a>
 {% endblock %}

@@ -855,7 +855,7 @@ class IdentifierView(LoginRequiredMixin, TemplateView):
                     )
                 except Identifier.DoesNotExist:
                     pass
-        elif "link_identifier" in data:
+        elif "link_identifier" in data and self.request.user == self.identity.user:
             identifier_type = str(data["link_identifier"])
             linking_view = self._get_linking_view(identifier_type)
             if linking_view:
