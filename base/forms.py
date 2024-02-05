@@ -198,7 +198,7 @@ class RegistrationForm(forms.Form):
             raise ValidationError(_("This e-mail address is already linked to an account."))
         return email_address
 
-    def clean(self) -> None:
+    def clean(self) -> dict[str, Any]:
         """
         Test that either given_names or surname is filled in.
         """
@@ -209,6 +209,7 @@ class RegistrationForm(forms.Form):
         surname = cleaned_data.get("surname")
         if not given_names and not surname:
             raise ValidationError(_("Either given names or surname must be filled in."))
+        return cleaned_data
 
 
 class EmailAddressVerificationForm(forms.Form):
