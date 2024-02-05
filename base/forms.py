@@ -99,6 +99,8 @@ class EmailPhoneVerificationForm(AuthenticationForm):
         super(EmailPhoneVerificationForm, self).__init__(*args, **kwargs)
         self.fields.pop("username")
         self.fields.pop("password")
+        self.fields["email_verification_token"].widget.attrs.update(autocomplete="off")
+        self.fields["phone_verification_token"].widget.attrs.update(autocomplete="off")
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Verify")))
         self.helper.add_input(Submit("resend_email_code", _("Resend an email code"), css_class="btn-warning"))
@@ -222,6 +224,7 @@ class EmailAddressVerificationForm(forms.Form):
         """
         self.email_address = kwargs.pop("email_address", None)
         super(EmailAddressVerificationForm, self).__init__(*args, **kwargs)
+        self.fields["code"].widget.attrs.update(autocomplete="off")
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Verify")))
         self.helper.add_input(Submit("resend_email_code", _("Resend verification code"), css_class="btn-warning"))
@@ -274,6 +277,7 @@ class PhoneNumberVerificationForm(forms.Form):
         """
         self.phone_number = kwargs.pop("phone_number", None)
         super(PhoneNumberVerificationForm, self).__init__(*args, **kwargs)
+        self.fields["code"].widget.attrs.update(autocomplete="off")
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Verify")))
         self.helper.add_input(Submit("resend_phone_code", _("Resend verification code"), css_class="btn-warning"))
@@ -320,6 +324,7 @@ class InviteTokenForm(forms.Form):
         super(InviteTokenForm, self).__init__(*args, **kwargs)
         if token:
             self.fields["code"].initial = token
+        self.fields["code"].widget.attrs.update(autocomplete="off")
         self.helper = FormHelper()
         self.helper.form_tag = False
 

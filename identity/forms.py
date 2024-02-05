@@ -188,6 +188,7 @@ class EmailAddressVerificationForm(forms.ModelForm):
         """
         super(EmailAddressVerificationForm, self).__init__(*args, **kwargs)
         self.fields["address"].disabled = True
+        self.fields["code"].widget.attrs.update(autocomplete="off")
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Save")))
         self.helper.add_input(Submit("resend_code", _("Resend a code")))
@@ -223,6 +224,7 @@ class PhoneNumberVerificationForm(forms.ModelForm):
         """
         super(PhoneNumberVerificationForm, self).__init__(*args, **kwargs)
         self.fields["number"].disabled = True
+        self.fields["code"].widget.attrs.update(autocomplete="off")
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Save")))
         self.helper.add_input(Submit("resend_code", _("Resend a code")))
