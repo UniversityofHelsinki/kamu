@@ -2,6 +2,8 @@
 Helper functions for the identity app
 """
 
+from typing import Callable
+
 from django.contrib import messages
 from django.db import IntegrityError
 from django.http import HttpRequest
@@ -88,13 +90,13 @@ def _combine_identity_attributes(
     combined_attributes = ["given_names", "surname", "uid", "fpic", "date_of_birth"]
     unique_attributes = ["uid", "fpic"]
 
-    def _combine_identity_attribute(attribute: str) -> None:
+    def _combine_identity_attribute(attribute: str, has_val: Callable[[str], bool] = bool) -> None:
         """
         Combine an attribute from two identities.
 
         Copy attribute from secondary identity to primary identity, if primary identity does not have it.
         """
-        if not getattr(primary_identity, attribute) and getattr(secondary_identity, attribute):
+        if not has_val(getattr(primary_identity, attribute)) and has_val(getattr(secondary_identity, attribute)):
             setattr(primary_identity, attribute, getattr(secondary_identity, attribute))
             if attribute in unique_attributes:
                 setattr(secondary_identity, attribute, None)
@@ -113,19 +115,7 @@ def _combine_identity_attributes(
 
     for attr in combined_attributes:
         _combine_identity_attribute(attr)
-    if primary_identity.gender == "U" and secondary_identity.gender != "U":
-        primary_identity.gender = secondary_identity.gender
-        primary_identity.save()
-        audit_log.info(
-            f"Identity transfer: gender from identity: { secondary_identity.pk }",
-            category="identity",
-            action="update",
-            outcome="success",
-            request=request,
-            objects=[primary_identity],
-            log_to_db=True,
-            extra={"secondary_identity": secondary_identity.pk},
-        )
+    _combine_identity_attribute("gender", lambda val: val != "U")
 
 
 def combine_identities(request: HttpRequest, primary_identity: Identity, secondary_identity: Identity) -> None:
