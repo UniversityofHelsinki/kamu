@@ -1,0 +1,4 @@
+{% load i18n %}{% trans "Hi" %}
+
+{% if inviter %}{% blocktrans %}{{ inviter }} has added you a new role membership in Kamu:{% endblocktrans %}{% else %}{% trans "You have a new role membership in Kamu:" %}{% endif %}
+{{ role }}

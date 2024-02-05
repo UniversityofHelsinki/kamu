@@ -36,6 +36,33 @@ def _get_link_url(request: HttpRequest | None = None, view_name: str = "front-pa
     return None
 
 
+def send_add_email(membership: Membership) -> bool:
+    """
+    Send an email notification of the role membership.
+    """
+    cur_language = translation.get_language()
+    if not membership or not membership.identity:
+        return False
+    address = membership.identity.email_addresses.first()
+    if not address:
+        return False
+    lang = membership.identity.preferred_language
+    inviter = membership.inviter.get_full_name() if membership.inviter else None
+    try:
+        translation.activate(lang)
+        subject = render_to_string("email/membership_add_subject.txt")
+        message = render_to_string(
+            "email/membership_add_message.txt",
+            {
+                "inviter": inviter,
+                "role": membership.role.name(),
+            },
+        )
+    finally:
+        translation.activate(cur_language)
+    return _send_email(subject, message, recipient_list=[address.address])
+
+
 def send_invite_email(
     membership: Membership, token: str, address: str, lang: str = "en", request: HttpRequest | None = None
 ) -> bool:

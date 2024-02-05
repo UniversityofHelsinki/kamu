@@ -262,6 +262,7 @@ class RoleInviteTests(BaseTestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Membership.objects.filter(role=self.role, identity=self.identity).exists())
+        self.assertIn("Test User has added you a new role membership in Kamu", mail.outbox[0].body)
 
     @mock.patch("base.connectors.ldap._get_connection")
     @mock.patch("base.utils.logger_audit")
@@ -296,6 +297,7 @@ class RoleInviteTests(BaseTestCase):
                 call(20, "Membership to testrole added to identity: Ldap User", extra=ANY),
             ]
         )
+        self.assertIn("Test User has added you a new role membership in Kamu", mail.outbox[0].body)
 
     @mock.patch("base.connectors.ldap._get_connection")
     @override_settings(ALLOW_TEST_FPIC=True)

@@ -18,7 +18,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import DetailView, ListView, View
 from django.views.generic.edit import CreateView
 
-from base.connectors.email import send_invite_email
+from base.connectors.email import send_add_email, send_invite_email
 from base.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
 from base.models import Token
 from base.utils import AuditLog
@@ -343,6 +343,7 @@ class RoleInviteView(BaseRoleInviteView):
                 objects=[self.object, self.object.identity, self.object.role],
                 log_to_db=True,
             )
+            send_add_email(self.object)
         return valid
 
 
@@ -547,6 +548,7 @@ class RoleInviteLdapView(BaseRoleInviteView):
                 objects=[self.object, self.object.identity, self.object.role],
                 log_to_db=True,
             )
+            send_add_email(self.object)
         return valid
 
 
