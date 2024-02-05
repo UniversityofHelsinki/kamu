@@ -972,6 +972,13 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         result_uids = set(object_list.values_list("uid", flat=True))
         return sorted([res for res in ldap_results if res["uid"] not in result_uids], key=lambda x: x["cn"])
 
+    @staticmethod
+    def search_ldap() -> bool:
+        """
+        Check if LDAP should be searched.
+        """
+        return False
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add form and searched phone and email to context data.
@@ -980,13 +987,14 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         context["phone"] = self.request.GET.get("phone", "").replace(" ", "")
         context["email"] = self.request.GET.get("email")
         context["form"] = IdentitySearchForm(self.request.GET)
-        ldap_results = self._get_ldap_results()
-        if isinstance(ldap_results, list):
-            context["ldap_results"] = self._filter_ldap_list(context["object_list"], ldap_results)
-        else:
-            messages.add_message(
-                self.request, messages.ERROR, _("LDAP search failed, could not search existing accounts.")
-            )
+        if self.search_ldap():
+            ldap_results = self._get_ldap_results()
+            if isinstance(ldap_results, list):
+                context["ldap_results"] = self._filter_ldap_list(context["object_list"], ldap_results)
+            else:
+                messages.add_message(
+                    self.request, messages.ERROR, _("LDAP search failed, could not search existing accounts.")
+                )
         return context
 
     def get_queryset(self) -> QuerySet[Identity]:
@@ -1028,7 +1036,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
             action="search",
             outcome="success",
             request=self.request,
-            extra={"search_terms": str(search_terms)},
+            extra={"search_terms": str(search_terms), "ldap": self.search_ldap()},
         )
         return queryset
 

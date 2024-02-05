@@ -17,20 +17,7 @@ from identity.models import Identifier, Identity
 from role.models import Membership, Role
 from role.views import RoleListApproverView, RoleListInviterView, RoleListOwnerView
 from tests.setup import BaseTestCase
-
-LDAP_RETURN_VALUE = [
-    {
-        "uid": "ldapuser",
-        "cn": "Ldap User",
-        "mail": "ldap.user@example.org",
-        "dn": "uid=ldapuser,ou=users,dc=example,dc=org",
-        "preferredLanguage": "en",
-        "givenName": "Ldap",
-        "sn": "User",
-        "schacDateOfBirth": "19810101",
-        "schacPersonalUniqueID": "urn:schac:personalUniqueID:fi:010181-900C",
-    }
-]
+from tests.utils import MockLdapConn
 
 
 class RoleListTests(BaseTestCase):
@@ -205,6 +192,39 @@ class RoleInviteTests(BaseTestCase):
         self.assertIn("Test User", response.content.decode("utf-8"))
         self.assertIn("Select", response.content.decode("utf-8"))
 
+    @mock.patch("base.connectors.ldap.logger")
+    def test_search_ldap_fail(self, mock_logger):
+        url = f"{self.url}?uid=testuser"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("LDAP search failed", response.content.decode("utf-8"))
+        mock_logger.error.assert_called_once()
+
+    @mock.patch("base.connectors.ldap._get_connection")
+    def test_search_ldap(self, mock_ldap):
+        mock_ldap.return_value = MockLdapConn(limited_fields=True)
+        url = f"{self.url}?uid=testuser&given_names=test"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Test User", response.content.decode("utf-8"))
+        self.assertEqual(response.content.decode("utf-8").count("ldap.user@example.org"), 1)
+
+    @mock.patch("base.connectors.ldap._get_connection")
+    def test_search_ldap_sizelimit_exceeded(self, mock_ldap):
+        mock_ldap.return_value = MockLdapConn(limited_fields=True, size_exceeded=True)
+        url = f"{self.url}?uid=testuser&given_names=test"
+        response = self.client.get(url)
+        self.assertIn("search returned too many results", response.content.decode("utf-8"))
+
+    @mock.patch("base.connectors.ldap._get_connection")
+    def test_search_ldap_escaping(self, mock_ldap):
+        conn = MockLdapConn(limited_fields=True)
+        mock_ldap.return_value = conn
+        url = f"{self.url}?given_names=t*est"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("(givenName=*t\\2aest*)", conn.search_args[0][2])
+
     @mock.patch("identity.views.ldap_search")
     def test_search_not_found_email(self, mock_ldap):
         mock_ldap.return_value = []
@@ -227,11 +247,11 @@ class RoleInviteTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Membership.objects.filter(role=self.role, identity=self.identity).exists())
 
-    @mock.patch("role.views.ldap_search")
+    @mock.patch("base.connectors.ldap._get_connection")
     @mock.patch("base.utils.logger_audit")
     @override_settings(ALLOW_TEST_FPIC=True)
     def test_add_role_with_ldap(self, mock_logger, mock_ldap):
-        mock_ldap.return_value = LDAP_RETURN_VALUE
+        mock_ldap.return_value = MockLdapConn()
         url = f"{self.url}ldap/ldapuser/"
         response = self.client.post(
             url,
@@ -261,10 +281,10 @@ class RoleInviteTests(BaseTestCase):
             ]
         )
 
-    @mock.patch("role.views.ldap_search")
+    @mock.patch("base.connectors.ldap._get_connection")
     @override_settings(ALLOW_TEST_FPIC=True)
     def test_join_role_with_ldap_existing_identity(self, mock_ldap):
-        mock_ldap.return_value = LDAP_RETURN_VALUE
+        mock_ldap.return_value = MockLdapConn()
         Identifier.objects.create(identity=self.identity, type="fpic", value="010181-900C")
         url = f"{self.url}ldap/ldapuser/"
         response = self.client.post(

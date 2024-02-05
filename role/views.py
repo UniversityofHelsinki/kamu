@@ -237,6 +237,13 @@ class RoleInviteIdentitySearch(IdentitySearchView):
 
     template_name = "role/role_invite_identity.html"
 
+    @staticmethod
+    def search_ldap() -> bool:
+        """
+        Enable LDAP search.
+        """
+        return True
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add form and role to the context data.

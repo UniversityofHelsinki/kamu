@@ -13,7 +13,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.test import Client, override_settings
 from django.utils import timezone
-from ldap import SIZELIMIT_EXCEEDED
 
 from base.utils import set_default_permissions
 from identity.models import (
@@ -26,29 +25,7 @@ from identity.models import (
 )
 from role.models import Membership, Role
 from tests.setup import BaseTestCase
-
-
-class MockLdapConn:
-    def __init__(self, size_exceeded=False):
-        self.size_exceeded = size_exceeded
-        self.search_args = []
-
-    LDAP_RETURN_VALUE = [
-        (
-            "uid=ldapuser,ou=users,dc=example,dc=org",
-            {
-                "uid": [b"ldapuser"],
-                "cn": [b"Ldap User"],
-                "mail": [b"ldap.user@example.org"],
-            },
-        )
-    ]
-
-    def search_s(self, *args, **kwargs):
-        self.search_args.append(args)
-        if self.size_exceeded:
-            raise SIZELIMIT_EXCEEDED
-        return self.LDAP_RETURN_VALUE
+from tests.utils import MockLdapConn
 
 
 class IdentityTests(BaseTestCase):
@@ -95,7 +72,7 @@ class IdentityTests(BaseTestCase):
     @mock.patch("base.connectors.ldap._get_connection")
     @mock.patch("base.utils.logger_audit")
     def test_search_identity(self, mock_logger, mock_ldap):
-        mock_ldap.return_value = MockLdapConn()
+        mock_ldap.return_value = MockLdapConn(limited_fields=True)
         EmailAddress.objects.create(
             identity=self.superidentity,
             address="super@example.org",
@@ -120,39 +97,6 @@ class IdentityTests(BaseTestCase):
         url = f"{self.url}search/?given_names=test&email=super@example.org"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
-
-    @mock.patch("base.connectors.ldap.logger")
-    def test_search_ldap_fail(self, mock_logger):
-        url = f"{self.url}search/?uid=testuser"
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("LDAP search failed", response.content.decode("utf-8"))
-        mock_logger.error.assert_called_once()
-
-    @mock.patch("base.connectors.ldap._get_connection")
-    def test_search_ldap(self, mock_ldap):
-        mock_ldap.return_value = MockLdapConn()
-        url = f"{self.url}search/?uid=testuser&given_names=test"
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Test User", response.content.decode("utf-8"))
-        self.assertEqual(response.content.decode("utf-8").count("ldap.user@example.org"), 1)
-
-    @mock.patch("base.connectors.ldap._get_connection")
-    def test_search_ldap_sizelimit_exceeded(self, mock_ldap):
-        mock_ldap.return_value = MockLdapConn(size_exceeded=True)
-        url = f"{self.url}search/?uid=testuser&given_names=test"
-        response = self.client.get(url)
-        self.assertIn("search returned too many results", response.content.decode("utf-8"))
-
-    @mock.patch("base.connectors.ldap._get_connection")
-    def test_search_ldap_escaping(self, mock_ldap):
-        conn = MockLdapConn()
-        mock_ldap.return_value = conn
-        url = f"{self.url}search/?given_names=t*est"
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("(givenName=*t\\2aest*)", conn.search_args[0][2])
 
 
 class IdentityEditTests(BaseTestCase):
