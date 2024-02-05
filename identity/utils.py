@@ -2,7 +2,7 @@
 Helper functions for the identity app
 """
 
-from typing import Callable
+from typing import TYPE_CHECKING, Callable
 
 from django.contrib import messages
 from django.db import IntegrityError
@@ -13,6 +13,9 @@ from django.utils.translation import gettext_lazy as _
 from base.utils import AuditLog
 from identity.models import Contract, EmailAddress, Identifier, Identity, PhoneNumber
 from role.models import Membership
+
+if TYPE_CHECKING:
+    from base.utils import CategoryTypes
 
 audit_log = AuditLog()
 
@@ -118,6 +121,36 @@ def _combine_identity_attributes(
     _combine_identity_attribute("gender", lambda val: val != "U")
 
 
+def _move_objects_to_primary_identity(
+    request: HttpRequest,
+    cls: type[EmailAddress | PhoneNumber | Contract | Identifier | Membership],
+    primary_identity: Identity,
+    secondary_identity: Identity,
+    log_category: "CategoryTypes",
+    allow_integrity_error: bool = True,
+) -> None:
+    """change the linked identity for all objects of the specified type"""
+
+    for obj in cls.objects.filter(identity=secondary_identity):
+        try:
+            # the foreign key part here seems to be too hard for static checking
+            obj.identity = primary_identity  # type: ignore[assignment]
+            obj.save()
+            audit_log.info(
+                f"Identity transfer: { log_category } from identity: { secondary_identity.pk }",
+                category=log_category,
+                action="update",
+                outcome="success",
+                request=request,
+                objects=[obj, primary_identity],
+                log_to_db=True,
+                extra={"secondary_identity": secondary_identity.pk},
+            )
+        except IntegrityError:
+            if not allow_integrity_error:
+                raise
+
+
 def combine_identities(request: HttpRequest, primary_identity: Identity, secondary_identity: Identity) -> None:
     """
     Combine two identities.
@@ -126,84 +159,50 @@ def combine_identities(request: HttpRequest, primary_identity: Identity, seconda
     """
     _combine_identity_attributes(request, primary_identity, secondary_identity)
     # Move email addresses, skip duplicates (IntegrityError)
-    for email in EmailAddress.objects.filter(identity=secondary_identity):
-        try:
-            email.identity = primary_identity
-            email.save()
-            audit_log.info(
-                f"Identity transfer: email address from identity: { secondary_identity.pk }",
-                category="email_address",
-                action="update",
-                outcome="success",
-                request=request,
-                objects=[email, primary_identity],
-                log_to_db=True,
-                extra={"secondary_identity": secondary_identity.pk},
-            )
-        except IntegrityError:
-            pass
+    _move_objects_to_primary_identity(
+        request=request,
+        cls=EmailAddress,
+        primary_identity=primary_identity,
+        secondary_identity=secondary_identity,
+        log_category="email_address",
+        allow_integrity_error=True,
+    )
     # Move phone numbers, skip duplicates (IntegrityError)
-    for phone in PhoneNumber.objects.filter(identity=secondary_identity):
-        try:
-            phone.identity = primary_identity
-            phone.save()
-            audit_log.info(
-                f"Identity transfer: phone number from identity: { secondary_identity.pk }",
-                category="phone_number",
-                action="update",
-                outcome="success",
-                request=request,
-                objects=[phone, primary_identity],
-                log_to_db=True,
-                extra={"secondary_identity": secondary_identity.pk},
-            )
-        except IntegrityError:
-            pass
+    _move_objects_to_primary_identity(
+        request=request,
+        cls=PhoneNumber,
+        primary_identity=primary_identity,
+        secondary_identity=secondary_identity,
+        log_category="phone_number",
+        allow_integrity_error=True,
+    )
     # Move contracts, if contract does not yet exist. (IntegrityError)
-    for contract in Contract.objects.filter(identity=secondary_identity):
-        try:
-            contract.identity = primary_identity
-            contract.save()
-            audit_log.info(
-                f"Identity transfer: contract from identity: { secondary_identity.pk }",
-                category="contract",
-                action="update",
-                outcome="success",
-                request=request,
-                objects=[contract, primary_identity],
-                log_to_db=True,
-                extra={"secondary_identity": secondary_identity.pk},
-            )
-        except IntegrityError:
-            pass
+    _move_objects_to_primary_identity(
+        request=request,
+        cls=Contract,
+        primary_identity=primary_identity,
+        secondary_identity=secondary_identity,
+        log_category="contract",
+        allow_integrity_error=True,
+    )
     # Move identifiers
-    for identifier in Identifier.objects.filter(identity=secondary_identity):
-        identifier.identity = primary_identity
-        identifier.save()
-        audit_log.info(
-            f"Identity transfer: identifier from identity: { secondary_identity.pk }",
-            category="identifier",
-            action="update",
-            outcome="success",
-            request=request,
-            objects=[identifier, primary_identity],
-            log_to_db=True,
-            extra={"secondary_identity": secondary_identity.pk},
-        )
+    _move_objects_to_primary_identity(
+        request=request,
+        cls=Identifier,
+        primary_identity=primary_identity,
+        secondary_identity=secondary_identity,
+        log_category="identifier",
+        allow_integrity_error=False,
+    )
     # Move memberships
-    for membership in Membership.objects.filter(identity=secondary_identity):
-        membership.identity = primary_identity
-        membership.save()
-        audit_log.info(
-            f"Identity transfer: membership from identity: { secondary_identity.pk }",
-            category="membership",
-            action="update",
-            outcome="success",
-            request=request,
-            objects=[membership, primary_identity],
-            log_to_db=True,
-            extra={"secondary_identity": secondary_identity.pk},
-        )
+    _move_objects_to_primary_identity(
+        request=request,
+        cls=Membership,
+        primary_identity=primary_identity,
+        secondary_identity=secondary_identity,
+        log_category="membership",
+        allow_integrity_error=False,
+    )
     # Copy kamu_id as identifier to primary identity
     Identifier.objects.create(
         identity=primary_identity,

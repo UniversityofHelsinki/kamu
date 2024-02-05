@@ -833,8 +833,8 @@ class IdentityCombineTests(BaseTestCase):
             [
                 call(20, f"Identity transfer: membership from identity: {self.identity.pk}", extra=ANY),
                 call(20, f"Identity transfer: contract from identity: {self.identity.pk}", extra=ANY),
-                call(20, f"Identity transfer: phone number from identity: {self.identity.pk}", extra=ANY),
-                call(20, f"Identity transfer: email address from identity: {self.identity.pk}", extra=ANY),
+                call(20, f"Identity transfer: phone_number from identity: {self.identity.pk}", extra=ANY),
+                call(20, f"Identity transfer: email_address from identity: {self.identity.pk}", extra=ANY),
                 call(20, f"Identity transfer: identifier from identity: {self.identity.pk}", extra=ANY),
                 call(20, f"Identity transfer: gender from identity: {self.identity.pk}", extra=ANY),
                 call(20, f"Identity transfer: date_of_birth from identity: {self.identity.pk}", extra=ANY),
