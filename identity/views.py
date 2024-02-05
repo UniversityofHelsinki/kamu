@@ -164,6 +164,13 @@ class IdentityUpdateView(UpdateView):
     form_class = IdentityForm
 
     def form_valid(self, form: IdentityForm) -> HttpResponse:
+        """
+        Set verification level to self-asserted, if user is changing their own information.
+        """
+        if self.request.user == self.object.user:
+            for field in form.changed_data:
+                if field in self.object.verifiable_fields() and getattr(form.instance, f"{field}_verification") != 1:
+                    setattr(form.instance, f"{field}_verification", 1)
         valid = super().form_valid(form)
         if form.changed_data:
             # construct_change_message is used for all models in admin, but limited to single form in django-stubs.

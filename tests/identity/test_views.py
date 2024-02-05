@@ -196,12 +196,19 @@ class IdentityEditTests(BaseTestCase):
     @mock.patch("base.utils.logger_audit")
     def test_edit_own_information(self, mock_logger):
         self.client.force_login(self.user)
+        self.identity.surname_verification = 2
+        self.identity.save()
+        self.data["surname"] = "New-User"
         self.data["fpic"] = "010181-900C"
         response = self.client.post(self.url, self.data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User</h1>", response.content.decode("utf-8"))
+        self.assertIn("New-User", response.content.decode("utf-8"))
         self.assertIn("Jan. 1, 1999", response.content.decode("utf-8"))
         self.assertIn("010181-900C", response.content.decode("utf-8"))
+        self.identity.refresh_from_db()
+        self.assertEqual(self.identity.fpic_verification, 1)
+        self.assertEqual(self.identity.surname_verification, 1)
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Changed identity information", extra=ANY),
