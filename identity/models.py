@@ -295,6 +295,12 @@ class Identity(models.Model):
             self.given_name_display = self.given_names.split(" ")[0]
         if not self.surname_display:
             self.surname_display = self.surname.split(" ")[0]
+        if self.user and (
+            self.user.first_name != self.given_name_display or self.user.last_name != self.surname_display
+        ):
+            self.user.first_name = self.given_name_display
+            self.user.last_name = self.surname_display
+            self.user.save()
         super(Identity, self).save(*args, **kwargs)
 
 
