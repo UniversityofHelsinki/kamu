@@ -7,6 +7,7 @@ from typing import Any
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
+from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import (
@@ -306,6 +307,18 @@ class LoginForm(AuthenticationForm):
         super(LoginForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Login")))
+
+    def clean(self) -> dict[str, Any]:
+        username = self.cleaned_data.get("username")
+        password = self.cleaned_data.get("password")
+        if username is not None and password:
+            backend = ModelBackend()
+            self.user_cache = backend.authenticate(self.request, username=username, password=password)
+            if self.user_cache is None:
+                raise self.get_invalid_login_error()
+            else:
+                self.confirm_login_allowed(self.user_cache)
+        return self.cleaned_data
 
 
 class InviteTokenForm(forms.Form):
