@@ -31,6 +31,13 @@ class TokenManager(models.Manager["Token"]):
     """
 
     @staticmethod
+    def get_readable_alphabet() -> str:
+        """
+        Get alphabet for tokens, without ambiguous characters "01lIO".
+        """
+        return "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+
+    @staticmethod
     def _generate_secret(length: int = 8, alphabet: str = string.ascii_letters + string.digits) -> str:
         """
         Generate a new secret of chosen length
@@ -53,6 +60,7 @@ class TokenManager(models.Manager["Token"]):
         email_address: str = "",
         phone_number: str = "",
         length: int = 8,
+        readable_token: bool = False,
     ) -> str:
         """
         Create a new token. Removes existing tokens of the same type and linked object.
@@ -90,7 +98,10 @@ class TokenManager(models.Manager["Token"]):
                 token.delete()
             else:
                 raise TimeLimitError
-        secret = self._generate_secret(length=length)
+        if readable_token:
+            secret = self._generate_secret(length=length, alphabet=self.get_readable_alphabet())
+        else:
+            secret = self._generate_secret(length=length)
         token = Token(
             tries_left=verification_tries,
             token_type=token_type,
@@ -111,37 +122,37 @@ class TokenManager(models.Manager["Token"]):
         """
         Create a new email verification token.
         """
-        return self._create_token("emailobjectverif", email_object=email)
+        return self._create_token("emailobjectverif", email_object=email, readable_token=True)
 
     def create_phone_object_verification_token(self, phone: PhoneNumber) -> str:
         """
         Create a new SMS verification token.
         """
-        return self._create_token("phoneobjectverif", phone_object=phone)
+        return self._create_token("phoneobjectverif", phone_object=phone, readable_token=True)
 
     def create_email_login_token(self, email: EmailAddress) -> str:
         """
         Create a new email login token.
         """
-        return self._create_token("emaillogin", email_object=email)
+        return self._create_token("emaillogin", email_object=email, readable_token=True)
 
     def create_phone_login_token(self, phone: PhoneNumber) -> str:
         """
         Create a new SMS login token.
         """
-        return self._create_token("phonelogin", phone_object=phone)
+        return self._create_token("phonelogin", phone_object=phone, readable_token=True)
 
     def create_email_address_verification_token(self, email_address: str) -> str:
         """
         Create a new email address verification token.
         """
-        return self._create_token("emailaddrverif", email_address=email_address)
+        return self._create_token("emailaddrverif", email_address=email_address, readable_token=True)
 
     def create_phone_number_verification_token(self, phone_number: str) -> str:
         """
         Create a new phone number verification token.
         """
-        return self._create_token("phonenumberverif", phone_number=phone_number)
+        return self._create_token("phonenumberverif", phone_number=phone_number, readable_token=True)
 
     def create_invite_token(self, membership: Membership) -> str:
         """
