@@ -38,9 +38,9 @@
         <dt class="col-sm-3">{% trans "Expire date" %}</dt>
         <dd class="col-sm-9">{{ object.expire_date }}</dd>
         <dt class="col-sm-3">{% trans "Approver" %}</dt>
-        <dd class="col-sm-9">{% if object.approver %}{{ object.approver }}{% else %}&nbsp;{% endif %}</dd>
+        <dd class="col-sm-9">{% if object.approver %}{{ object.approver.get_full_name }}{% else %}&nbsp;{% endif %}</dd>
         <dt class="col-sm-3">{% trans "Inviter" %}</dt>
-        <dd class="col-sm-9">{% if object.inviter %}{{ object.inviter }}{% else %}&nbsp;{% endif %}</dd>
+        <dd class="col-sm-9">{% if object.inviter %}{{ object.inviter.get_full_name }}{% else %}&nbsp;{% endif %}</dd>
         <dt class="col-sm-3">{% trans "Reason" %}</dt>
         <dd class="col-sm-9">{{ object.reason }}</dd>
       </dl>
