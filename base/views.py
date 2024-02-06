@@ -356,9 +356,15 @@ class VerifyPhoneNumberView(BaseRegisterView, FormView):
 
 class RemoteLoginView(View):
     """
-    Base class for remote login views. Overwrite _authenticate_backend and _auth_login methods with
-    correct backend settings.
+    Base class for remote login views.
+
+    Create a new user if the user does not exist yet and user has an invitation code in the session.
+    Link identifier if user is logged in and link_identifier variable is in the session.
+
+    Set backend_class to the correct class in the subclass.
     """
+
+    backend_class: type[LocalBaseBackend] = LocalBaseBackend
 
     def _remove_session_parameters(self, request: HttpRequest) -> None:
         """
@@ -423,16 +429,16 @@ class RemoteLoginView(View):
         # user = backend.authenticate(request, create_user=True)
         # return user
         """
-        raise AuthenticationError(_("Authentication backend not set"))
+        return self._authenticate(request, self.backend_class())
 
-    @staticmethod
-    def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
+    def _remote_auth_login(self, request: HttpRequest, user: UserType) -> None:
         """
         Log user in using a correct backend.
 
         # auth_login(request, user, backend="base.auth.ShibbolethBackend")
         """
-        pass
+        backend = f"{self.backend_class.__module__}.{self.backend_class.__name__}"
+        auth_login(request, user, backend=backend)
 
     def _handle_error(self, request: HttpRequest, error: Exception) -> str:
         """
@@ -482,15 +488,17 @@ class RemoteLoginView(View):
 
 class ShibbolethLocalLoginView(RemoteLoginView):
     """
-    LoginView to authenticate user with Shibboleth.
+    LoginView to authenticate user with local Shibboleth.
     Create user if it does not exist yet.
     """
+
+    backend_class = ShibbolethLocalBackend
 
     def _authenticate_backend(self, request: HttpRequest) -> UserType:
         """
         Shibboleth Local does not require invitation code to create a new user.
         """
-        backend = ShibbolethLocalBackend()
+        backend = self.backend_class()
         if "link_identifier" in request.session and self._validate_link_identifier_time(request):
             audit_log.info(
                 "Started local identifier linking process",
@@ -511,89 +519,45 @@ class ShibbolethLocalLoginView(RemoteLoginView):
             user = backend.authenticate(request, create_user=True)
         return user
 
-    @staticmethod
-    def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
-        auth_login(request, user, backend="base.auth.ShibbolethLocalBackend")
-
 
 class ShibbolethEdugainLoginView(RemoteLoginView):
     """
-    LoginView to authenticate user with Shibboleth.
-
-    Create a new user if the user does not exist yet and user has an invitation code in the session.
+    LoginView to authenticate user with eduGAIN Shibboleth.
     """
 
-    def _authenticate_backend(self, request: HttpRequest) -> UserType:
-        backend = ShibbolethEdugainBackend()
-        return self._authenticate(request, backend)
-
-    @staticmethod
-    def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
-        auth_login(request, user, backend="base.auth.ShibbolethEdugainBackend")
+    backend_class = ShibbolethEdugainBackend
 
 
 class ShibbolethHakaLoginView(RemoteLoginView):
     """
-    LoginView to authenticate user with Shibboleth.
-
-    Create a new user if the user does not exist yet and user has an invitation code in the session.
+    LoginView to authenticate user with Haka Shibboleth.
     """
 
-    def _authenticate_backend(self, request: HttpRequest) -> UserType:
-        backend = ShibbolethHakaBackend()
-        return self._authenticate(request, backend)
-
-    @staticmethod
-    def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
-        auth_login(request, user, backend="base.auth.ShibbolethHakaBackend")
+    backend_class = ShibbolethHakaBackend
 
 
 class SuomiFiLoginView(RemoteLoginView):
     """
     LoginView to authenticate user with Suomi.fi and eIDAS.
-
-    Create a new user if the user does not exist yet and user has an invitation code in the session.
     """
 
-    def _authenticate_backend(self, request: HttpRequest) -> UserType:
-        backend = SuomiFiBackend()
-        return self._authenticate(request, backend)
-
-    @staticmethod
-    def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
-        auth_login(request, user, backend="base.auth.SuomiFiBackend")
+    backend_class = SuomiFiBackend
 
 
 class GoogleLoginView(RemoteLoginView):
     """
     LoginView to authenticate user with Google.
-
-    Create a new user if the user does not exist yet and user has an invitation code in the session.
     """
 
-    def _authenticate_backend(self, request: HttpRequest) -> UserType:
-        backend = GoogleBackend()
-        return self._authenticate(request, backend)
-
-    @staticmethod
-    def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
-        auth_login(request, user, backend="base.auth.GoogleBackend")
+    backend_class = GoogleBackend
 
 
 class MicrosoftLoginView(RemoteLoginView):
     """
     LoginView to authenticate user with Microsoft.
-
-    Create a new user if the user does not exist yet and user has an invitation code in the session.
     """
 
-    def _authenticate_backend(self, request: HttpRequest) -> UserType:
-        backend = MicrosoftBackend()
-        return self._authenticate(request, backend)
-
-    @staticmethod
-    def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
-        auth_login(request, user, backend="base.auth.MicrosoftBackend")
+    backend_class = MicrosoftBackend
 
 
 class EmailPhoneLoginView(FormView):
