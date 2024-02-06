@@ -8,10 +8,10 @@
     <dd class="col-sm-9">{{ object.name }}</dd>
 
     <dt class="col-sm-3">{% trans "Owner" %}</dt>
-    <dd class="col-sm-9">{% if object.owner is not None %}{{ object.owner.get_full_name }}{% else %}&nbsp;{% endif %}</dd>
+    <dd class="col-sm-9">{{ object.owner.get_full_name|default:"&nbsp;" }}</dd>
 
     <dt class="col-sm-3">{% trans "Parent" %}</dt>
-    <dd class="col-sm-9">{% if object.parent %}{{ object.parent }}{% else %}&nbsp;{% endif %}</dd>
+    <dd class="col-sm-9">{{ object.parent|default:"&nbsp;" }}</dd>
 
     <dt class="col-sm-3">{% trans "Permissions" %}</dt>
     <dd class="col-sm-9">{% for permission in object.get_permissions %}{{ permission }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>

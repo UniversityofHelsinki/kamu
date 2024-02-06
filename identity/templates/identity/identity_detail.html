@@ -6,22 +6,22 @@
     <div class="col-12 col-lg-6">
       <dl class="row">
         <dt class="col-sm-4">{% trans "Given names" %}</dt>
-        <dd class="col-sm-8">{% if object.given_names %}{{ object.given_names }}{% else %}&nbsp;{% endif %}{% if object.given_names_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+        <dd class="col-sm-8">{{ object.given_names|default:"&nbsp;" }}{% if object.given_names_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
         <dt class="col-sm-4">{% trans "Surname" %}</dt>
-        <dd class="col-sm-8">{% if object.surname %}{{ object.surname }}{% else %}&nbsp;{% endif %}{% if object.surname_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+        <dd class="col-sm-8">{{ object.surname|default:"&nbsp;" }}{% if object.surname_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
         <dt class="col-sm-4">{% trans "Display name" %}</dt>
-        <dd class="col-sm-8">{% if object.display_name %}{{ object.display_name }}{% else %}&nbsp;{% endif %}</dd>
+        <dd class="col-sm-8">{{ object.display_name|default:"&nbsp;" }}</dd>
         <dt class="col-sm-4">{% trans "Preferred language" %}</dt>
         <dd class="col-sm-8">{{ object.get_preferred_language_display }}</dd>
         {% if user == object.user or perms.identity.view_restricted_information %}
           <dt class="col-sm-4">{% trans "Date of birth" %}</dt>
-          <dd class="col-sm-8">{% if object.date_of_birth %}{{ object.date_of_birth }}{% else %}&nbsp;{% endif %}{% if object.date_of_birth_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+          <dd class="col-sm-8">{{ object.date_of_birth|default:"&nbsp;" }}{% if object.date_of_birth_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
           <dt class="col-sm-4">{% trans "Gender" %}</dt>
           <dd class="col-sm-8">{{ object.get_gender_display }}</dd>
           <dt class="col-sm-4">{% trans "Nationality" %}</dt>
           <dd class="col-sm-8">{% for nationality in object.nationality.all %}{{ nationality.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if object.nationality_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
           <dt class="col-sm-4">{% trans "Finnish personal identity code" %}</dt>
-          <dd class="col-sm-8">{% if object.fpic %}{{ object.fpic }}{% else %}&nbsp;{% endif %}{% if object.fpic_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+          <dd class="col-sm-8">{{ object.fpic|default:"&nbsp;" }}{% if object.fpic_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
         {% endif %}
       </dl>
     </div>
