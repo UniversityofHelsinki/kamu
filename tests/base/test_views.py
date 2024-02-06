@@ -26,6 +26,12 @@ class LoginViewTests(BaseTestCase):
     def setUp(self):
         super().setUp()
 
+    def test_redirect_admin_site_to_login(self):
+        url = reverse("admin:login")
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Login with the University", response.content.decode("utf-8"))
+
     def test_login_view(self):
         url = reverse("login")
         response = self.client.get(url, follow=True)

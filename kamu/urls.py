@@ -76,6 +76,7 @@ urlpatterns = [
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/schema/swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path("api/schema/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+    path("admin/login/", CustomLoginView.as_view(), name="login"),
     path("admin/", admin.site.urls),
     path("", FrontPageView.as_view(), name="front-page"),
     path("identity/me/", IdentityMeView.as_view(), name="identity-me"),
