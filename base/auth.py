@@ -22,7 +22,7 @@ from django.core.exceptions import (
 )
 from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
-from django.http import HttpRequest
+from django.http import Http404, HttpRequest
 from django.utils.translation import gettext as _
 
 from base.models import Token
@@ -92,6 +92,14 @@ class LocalBaseBackend(BaseBackend):
         "user_authenticated": _("You are already logged in."),
         "link_user_not_authenticated": _("User must be authenticated to link identifier."),
     }
+
+    def check_enabled(self) -> None:
+        """
+        Check if authentication backend is enabled in settings.
+        """
+        backend = f"{self.__class__.__module__}.{self.__class__.__name__}"
+        if backend not in settings.AUTHENTICATION_BACKENDS:
+            raise Http404
 
     def _get_identifier_type(self, request: HttpRequest) -> str:
         """
@@ -418,6 +426,7 @@ class LocalBaseBackend(BaseBackend):
         """
         if not request:
             raise AuthenticationError(self.error_messages["unexpected"])
+        self.check_enabled()
         if not self._validate_issuer(request):
             raise AuthenticationError(self.error_messages["invalid_issuer"])
         unique_identifier = self._get_meta_unique_identifier(request)
@@ -827,6 +836,7 @@ class EmailSMSBackend(LocalBaseBackend):
         phone_token: str | None = None,
         **kwargs: Any,
     ) -> UserType:
+        self.check_enabled()
         if not email_address or not email_token or not phone_number or not phone_token:
             raise AuthenticationError(self.error_messages["invalid_parameters"])
         try:

@@ -4,7 +4,6 @@ Common settings file used by Kamu service
 Loaded by environment specific settings files
 """
 
-from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
@@ -94,17 +93,6 @@ TEMPLATES: list[dict[str, Any]] = [
         },
     },
 ]
-
-AUTHENTICATION_BACKENDS: Sequence[str] = (
-    "django.contrib.auth.backends.ModelBackend",
-    "base.auth.ShibbolethLocalBackend",
-    "base.auth.ShibbolethEdugainBackend",
-    "base.auth.ShibbolethHakaBackend",
-    "base.auth.GoogleBackend",
-    "base.auth.MicrosoftBackend",
-    "base.auth.SuomiFiBackend",
-    "base.auth.EmailSMSBackend",
-)
 
 WSGI_APPLICATION: str = "kamu.wsgi.application"
 

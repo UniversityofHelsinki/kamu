@@ -235,6 +235,18 @@ class LoginViewTests(BaseTestCase):
         self.assertIn("Tried to send a new code too soon", response.content.decode("utf-8"))
         self.assertEqual(0, len(mail.outbox))
 
+    @override_settings(AUTHENTICATION_BACKENDS=["django.contrib.auth.backends.ModelBackend"])
+    def test_disabled_local_shibboleth_login(self):
+        url = reverse("login-shibboleth")
+        response = self.client.get(url, follow=True, headers={"EPPN": "testuser@example.org"})
+        self.assertEqual(response.status_code, 404)
+
+    @override_settings(AUTHENTICATION_BACKENDS=["base.auth.ShibbolethLocalBackend"])
+    def test_disabled_password_login(self):
+        url = reverse("login-local")
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 404)
+
 
 class RegistrationViewTests(TestCase):
     def setUp(self):

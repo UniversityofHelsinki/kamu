@@ -14,6 +14,7 @@ from django.contrib.auth.models import User as UserType
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
 from django.http import (
+    Http404,
     HttpRequest,
     HttpResponse,
     HttpResponseBase,
@@ -677,6 +678,14 @@ class LocalLoginView(LoginView):
 
     template_name = "login_local.html"
     form_class = LoginForm
+
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        """
+        Check that backend is enabled.
+        """
+        if "django.contrib.auth.backends.ModelBackend" not in settings.AUTHENTICATION_BACKENDS:
+            raise Http404
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form: AuthenticationForm) -> HttpResponse:
         """Security check complete. Log the user in."""

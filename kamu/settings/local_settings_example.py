@@ -4,6 +4,7 @@ Example local settings file.
 Copy this to local_settings.py and modify as needed.
 """
 
+from collections.abc import Sequence
 from typing import Any
 
 DEBUG: bool = False
@@ -112,3 +113,15 @@ LDAP_SEARCH_LIMIT: int = 50
 # mod_auth_openidc does not support multiple simultaneous sessions.
 OIDC_LOGOUT_PATH: str = "/login/redirecturi?logout="
 OIDC_VIEWS: list[str] = ["login-google", "login-microsoft"]
+
+# Uncomment login backends you want to activate.
+AUTHENTICATION_BACKENDS: Sequence[str] = (
+    # "django.contrib.auth.backends.ModelBackend",
+    # "base.auth.ShibbolethLocalBackend",
+    # "base.auth.ShibbolethEdugainBackend",
+    # "base.auth.ShibbolethHakaBackend",
+    # "base.auth.GoogleBackend",
+    # "base.auth.MicrosoftBackend",
+    # "base.auth.SuomiFiBackend",
+    # "base.auth.EmailSMSBackend",
+)

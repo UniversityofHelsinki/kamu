@@ -6,6 +6,7 @@ Uses local_settings_example configuration with SQLite database, and disables bro
 
 # mypy: disable-error-code="no-redef"
 
+from collections.abc import Sequence
 from typing import Any
 
 from kamu.settings.common import *
@@ -22,3 +23,15 @@ DATABASES: dict[str, dict[str, Any]] = {
 }
 LOGGING["loggers"]["django.request"] = {"level": "ERROR"}
 LOGGING["loggers"]["audit"] = {"level": "WARNING"}
+
+# Enable all login backends for testing
+AUTHENTICATION_BACKENDS: Sequence[str] = (
+    "django.contrib.auth.backends.ModelBackend",
+    "base.auth.ShibbolethLocalBackend",
+    "base.auth.ShibbolethEdugainBackend",
+    "base.auth.ShibbolethHakaBackend",
+    "base.auth.GoogleBackend",
+    "base.auth.MicrosoftBackend",
+    "base.auth.SuomiFiBackend",
+    "base.auth.EmailSMSBackend",
+)
