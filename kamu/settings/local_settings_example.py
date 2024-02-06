@@ -114,6 +114,12 @@ LDAP_SEARCH_LIMIT: int = 50
 OIDC_LOGOUT_PATH: str = "/login/redirecturi?logout="
 OIDC_VIEWS: list[str] = ["login-google", "login-microsoft"]
 
+# SAML_LOGOUT paths are used to redirect user back to Shibboleth SP process.
+SAML_LOGOUT_LOCAL_PATH: str = "/Shibboleth.sso/default/Logout"
+SAML_LOGOUT_SUOMIFI_PATH: str = "/Shibboleth.sso/suomifi/Logout"
+SAML_LOGOUT_HAKA_PATH: str = "/Shibboleth.sso/haka/Logout"
+SAML_LOGOUT_EDUGAIN_PATH: str = "/Shibboleth.sso/edugain/Logout"
+
 # Uncomment login backends you want to activate.
 AUTHENTICATION_BACKENDS: Sequence[str] = (
     # "django.contrib.auth.backends.ModelBackend",

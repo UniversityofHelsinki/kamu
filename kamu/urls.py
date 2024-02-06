@@ -7,7 +7,6 @@ The `urlpatterns` list routes URLs to views. For more information please see:
 
 from django.conf.urls import include
 from django.contrib import admin
-from django.contrib.auth.views import LogoutView
 from django.urls import path
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -23,6 +22,7 @@ from base.views import (
     GoogleLoginView,
     InviteView,
     LocalLoginView,
+    LocalLogoutView,
     MicrosoftLoginView,
     RegisterPhoneNumberView,
     RegisterView,
@@ -77,6 +77,7 @@ urlpatterns = [
     path("api/schema/swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path("api/schema/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     path("admin/login/", CustomLoginView.as_view(), name="login"),
+    path("admin/logout/", LocalLogoutView.as_view(), name="logout"),
     path("admin/", admin.site.urls),
     path("", FrontPageView.as_view(), name="front-page"),
     path("identity/me/", IdentityMeView.as_view(), name="identity-me"),
@@ -125,5 +126,5 @@ urlpatterns = [
     path("login/register/email/verify/", VerifyEmailAddressView.as_view(), name="login-register-email-verify"),
     path("login/register/phone/", RegisterPhoneNumberView.as_view(), name="login-register-phone"),
     path("login/register/phone/verify/", VerifyPhoneNumberView.as_view(), name="login-register-phone-verify"),
-    path("logout/", LogoutView.as_view(), name="logout"),
+    path("logout/", LocalLogoutView.as_view(), name="logout"),
 ]

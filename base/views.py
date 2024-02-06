@@ -11,7 +11,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User as UserType
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.core.exceptions import PermissionDenied
 from django.http import (
     Http404,
@@ -713,3 +713,42 @@ class FrontPageView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         return render(request, self.template_name)
+
+
+class LocalLogoutView(LogoutView):
+    """
+    Custom logout view to redirect to the correct page.
+    """
+
+    def _get_backend_logout_url(self) -> str | None:
+        """
+        Return logout url based on the backend.
+        """
+        oidc_return_url = getattr(settings, "SERVICE_LINK_URL") + getattr(settings, "LOGOUT_REDIRECT_URL")
+        saml_return_url = "?return=" + getattr(settings, "SERVICE_LINK_URL") + getattr(settings, "LOGOUT_REDIRECT_URL")
+        logout_url = {
+            "django.contrib.auth.backends.ModelBackend": getattr(settings, "LOGOUT_REDIRECT_URL"),
+            "base.auth.ShibbolethLocalBackend": getattr(settings, "SAML_LOGOUT_LOCAL_PATH") + saml_return_url,
+            "base.auth.ShibbolethEdugainBackend": getattr(settings, "SAML_LOGOUT_EDUGAIN_PATH") + saml_return_url,
+            "base.auth.ShibbolethHakaBackend": getattr(settings, "SAML_LOGOUT_HAKA_PATH") + saml_return_url,
+            "base.auth.SuomiFiBackend": getattr(settings, "SAML_LOGOUT_SUOMIFI_PATH") + saml_return_url,
+            "base.auth.GoogleBackend": getattr(settings, "OIDC_LOGOUT_PATH") + oidc_return_url,
+            "base.auth.MicrosoftBackend": getattr(settings, "OIDC_LOGOUT_PATH") + oidc_return_url,
+            "base.auth.EmailSMSBackend": getattr(settings, "LOGOUT_REDIRECT_URL"),
+        }
+        backend = self.request.session.get("_auth_user_backend", None)
+        return logout_url.get(backend, None)
+
+    @method_decorator(csrf_protect)
+    @method_decorator(never_cache)
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Set next page to the correct url.
+
+        If it's from a Shibboleth SP front-channel notification, return it to return url.
+        """
+        if "action" in request.GET and request.GET.get("action") == "logout" and "return" in request.GET:
+            self.next_page = request.GET.get("return")
+        else:
+            self.next_page = self._get_backend_logout_url()
+        return super().dispatch(request, *args, **kwargs)

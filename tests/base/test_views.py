@@ -271,6 +271,63 @@ class LoginViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 404)
 
 
+class LogoutViewTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.url = reverse("logout")
+
+    @override_settings(LOGOUT_REDIRECT_URL="/test/")
+    def test_logout_without_login(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/test/", response.url)
+        self.assertIsNone(self.client.session.get("_auth_user_id"))
+
+    @override_settings(LOGOUT_REDIRECT_URL="/")
+    def test_logout_default(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/", response.url)
+        self.assertIsNone(self.client.session.get("_auth_user_id"))
+
+    @override_settings(SERVICE_LINK_URL="https://example.org")
+    @override_settings(SAML_LOGOUT_LOCAL_PATH="/saml-logout/")
+    @override_settings(LOGOUT_REDIRECT_URL="/test/")
+    def test_logout_saml(self):
+        self.client.force_login(self.user)
+        self.session = self.client.session
+        self.session["_auth_user_backend"] = "base.auth.ShibbolethLocalBackend"
+        self.session.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/saml-logout/?return=https://example.org/test/", response.url)
+        self.assertIsNone(self.client.session.get("_auth_user_id"))
+
+    @override_settings(SERVICE_LINK_URL="https://example.org")
+    @override_settings(OIDC_LOGOUT_PATH="/login/redirecturi?logout=")
+    @override_settings(LOGOUT_REDIRECT_URL="/test/")
+    def test_logout_oidc(self):
+        self.client.force_login(self.user)
+        self.assertEqual(self.client.session["_auth_user_id"], str(self.user.pk))
+        self.session = self.client.session
+        self.session["_auth_user_backend"] = "base.auth.GoogleBackend"
+        self.session.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/redirecturi?logout=https://example.org/test/", response.url)
+        self.assertIsNone(self.client.session.get("_auth_user_id"))
+
+    @override_settings(LOGOUT_REDIRECT_URL="/test/")
+    def test_shibboleth_notify(self):
+        self.client.force_login(self.user)
+        self.assertIsNotNone(self.client.session.get("_auth_user_id"))
+        response = self.client.get(self.url, {"action": "logout", "return": "/shibboleth/logout/"})
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/shibboleth/logout/", response.url)
+        self.assertIsNone(self.client.session.get("_auth_user_id"))
+
+
 class RegistrationViewTests(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
