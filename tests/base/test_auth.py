@@ -14,7 +14,9 @@ from django.urls import reverse
 from base.auth import (
     AuthenticationError,
     GoogleBackend,
-    ShibbolethBackend,
+    ShibbolethEdugainBackend,
+    ShibbolethHakaBackend,
+    ShibbolethLocalBackend,
     SuomiFiBackend,
 )
 from identity.models import Identifier, Identity
@@ -31,12 +33,34 @@ class ShibbolethBackendTests(TestCase):
         self.request = self.factory.get(reverse("login-shibboleth"))
         self.request.user = AnonymousUser()
 
-    def test_login_with_existing_user(self):
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    def test_local_login_with_existing_user(self):
         self.request.META = {settings.SAML_ATTR_EPPN: "testuser@example.org"}
-        backend = ShibbolethBackend()
+        backend = ShibbolethLocalBackend()
         user = backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(user.username, "testuser@example.org")
 
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.com")
+    def test_local_login_with_incorrect_suffix(self):
+        self.request.META = {settings.SAML_ATTR_EPPN: "testuser@example.org"}
+        backend = ShibbolethLocalBackend()
+        with self.assertRaises(AuthenticationError) as e:
+            backend.authenticate(request=self.request, create_user=True)
+        self.assertEqual(str(e.exception), "Invalid identifier format.")
+
+    def test_haka_local_login_with_existing_user(self):
+        self.request.META = {settings.SAML_ATTR_EPPN: "testuser@example.org"}
+        backend = ShibbolethHakaBackend()
+        user = backend.authenticate(request=self.request, create_user=True)
+        self.assertEqual(user.username, "testuser@example.org")
+
+    def test_edugain_local_login_with_existing_user(self):
+        self.request.META = {settings.SAML_ATTR_EPPN: "testuser@example.org"}
+        backend = ShibbolethEdugainBackend()
+        user = backend.authenticate(request=self.request, create_user=True)
+        self.assertEqual(user.username, "testuser@example.org")
+
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @patch("base.utils.logger_audit")
     def test_login_create_user(self, mock_logger):
         self.request.META = {
@@ -44,7 +68,7 @@ class ShibbolethBackendTests(TestCase):
             settings.SAML_ATTR_GIVEN_NAMES: "New",
             settings.SAML_ATTR_SURNAME: "User",
         }
-        backend = ShibbolethBackend()
+        backend = ShibbolethLocalBackend()
         user = backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(user.username, "newuser@example.org")
         self.assertEqual(user.identity.assurance_level, "low")
@@ -57,26 +81,27 @@ class ShibbolethBackendTests(TestCase):
             ]
         )
 
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     def test_login_create_user_assurance(self):
         self.request.META = {
             settings.SAML_ATTR_EPPN: "newuser@example.org",
             settings.SAML_ATTR_ASSURANCE: "https://refeds.org/assurance/IAP/medium;https://refeds.org/assurance/IAP/high",
         }
-        backend = ShibbolethBackend()
+        backend = ShibbolethLocalBackend()
         user = backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(user.username, "newuser@example.org")
         self.assertEqual(user.identity.assurance_level, "high")
 
     def test_login_create_incorrect_user_name(self):
         self.request.META = {settings.SAML_ATTR_EPPN: "newuser"}
-        backend = ShibbolethBackend()
+        backend = ShibbolethLocalBackend()
         with self.assertRaises(AuthenticationError) as e:
             backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(str(e.exception), "Invalid identifier format.")
 
     def test_login_no_user_creation(self):
         self.request.META = {settings.SAML_ATTR_EPPN: "newuser@example.org"}
-        backend = ShibbolethBackend()
+        backend = ShibbolethHakaBackend()
         with self.assertRaises(AuthenticationError) as e:
             backend.authenticate(request=self.request, create_user=False)
         self.assertEqual(str(e.exception), "Identifier not found.")
@@ -94,7 +119,7 @@ class ShibbolethBackendTests(TestCase):
             settings.SAML_ATTR_EPPN: "testuser@example.org",
             settings.SAML_ATTR_GROUPS: f"{sso_group.name};saml_nogroup",
         }
-        backend = ShibbolethBackend()
+        backend = ShibbolethLocalBackend()
         user = backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(user.groups.count(), 2)
         self.assertIn(test_group, user.groups.all())
@@ -106,24 +131,12 @@ class ShibbolethBackendTests(TestCase):
             ]
         )
 
-    @override_settings(LOCAL_EPPN_SUFFIX="@example.com")
-    @override_settings(SAML_GROUP_PREFIXES=["saml_", "sso_"])
-    def test_login_do_not_update_groups_for_incorrect_suffix(self):
-        sso_group = Group.objects.create(name="sso_group")
-        self.request.META = {
-            settings.SAML_ATTR_EPPN: "testuser@example.org",
-            settings.SAML_ATTR_GROUPS: f"{sso_group.name};saml_nogroup",
-        }
-        backend = ShibbolethBackend()
-        user = backend.authenticate(request=self.request, create_user=True)
-        self.assertEqual(user.groups.count(), 0)
-
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     def test_uid_update(self):
         self.request.META = {
             settings.SAML_ATTR_EPPN: "testuser@example.org",
         }
-        backend = ShibbolethBackend()
+        backend = ShibbolethLocalBackend()
         user = backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(user.identity.uid, "testuser")
 
@@ -135,7 +148,7 @@ class ShibbolethBackendTests(TestCase):
         self.request.META = {
             settings.SAML_ATTR_EPPN: "testuser@example.org",
         }
-        backend = ShibbolethBackend()
+        backend = ShibbolethLocalBackend()
         setattr(self.request, "session", "session")
         messages = FallbackStorage(self.request)
         setattr(self.request, "_messages", messages)
@@ -156,7 +169,7 @@ class ShibbolethBackendTests(TestCase):
         self.request.META = {
             settings.SAML_ATTR_EPPN: "0k123456@example.org",
         }
-        backend = ShibbolethBackend()
+        backend = ShibbolethLocalBackend()
         user = backend.authenticate(request=self.request, create_user=True)
         self.assertIsNone(user.identity.uid)
 

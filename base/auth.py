@@ -433,7 +433,7 @@ class LocalBaseBackend(BaseBackend):
         return user
 
 
-class ShibbolethBackend(LocalBaseBackend):
+class ShibbolethBaseBackend(LocalBaseBackend):
     """
     Backend for Shibboleth authentication.
 
@@ -529,15 +529,42 @@ class ShibbolethBackend(LocalBaseBackend):
                         _("Suspected duplicate user. Identity already has a different username: ") + uid,
                     )
 
+
+class ShibbolethLocalBackend(ShibbolethBaseBackend):
+    """
+    Backend for local Shibboleth authentication.
+    """
+
+    def _identifier_validation(self, request: HttpRequest, identifier: str) -> None:
+        """
+        Validates identifier.
+        """
+        if not identifier.endswith(settings.LOCAL_EPPN_SUFFIX):
+            raise AuthenticationError(self.error_messages["invalid_identifier_format"])
+
     def _post_tasks(self, request: HttpRequest, user: UserType) -> None:
         """
         Set groups if user is using local authentication.
         """
-        unique_identifier = request.META.get(settings.SAML_ATTR_EPPN, "")
-        if unique_identifier.endswith(settings.LOCAL_EPPN_SUFFIX):
-            groups = request.META.get(settings.SAML_ATTR_GROUPS, "").split(";")
-            self.update_groups(user, groups, settings.SAML_GROUP_PREFIXES)
-            self._set_uid(request, user, unique_identifier)
+        groups = request.META.get(settings.SAML_ATTR_GROUPS, "").split(";")
+        self.update_groups(user, groups, settings.SAML_GROUP_PREFIXES)
+        self._set_uid(request, user, self._get_meta_unique_identifier(request))
+
+
+class ShibbolethHakaBackend(ShibbolethBaseBackend):
+    """
+    Backend for Haka Shibboleth authentication.
+    """
+
+    pass
+
+
+class ShibbolethEdugainBackend(ShibbolethBaseBackend):
+    """
+    Backend for eduGAIN Shibboleth authentication.
+    """
+
+    pass
 
 
 class SuomiFiBackend(LocalBaseBackend):

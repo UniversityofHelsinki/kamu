@@ -36,14 +36,17 @@ class LoginViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User</h1>", response.content.decode("utf-8"))
 
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
     def test_shibboleth_local_login(self):
         Identifier.objects.create(type="eppn", value="testuser@example.org", identity=self.identity)
         url = reverse("login-shibboleth")
         response = self.client.get(url, follow=True, headers={"EPPN": "testuser@example.org"})
         self.assertEqual(response.status_code, 200)
+        self.assertTrue(self.user.is_authenticated)
         self.assertEqual(self.user.user_permissions.count(), 0)
 
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
     def test_shibboleth_local_login_with_owner_permissions(self):
         self.role.owner = self.user
@@ -53,6 +56,7 @@ class LoginViewTests(BaseTestCase):
         self.client.get(url, follow=True, headers={"EPPN": "testuser@example.org"})
         self.assertEqual(self.user.user_permissions.count(), 2)
 
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
     def test_shibboleth_local_login_create_user(self):
         url = reverse("login-shibboleth")

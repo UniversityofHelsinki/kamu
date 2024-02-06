@@ -36,7 +36,9 @@ from base.auth import (
     GoogleBackend,
     LocalBaseBackend,
     MicrosoftBackend,
-    ShibbolethBackend,
+    ShibbolethEdugainBackend,
+    ShibbolethHakaBackend,
+    ShibbolethLocalBackend,
     SuomiFiBackend,
     auth_login,
 )
@@ -488,7 +490,7 @@ class ShibbolethLocalLoginView(RemoteLoginView):
         """
         Shibboleth Local does not require invitation code to create a new user.
         """
-        backend = ShibbolethBackend()
+        backend = ShibbolethLocalBackend()
         if "link_identifier" in request.session and self._validate_link_identifier_time(request):
             audit_log.info(
                 "Started local identifier linking process",
@@ -511,10 +513,10 @@ class ShibbolethLocalLoginView(RemoteLoginView):
 
     @staticmethod
     def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
-        auth_login(request, user, backend="base.auth.ShibbolethBackend")
+        auth_login(request, user, backend="base.auth.ShibbolethLocalBackend")
 
 
-class ShibbolethExternalLoginView(RemoteLoginView):
+class ShibbolethEdugainLoginView(RemoteLoginView):
     """
     LoginView to authenticate user with Shibboleth.
 
@@ -522,12 +524,28 @@ class ShibbolethExternalLoginView(RemoteLoginView):
     """
 
     def _authenticate_backend(self, request: HttpRequest) -> UserType:
-        backend = ShibbolethBackend()
+        backend = ShibbolethEdugainBackend()
         return self._authenticate(request, backend)
 
     @staticmethod
     def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
-        auth_login(request, user, backend="base.auth.ShibbolethBackend")
+        auth_login(request, user, backend="base.auth.ShibbolethEdugainBackend")
+
+
+class ShibbolethHakaLoginView(RemoteLoginView):
+    """
+    LoginView to authenticate user with Shibboleth.
+
+    Create a new user if the user does not exist yet and user has an invitation code in the session.
+    """
+
+    def _authenticate_backend(self, request: HttpRequest) -> UserType:
+        backend = ShibbolethHakaBackend()
+        return self._authenticate(request, backend)
+
+    @staticmethod
+    def _remote_auth_login(request: HttpRequest, user: UserType) -> None:
+        auth_login(request, user, backend="base.auth.ShibbolethHakaBackend")
 
 
 class SuomiFiLoginView(RemoteLoginView):

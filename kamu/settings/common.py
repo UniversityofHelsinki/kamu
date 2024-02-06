@@ -97,7 +97,9 @@ TEMPLATES: list[dict[str, Any]] = [
 
 AUTHENTICATION_BACKENDS: Sequence[str] = (
     "django.contrib.auth.backends.ModelBackend",
-    "base.auth.ShibbolethBackend",
+    "base.auth.ShibbolethLocalBackend",
+    "base.auth.ShibbolethEdugainBackend",
+    "base.auth.ShibbolethHakaBackend",
     "base.auth.GoogleBackend",
     "base.auth.MicrosoftBackend",
     "base.auth.SuomiFiBackend",
