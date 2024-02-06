@@ -26,6 +26,23 @@ class LoginViewTests(BaseTestCase):
     def setUp(self):
         super().setUp()
 
+    def test_login_view(self):
+        url = reverse("login")
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Login with the University", response.content.decode("utf-8"))
+        self.assertIn("Haka federation login", response.content.decode("utf-8"))
+        self.assertIn("Login with a username and password", response.content.decode("utf-8"))
+
+    @override_settings(AUTHENTICATION_BACKENDS=["base.auth.ShibbolethLocalBackend"])
+    def test_login_view_disable_methods(self):
+        url = reverse("login")
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Login with the University", response.content.decode("utf-8"))
+        self.assertNotIn("Haka federation login", response.content.decode("utf-8"))
+        self.assertNotIn("Login with a username and password", response.content.decode("utf-8"))
+
     def test_local_login(self):
         url = reverse("login-local") + "?next=/identity/1/"
         response = self.client.post(

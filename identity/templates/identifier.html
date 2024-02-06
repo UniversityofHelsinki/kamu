@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load crispy_forms_tags %}
+{% load auth_backend %}
 
 {% block content %}
   <form method='POST'>
@@ -51,7 +52,7 @@
       <p>{% trans "You have not have any linked identifiers." %}</p>
     {% endif %}
     {% if identifier_deactivated_list %}
-    <h2 id="identifier-deactivated-list" class="mt-5">{% trans "Deactivated identifiers" %}</h2>
+      <h2 id="identifier-deactivated-list" class="mt-5">{% trans "Deactivated identifiers" %}</h2>
       <table class="table" aria-describedby="identifier-deactivated-list">
         <thead>
         <tr>
@@ -71,16 +72,28 @@
         </tbody>
       </table>
     {% endif %}
-  {% if user == identity.user %}
-  <h2>{% trans "Link a new identifier" %}</h2>
-  <p>{% trans "Link a new identifier to your identity. After linking a new identifier, you can use it to manage your information in Kamu, or when using light accounts." %}</p>
-  <button type="submit" name="link_identifier" value="hy" class="btn btn-primary me-2 mb-2">{% trans "University of Helsinki account" %}</button>
-  <button type="submit" name="link_identifier" value="haka" class="btn btn-primary me-2 mb-2">{% trans "Haka" %}</button>
-  <button type="submit" name="link_identifier" value="edugain" class="btn btn-primary me-2 mb-2">{% trans "eduGAIN" %}</button>
-  <button type="submit" name="link_identifier" value="google" class="btn btn-primary me-2 mb-2">{% trans "Google" %}</button>
-  <button type="submit" name="link_identifier" value="microsoft" class="btn btn-primary me-2 mb-2">{% trans "Microsoft" %}</button>
-  <button type="submit" name="link_identifier" value="suomifi" class="btn btn-primary me-2 mb-2">{% trans "Suomi.fi and eIDAS" %}</button>
-  </form>
-  {% endif %}
+    {% if user == identity.user %}
+      <h2>{% trans "Link a new identifier" %}</h2>
+      <p>{% trans "Link a new identifier to your identity. After linking a new identifier, you can use it to manage your information in Kamu, or when using light accounts." %}</p>
+      {% if "local"|enabled_backend %}
+        <button type="submit" name="link_identifier" value="hy" class="btn btn-primary me-2 mb-2">{% trans "University of Helsinki account" %}</button>
+      {% endif %}
+      {% if "haka"|enabled_backend %}
+        <button type="submit" name="link_identifier" value="haka" class="btn btn-primary me-2 mb-2">{% trans "Haka" %}</button>
+      {% endif %}
+      {% if "edugain"|enabled_backend %}
+        <button type="submit" name="link_identifier" value="edugain" class="btn btn-primary me-2 mb-2">{% trans "eduGAIN" %}</button>
+      {% endif %}
+      {% if "google"|enabled_backend %}
+        <button type="submit" name="link_identifier" value="google" class="btn btn-primary me-2 mb-2">{% trans "Google" %}</button>
+      {% endif %}
+      {% if "microsoft"|enabled_backend %}
+        <button type="submit" name="link_identifier" value="microsoft" class="btn btn-primary me-2 mb-2">{% trans "Microsoft" %}</button>
+      {% endif %}
+      {% if "suomifi"|enabled_backend %}
+        <button type="submit" name="link_identifier" value="suomifi" class="btn btn-primary me-2 mb-2">{% trans "Suomi.fi and eIDAS" %}</button>
+      {% endif %}
+      </form>
+    {% endif %}
   <a class="btn btn-secondary" href="{% url 'identity-detail' pk=identity.pk %}">{% trans "Return" %}</a>
 {% endblock %}
