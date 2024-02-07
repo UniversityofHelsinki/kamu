@@ -119,10 +119,10 @@ class Identity(models.Model):
         ("U", _("Unknown")),
     )
     ASSURANCE_CHOICES = (
-        ("none", _("No assurance level")),
-        ("low", _("Low, self-asserted with a verified email-address")),
-        ("medium", _("Medium, verified from a government issued photo-ID")),
-        ("high", _("High, eIDAS substantial level or similar")),
+        (0, _("No assurance level")),
+        (1, _("Low, self-asserted with a verified email-address")),
+        (2, _("Medium, verified from a government issued photo-ID")),
+        (3, _("High, eIDAS substantial level or similar")),
     )
     VERIFICATION_CHOICES = (
         (0, _("No verification")),
@@ -152,9 +152,8 @@ class Identity(models.Model):
         verbose_name=_("External identity"),
         help_text=_("This identity is managed in another registry."),
     )
-    assurance_level = models.CharField(
-        max_length=10,
-        default="none",
+    assurance_level = models.SmallIntegerField(
+        default=0,
         choices=ASSURANCE_CHOICES,
         verbose_name=_("Assurance level"),
         help_text=_("How strongly this user identity is identified."),

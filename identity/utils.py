@@ -32,13 +32,7 @@ def combine_identities_requirements(
         messages.add_message(request, messages.ERROR, _("Cannot combine identity with itself."))
         return False
     error = False
-    assurance_choices = {
-        "none": 0,
-        "low": 1,
-        "medium": 2,
-        "high": 3,
-    }
-    if assurance_choices[secondary_identity.assurance_level] > assurance_choices[primary_identity.assurance_level]:
+    if secondary_identity.assurance_level > primary_identity.assurance_level:
         messages.add_message(
             request,
             messages.ERROR,

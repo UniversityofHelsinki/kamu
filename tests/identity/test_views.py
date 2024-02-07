@@ -806,7 +806,7 @@ class IdentityCombineTests(BaseTestCase):
         )
 
     def test_combine_invalid_higher_assurance_level(self):
-        self.identity.assurance_level = "high"
+        self.identity.assurance_level = 3
         self.identity.save()
         response = self.client.post(self.url, self.data, follow=True)
         self.assertIn(

@@ -295,7 +295,7 @@ class VerifyPhoneNumberView(BaseRegisterView, FormView):
         email_address = self.request.session["verified_email_address"]
         phone_number = self.request.session["register_phone_number"]
         identity = Identity.objects.create(
-            given_names=given_names, surname=surname, assurance_level="low", preferred_language=get_language()
+            given_names=given_names, surname=surname, assurance_level=1, preferred_language=get_language()
         )
         audit_log.info(
             f"Identity created.",

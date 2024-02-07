@@ -601,7 +601,7 @@ class RegistrationViewTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         identity = Identity.objects.get(identifiers__value="ES/FI/abcdefg")
-        self.assertEqual(identity.assurance_level, "medium")
+        self.assertEqual(identity.assurance_level, 2)
         self.assertEqual(identity.given_names, "eIDAS")
         self.assertEqual(identity.surname, "User")
 

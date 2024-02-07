@@ -115,7 +115,7 @@ class LocalBaseBackend(BaseBackend):
         return settings.AUTH_DEFAULT_USERNAME_SUFFIX
 
     @staticmethod
-    def _get_assurance_level(request: HttpRequest) -> str:
+    def _get_assurance_level(request: HttpRequest) -> int:
         """
         Get assurance level for the login method. Values from the Identity model choices.
         """
@@ -458,17 +458,17 @@ class ShibbolethBaseBackend(LocalBaseBackend):
         return "eppn"
 
     @staticmethod
-    def _get_assurance_level(request: HttpRequest) -> str:
+    def _get_assurance_level(request: HttpRequest) -> int:
         """
         Get assurance level for the login method, using Identity model choices.
         """
         assurance_level = request.META.get(settings.SAML_ATTR_ASSURANCE, "").split(";")
         if "https://refeds.org/assurance/IAP/high" in assurance_level:
-            return "high"
+            return 3
         elif "https://refeds.org/assurance/IAP/medium" in assurance_level:
-            return "medium"
+            return 2
         else:
-            return "low"
+            return 1
 
     def _get_meta_unique_identifier(self, request: HttpRequest) -> str:
         """
@@ -604,17 +604,17 @@ class SuomiFiBackend(LocalBaseBackend):
             return identifier_type
 
     @staticmethod
-    def _get_assurance_level(request: HttpRequest) -> str:
+    def _get_assurance_level(request: HttpRequest) -> int:
         """
         Get assurance level for  the login method. Values from the Identity model choices.
         """
         assurance_level = set(request.META.get(settings.SAML_SUOMIFI_ASSURANCE, "").split(";"))
         if set(settings.SUOMIFI_ASSURANCE_HIGH).intersection(assurance_level):
-            return "high"
+            return 3
         elif set(settings.SUOMIFI_ASSURANCE_MEDIUM).intersection(assurance_level):
-            return "medium"
+            return 2
         else:
-            return "low"
+            return 1
 
     @staticmethod
     def _get_verification_level(request: HttpRequest) -> int:

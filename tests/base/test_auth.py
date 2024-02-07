@@ -71,7 +71,7 @@ class ShibbolethBackendTests(TestCase):
         backend = ShibbolethLocalBackend()
         user = backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(user.username, "newuser@example.org")
-        self.assertEqual(user.identity.assurance_level, "low")
+        self.assertEqual(user.identity.assurance_level, 1)
         self.assertEqual(Identifier.objects.get(type="eppn", value="newuser@example.org").identity, user.identity)
         mock_logger.log.assert_has_calls(
             [
@@ -90,7 +90,7 @@ class ShibbolethBackendTests(TestCase):
         backend = ShibbolethLocalBackend()
         user = backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(user.username, "newuser@example.org")
-        self.assertEqual(user.identity.assurance_level, "high")
+        self.assertEqual(user.identity.assurance_level, 3)
 
     def test_login_create_incorrect_user_name(self):
         self.request.META = {settings.SAML_ATTR_EPPN: "newuser"}

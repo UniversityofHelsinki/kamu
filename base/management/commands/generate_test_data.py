@@ -339,13 +339,13 @@ class Command(BaseCommand):
                 date_of_birth = fake.date_of_birth(minimum_age=17, maximum_age=80)
             verification_level = random.randint(0, 4)
             if verification_level == 4:
-                assurance_level = "high"
+                assurance_level = 3
             elif verification_level == 3:
-                assurance_level = "medium"
+                assurance_level = 2
             elif 2 <= verification_level <= 3:
-                assurance_level = "low"
+                assurance_level = 1
             else:
-                assurance_level = "none"
+                assurance_level = 0
             identity = Identity.objects.create(
                 given_names=given_names,
                 given_names_verification=verification_level,
