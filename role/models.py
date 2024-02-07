@@ -5,11 +5,11 @@ Role app models.
 from __future__ import annotations
 
 import datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from django.conf import settings
 from django.contrib.auth.models import User as UserType
-from django.core.exceptions import ValidationError
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db import models
 from django.db.models import Q, QuerySet
 from django.urls import reverse
@@ -18,6 +18,9 @@ from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
 from role.validators import validate_role_hierarchy
+
+if TYPE_CHECKING:
+    from identity.models import Identity as IdentityType
 
 
 class Role(models.Model):
@@ -46,6 +49,10 @@ class Role(models.Model):
     )
 
     permissions = models.ManyToManyField("role.Permission", verbose_name=_("Permissions"), blank=True)
+    requirements = models.ManyToManyField(
+        "role.Requirement", related_name="role_requirements", verbose_name=_("Requirements"), blank=True
+    )
+
     iam_group = models.CharField(max_length=20, blank=True, verbose_name=_("IAM Group"))
 
     maximum_duration = models.IntegerField(verbose_name=_("Maximum duration (days)"))
@@ -142,6 +149,16 @@ class Role(models.Model):
         roles = self.get_role_hierarchy()
         return Permission.objects.filter(role__in=roles).distinct()
 
+    def get_requirements(self) -> models.QuerySet:
+        """
+        Returns combined requirements of all distinct roles and permissions in hierarchy.
+        """
+        roles = self.get_role_hierarchy()
+        permissions = Permission.objects.filter(role__in=roles).distinct()
+        return Requirement.objects.filter(
+            Q(role_requirements__in=roles) | Q(permission_requirements__in=permissions)
+        ).distinct()
+
     def get_cost(self) -> int:
         """
         Returns combined cost of all distinct permissions in hierarchy.
@@ -208,6 +225,9 @@ class Permission(models.Model):
     description_sv = models.CharField(max_length=255, verbose_name=_("Permission description (sv)"))
 
     cost = models.IntegerField(verbose_name=_("Permission cost"))
+    requirements = models.ManyToManyField(
+        "role.Requirement", related_name="permission_requirements", verbose_name=_("Requirements"), blank=True
+    )
 
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
@@ -254,6 +274,125 @@ class Permission(models.Model):
             "permission_id": self.pk,
             "permission": self.identifier,
         }
+
+
+class Requirement(models.Model):
+    """
+    Stores a requirement.
+    """
+
+    name_fi = models.CharField(max_length=50, verbose_name=_("Requirement name (fi)"))
+    name_en = models.CharField(max_length=50, verbose_name=_("Requirement name (en)"))
+    name_sv = models.CharField(max_length=50, verbose_name=_("Requirement name (sv)"))
+
+    TYPE_CHOICES = (
+        ("contract", _("Requires a signed contract of type (value)")),
+        ("attribute", _("User attribute (value) is defined")),
+        ("assurance", _("Assurance level at least the level")),
+        ("external", _("External requirement")),
+    )
+
+    type = models.CharField(max_length=20, choices=TYPE_CHOICES, verbose_name=_("Requirement type"))
+    value = models.CharField(
+        blank=True,
+        max_length=255,
+        verbose_name=_("Requirement value"),
+    )
+    level = models.IntegerField(
+        default=0,
+        verbose_name=_("Level or version required"),
+        help_text=_(
+            "Require a minimum level of assurance or attribute verification level, or a minimum version of "
+            "contract. "
+            "Contract level must be positive integer. Assurance levels are from 1 (low) to 3 (high) and "
+            "attribute verification levels are from 1 (self assured) to 4 (strong electrical verification)"
+        ),
+    )
+    grace = models.IntegerField(
+        default=0,
+        verbose_name=_("Grace time (days)"),
+        help_text=_("Grace time (days) before membership status is changed."),
+    )
+
+    created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["type", "value", "grace"], name="unique_requirement"),
+        ]
+        ordering = ["type"]
+        verbose_name = _("Requirement")
+        verbose_name_plural = _("Requirements")
+
+    def __str__(self) -> str:
+        return self.name()
+
+    def name(self, lang: str | None = None) -> str:
+        """
+        Returns requirement name in a given language (defaulting current language, or English).
+        """
+        if not lang:
+            lang = get_language()
+        if lang == "fi":
+            return self.name_fi
+        elif lang == "sv":
+            return self.name_sv
+        else:
+            return self.name_en
+
+    def log_values(self) -> dict[str, str | int]:
+        """
+        Return values for audit log.
+        """
+        return {
+            "requirement_id": self.pk,
+            "requirement_type": self.type,
+        }
+
+    def clean(self) -> None:
+        """
+        Validates requirement data.
+        """
+        from identity.models import Identity
+
+        if self.type == "contract":
+            if not self.value:
+                raise ValidationError({"value": [_("Contract requirement needs contract type as a value")]})
+            if self.level and self.level < 0:
+                raise ValidationError({"level": [_("Contract version must be positive integer")]})
+        if self.type == "assurance":
+            if 1 > int(self.level) or int(self.level) > 3:
+                raise ValidationError({"level": [_("Allowed assurance levels are from 1 (low) to 3 (high)")]})
+        if self.type == "attribute":
+            if self.value not in ["phone_number", "email_address"]:
+                try:
+                    Identity._meta.get_field(self.value)
+                except FieldDoesNotExist:
+                    raise ValidationError({"value": [_("Invalid attribute name")]})
+            if self.level:
+                try:
+                    Identity._meta.get_field(self.value + "_verification")
+                except FieldDoesNotExist:
+                    raise ValidationError({"level": [_("Attribute does not have verification level")]})
+                if 1 > int(self.level) or int(self.level) > 4:
+                    raise ValidationError({"level": [_("Allowed levels are from 1 to 4")]})
+
+    def test(self, identity: IdentityType) -> bool:
+        """
+        Test if the requirement is met by the identity.
+        """
+        if self.type == "contract":
+            return identity.has_contract(self.value, self.level)
+        if self.type == "attribute":
+            if self.value == "phone_number":
+                return identity.has_phone_number()
+            if self.value == "email_address":
+                return identity.has_email_address()
+            return identity.has_attribute(self.value, self.level)
+        if self.type == "assurance":
+            return identity.has_assurance(self.level)
+        return False
 
 
 class MembershipManager(models.Manager["Membership"]):
@@ -304,6 +443,7 @@ class Membership(models.Model):
     start_date = models.DateField(verbose_name=_("Membership start date"))
     expire_date = models.DateField(verbose_name=_("Membership expire date"))
 
+    requirements_failed_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Requirements failed time"))
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
@@ -340,16 +480,49 @@ class Membership(models.Model):
         """
         return reverse("membership-detail", kwargs={"pk": self.pk})
 
+    def get_missing_requirements(self) -> QuerySet[Requirement]:
+        """
+        Test if the membership requirements are met.
+        """
+        missing = Requirement.objects.none()
+        for requirement in self.role.get_requirements():
+            if not requirement.test(self.identity):
+                missing |= Requirement.objects.filter(pk=requirement.pk)
+        return missing
+
+    def test_requirements(self, allow_grace: bool = False) -> bool:
+        """
+        Test if the membership requirements are met.
+
+        Set requirements_failed_at if not met, and it doesn't exist yet.
+        If grace is allowed, pass requirements that are in the grace period.
+        """
+        grace_used = False
+        for requirement in self.role.get_requirements():
+            if not requirement.test(self.identity):
+                if not self.requirements_failed_at:
+                    self.requirements_failed_at = timezone.now()
+                if not allow_grace:
+                    return False
+                if not requirement.grace or timezone.now() > self.requirements_failed_at + datetime.timedelta(
+                    days=requirement.grace
+                ):
+                    return False
+                grace_used = True
+        if self.requirements_failed_at and not grace_used:
+            self.requirements_failed_at = None
+        return True
+
     def set_status(self) -> None:
         """
         Sets membership status.
-
-        Requirements have not been implemented yet.
         """
         if timezone.now().date() > self.expire_date:
             self.status = "expired"
         elif not self.identity:
             self.status = "invited"
+        elif not self.test_requirements(allow_grace=self.status == "active"):
+            self.status = "require"
         elif not self.approver:
             self.status = "approval"
         elif timezone.now().date() < self.start_date:

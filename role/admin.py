@@ -4,7 +4,7 @@ Django admin site configuration for the role app.
 
 from django.contrib import admin
 
-from role.models import Membership, Permission, Role
+from role.models import Membership, Permission, Requirement, Role
 
 
 class MembershipAdmin(admin.ModelAdmin):
@@ -30,6 +30,14 @@ class PermissionAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Permission, PermissionAdmin)
+
+
+class RequirementAdmin(admin.ModelAdmin):
+    list_display = ["name", "type", "value"]
+    search_fields = ["name_en", "name_fi", "name_sv", "type"]
+
+
+admin.site.register(Requirement, RequirementAdmin)
 
 
 class RoleAdmin(admin.ModelAdmin):

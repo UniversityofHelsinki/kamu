@@ -19,6 +19,7 @@ from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
 from identity.validators import validate_fpic
+from role.models import Permission, Requirement, Role
 
 
 class Nationality(models.Model):
@@ -301,6 +302,68 @@ class Identity(models.Model):
             self.user.last_name = self.surname_display
             self.user.save()
         super(Identity, self).save(*args, **kwargs)
+
+    def has_attribute(self, name: str, level: int = 0) -> bool:
+        """
+        Returns True if the identity has attribute value defined.
+
+        If level is given and attribute is verifiable, require at least that level of verification.
+        """
+        value = getattr(self, name, None)
+        if value is not None and (value or isinstance(value, int)):
+            if name not in self.verifiable_fields() or getattr(self, f"{name}_verification") >= level:
+                return True
+        return False
+
+    def has_assurance(self, level: int) -> bool:
+        """
+        Returns True if the identity has at least assurance level.
+        """
+        return self.assurance_level >= level
+
+    def has_contract(self, contract_type: str, version: int = 0) -> bool:
+        """
+        Returns True if the identity has signed the contract.
+
+        If version is given, require at least that version of the contract.
+        """
+        return self.contracts.filter(template__type=contract_type, template__version__gte=version).exists()
+
+    def has_email_address(self) -> bool:
+        """
+        Returns True if the identity has at least one verified email address.
+        """
+        return self.email_addresses.filter(verified=True).exists()
+
+    def has_phone_number(self) -> bool:
+        """
+        Returns True if the identity has at least one verified phone number.
+        """
+        return self.phone_numbers.filter(verified=True).exists()
+
+    def get_requirements(self) -> QuerySet[Requirement]:
+        """
+        Returns combined requirements of all roles of the identity.
+        """
+        all_roles = Role.objects.none()
+        for role in self.roles.all():
+            all_roles |= role.get_role_hierarchy()
+        roles = all_roles.distinct()
+        permissions = Permission.objects.filter(role__in=roles).distinct()
+        return Requirement.objects.filter(
+            Q(role_requirements__in=roles) | Q(permission_requirements__in=permissions)
+        ).distinct()
+
+    def get_missing_requirements(self) -> QuerySet[Requirement]:
+        """
+        Returns requirements that are not met by the identity.
+        """
+        requirements = self.get_requirements()
+        missing = Requirement.objects.none()
+        for requirement in requirements:
+            if not requirement.test(self):
+                missing |= Requirement.objects.filter(pk=requirement.pk)
+        return missing
 
 
 class EmailAddress(models.Model):
