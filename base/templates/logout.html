@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+  {% if multiple_backends %}
+    <h1 class="mb-4">{% trans "Logout warning" %}</h1>
+    <div class="alert alert-danger" role="alert">
+      <p>{% trans "You have logged in with multiple sign-in methods. This might happen if you have been linking external identifiers to your identity." %}</p>
+      <p>{% trans "Logging out all external methods is not possible. Clear your browser cache after logging out, if you are using a shared device." %}</p>
+    </div>
+    <a href="{% url 'logout' %}" class="btn btn-primary" role="button">{% trans "Continue to logout" %}</a>
+  {% else %}
+  <h1 class="mb-4">{% trans "Logout" %}</h1>
+    <p>{% trans "You have been logged out." %}</p>
+    <a href="{% url 'front-page' %}" class="btn btn-primary" role="button">{% trans "Return to front page" %}</a>
+  {% endif %}
+{% endblock %}

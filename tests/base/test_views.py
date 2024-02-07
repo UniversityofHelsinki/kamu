@@ -68,6 +68,7 @@ class LoginViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(self.user.is_authenticated)
         self.assertEqual(self.user.user_permissions.count(), 0)
+        self.assertEqual(self.client.session.get("external_login_backends"), "base.auth.ShibbolethLocalBackend;")
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
@@ -286,6 +287,24 @@ class LogoutViewTests(BaseTestCase):
     @override_settings(LOGOUT_REDIRECT_URL="/")
     def test_logout_default(self):
         self.client.force_login(self.user)
+        self.assertEqual(self.client.session.get("_auth_user_id"), str(self.user.pk))
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/", response.url)
+        self.assertIsNone(self.client.session.get("_auth_user_id"))
+
+    @override_settings(LOGOUT_REDIRECT_URL="/")
+    def test_logout_notification(self):
+        self.client.force_login(self.user)
+        self.assertEqual(self.client.session.get("_auth_user_backend"), "django.contrib.auth.backends.ModelBackend")
+        self.session = self.client.session
+        self.session["external_login_backends"] = "base.auth.ShibbolethLocalBackend;base.auth.GoogleBackend;"
+        self.session.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Logout warning", response.content.decode("utf-8"))
+        self.assertEqual(self.client.session.get("_auth_user_id"), str(self.user.pk))
+        self.assertEqual(self.client.session.get("_auth_user_backend"), "base.auth.ShibbolethLocalBackend")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
         self.assertIn("/", response.url)

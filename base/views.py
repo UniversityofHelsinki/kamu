@@ -440,6 +440,9 @@ class RemoteLoginView(View):
         """
         backend = f"{self.backend_class.__module__}.{self.backend_class.__name__}"
         auth_login(request, user, backend=backend)
+        self.request.session["external_login_backends"] = (
+            self.request.session.get("external_login_backends", "") + backend + ";"
+        )
 
     def _handle_error(self, request: HttpRequest, error: Exception) -> str:
         """
@@ -617,7 +620,8 @@ class EmailPhoneLoginVerificationView(LoginView):
         """
         del self.request.session["login_email_address"]
         del self.request.session["login_phone_number"]
-        auth_login(self.request, form.get_user(), backend="base.auth.EmailSMSBackend")
+        backend = "base.auth.EmailSMSBackend"
+        auth_login(self.request, form.get_user(), backend=backend)
         return HttpResponseRedirect(self.get_success_url())
 
     def redirect_to_self(self) -> HttpResponse:
@@ -689,7 +693,8 @@ class LocalLoginView(LoginView):
 
     def form_valid(self, form: AuthenticationForm) -> HttpResponse:
         """Security check complete. Log the user in."""
-        auth_login(self.request, form.get_user(), backend="django.contrib.auth.backends.ModelBackend")
+        backend = "django.contrib.auth.backends.ModelBackend"
+        auth_login(self.request, form.get_user(), backend=backend)
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -746,9 +751,19 @@ class LocalLogoutView(LogoutView):
         Set next page to the correct url.
 
         If it's from a Shibboleth SP front-channel notification, return it to return url.
+
+        If user has logged in with multiple external backends, show a logout warning and set
+        current authentication backend to the first external backend.
         """
         if "action" in request.GET and request.GET.get("action") == "logout" and "return" in request.GET:
             self.next_page = request.GET.get("return")
         else:
+            external_backends: list[str] = list(
+                filter(None, self.request.session.get("external_login_backends", "").split(";"))
+            )
+            if len(external_backends) > 1:
+                self.request.session["_auth_user_backend"] = external_backends[0]
+                del self.request.session["external_login_backends"]
+                return render(request, "logout.html", {"multiple_backends": True})
             self.next_page = self._get_backend_logout_url()
         return super().dispatch(request, *args, **kwargs)
