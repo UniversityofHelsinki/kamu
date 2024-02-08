@@ -2,6 +2,14 @@
 {% load i18n %}
 {% block content %}
   <h1 class="mb-5">{% trans "Role membership" %}</h1>
+  {% if is_approver and not object.approver %}
+    <div class="alert alert-info">
+      <h4>{% trans "Approval required" %}</h4>
+      <form method="post">{% csrf_token %}
+        <input type="submit" name="approve_membership" value="{% trans 'Approve' %}" class="btn btn-primary"/>
+      </form>
+    </div>
+  {% endif %}
   <div class="row">
     <div class="col-md-6">
       <h2>{% trans "Role" %}</h2>

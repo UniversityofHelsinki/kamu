@@ -13,8 +13,10 @@ from django.db.models import Q, QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseBase
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
+from django.views.decorators.csrf import csrf_protect
 from django.views.generic import DetailView, ListView, View
 from django.views.generic.edit import CreateView
 
@@ -133,6 +135,20 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
         )
         return get
 
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Add approver and inviter permission info to context.
+        """
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        if not user.is_authenticated:
+            raise PermissionDenied
+        if self.object.role.is_approver(user):
+            context["is_approver"] = True
+        if self.object.role.is_inviter(user):
+            context["is_inviter"] = True
+        return context
+
     def get_queryset(self) -> QuerySet[Membership]:
         """
         Limit membership details to a member, approvers, inviters and owners.
@@ -150,6 +166,34 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
                 | Q(identity__user=user)
             ).distinct()
         return queryset.prefetch_related("identity", "role")
+
+    @method_decorator(csrf_protect)
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Check for role approval.
+        """
+        self.object = self.get_object()
+        if not self.request.user.is_authenticated:
+            raise PermissionDenied
+        if (
+            not self.object.approver
+            and "approve_membership" in self.request.POST
+            and self.object.role.is_approver(self.request.user)
+        ):
+            self.object.approver = self.request.user
+            self.object.set_status()
+            self.object.save()
+            audit_log.info(
+                f"Membership to {self.object.role} approved for identity: {self.object.identity}",
+                category="membership",
+                action="update",
+                outcome="success",
+                request=self.request,
+                objects=[self.object, self.object.identity, self.object.role],
+                log_to_db=True,
+            )
+            messages.add_message(request, messages.INFO, _("Membership approved."))
+        return redirect("membership-detail", pk=self.object.pk)
 
 
 class MembershipListView(LoginRequiredMixin, ListView[Membership]):

@@ -20,6 +20,57 @@ from tests.setup import BaseTestCase
 from tests.utils import MockLdapConn
 
 
+class MembershipViewTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.membership = Membership.objects.create(
+            role=self.role,
+            identity=self.identity,
+            invite_email_address="invited_user@example.org",
+            inviter=self.superuser,
+            reason="Because",
+            start_date=timezone.now().date(),
+            expire_date=timezone.now().date() + datetime.timedelta(days=1),
+        )
+        self.url = f"/membership/{ self.membership.pk }/"
+        self.group = Group.objects.create(name="group")
+        self.role.inviters.add(self.group)
+        self.user.groups.add(self.group)
+        self.client = Client()
+        self.client.force_login(self.user)
+
+    def test_show_membership(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Membership details", response.content.decode("utf-8"))
+        self.assertIn(self.role.name(), response.content.decode("utf-8"))
+        self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
+        self.assertNotIn("invited_user@example.org", response.content.decode("utf-8"))
+        self.assertNotIn("Approval required", response.content.decode("utf-8"))
+
+    def test_show_membership_without_linked_identity(self):
+        self.membership.identity = None
+        self.membership.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Membership details", response.content.decode("utf-8"))
+        self.assertIn("invited_user@example.org", response.content.decode("utf-8"))
+
+    def test_show_membership_approval_info(self):
+        self.role.approvers.add(self.group)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Approval required", response.content.decode("utf-8"))
+
+    def test_approve_membership(self):
+        self.role.approvers.add(self.group)
+        response = self.client.post(self.url, {"approve_membership": "approve"}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Approval required", response.content.decode("utf-8"))
+        self.membership.refresh_from_db()
+        self.assertEqual(self.membership.approver, self.user)
+
+
 class RoleListTests(BaseTestCase):
     def setUp(self):
         super().setUp()
