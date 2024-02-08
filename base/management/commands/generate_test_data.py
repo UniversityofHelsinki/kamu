@@ -26,9 +26,36 @@ from identity.models import (
     Nationality,
     PhoneNumber,
 )
-from role.models import Membership, Permission, Role
+from role.models import Membership, Permission, Requirement, Role
 
 fake = Faker()
+
+REQUIREMENTS: list = [
+    {
+        "name_en": "NDA signed",
+        "name_fi": "Salassapitositoumus allekirjoitettu",
+        "name_sv": "Sekretessavtal undertecknat",
+        "type": "contract",
+        "value": "nda",
+        "grace": 0,
+    },
+    {
+        "name_en": "Secret contract signed",
+        "name_fi": "Salainen sopimus allekirjoitettu",
+        "name_sv": "Hemligt kontrakt undertecknat",
+        "type": "contract",
+        "value": "secretcontract",
+        "grace": 0,
+    },
+    {
+        "name_en": "Phone number given",
+        "name_fi": "Puhelinnumero annettu",
+        "name_sv": "Telefonnummer angivet",
+        "type": "attribute",
+        "value": "phone_number",
+        "grace": 30,
+    },
+]
 
 PERMISSIONS: list = [
     {
@@ -64,6 +91,7 @@ ROLES: list = [
         "description_sv": "Extern styrelseledamot.",
         "sub_roles": ["HY247", "HY+", "Unigrafia"],
         "permissions": ["useraccount"],
+        "requirements": [],
         "purge_delay": 50,
         "set_inviters": False,
         "set_approvers": False,
@@ -79,6 +107,7 @@ ROLES: list = [
         "description_sv": "Extern konsult.",
         "sub_roles": ["TIKE", "OPA", "HY247", "KK"],
         "permissions": ["useraccount"],
+        "requirements": ["attribute:phone_number"],
         "purge_delay": 70,
         "set_inviters": True,
         "set_approvers": True,
@@ -94,6 +123,7 @@ ROLES: list = [
         "description_sv": "Forskningsgrupp extern medlem.",
         "sub_roles": ["BYTDK", "HYMTDK", "MLTDK", "MMTDK"],
         "permissions": ["useraccount"],
+        "requirements": [],
         "purge_delay": 90,
         "set_inviters": False,
         "set_approvers": False,
@@ -109,6 +139,7 @@ ROLES: list = [
         "description_sv": "Gäststudent.",
         "sub_roles": ["BYTDK", "HYMTDK", "MLTDK", "MMTDK"],
         "permissions": ["lightaccount"],
+        "requirements": [],
         "purge_delay": 110,
         "set_inviters": False,
         "set_approvers": False,
@@ -124,6 +155,7 @@ ROLES: list = [
         "description_sv": "Extern styrelseledamot",
         "sub_roles": [],
         "permissions": ["useraccount"],
+        "requirements": ["contract:secretcontract"],
         "set_inviters": False,
         "set_approvers": False,
         "set_owner": False,
@@ -178,6 +210,9 @@ class Command(BaseCommand):
             call_command("loaddata", "nationality.json", app="identity", verbosity=(0 if self.silent else 1))
 
     def create_contracts(self) -> None:
+        """
+        Create contracts if they do not exist
+        """
         if not self.silent:
             print("Creating contracts...")
         for contract in CONTRACTS:
@@ -191,6 +226,22 @@ class Command(BaseCommand):
                 text_sv=contract["text_sv"],
                 version=contract["version"],
                 public=contract["public"],
+            )
+
+    def create_requirements(self) -> None:
+        """
+        Create requirements if they do not exist
+        """
+        if not self.silent:
+            print("Creating requirements...")
+        for requirement in REQUIREMENTS:
+            Requirement.objects.get_or_create(
+                name_en=requirement["name_en"],
+                name_fi=requirement["name_fi"],
+                name_sv=requirement["name_sv"],
+                type=requirement["type"],
+                value=requirement["value"],
+                grace=requirement["grace"],
             )
 
     def create_users(self) -> None:
@@ -222,7 +273,7 @@ class Command(BaseCommand):
         if not self.silent:
             print("Creating permissions...")
         for permission in PERMISSIONS:
-            Permission.objects.get_or_create(
+            perm, created = Permission.objects.get_or_create(
                 identifier=permission["identifier"],
                 name_en=permission["name_en"],
                 name_fi=permission["name_fi"],
@@ -232,6 +283,8 @@ class Command(BaseCommand):
                 description_sv=permission["description_sv"],
                 cost=permission["cost"],
             )
+            if created and perm.identifier == "useraccount":
+                perm.requirements.add(Requirement.objects.get(type="contract", value="nda"))
 
     def create_roles(self) -> None:
         """
@@ -265,7 +318,7 @@ class Command(BaseCommand):
                 base_role.save()
             for sub_role in role["sub_roles"]:
                 sub_role_identifier = unicodedata.normalize("NFKD", sub_role).lower()
-                s_role = Role.objects.get_or_create(
+                s_role, created = Role.objects.get_or_create(
                     identifier=f"{sub_role_identifier}_{base_role.identifier}"[:20],
                     name_en=f"{sub_role} - {base_role.name_en}",
                     name_fi=f"{sub_role} - {base_role.name_fi}",
@@ -276,7 +329,13 @@ class Command(BaseCommand):
                     parent=base_role,
                     organisation_unit=sub_role,
                     maximum_duration=365,
-                )[0]
+                )
+                if created:
+                    for requirement in role["requirements"]:
+                        reqtype, reqvalue = requirement.split(":", 1)
+                        req = Requirement.objects.filter(type=reqtype, value=reqvalue).first()
+                        if req:
+                            s_role.requirements.add(req)
                 permission = Permission.objects.get_or_create(
                     identifier=unicodedata.normalize("NFKD", sub_role),
                     name_en=sub_role,
@@ -303,6 +362,10 @@ class Command(BaseCommand):
         """
         if not self.silent:
             print("Creating identities...")
+        user_approver = get_user_model().objects.get(username="approver")
+        user_inviter = get_user_model().objects.get(username="inviter")
+        user_owner = get_user_model().objects.get(username="owner")
+
         start_time = datetime.datetime.now()
         finnish_nationality = Nationality.objects.get(code="FI")
         contract_template = ContractTemplate.objects.filter(type="nda").order_by("-version").first()
@@ -383,6 +446,8 @@ class Command(BaseCommand):
                     identity.save()
                 except django.db.utils.IntegrityError:
                     pass
+            if contract_template and random.randint(0, 100) < 90:
+                Contract.objects.sign_contract(contract_template, identity)
             for r in range(random.randint(0, 2)):
                 PhoneNumber.objects.create(
                     identity=identity,
@@ -406,10 +471,21 @@ class Command(BaseCommand):
                     )
                     expire_date = start_date + datetime.timedelta(days=random.randint(0, role.maximum_duration))
                     status = "expired" if expire_date < datetime.datetime.today() else "active"
+                    approver = None
+                    if random.randint(0, 100) < 90:
+                        inviter = user_inviter
+                    else:
+                        inviter = user_approver
+                    if random.randint(0, 100) < 70:
+                        approver = user_approver
+                    elif random.randint(0, 100) < 50:
+                        approver = user_owner
                     Membership.objects.create(
                         identity=identity,
                         role=role,
                         reason="Because",
+                        inviter=inviter,
+                        approver=approver,
                         start_date=start_date.date(),
                         expire_date=expire_date.date(),
                         status=status,
@@ -419,8 +495,6 @@ class Command(BaseCommand):
                 add_membership()
             if random.randint(0, 100) < 10:
                 add_membership()
-            if contract_template and random.randint(0, 100) < 50:
-                Contract.objects.sign_contract(contract_template, identity)
 
     def set_user_identities(self) -> None:
         """
@@ -438,6 +512,7 @@ class Command(BaseCommand):
         self.silent = options["verbosity"] == 0
         self.load_fixtures()
         self.create_users()
+        self.create_requirements()
         self.create_permissions()
         self.create_roles()
         self.create_contracts()
