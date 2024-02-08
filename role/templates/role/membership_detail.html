@@ -38,6 +38,11 @@
       {% else %}
         <p>{% trans "Identity has not yet been linked to this membership." %}</p>
         <p>{% trans "Invite has been sent to"%} {{ membership.invite_email_address }}.</p>
+        {% if is_inviter %}
+          <form method="post">{% csrf_token %}
+            <input type="submit" name="resend_invite" value="{% trans 'Resend invite email' %}" class="btn btn-primary"/>
+          </form>
+        {% endif %}
       {% endif %}
     </div>
     <div class="col">

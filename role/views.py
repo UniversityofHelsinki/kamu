@@ -22,7 +22,7 @@ from django.views.generic.edit import CreateView
 
 from base.connectors.email import send_add_email, send_invite_email
 from base.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
-from base.models import Token
+from base.models import TimeLimitError, Token
 from base.utils import AuditLog
 from identity.models import EmailAddress, Identifier, Identity
 from identity.validators import validate_fpic
@@ -197,6 +197,23 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
                 log_to_db=True,
             )
             messages.add_message(request, messages.INFO, _("Membership approved."))
+        if (
+            "resend_invite" in self.request.POST
+            and self.object.role.is_inviter(self.request.user)
+            and self.object.invite_email_address
+        ):
+            try:
+                token = Token.objects.create_invite_token(membership=self.object)
+                if send_invite_email(self.object, token, self.object.invite_email_address, request=self.request):
+                    messages.add_message(request, messages.INFO, _("Invite email sent."))
+                else:
+                    messages.add_message(request, messages.ERROR, _("Could not send invite email."))
+            except TimeLimitError:
+                messages.add_message(
+                    self.request,
+                    messages.WARNING,
+                    _("Tried to send a new invite too soon. Please try again in one minute."),
+                )
         return redirect("membership-detail", pk=self.object.pk)
 
 
