@@ -49,9 +49,10 @@ from identity.views import (
 )
 from kamu.routers import router
 from role.views import (
+    MembershipApprovalListView,
     MembershipClaimView,
     MembershipDetailView,
-    MembershipListView,
+    MembershipExpiringListView,
     RoleDetailView,
     RoleInviteEmailView,
     RoleInviteIdentitySearch,
@@ -98,8 +99,9 @@ urlpatterns = [
     path("identity/<int:pk>/identifiers/", IdentifierView.as_view(), name="identity-identifier"),
     path("email/<int:pk>/verify/", EmailAddressVerificationView.as_view(), name="email-verify"),
     path("phone/<int:pk>/verify/", PhoneNumberVerificationView.as_view(), name="phone-verify"),
-    path("membership/", MembershipListView.as_view(), name="membership-list"),
     path("membership/<int:pk>/", MembershipDetailView.as_view(), name="membership-detail"),
+    path("membership/approval/", MembershipApprovalListView.as_view(), name="membership-approval"),
+    path("membership/expiring/", MembershipExpiringListView.as_view(), name="membership-expiring"),
     path("membership/claim/", MembershipClaimView.as_view(), name="membership-claim"),
     path("role/approver/", RoleListApproverView.as_view(), name="role-list-approver"),
     path("role/inviter/", RoleListInviterView.as_view(), name="role-list-inviter"),

@@ -1,8 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q, QuerySet
 from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -13,6 +15,49 @@ from identity.models import Identity
 from role.models import Membership
 
 audit_log = AuditLog()
+
+
+def _get_base_membership_queryset(user: AbstractUser, include_inviters: bool = False) -> QuerySet[Membership]:
+    """
+    Filter membership lists based on user role.
+    """
+    groups = user.groups.all()
+    queryset = Membership.objects.all()
+    if not user.is_superuser:
+        if include_inviters:
+            queryset = queryset.filter(
+                Q(role__approvers__in=groups) | Q(role__inviters__in=groups) | Q(role__owner=user)
+            ).distinct()
+        else:
+            queryset = queryset.filter(Q(role__approvers__in=groups) | Q(role__owner=user)).distinct()
+    return queryset
+
+
+def get_memberships_requiring_approval(user: AbstractUser, include_inviters: bool = False) -> QuerySet[Membership]:
+    """
+    Get memberships that require approval and user has approval rights for.
+    """
+    queryset = _get_base_membership_queryset(user, include_inviters)
+    queryset = queryset.filter(
+        expire_date__gte=timezone.now().date(),
+        approver=None,
+    )
+    return queryset.order_by("start_date").prefetch_related("identity", "role")
+
+
+def get_expiring_memberships(
+    user: AbstractUser, days: int | None = None, include_inviters: bool = False
+) -> QuerySet[Membership]:
+    """
+    Get memberships that are about to end and user has approval rights for.
+    """
+    queryset = _get_base_membership_queryset(user, include_inviters)
+    if not days:
+        days = getattr(settings, "EXPIRING_LIMIT_DAYS", 30)
+    queryset = queryset.filter(
+        expire_date__gte=timezone.now().date(), expire_date__lte=timezone.now().date() + timedelta(days=days)
+    )
+    return queryset.order_by("expire_date").prefetch_related("identity", "role")
 
 
 def get_invitation_session_parameters(request: HttpRequest) -> tuple[str, datetime]:

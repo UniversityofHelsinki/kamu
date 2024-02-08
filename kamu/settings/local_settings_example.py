@@ -86,6 +86,9 @@ INVITATION_PROCESS_TIME: int = 60 * 60  # 1 hour
 # How long link identifier session variable is valid (in seconds)
 LINK_IDENTIFIER_TIME_LIMIT: int = 5 * 60  # 5 minutes
 
+# Memberships are flagged as expiring soon this many days in advance
+EXPIRING_LIMIT_DAYS: int = 30  # 30 days
+
 SMS_API_URL: str = "https://api-gateway.example.org/sms/send"
 SMS_AUTH_HEADER: str = "X-Api-Key"
 SMS_API_KEY: str = ""

@@ -2,14 +2,14 @@
 {% load i18n %}
 
 {% block content %}
-  <h1 id="members-list" class="mb-4">{% trans "Members" %}</h1>
+  <h1 id="members-list" class="mb-4">{% trans "Memberships requiring approval" %}</h1>
   <table class="table" aria-describedby="members-list">
     <thead>
     <tr>
       <th scope="col">{% trans "Identity" %}</th>
       <th scope="col">{% trans "Role" %}</th>
       <th scope="col">{% trans "Status" %}</th>
-      <th scope="col">{% trans "Expires" %}</th>
+      <th scope="col">{% trans "Starts" %}</th>
     </tr>
     </thead>
     <tbody>
@@ -18,7 +18,7 @@
         <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{% if membership.identity %}{{ membership.identity }}{% else %}{% trans "Invite" %}: {{ membership.invite_email_address }}{% endif %}</a></th>
         <td>{{ membership.role }}</td>
         <td>{{ membership.status }}</td>
-        <td>{{ membership.expire_date }}</td>
+        <td>{{ membership.start_date }}</td>
       </tr>
     {% endfor %}
     </tbody>

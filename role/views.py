@@ -29,7 +29,11 @@ from identity.validators import validate_fpic
 from identity.views import IdentitySearchView
 from role.forms import MembershipCreateForm, MembershipEmailCreateForm, TextSearchForm
 from role.models import Membership, Role
-from role.utils import claim_membership
+from role.utils import (
+    claim_membership,
+    get_expiring_memberships,
+    get_memberships_requiring_approval,
+)
 
 audit_log = AuditLog()
 
@@ -196,9 +200,9 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
         return redirect("membership-detail", pk=self.object.pk)
 
 
-class MembershipListView(LoginRequiredMixin, ListView[Membership]):
+class MembershipListBaseView(LoginRequiredMixin, ListView[Membership]):
     """
-    View for membership list.
+    Base view for membership list.
     """
 
     model = Membership
@@ -217,28 +221,37 @@ class MembershipListView(LoginRequiredMixin, ListView[Membership]):
         )
         return get
 
+
+class MembershipApprovalListView(MembershipListBaseView):
+    """
+    List memberships that require approval.
+    """
+
+    template_name = "role/membership_approval_list.html"
+
     def get_queryset(self) -> QuerySet[Membership]:
         """
-        Limit membership list to approvers, inviters and owners.
-
-        Include only last 30 days if filter URI parameter with value expiring is used.
+        Include only memberships that require approval.
         """
-        user = self.request.user
-        if not user.is_authenticated:
-            raise PermissionDenied
-        groups = user.groups.all()
-        queryset = Membership.objects.all()
-        if not user.is_superuser:
-            queryset = queryset.filter(
-                Q(role__approvers__in=groups) | Q(role__inviters__in=groups) | Q(role__owner=user)
-            ).distinct()
-        if "filter" in self.request.GET:
-            if self.request.GET["filter"] == "expiring":
-                queryset = queryset.filter(
-                    expire_date__gte=timezone.now().date(),
-                    expire_date__lte=timezone.now().date() + datetime.timedelta(days=30),
-                ).order_by("expire_date")
-        return queryset.prefetch_related("identity", "role")
+        if self.request.user.is_authenticated:
+            return get_memberships_requiring_approval(self.request.user, include_inviters=True)
+        return Membership.objects.none()
+
+
+class MembershipExpiringListView(MembershipListBaseView):
+    """
+    List expiring memberships.
+    """
+
+    template_name = "role/membership_expiring_list.html"
+
+    def get_queryset(self) -> QuerySet[Membership]:
+        """
+        Include only memberships expiring in the next EXPIRING_LIMIT_DAYS (default 30) days.
+        """
+        if self.request.user.is_authenticated:
+            return get_expiring_memberships(self.request.user, include_inviters=True)
+        return Membership.objects.none()
 
 
 class RoleDetailView(LoginRequiredMixin, DetailView[Role]):

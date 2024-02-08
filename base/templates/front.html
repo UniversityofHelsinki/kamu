@@ -16,14 +16,24 @@
       <h2 class="mb-4 mt-4">{% trans "Role and membership management" %}</h2>
       <div class="row">
         <div class="col-lg-4 col-md-6 mb-3">
-          <h3>{% trans "Expiring" %}</h3>
-          <p>{% trans "Show expiring memberships." %}</p>
-          <a href="{% url 'membership-list' %}?filter=expiring" class="btn btn-primary mb-3">{% trans "Expiring" %}</a>
+          <h3>{% trans "Requiring approval" %}</h3>
+          <p>{% trans "Show memberships requiring approval." %}</p>
+          <a href="{% url 'membership-approval' %}" class="btn btn-primary mb-3">{% trans "Requiring approval" %}</a>
         </div>
         <div class="col-lg-4 col-md-6 mb-3">
-          <h3>{% trans "Invite" %}</h3>
+          <h3>{% trans "Expiring" %}</h3>
+          <p>{% trans "Show expiring memberships." %}</p>
+          <a href="{% url 'membership-expiring' %}" class="btn btn-primary mb-3">{% trans "Expiring" %}</a>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-3">
+          <h3>{% trans "Role search" %}</h3>
+          <p>{% trans "Search roles." %}</p>
+          <a href="{% url 'role-search' %}" class="btn btn-primary mb-3">{% trans "Search" %}</a>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-3">
+          <h3>{% trans "Inviter" %}</h3>
           <p>{% trans "Show roles with invite permissions." %}</p>
-          <a href="{% url 'role-list-inviter' %}" class="btn btn-primary mb-3">{% trans "Invite" %}</a>
+          <a href="{% url 'role-list-inviter' %}" class="btn btn-primary mb-3">{% trans "Inviter" %}</a>
         </div>
         <div class="col-lg-4 col-md-6 mb-3">
           <h3>{% trans "Approver" %}</h3>

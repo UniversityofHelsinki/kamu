@@ -70,6 +70,24 @@ class MembershipViewTests(BaseTestCase):
         self.membership.refresh_from_db()
         self.assertEqual(self.membership.approver, self.user)
 
+    def test_view_membership_approval_list(self):
+        response = self.client.get("/membership/approval/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data["object_list"].count(), 1)
+        self.membership.approver = self.user
+        self.membership.save()
+        response = self.client.get("/membership/approval/")
+        self.assertEqual(response.context_data["object_list"].count(), 0)
+
+    def test_view_membership_expiring_list(self):
+        response = self.client.get("/membership/expiring/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data["object_list"].count(), 1)
+        self.membership.expire_date = timezone.now().date() + datetime.timedelta(days=31)
+        self.membership.save()
+        response = self.client.get("/membership/expiring/")
+        self.assertEqual(response.context_data["object_list"].count(), 0)
+
 
 class RoleListTests(BaseTestCase):
     def setUp(self):
