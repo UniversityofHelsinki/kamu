@@ -5,11 +5,14 @@ Unit tests for role app.
 import datetime
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase, override_settings
+from django.contrib.auth.models import AnonymousUser
+from django.contrib.messages.storage.fallback import FallbackStorage
+from django.test import RequestFactory, TestCase, override_settings
 from django.utils import timezone
 
 from identity.models import Contract, ContractTemplate, Identity
 from role.models import Membership, Permission, Role
+from role.utils import add_missing_requirement_messages
 
 User = get_user_model()
 
@@ -172,3 +175,57 @@ class RequirementsTests(TestData):
         self.parent_membership.requirements_failed_at = timezone.now() - datetime.timedelta(days=2, hours=-1)
         self.parent_membership.set_status()
         self.assertEqual(self.parent_membership.status, "require")
+
+    def test_message_generation(self):
+        factory = RequestFactory()
+        request = factory.get("/")
+        request.user = AnonymousUser()
+        setattr(request, "session", "session")
+        messages = FallbackStorage(request)
+        setattr(request, "_messages", messages)
+        missing = self.membership.get_missing_requirements()
+        add_missing_requirement_messages(request, missing, self.identity)
+        self.assertEqual(
+            "Role requires higher assurance level: 3 (High, eIDAS substantial level or similar).",
+            messages._queued_messages[0].message,
+        )
+        self.assertEqual(
+            'Role requires an attribute "date of birth" of at least verification level: 2 (External source).',
+            messages._queued_messages[1].message,
+        )
+        self.assertNotIn(
+            "Add here",
+            messages._queued_messages[1].message,
+        )
+        self.assertIn(
+            "Role requires a verified email address.",
+            messages._queued_messages[2].message,
+        )
+        self.assertEqual(
+            "Role requires a contract you cannot currently sign.",
+            messages._queued_messages[3].message,
+        )
+
+    def test_message_generation_with_user(self):
+        template = ContractTemplate.objects.create(type="nda", name_en="NDA")
+        template.save()
+        self.nda.level = 2
+        self.nda.save()
+        factory = RequestFactory()
+        request = factory.get("/")
+        self.identity.user = self.user
+        self.identity.save()
+        request.user = self.user
+        setattr(request, "session", "session")
+        messages = FallbackStorage(request)
+        setattr(request, "_messages", messages)
+        missing = self.membership.get_missing_requirements()
+        add_missing_requirement_messages(request, missing, self.identity)
+        self.assertIn(
+            "Add here",
+            messages._queued_messages[2].message,
+        )
+        self.assertIn(
+            'Role requires a contract "NDA", version 2 or higher.',
+            messages._queued_messages[3].message,
+        )

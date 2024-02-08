@@ -58,6 +58,7 @@ from identity.models import (
 )
 from identity.utils import combine_identities, combine_identities_requirements
 from role.models import Membership
+from role.utils import add_missing_requirement_messages
 
 audit_log = AuditLog()
 
@@ -119,6 +120,9 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
             objects=[self.object],
             extra={"permissions": str(permissions)},
         )
+        missing_requirements = self.object.get_missing_requirements()
+        if missing_requirements:
+            add_missing_requirement_messages(self.request, missing_requirements, self.object)
         return get
 
     @method_decorator(csrf_protect)

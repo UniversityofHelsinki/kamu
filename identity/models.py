@@ -17,6 +17,7 @@ from django.db.models import Q, QuerySet
 from django.utils import timezone
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
+from django_stubs_ext import StrOrPromise
 
 from identity.validators import validate_fpic
 from role.models import Permission, Requirement, Role
@@ -261,6 +262,20 @@ class Identity(models.Model):
             "identity_id": self.pk,
             "identity": self.display_name(),
         }
+
+    @staticmethod
+    def get_verification_level_display_by_value(value: int) -> StrOrPromise:
+        for level, name in Identity.VERIFICATION_CHOICES:
+            if level == value:
+                return name
+        return ""
+
+    @staticmethod
+    def get_assurance_level_display_by_value(value: int) -> StrOrPromise:
+        for level, name in Identity.ASSURANCE_CHOICES:
+            if level == value:
+                return name
+        return ""
 
     @staticmethod
     def basic_fields() -> list[str]:

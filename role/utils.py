@@ -6,13 +6,15 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q, QuerySet
 from django.http import HttpRequest
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django_stubs_ext import StrOrPromise
 
 from base.models import Token
 from base.utils import AuditLog
-from identity.models import Identity
-from role.models import Membership
+from identity.models import ContractTemplate, Identity
+from role.models import Membership, Requirement
 
 audit_log = AuditLog()
 
@@ -58,6 +60,110 @@ def get_expiring_memberships(
         expire_date__gte=timezone.now().date(), expire_date__lte=timezone.now().date() + timedelta(days=days)
     )
     return queryset.order_by("expire_date").prefetch_related("identity", "role")
+
+
+def add_missing_requirement_messages(
+    request: HttpRequest, missing_requirements: QuerySet[Requirement], identity: Identity
+) -> None:
+    """
+    Add messages for missing requirements to the request.
+    """
+
+    def _get_link(url_name: str, text: StrOrPromise, kwargs: dict[str, int]) -> str:
+        """
+        Add link to the message.
+        """
+        url = reverse(url_name, kwargs=kwargs)
+        return f' | <a href="{url}">{text}</a>'
+
+    def _add_contract_message() -> None:
+        """
+        Add missing contract message to the request. Add link if the user is the identity owner.
+        """
+        template = (
+            ContractTemplate.objects.filter(type=requirement.value, version__gte=requirement.level)
+            .order_by("-version")
+            .first()
+        )
+        if not template:
+            messages.add_message(
+                request,
+                messages.ERROR,
+                _("Role requires a contract you cannot currently sign."),
+            )
+        else:
+            message = _('"Role requires a contract "%(name)s"') % {"name": template.name()}
+            if requirement.level:
+                message = _('"Role requires a contract "%(name)s", version %(version)d or higher.') % {
+                    "name": template.name(),
+                    "version": requirement.level,
+                }
+            if request.user == identity.user:
+                message += _get_link(
+                    "contract-sign",
+                    _("Open contract"),
+                    {"identity_pk": identity.pk, "template_pk": template.pk},
+                )
+            messages.add_message(request, messages.WARNING, message, extra_tags="safe")
+
+    def _add_attribute_message() -> None:
+        """
+        Add missing attribute message to the request.
+
+        Add link if the user is the identity owner or has identity change permissions.
+        """
+        message: StrOrPromise = ""
+        if requirement.value == "email_address":
+            message = _("Role requires a verified email address.")
+            if request.user == identity.user:
+                message += _get_link("contact-change", _("Add here"), {"pk": identity.pk})
+            messages.add_message(request, messages.WARNING, message, extra_tags="safe")
+            return
+        if requirement.value == "phone_number":
+            message = _("Role requires a verified phone number.")
+            if request.user == identity.user:
+                message += _get_link("contact-change", _("Add here"), {"pk": identity.pk})
+            messages.add_message(request, messages.WARNING, message, extra_tags="safe")
+            return
+        field = Identity._meta.get_field(requirement.value)
+        if hasattr(field, "verbose_name"):
+            name = field.verbose_name.lower()
+        else:
+            name = requirement.value
+        if requirement.level:
+            level_text = Identity.get_verification_level_display_by_value(requirement.level)
+            message = _(
+                'Role requires an attribute "%(name)s" of at least verification level: %(level)d (%(level_text)s).'
+            ) % {
+                "name": name,
+                "level": requirement.level,
+                "level_text": level_text,
+            }
+        else:
+            message = _('Role requires an attribute "%(name)s".') % {"name": name}
+        if request.user == identity.user or request.user.has_perm("identity.change_restricted_information"):
+            message += _get_link("identity-change", _("Add here"), {"pk": identity.pk})
+        messages.add_message(request, messages.WARNING, message, extra_tags="safe")
+
+    for requirement in missing_requirements:
+        if requirement.type == "assurance":
+            level_text = Identity.get_assurance_level_display_by_value(requirement.level)
+            messages.add_message(
+                request,
+                messages.WARNING,
+                _("Role requires higher assurance level: " + str(requirement.level) + " (" + level_text + ")."),
+            )
+        elif requirement.type == "contract":
+            _add_contract_message()
+        elif requirement.type == "attribute":
+            _add_attribute_message()
+        else:
+            messages.add_message(
+                request,
+                messages.ERROR,
+                _("Role requires a requirement you cannot currently fulfill: %(name)s.")
+                % {"name": requirement.name()},
+            )
 
 
 def get_invitation_session_parameters(request: HttpRequest) -> tuple[str, datetime]:

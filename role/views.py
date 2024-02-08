@@ -35,6 +35,7 @@ from role.forms import (
 )
 from role.models import Membership, Role
 from role.utils import (
+    add_missing_requirement_messages,
     claim_membership,
     get_expiring_memberships,
     get_memberships_requiring_approval,
@@ -142,6 +143,10 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
             request=self.request,
             objects=[self.object, self.object.role, self.object.identity],
         )
+        if self.object.identity:
+            missing_requirements = self.object.get_missing_requirements()
+            if missing_requirements:
+                add_missing_requirement_messages(self.request, missing_requirements, self.object.identity)
         return get
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
