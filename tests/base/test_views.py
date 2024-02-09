@@ -15,11 +15,68 @@ from django.urls import reverse
 from django.utils import timezone
 
 from base.models import Token
+from base.utils import set_default_permissions
 from identity.models import Identifier, Identity, PhoneNumber
 from role.models import Membership, Role
 from tests.setup import BaseTestCase
 
 UserModel = get_user_model()
+
+
+class FrontPageViewTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.url = reverse("front-page")
+
+    def test_front_page_view(self):
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("register here", response.content.decode("utf-8"))
+
+    def test_front_page_view_logged_in(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Manage your own information", response.content.decode("utf-8"))
+
+    def test_front_page_view_logged_in_with_role_permissions(self):
+        self.client.force_login(self.user)
+        set_default_permissions(self.user)
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Manage your own information", response.content.decode("utf-8"))
+        self.assertIn("Role and membership management", response.content.decode("utf-8"))
+
+    def test_front_page_view_logged_in_with_messages(self):
+        self.client.force_login(self.superuser)
+        Membership.objects.create(
+            role=self.role,
+            reason="Test",
+            start_date=timezone.now().date(),
+            expire_date=timezone.now().date() + datetime.timedelta(days=7),
+        )
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("You have pending membership approvals", response.content.decode("utf-8"))
+        self.assertIn(
+            "Memberships are ending soon in roles you have approval rights", response.content.decode("utf-8")
+        )
+
+    @override_settings(EXPIRING_LIMIT_DAYS=6)
+    def test_front_page_view_logged_in_without_messages(self):
+        self.client.force_login(self.superuser)
+        Membership.objects.create(
+            role=self.role,
+            reason="Test",
+            approver=self.superuser,
+            start_date=timezone.now().date(),
+            expire_date=timezone.now().date() + datetime.timedelta(days=7),
+        )
+        response = self.client.get(self.url, follow=True)
+        self.assertNotIn("You have pending membership approvals", response.content.decode("utf-8"))
+        self.assertNotIn(
+            "Memberships are ending soon in roles you have approval rights", response.content.decode("utf-8")
+        )
 
 
 class LoginViewTests(BaseTestCase):

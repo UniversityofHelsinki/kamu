@@ -58,7 +58,12 @@ from base.forms import (
 from base.models import TimeLimitError, Token
 from base.utils import AuditLog
 from identity.models import EmailAddress, Identity, PhoneNumber
-from role.utils import claim_membership, get_invitation_session_parameters
+from role.utils import (
+    claim_membership,
+    get_expiring_memberships,
+    get_invitation_session_parameters,
+    get_memberships_requiring_approval,
+)
 
 audit_log = AuditLog()
 logger = logging.getLogger(__name__)
@@ -717,6 +722,20 @@ class FrontPageView(View):
     template_name = "front.html"
 
     def get(self, request: HttpRequest) -> HttpResponse:
+        if request.user.is_authenticated and request.user.has_perm("role.search_roles"):
+            if get_memberships_requiring_approval(request.user).exists():
+                link = " | <a href='" + reverse("membership-approval") + "'>" + _("List here") + "</a>"
+                messages.add_message(
+                    request, messages.INFO, _("You have pending membership approvals." + link), extra_tags="safe"
+                )
+            if get_expiring_memberships(request.user).exists():
+                link = " | <a href='" + reverse("membership-expiring") + "'>" + _("List here") + "</a>"
+                messages.add_message(
+                    request,
+                    messages.INFO,
+                    _("Memberships are ending soon in roles you have approval rights.") + link,
+                    extra_tags="safe",
+                )
         return render(request, self.template_name)
 
 
