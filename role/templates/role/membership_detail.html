@@ -61,8 +61,44 @@
         <dt class="col-sm-3">{% trans "Reason" %}</dt>
         <dd class="col-sm-9">{{ object.reason }}</dd>
       </dl>
+      {% if object.ending_in_future %}
+        {% if is_approver or user.identity == object.identity %}
+          <form method="post">{% csrf_token %}
+        {% endif %}
+      {% endif %}
       {% if is_approver %}
         <a href="{% url 'membership-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Update membership" %}</a>
+      {% endif %}
+      {% if object.ending_in_future %}
+        {% if is_approver or user.identity == object.identity %}
+          <button type="button" class="btn btn-danger me-2 mb-2" data-bs-toggle="modal" data-bs-target="#endMembershipModal">{% trans "End membership" %}</button>
+          <div class="modal fade" id="endMembershipModal" tabindex="-1" aria-labelledby="endMembershipModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="endMembershipModalLabel">{% trans "Confirm ending membership" %}</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans "Close" %}"></button>
+                </div>
+                <div class="modal-body">
+                  <p class="text-break">{% trans "This membership will be set to end after today." %}</p>
+                  <dl class="row">
+                    <dt class="col-sm-3">{% trans "Role" %}</dt>
+                    <dd class="col-sm-9">{{ object.role }}</dd>
+                    <dt class="col-sm-3">{% trans "Identity" %}</dt>
+                    <dd class="col-sm-9">{{ object.identity }}</dd>
+                    <dt class="col-sm-3">{% trans "End date" %}</dt>
+                    <dd class="col-sm-9">{% now "DATE_FORMAT" %}</dd>
+                  </dl>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                    <button type="submit" name="end_membership" class="btn btn-danger">{% trans 'Confirm ending membership' %}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </form>
+        {% endif %}
       {% endif %}
     </div>
   </div>

@@ -328,6 +328,12 @@ class Membership(models.Model):
             "membership": self.__str__(),
         }
 
+    def ending_in_future(self) -> bool:
+        """
+        Returns True if membership expire date is in the future.
+        """
+        return self.expire_date > timezone.now().date()
+
     def get_absolute_url(self) -> str:
         """
         Returns url to current membership's detail view.

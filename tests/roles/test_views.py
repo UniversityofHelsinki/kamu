@@ -155,6 +155,25 @@ class MembershipViewTests(BaseTestCase):
         self.assertEqual(self.membership.start_date, timezone.now().date())
         self.assertEqual(self.membership.expire_date, expire_date)
 
+    @patch("base.utils.logger_audit")
+    def test_end_membership(self, mock_logger):
+        response = self.client.post(self.url, {"end_membership": "end"}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Membership set to end today", response.content.decode("utf-8"))
+        self.membership.refresh_from_db()
+        self.assertEqual(self.membership.expire_date, timezone.now().date())
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Membership to Test Role ended for identity: Test User", extra=ANY),
+            ]
+        )
+
+    def test_end_membership_without_access(self):
+        self.membership.identity = self.superidentity
+        self.membership.save()
+        response = self.client.post(self.url, {"end_membership": "end"}, follow=True)
+        self.assertEqual(response.status_code, 403)
+
 
 class RoleListTests(BaseTestCase):
     def setUp(self):

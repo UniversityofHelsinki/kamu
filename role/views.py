@@ -176,19 +176,13 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
             ).distinct()
         return queryset.prefetch_related("identity", "role")
 
-    @method_decorator(csrf_protect)
-    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def _approve_membership(self, request: HttpRequest) -> None:
         """
-        Check for role approval.
+        Approve membership, if user is approver and membership is not approved.
         """
-        self.object = self.get_object()
-        if not self.request.user.is_authenticated:
+        if not self.request.user.is_authenticated or not self.object.role.is_approver(self.request.user):
             raise PermissionDenied
-        if (
-            not self.object.approver
-            and "approve_membership" in self.request.POST
-            and self.object.role.is_approver(self.request.user)
-        ):
+        if not self.object.approver:
             self.object.approver = self.request.user
             self.object.set_status()
             self.object.save()
@@ -202,23 +196,68 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
                 log_to_db=True,
             )
             messages.add_message(request, messages.INFO, _("Membership approved."))
+
+    def _resend_invite(self, request: HttpRequest) -> None:
+        """
+        Resend invite email, if user is inviter.
+        """
         if (
-            "resend_invite" in self.request.POST
-            and self.object.role.is_inviter(self.request.user)
-            and self.object.invite_email_address
+            not self.request.user.is_authenticated
+            or not self.object.role.is_inviter(self.request.user)
+            or not self.object.invite_email_address
         ):
-            try:
-                token = Token.objects.create_invite_token(membership=self.object)
-                if send_invite_email(self.object, token, self.object.invite_email_address, request=self.request):
-                    messages.add_message(request, messages.INFO, _("Invite email sent."))
-                else:
-                    messages.add_message(request, messages.ERROR, _("Could not send invite email."))
-            except TimeLimitError:
-                messages.add_message(
-                    self.request,
-                    messages.WARNING,
-                    _("Tried to send a new invite too soon. Please try again in one minute."),
-                )
+            raise PermissionDenied
+        try:
+            token = Token.objects.create_invite_token(membership=self.object)
+            if send_invite_email(self.object, token, self.object.invite_email_address, request=self.request):
+                messages.add_message(request, messages.INFO, _("Invite email sent."))
+            else:
+                messages.add_message(request, messages.ERROR, _("Could not send invite email."))
+        except TimeLimitError:
+            messages.add_message(
+                self.request,
+                messages.WARNING,
+                _("Tried to send a new invite too soon. Please try again in one minute."),
+            )
+
+    def _end_membership(self, request: HttpRequest) -> None:
+        """
+        Set membership to end after today, if user is approver or the identity user.
+        """
+        if not self.request.user.is_authenticated:
+            raise PermissionDenied
+        if not self.object.role.is_approver(self.request.user) and (
+            not self.object.identity or self.object.identity.user != self.request.user
+        ):
+            raise PermissionDenied
+        if self.object.expire_date > timezone.now().date():
+            self.object.expire_date = timezone.now().date()
+            self.object.save()
+            audit_log.info(
+                f"Membership to {self.object.role} ended for identity: {self.object.identity}",
+                category="membership",
+                action="update",
+                outcome="success",
+                request=self.request,
+                objects=[self.object, self.object.identity, self.object.role],
+                log_to_db=True,
+            )
+            messages.add_message(request, messages.INFO, _("Membership set to end today."))
+
+    @method_decorator(csrf_protect)
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Check for role approval.
+        """
+        self.object = self.get_object()
+        if not self.request.user.is_authenticated:
+            raise PermissionDenied
+        if "approve_membership" in self.request.POST:
+            self._approve_membership(request)
+        if "resend_invite" in self.request.POST:
+            self._resend_invite(request)
+        if "end_membership" in self.request.POST:
+            self._end_membership(request)
         return redirect("membership-detail", pk=self.object.pk)
 
 
