@@ -61,6 +61,9 @@
         <dt class="col-sm-3">{% trans "Reason" %}</dt>
         <dd class="col-sm-9">{{ object.reason }}</dd>
       </dl>
+      {% if is_approver %}
+        <a href="{% url 'membership-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Update membership" %}</a>
+      {% endif %}
     </div>
   </div>
 {% endblock %}

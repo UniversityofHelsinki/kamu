@@ -18,7 +18,7 @@ from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import DetailView, ListView, View
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 
 from base.connectors.email import send_add_email, send_invite_email
 from base.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
@@ -27,7 +27,12 @@ from base.utils import AuditLog
 from identity.models import EmailAddress, Identifier, Identity
 from identity.validators import validate_fpic
 from identity.views import IdentitySearchView
-from role.forms import MembershipCreateForm, MembershipEmailCreateForm, TextSearchForm
+from role.forms import (
+    MembershipCreateForm,
+    MembershipEditForm,
+    MembershipEmailCreateForm,
+    TextSearchForm,
+)
 from role.models import Membership, Role
 from role.utils import (
     claim_membership,
@@ -215,6 +220,38 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
                     _("Tried to send a new invite too soon. Please try again in one minute."),
                 )
         return redirect("membership-detail", pk=self.object.pk)
+
+
+class MembershipUpdateView(LoginRequiredMixin, UpdateView[Membership, MembershipEditForm]):
+    """
+    Update membership information.
+    """
+
+    model = Membership
+    form_class = MembershipEditForm
+    template_name = "role/membership_edit_form.html"
+
+    def form_valid(self, form: MembershipEditForm) -> HttpResponse:
+        """
+        Edit membership data and update approver.
+        """
+        user = self.request.user if self.request.user.is_authenticated else None
+        if not user or not form.instance.role.is_approver(user):
+            raise PermissionDenied
+        form.instance.approver = user
+        valid = super().form_valid(form)
+        if self.object:
+            audit_log.info(
+                f"Membership modified, role: {self.object.role}, identity: {self.object.identity}",
+                category="membership",
+                action="update",
+                outcome="success",
+                request=self.request,
+                objects=[self.object, self.object.identity, self.object.role],
+                log_to_db=True,
+            )
+            messages.add_message(self.request, messages.INFO, _("Membership updated."))
+        return valid
 
 
 class MembershipListBaseView(LoginRequiredMixin, ListView[Membership]):

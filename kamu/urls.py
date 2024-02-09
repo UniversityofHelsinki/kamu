@@ -53,6 +53,7 @@ from role.views import (
     MembershipClaimView,
     MembershipDetailView,
     MembershipExpiringListView,
+    MembershipUpdateView,
     RoleDetailView,
     RoleInviteEmailView,
     RoleInviteIdentitySearch,
@@ -70,6 +71,7 @@ handler400 = "base.error_views.bad_request"
 handler403 = "base.error_views.permission_denied"
 handler404 = "base.error_views.page_not_found"
 handler500 = "base.error_views.server_error"
+
 
 urlpatterns = [
     path("api/v0/", include(router.urls)),
@@ -100,6 +102,7 @@ urlpatterns = [
     path("email/<int:pk>/verify/", EmailAddressVerificationView.as_view(), name="email-verify"),
     path("phone/<int:pk>/verify/", PhoneNumberVerificationView.as_view(), name="phone-verify"),
     path("membership/<int:pk>/", MembershipDetailView.as_view(), name="membership-detail"),
+    path("membership/<int:pk>/change/", MembershipUpdateView.as_view(), name="membership-change"),
     path("membership/approval/", MembershipApprovalListView.as_view(), name="membership-approval"),
     path("membership/expiring/", MembershipExpiringListView.as_view(), name="membership-expiring"),
     path("membership/claim/", MembershipClaimView.as_view(), name="membership-claim"),

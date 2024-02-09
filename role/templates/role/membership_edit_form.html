@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <h1 class="mb-4">{% trans "Edit membership" %}</h1>
+  <form method="post">
+    {% csrf_token %}
+    {% crispy form form.helper %}
+    <a href="{% url 'membership-detail' object.pk %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+  </form>
+{% endblock %}

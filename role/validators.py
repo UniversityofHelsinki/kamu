@@ -38,16 +38,25 @@ def validate_role_hierarchy(
 
 
 def validate_membership(
-    error_class: type[ValidationError] | type[DRFValidationError], role: Role, start_date: date, expire_date: date
+    error_class: type[ValidationError] | type[DRFValidationError],
+    role: Role,
+    start_date: date,
+    expire_date: date,
+    edit: bool = False,
 ) -> None:
     """
     Validates membership dates.
+
+    Allow past start dates when editing a membership. In this case, compare maximum role duration
+    from the current date.
     """
     if expire_date < start_date:
         raise error_class({"expire_date": [_("Role expire date cannot be earlier than start date")]})
-    if (expire_date - start_date).days > role.maximum_duration:
-        raise error_class({"expire_date": [_("Role duration cannot be more than maximum duration")]})
     if expire_date < timezone.now().date():
         raise error_class({"expire_date": [_("Role expire date cannot be in the past")]})
-    if start_date < timezone.now().date():
+    if not edit and start_date < timezone.now().date():
         raise error_class({"start_date": [_("Role start date cannot be in the past")]})
+    if start_date >= timezone.now().date() and (expire_date - start_date).days > role.maximum_duration:
+        raise error_class({"expire_date": [_("Role duration cannot be more than maximum duration")]})
+    if start_date < timezone.now().date() and (expire_date - timezone.now().date()).days > role.maximum_duration:
+        raise error_class({"expire_date": [_("Role duration cannot be more than maximum duration")]})

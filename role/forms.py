@@ -77,6 +77,44 @@ class MembershipCreateForm(forms.ModelForm[Membership]):
         validate_membership(ValidationError, self.role, start_date, expire_date)
 
 
+class MembershipEditForm(forms.ModelForm[Membership]):
+    """
+    Form for editing membership.
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """
+        Get role from kwargs for form validation and set Crispy Forms helper.
+        """
+        super().__init__(*args, **kwargs)
+        self.fields["start_date"].disabled = True
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("submit", _("Update")))
+
+    class Meta:
+        model = Membership
+        fields = ["start_date", "expire_date", "reason"]
+        widgets = {
+            "start_date": DateInput(attrs={"type": "date"}),
+            "expire_date": DateInput(attrs={"type": "date"}),
+        }
+
+    def clean(self) -> None:
+        """
+        Validate dates and duration.
+        """
+        cleaned_data = super().clean()
+        if cleaned_data is None:
+            cleaned_data = self.cleaned_data
+        start_date = cleaned_data.get("start_date")
+        expire_date = cleaned_data.get("expire_date")
+        if not start_date or not isinstance(start_date, date):
+            raise ValidationError(_("Invalid start date format"))
+        if not expire_date or not isinstance(expire_date, date):
+            raise ValidationError(_("Invalid expire date format"))
+        validate_membership(ValidationError, self.instance.role, start_date, expire_date, edit=True)
+
+
 class MembershipEmailCreateForm(forms.ModelForm[Membership]):
     """
     Form for creating a new membership with email invite.

@@ -4,7 +4,7 @@ View tests for role app.
 
 import datetime
 from unittest import mock
-from unittest.mock import ANY, call
+from unittest.mock import ANY, call, patch
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -72,6 +72,7 @@ class MembershipViewTests(BaseTestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Approval required", response.content.decode("utf-8"))
+        self.assertIn("Update membership", response.content.decode("utf-8"))
 
     def test_approve_membership(self):
         self.role.approvers.add(self.group)
@@ -98,6 +99,61 @@ class MembershipViewTests(BaseTestCase):
         self.membership.save()
         response = self.client.get("/membership/expiring/")
         self.assertEqual(response.context_data["object_list"].count(), 0)
+
+    def test_edit_membership_without_access(self):
+        url = f"{self.url}change/"
+        response = self.client.post(
+            url,
+            {
+                "start_date": timezone.now().date(),
+                "expire_date": timezone.now().date() + datetime.timedelta(days=2),
+                "reason": "Because new role",
+            },
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 403)
+
+    @patch("base.utils.logger_audit")
+    def test_edit_membership(self, mock_logger):
+        self.role.approvers.add(self.group)
+        url = f"{self.url}change/"
+        expire_date = timezone.now().date() + datetime.timedelta(days=2)
+        response = self.client.post(
+            url,
+            {
+                "start_date": timezone.now().date(),
+                "expire_date": expire_date,
+                "reason": "Updated",
+            },
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.membership.refresh_from_db()
+        self.assertEqual(self.membership.reason, "Updated")
+        self.assertEqual(self.membership.approver, self.user)
+        self.assertEqual(self.membership.expire_date, expire_date)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Membership modified, role: Test Role, identity: Test User", extra=ANY),
+            ]
+        )
+
+    def test_edit_membership_ignore_disabled_start_date(self):
+        self.role.approvers.add(self.group)
+        url = f"{self.url}change/"
+        expire_date = timezone.now().date() + datetime.timedelta(days=2)
+        response = self.client.post(
+            url,
+            {
+                "start_date": timezone.now().date() + datetime.timedelta(days=1),
+                "expire_date": expire_date,
+                "reason": "Updated",
+            },
+            follow=True,
+        )
+        self.membership.refresh_from_db()
+        self.assertEqual(self.membership.start_date, timezone.now().date())
+        self.assertEqual(self.membership.expire_date, expire_date)
 
 
 class RoleListTests(BaseTestCase):
