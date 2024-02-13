@@ -173,8 +173,11 @@ class IdentityUpdateView(UpdateView):
         """
         if self.request.user == self.object.user:
             for field in form.changed_data:
-                if field in self.object.verifiable_fields() and getattr(form.instance, f"{field}_verification") != 1:
-                    setattr(form.instance, f"{field}_verification", 1)
+                if (
+                    field in self.object.verifiable_fields()
+                    and getattr(form.instance, f"{field}_verification") != Identity.VerificationMethod.SELF_ASSURED
+                ):
+                    setattr(form.instance, f"{field}_verification", Identity.VerificationMethod.SELF_ASSURED)
         valid = super().form_valid(form)
         if form.changed_data:
             # construct_change_message is used for all models in admin, but limited to single form in django-stubs.
@@ -889,9 +892,9 @@ class IdentityMeView(LoginRequiredMixin, View):
             identity = Identity.objects.create(
                 user=user,
                 given_names=user.first_name,
-                given_names_verification=2,
+                given_names_verification=Identity.VerificationMethod.EXTERNAL,
                 surname=user.last_name,
-                surname_verification=2,
+                surname_verification=Identity.VerificationMethod.EXTERNAL,
             )
             if user.email:
                 EmailAddress.objects.create(address=user.email, identity=identity)

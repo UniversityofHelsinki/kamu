@@ -126,13 +126,14 @@ class Identity(models.Model):
         (2, _("Medium, verified from a government issued photo-ID")),
         (3, _("High, eIDAS substantial level or similar")),
     )
-    VERIFICATION_CHOICES = (
-        (0, _("No verification")),
-        (1, _("Self assurance")),
-        (2, _("External source")),
-        (3, _("Verified from a government issued photo-ID")),
-        (4, _("Strong electrical verification")),
-    )
+
+    class VerificationMethod(models.IntegerChoices):
+        UNVERIFIED = (0, _("No verification"))
+        SELF_ASSURED = (1, _("Self assurance"))
+        EXTERNAL = (2, _("External source"))
+        PHOTO_ID = (3, _("Verified from a government issued photo-ID"))
+        STRONG = (4, _("Strong electrical verification"))
+
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     kamu_id = models.UUIDField(
         unique=True,
@@ -163,13 +164,17 @@ class Identity(models.Model):
         blank=True, max_length=200, verbose_name=_("Given names"), help_text=_("All official first names.")
     )
     given_names_verification = models.SmallIntegerField(
-        choices=VERIFICATION_CHOICES, default=0, verbose_name=_("Given names verification method")
+        choices=VerificationMethod.choices,
+        default=VerificationMethod.UNVERIFIED,
+        verbose_name=_("Given names verification method"),
     )
     surname = models.CharField(
         blank=True, max_length=200, verbose_name=_("Surname"), help_text=_("Official surname(s).")
     )
     surname_verification = models.SmallIntegerField(
-        choices=VERIFICATION_CHOICES, default=0, verbose_name=_("Surname verification method")
+        choices=VerificationMethod.choices,
+        default=VerificationMethod.UNVERIFIED,
+        verbose_name=_("Surname verification method"),
     )
     given_name_display = models.CharField(
         blank=True,
@@ -190,7 +195,9 @@ class Identity(models.Model):
         help_text=_("Required for the user identification from the official identity documents."),
     )
     date_of_birth_verification = models.SmallIntegerField(
-        choices=VERIFICATION_CHOICES, default=0, verbose_name=_("Date of birth verification method")
+        choices=VerificationMethod.choices,
+        default=VerificationMethod.UNVERIFIED,
+        verbose_name=_("Date of birth verification method"),
     )
     gender = models.CharField(
         max_length=1,
@@ -204,7 +211,9 @@ class Identity(models.Model):
         help_text=_("Required for the user identification from the official identity documents."),
     )
     nationality_verification = models.SmallIntegerField(
-        choices=VERIFICATION_CHOICES, default=0, verbose_name=_("Nationality verification method")
+        choices=VerificationMethod.choices,
+        default=VerificationMethod.UNVERIFIED,
+        verbose_name=_("Nationality verification method"),
     )
     fpic = models.CharField(
         unique=True,
@@ -216,7 +225,9 @@ class Identity(models.Model):
         help_text=_("Used for the strong electrical identification."),
     )
     fpic_verification = models.SmallIntegerField(
-        choices=VERIFICATION_CHOICES, default=0, verbose_name=_("FPIC verification method")
+        choices=VerificationMethod.choices,
+        default=VerificationMethod.UNVERIFIED,
+        verbose_name=_("FPIC verification method"),
     )
     preferred_language = models.CharField(
         max_length=2,
@@ -264,10 +275,10 @@ class Identity(models.Model):
 
     @staticmethod
     def get_verification_level_display_by_value(value: int) -> StrOrPromise:
-        for level, name in Identity.VERIFICATION_CHOICES:
-            if level == value:
-                return name
-        return ""
+        try:
+            return Identity.VerificationMethod(value).label
+        except ValueError:
+            return ""
 
     @staticmethod
     def get_assurance_level_display_by_value(value: int) -> StrOrPromise:

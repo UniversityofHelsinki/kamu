@@ -375,8 +375,17 @@ class Requirement(models.Model):
                     Identity._meta.get_field(self.value + "_verification")
                 except FieldDoesNotExist:
                     raise ValidationError({"level": [_("Attribute does not have verification level")]})
-                if 1 > int(self.level) or int(self.level) > 4:
-                    raise ValidationError({"level": [_("Allowed levels are from 1 to 4")]})
+                min_verification = Identity.VerificationMethod.SELF_ASSURED
+                max_verification = Identity.VerificationMethod.STRONG
+                if min_verification > int(self.level) or int(self.level) > max_verification:
+                    raise ValidationError(
+                        {
+                            "level": [
+                                _("Allowed levels are from %(min) to %(max)")
+                                % {"min": min_verification.value, "max": max_verification.value}
+                            ]
+                        }
+                    )
 
     def test(self, identity: IdentityType) -> bool:
         """

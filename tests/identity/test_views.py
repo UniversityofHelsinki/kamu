@@ -140,7 +140,7 @@ class IdentityEditTests(BaseTestCase):
     @mock.patch("base.utils.logger_audit")
     def test_edit_own_information(self, mock_logger):
         self.client.force_login(self.user)
-        self.identity.surname_verification = 2
+        self.identity.surname_verification = Identity.VerificationMethod.EXTERNAL
         self.identity.save()
         self.data["surname"] = "New-User"
         self.data["fpic"] = "010181-900C"
@@ -151,8 +151,8 @@ class IdentityEditTests(BaseTestCase):
         self.assertIn("Jan. 1, 1999", response.content.decode("utf-8"))
         self.assertIn("010181-900C", response.content.decode("utf-8"))
         self.identity.refresh_from_db()
-        self.assertEqual(self.identity.fpic_verification, 1)
-        self.assertEqual(self.identity.surname_verification, 1)
+        self.assertEqual(self.identity.fpic_verification, Identity.VerificationMethod.SELF_ASSURED)
+        self.assertEqual(self.identity.surname_verification, Identity.VerificationMethod.SELF_ASSURED)
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Changed identity information", extra=ANY),
@@ -167,20 +167,20 @@ class IdentityEditTests(BaseTestCase):
         self.assertIn("verification method", response.content.decode("utf-8"))
 
     def test_edit_strong_electrical_verification_error(self):
-        self.identity.given_names_verification = 4
+        self.identity.given_names_verification = Identity.VerificationMethod.STRONG
         self.identity.save()
         self.data["given_names"] = "New Name"
-        self.data["given_names_verification"] = 4
+        self.data["given_names_verification"] = Identity.VerificationMethod.STRONG
         self.client.force_login(self.superuser)
         response = self.client.post(self.url, self.data)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Cannot set strong electrical verification by hand", response.content.decode("utf-8"))
 
     def test_edit_lower_verification_level(self):
-        self.identity.given_names_verification = 4
+        self.identity.given_names_verification = Identity.VerificationMethod.STRONG
         self.identity.save()
         self.data["given_names"] = "New Name"
-        self.data["given_names_verification"] = 3
+        self.data["given_names_verification"] = Identity.VerificationMethod.PHOTO_ID
         self.client.force_login(self.superuser)
         response = self.client.post(self.url, self.data)
         self.assertEqual(response.status_code, 302)

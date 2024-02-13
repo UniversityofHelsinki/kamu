@@ -343,7 +343,7 @@ class IdentityForm(forms.ModelForm):
         if not self.instance or self.instance.user == self.request.user:
             verification_fields = False
             for field in self.instance.basic_verification_fields() + self.instance.restricted_verification_fields():
-                if self.initial and self.initial[field] == 4:
+                if self.initial and self.initial[field] == Identity.VerificationMethod.STRONG:
                     self.fields[field.removesuffix("_verification")].disabled = True
                 del self.fields[field]
         elif not self.request.user.has_perms(["identity.change_restricted_information"]):
@@ -367,8 +367,9 @@ class IdentityForm(forms.ModelForm):
             verification = cleaned_data.get(f"{ field }_verification")
             initial_verification = initial_data.get(f"{ field }_verification")
             if (
-                value != initial_value or (initial_verification is not None and initial_verification < 4)
-            ) and verification == 4:
+                value != initial_value
+                or (initial_verification is not None and initial_verification < Identity.VerificationMethod.STRONG)
+            ) and verification == Identity.VerificationMethod.STRONG:
                 self.add_error(f"{ field }_verification", _("Cannot set strong electrical verification by hand."))
 
     class Meta:

@@ -400,12 +400,14 @@ class Command(BaseCommand):
                 date_of_birth = None
             else:
                 date_of_birth = fake.date_of_birth(minimum_age=17, maximum_age=80)
-            verification_level = random.randint(0, 4)
-            if verification_level == 4:
+            verification_level = random.choice(Identity.VerificationMethod.values)
+            if verification_level == Identity.VerificationMethod.STRONG:
                 assurance_level = 3
-            elif verification_level == 3:
+            elif verification_level == Identity.VerificationMethod.PHOTO_ID:
                 assurance_level = 2
-            elif 1 <= verification_level <= 2:
+            elif (
+                Identity.VerificationMethod.SELF_ASSURED <= verification_level <= Identity.VerificationMethod.EXTERNAL
+            ):
                 assurance_level = 1
             else:
                 assurance_level = 0

@@ -567,9 +567,9 @@ class RoleInviteLdapView(BaseRoleInviteView):
         identity = Identity.objects.create(
             uid=user["uid"],
             given_names=user["givenName"],
-            given_names_verification=2,
+            given_names_verification=Identity.VerificationMethod.EXTERNAL,
             surname=user["sn"],
-            surname_verification=2,
+            surname_verification=Identity.VerificationMethod.EXTERNAL,
         )
         audit_log.info(
             "Identity created.",
@@ -593,13 +593,13 @@ class RoleInviteLdapView(BaseRoleInviteView):
             )
         if "schacDateOfBirth" in user:
             identity.date_of_birth = datetime.datetime.strptime(user["schacDateOfBirth"], "%Y%m%d").date()
-            identity.date_of_birth_verification = 2
+            identity.date_of_birth_verification = Identity.VerificationMethod.EXTERNAL
         if "preferredLanguage" in user and user["preferredLanguage"] in [k for k, v in settings.LANGUAGES]:
             identity.preferred_language = user["preferredLanguage"]
         fpic = self._parse_fpic(user)
         if fpic:
             identity.fpic = fpic
-            identity.fpic_verification = 2
+            identity.fpic_verification = Identity.VerificationMethod.EXTERNAL
         identity.save()
         identifier, created = Identifier.objects.get_or_create(
             type="eppn",

@@ -122,11 +122,11 @@ class LocalBaseBackend(BaseBackend):
         return settings.AUTH_DEFAULT_ASSURANCE_LEVEL
 
     @staticmethod
-    def _get_verification_level(request: HttpRequest) -> int:
+    def _get_verification_level(request: HttpRequest) -> Identity.VerificationMethod:
         """
         Get attribute verification level for the login method. Values from the Identity model choices.
         """
-        return settings.AUTH_DEFAULT_VERIFICATION_LEVEL
+        return Identity.VerificationMethod[settings.AUTH_DEFAULT_VERIFICATION_LEVEL]
 
     def _get_meta_unique_identifier(self, request: HttpRequest) -> str:
         """
@@ -617,11 +617,11 @@ class SuomiFiBackend(LocalBaseBackend):
             return 1
 
     @staticmethod
-    def _get_verification_level(request: HttpRequest) -> int:
+    def _get_verification_level(request: HttpRequest) -> Identity.VerificationMethod:
         """
         Get attribute verification level for the login method. Values from the Identity model choices.
         """
-        return 4
+        return Identity.VerificationMethod.STRONG
 
     def _get_meta_unique_identifier(self, request: HttpRequest) -> str:
         """

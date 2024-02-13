@@ -146,7 +146,7 @@ class RequirementsTests(TestData):
         self.identity.date_of_birth = timezone.now().date() - datetime.timedelta(days=365 * 18)
         self.identity.save()
         self.assertEqual(self.membership.get_missing_requirements().count(), 3)
-        self.identity.date_of_birth_verification = 2
+        self.identity.date_of_birth_verification = Identity.VerificationMethod.EXTERNAL
         self.identity.save()
         self.membership.refresh_from_db()
         self.assertEqual(self.membership.get_missing_requirements().count(), 2)
@@ -190,7 +190,7 @@ class RequirementsTests(TestData):
             messages._queued_messages[0].message,
         )
         self.assertEqual(
-            'Role requires an attribute "date of birth" of at least verification level: 2 (External source).',
+            f'Role requires an attribute "date of birth" of at least verification level: {Identity.VerificationMethod.EXTERNAL} (External source).',
             messages._queued_messages[1].message,
         )
         self.assertNotIn(
