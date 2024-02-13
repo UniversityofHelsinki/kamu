@@ -145,9 +145,8 @@ class Identity(models.Model):
         unique=True,
         blank=True,
         null=True,
-        max_length=11,
-        verbose_name=_("HY user account name"),
-        help_text=_("University of Helsinki user account name."),
+        max_length=255,
+        verbose_name=_("User identifier"),
     )
     external = models.BooleanField(
         default=False,
@@ -488,7 +487,7 @@ class Identifier(models.Model):
         ("kamu", _("Kamu identifier")),
     )
     type = models.CharField(max_length=10, choices=IDENTIFIER_CHOICES, verbose_name=_("Identifier type"))
-    value = models.CharField(max_length=255, verbose_name=_("Identifier value"))
+    value = models.CharField(max_length=4000, verbose_name=_("Identifier value"))
     verified = models.BooleanField(default=False, verbose_name=_("Verified"))
 
     deactivated_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Deactivated at"))
