@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load crispy_forms_tags %}
+{% load identity_tags %}
 {% block content %}
+  {% get_gender_value "UNKNOWN" as unknown_gender %}
   <h1 class="mb-4" id="combine-list">{% trans "Combine identities" %}</h1>
     <div class="alert alert-success" role="alert">
       <p>{% trans "Transfer information from the source identity to the target identity, and delete the source identity and the corresponding user." %}</p>
@@ -97,7 +99,7 @@
           <th scope="row">{% trans "Gender" %}</th>
           <td>{{ primary_identity.get_gender_display }}</td>
           <td>{{ secondary_identity.get_gender_display }}</td>
-          <td>{% if primary_identity.gender != "U" %}{{ primary_identity.get_gender_display }}{% else %}{{ secondary_identity.get_gender_display }}{% endif %}</td>
+          <td>{% if primary_identity.gender != unknown_gender %}{{ primary_identity.get_gender_display }}{% else %}{{ secondary_identity.get_gender_display }}{% endif %}</td>
         </tr>
         <tr>
           <th scope="row">{% trans "Preferred language" %}</th>

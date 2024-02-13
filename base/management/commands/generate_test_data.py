@@ -420,7 +420,7 @@ class Command(BaseCommand):
                 date_of_birth=date_of_birth,
                 date_of_birth_verification=verification_level,
                 preferred_language=random.choice(["fi", "en", "sv"]),
-                gender=random.choice(["M", "F", "O", "U"]),
+                gender=random.choice(Identity.Gender.values),
                 assurance_level=assurance_level,
             )
             rand = random.randint(0, 100)

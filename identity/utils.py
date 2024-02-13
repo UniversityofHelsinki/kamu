@@ -112,7 +112,7 @@ def _combine_identity_attributes(
 
     for attr in combined_attributes:
         _combine_identity_attribute(attr)
-    _combine_identity_attribute("gender", lambda val: val != "U")
+    _combine_identity_attribute("gender", lambda val: val != Identity.Gender.UNKNOWN)
 
 
 def _move_objects_to_primary_identity(

@@ -114,12 +114,12 @@ class Identity(models.Model):
         ("fi", _("Finnish")),
         ("sv", _("Swedish")),
     )
-    GENDER_CHOICES = (
-        ("M", _("Male")),
-        ("F", _("Female")),
-        ("O", _("Other")),
-        ("U", _("Unknown")),
-    )
+
+    class Gender(models.TextChoices):
+        MALE = ("M", _("Male"))
+        FEMALE = ("F", _("Female"))
+        OTHER = ("O", _("Other"))
+        UNKNOWN = ("U", _("Unknown"))
 
     class AssuranceLevel(models.IntegerChoices):
         NONE = (0, _("No assurance level"))
@@ -201,8 +201,8 @@ class Identity(models.Model):
     )
     gender = models.CharField(
         max_length=1,
-        choices=GENDER_CHOICES,
-        default="U",
+        choices=Gender.choices,
+        default=Gender.UNKNOWN,
         verbose_name=_("Gender"),
         help_text=_("Used for statistical purposes."),
     )

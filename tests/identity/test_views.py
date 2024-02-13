@@ -752,7 +752,7 @@ class IdentityCombineTests(BaseTestCase):
     def test_combine_identities(self, mock_logger):
         self._create_test_data()
         self.identity.date_of_birth = datetime.date(1999, 1, 1)
-        self.identity.gender = "O"
+        self.identity.gender = Identity.Gender.OTHER
         self.identity.uid = "tester"
         self.identity.save()
         kamu_id = self.identity.kamu_id
@@ -761,7 +761,7 @@ class IdentityCombineTests(BaseTestCase):
         self.assertIn("Identities combined.", response.content.decode("utf-8"))
         self.superidentity.refresh_from_db()
         self.assertEqual(self.superidentity.given_names, "Super")
-        self.assertEqual(self.superidentity.gender, "O")
+        self.assertEqual(self.superidentity.gender, Identity.Gender.OTHER)
         self.assertEqual(self.superidentity.date_of_birth, datetime.date(1999, 1, 1))
         self.assertEqual(self.superidentity.membership_set.all().count(), 3)
         self.assertEqual(self.superidentity.phone_numbers.all().count(), 3)
