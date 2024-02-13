@@ -362,8 +362,17 @@ class Requirement(models.Model):
             if self.level and self.level < 0:
                 raise ValidationError({"level": [_("Contract version must be positive integer")]})
         if self.type == "assurance":
-            if 1 > int(self.level) or int(self.level) > 3:
-                raise ValidationError({"level": [_("Allowed assurance levels are from 1 (low) to 3 (high)")]})
+            min_assurance = Identity.AssuranceLevel.LOW
+            max_assurance = Identity.AssuranceLevel.HIGH
+            if min_assurance > int(self.level) or int(self.level) > max_assurance:
+                raise ValidationError(
+                    {
+                        "level": [
+                            _("Allowed assurance levels are from %(min) (low) to %(max) (high)")
+                            % {"min": min_assurance, "max": max_assurance}
+                        ]
+                    }
+                )
         if self.type == "attribute":
             if self.value not in ["phone_number", "email_address"]:
                 try:
@@ -391,6 +400,9 @@ class Requirement(models.Model):
         """
         Test if the requirement is met by the identity.
         """
+
+        from identity.models import Identity
+
         if self.type == "contract":
             return identity.has_contract(self.value, self.level)
         if self.type == "attribute":
@@ -400,7 +412,7 @@ class Requirement(models.Model):
                 return identity.has_email_address()
             return identity.has_attribute(self.value, self.level)
         if self.type == "assurance":
-            return identity.has_assurance(self.level)
+            return identity.has_assurance(Identity.AssuranceLevel(self.level))
         return False
 
 

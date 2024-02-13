@@ -120,12 +120,12 @@ class Identity(models.Model):
         ("O", _("Other")),
         ("U", _("Unknown")),
     )
-    ASSURANCE_CHOICES = (
-        (0, _("No assurance level")),
-        (1, _("Low, self-asserted with a verified email-address")),
-        (2, _("Medium, verified from a government issued photo-ID")),
-        (3, _("High, eIDAS substantial level or similar")),
-    )
+
+    class AssuranceLevel(models.IntegerChoices):
+        NONE = (0, _("No assurance level"))
+        LOW = (1, _("Low, self-asserted with a verified email-address"))
+        MEDIUM = (2, _("Medium, verified from a government issued photo-ID"))
+        HIGH = (3, _("High, eIDAS substantial level or similar"))
 
     class VerificationMethod(models.IntegerChoices):
         UNVERIFIED = (0, _("No verification"))
@@ -156,7 +156,7 @@ class Identity(models.Model):
     )
     assurance_level = models.SmallIntegerField(
         default=0,
-        choices=ASSURANCE_CHOICES,
+        choices=AssuranceLevel.choices,
         verbose_name=_("Assurance level"),
         help_text=_("How strongly this user identity is identified."),
     )
@@ -282,10 +282,10 @@ class Identity(models.Model):
 
     @staticmethod
     def get_assurance_level_display_by_value(value: int) -> StrOrPromise:
-        for level, name in Identity.ASSURANCE_CHOICES:
-            if level == value:
-                return name
-        return ""
+        try:
+            return Identity.AssuranceLevel(value).label
+        except ValueError:
+            return ""
 
     @staticmethod
     def basic_fields() -> list[str]:
@@ -340,7 +340,7 @@ class Identity(models.Model):
                 return True
         return False
 
-    def has_assurance(self, level: int) -> bool:
+    def has_assurance(self, level: AssuranceLevel) -> bool:
         """
         Returns True if the identity has at least assurance level.
         """

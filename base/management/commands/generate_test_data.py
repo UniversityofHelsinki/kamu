@@ -402,15 +402,15 @@ class Command(BaseCommand):
                 date_of_birth = fake.date_of_birth(minimum_age=17, maximum_age=80)
             verification_level = random.choice(Identity.VerificationMethod.values)
             if verification_level == Identity.VerificationMethod.STRONG:
-                assurance_level = 3
+                assurance_level = Identity.AssuranceLevel.HIGH
             elif verification_level == Identity.VerificationMethod.PHOTO_ID:
-                assurance_level = 2
+                assurance_level = Identity.AssuranceLevel.MEDIUM
             elif (
                 Identity.VerificationMethod.SELF_ASSURED <= verification_level <= Identity.VerificationMethod.EXTERNAL
             ):
-                assurance_level = 1
+                assurance_level = Identity.AssuranceLevel.LOW
             else:
-                assurance_level = 0
+                assurance_level = Identity.AssuranceLevel.NONE
             identity = Identity.objects.create(
                 given_names=given_names,
                 given_names_verification=verification_level,

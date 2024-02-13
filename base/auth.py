@@ -115,11 +115,11 @@ class LocalBaseBackend(BaseBackend):
         return settings.AUTH_DEFAULT_USERNAME_SUFFIX
 
     @staticmethod
-    def _get_assurance_level(request: HttpRequest) -> int:
+    def _get_assurance_level(request: HttpRequest) -> Identity.AssuranceLevel:
         """
         Get assurance level for the login method. Values from the Identity model choices.
         """
-        return settings.AUTH_DEFAULT_ASSURANCE_LEVEL
+        return Identity.AssuranceLevel[settings.AUTH_DEFAULT_ASSURANCE_LEVEL]
 
     @staticmethod
     def _get_verification_level(request: HttpRequest) -> Identity.VerificationMethod:
@@ -458,17 +458,17 @@ class ShibbolethBaseBackend(LocalBaseBackend):
         return "eppn"
 
     @staticmethod
-    def _get_assurance_level(request: HttpRequest) -> int:
+    def _get_assurance_level(request: HttpRequest) -> Identity.AssuranceLevel:
         """
         Get assurance level for the login method, using Identity model choices.
         """
         assurance_level = request.META.get(settings.SAML_ATTR_ASSURANCE, "").split(";")
         if "https://refeds.org/assurance/IAP/high" in assurance_level:
-            return 3
+            return Identity.AssuranceLevel.HIGH
         elif "https://refeds.org/assurance/IAP/medium" in assurance_level:
-            return 2
+            return Identity.AssuranceLevel.MEDIUM
         else:
-            return 1
+            return Identity.AssuranceLevel.LOW
 
     def _get_meta_unique_identifier(self, request: HttpRequest) -> str:
         """
@@ -604,17 +604,17 @@ class SuomiFiBackend(LocalBaseBackend):
             return identifier_type
 
     @staticmethod
-    def _get_assurance_level(request: HttpRequest) -> int:
+    def _get_assurance_level(request: HttpRequest) -> Identity.AssuranceLevel:
         """
         Get assurance level for  the login method. Values from the Identity model choices.
         """
         assurance_level = set(request.META.get(settings.SAML_SUOMIFI_ASSURANCE, "").split(";"))
         if set(settings.SUOMIFI_ASSURANCE_HIGH).intersection(assurance_level):
-            return 3
+            return Identity.AssuranceLevel.HIGH
         elif set(settings.SUOMIFI_ASSURANCE_MEDIUM).intersection(assurance_level):
-            return 2
+            return Identity.AssuranceLevel.MEDIUM
         else:
-            return 1
+            return Identity.AssuranceLevel.LOW
 
     @staticmethod
     def _get_verification_level(request: HttpRequest) -> Identity.VerificationMethod:

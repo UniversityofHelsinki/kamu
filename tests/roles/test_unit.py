@@ -76,11 +76,15 @@ class RequirementsTests(TestData):
     def setUp(self):
         super().setUp()
         self.date_of_birth = self.role.requirements.create(
-            name_en="Date of birth", type="attribute", value="date_of_birth", level=2, grace=0
+            name_en="Date of birth",
+            type="attribute",
+            value="date_of_birth",
+            level=Identity.VerificationMethod.EXTERNAL,
+            grace=0,
         )
         self.nda = self.parent_role.requirements.create(name_en="nda", type="contract", value="nda", grace=0)
         self.assurance = self.account_permission.requirements.create(
-            name_en="Assurance", type="assurance", level="3", grace=0
+            name_en="Assurance", type="assurance", level=Identity.AssuranceLevel.HIGH, grace=0
         )
         self.email = self.licence_permission.requirements.create(
             name_en="Email", type="attribute", value="email_address", grace=0
@@ -117,7 +121,7 @@ class RequirementsTests(TestData):
         self.assertEqual(self.parent_role.get_requirements().count(), 2)
 
     def test_contract_version(self):
-        self.identity.assurance_level = 3
+        self.identity.assurance_level = Identity.AssuranceLevel.HIGH
         self.identity.save()
         self._create_contract()
         self.nda.level = 2
@@ -186,7 +190,7 @@ class RequirementsTests(TestData):
         missing = self.membership.get_missing_requirements()
         add_missing_requirement_messages(request, missing, self.identity)
         self.assertEqual(
-            "Role requires higher assurance level: 3 (High, eIDAS substantial level or similar).",
+            f"Role requires higher assurance level: { Identity.AssuranceLevel.HIGH } (High, eIDAS substantial level or similar).",
             messages._queued_messages[0].message,
         )
         self.assertEqual(
