@@ -405,7 +405,7 @@ class Command(BaseCommand):
                 assurance_level = 3
             elif verification_level == 3:
                 assurance_level = 2
-            elif 2 <= verification_level <= 3:
+            elif 1 <= verification_level <= 2:
                 assurance_level = 1
             else:
                 assurance_level = 0
