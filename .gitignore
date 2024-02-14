@@ -29,3 +29,7 @@ coverage.xml
 
 # mypy
 .mypy_cache/
+
+# Dependency Check
+dependency-check-report.html
+dependency-check-report.json
