@@ -35,7 +35,7 @@ REQUIREMENTS: list = [
         "name_en": "NDA signed",
         "name_fi": "Salassapitositoumus allekirjoitettu",
         "name_sv": "Sekretessavtal undertecknat",
-        "type": "contract",
+        "type": Requirement.Type.CONTRACT,
         "value": "nda",
         "grace": 0,
     },
@@ -43,7 +43,7 @@ REQUIREMENTS: list = [
         "name_en": "Secret contract signed",
         "name_fi": "Salainen sopimus allekirjoitettu",
         "name_sv": "Hemligt kontrakt undertecknat",
-        "type": "contract",
+        "type": Requirement.Type.CONTRACT,
         "value": "secretcontract",
         "grace": 0,
     },
@@ -51,7 +51,7 @@ REQUIREMENTS: list = [
         "name_en": "Phone number given",
         "name_fi": "Puhelinnumero annettu",
         "name_sv": "Telefonnummer angivet",
-        "type": "attribute",
+        "type": Requirement.Type.ATTRIBUTE,
         "value": "phone_number",
         "grace": 30,
     },
@@ -284,7 +284,7 @@ class Command(BaseCommand):
                 cost=permission["cost"],
             )
             if created and perm.identifier == "useraccount":
-                perm.requirements.add(Requirement.objects.get(type="contract", value="nda"))
+                perm.requirements.add(Requirement.objects.get(type=Requirement.Type.CONTRACT, value="nda"))
 
     def create_roles(self) -> None:
         """
@@ -333,7 +333,7 @@ class Command(BaseCommand):
                 if created:
                     for requirement in role["requirements"]:
                         reqtype, reqvalue = requirement.split(":", 1)
-                        req = Requirement.objects.filter(type=reqtype, value=reqvalue).first()
+                        req = Requirement.objects.filter(type=Requirement.Type(reqtype), value=reqvalue).first()
                         if req:
                             s_role.requirements.add(req)
                 permission = Permission.objects.get_or_create(

@@ -285,14 +285,13 @@ class Requirement(models.Model):
     name_en = models.CharField(max_length=50, verbose_name=_("Requirement name (en)"))
     name_sv = models.CharField(max_length=50, verbose_name=_("Requirement name (sv)"))
 
-    TYPE_CHOICES = (
-        ("contract", _("Requires a signed contract of type (value)")),
-        ("attribute", _("User attribute (value) is defined")),
-        ("assurance", _("Assurance level at least the level")),
-        ("external", _("External requirement")),
-    )
+    class Type(models.TextChoices):
+        CONTRACT = ("contract", _("Requires a signed contract of type (value)"))
+        ATTRIBUTE = ("attribute", _("User attribute (value) is defined"))
+        ASSURANCE = ("assurance", _("Assurance level at least the level"))
+        EXTERNAL = ("external", _("External requirement"))
 
-    type = models.CharField(max_length=20, choices=TYPE_CHOICES, verbose_name=_("Requirement type"))
+    type = models.CharField(max_length=20, choices=Type.choices, verbose_name=_("Requirement type"))
     value = models.CharField(
         blank=True,
         max_length=255,
@@ -356,12 +355,12 @@ class Requirement(models.Model):
         """
         from identity.models import Identity
 
-        if self.type == "contract":
+        if self.type == Requirement.Type.CONTRACT:
             if not self.value:
                 raise ValidationError({"value": [_("Contract requirement needs contract type as a value")]})
             if self.level and self.level < 0:
                 raise ValidationError({"level": [_("Contract version must be positive integer")]})
-        if self.type == "assurance":
+        if self.type == Requirement.Type.ASSURANCE:
             min_assurance = Identity.AssuranceLevel.LOW
             max_assurance = Identity.AssuranceLevel.HIGH
             if min_assurance > int(self.level) or int(self.level) > max_assurance:
@@ -373,7 +372,7 @@ class Requirement(models.Model):
                         ]
                     }
                 )
-        if self.type == "attribute":
+        if self.type == Requirement.Type.ATTRIBUTE:
             if self.value not in ["phone_number", "email_address"]:
                 try:
                     Identity._meta.get_field(self.value)
@@ -403,15 +402,15 @@ class Requirement(models.Model):
 
         from identity.models import Identity
 
-        if self.type == "contract":
+        if self.type == Requirement.Type.CONTRACT:
             return identity.has_contract(self.value, self.level)
-        if self.type == "attribute":
+        if self.type == Requirement.Type.ATTRIBUTE:
             if self.value == "phone_number":
                 return identity.has_phone_number()
             if self.value == "email_address":
                 return identity.has_email_address()
             return identity.has_attribute(self.value, self.level)
-        if self.type == "assurance":
+        if self.type == Requirement.Type.ASSURANCE:
             return identity.has_assurance(Identity.AssuranceLevel(self.level))
         return False
 

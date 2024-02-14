@@ -146,16 +146,16 @@ def add_missing_requirement_messages(
         messages.add_message(request, messages.WARNING, message, extra_tags="safe")
 
     for requirement in missing_requirements:
-        if requirement.type == "assurance":
+        if requirement.type == Requirement.Type.ASSURANCE:
             level_text = Identity.get_assurance_level_display_by_value(requirement.level)
             messages.add_message(
                 request,
                 messages.WARNING,
                 _("Role requires higher assurance level: " + str(requirement.level) + " (" + level_text + ")."),
             )
-        elif requirement.type == "contract":
+        elif requirement.type == Requirement.Type.CONTRACT:
             _add_contract_message()
-        elif requirement.type == "attribute":
+        elif requirement.type == Requirement.Type.ATTRIBUTE:
             _add_attribute_message()
         else:
             messages.add_message(

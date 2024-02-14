@@ -11,7 +11,7 @@ from django.test import RequestFactory, TestCase, override_settings
 from django.utils import timezone
 
 from identity.models import Contract, ContractTemplate, Identity
-from role.models import Membership, Permission, Role
+from role.models import Membership, Permission, Requirement, Role
 from role.utils import add_missing_requirement_messages
 
 User = get_user_model()
@@ -77,17 +77,19 @@ class RequirementsTests(TestData):
         super().setUp()
         self.date_of_birth = self.role.requirements.create(
             name_en="Date of birth",
-            type="attribute",
+            type=Requirement.Type.ATTRIBUTE,
             value="date_of_birth",
             level=Identity.VerificationMethod.EXTERNAL,
             grace=0,
         )
-        self.nda = self.parent_role.requirements.create(name_en="nda", type="contract", value="nda", grace=0)
+        self.nda = self.parent_role.requirements.create(
+            name_en="nda", type=Requirement.Type.CONTRACT, value="nda", grace=0
+        )
         self.assurance = self.account_permission.requirements.create(
-            name_en="Assurance", type="assurance", level=Identity.AssuranceLevel.HIGH, grace=0
+            name_en="Assurance", type=Requirement.Type.ASSURANCE, level=Identity.AssuranceLevel.HIGH, grace=0
         )
         self.email = self.licence_permission.requirements.create(
-            name_en="Email", type="attribute", value="email_address", grace=0
+            name_en="Email", type=Requirement.Type.ATTRIBUTE, value="email_address", grace=0
         )
         self.identity = Identity.objects.create(given_names="Test User")
         self.membership = Membership.objects.create(
