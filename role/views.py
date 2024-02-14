@@ -68,7 +68,7 @@ class RoleJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateFo
             messages.add_message(request, messages.WARNING, _("You need to create an identity first."))
             return redirect("role-detail", pk=kwargs.pop("role_pk"))
         try:
-            membership = Membership.objects.get(identity=user.identity, role=role, status="active")
+            membership = Membership.objects.get(identity=user.identity, role=role, status=Membership.Status.ACTIVE)
             messages.add_message(request, messages.WARNING, _("You are already a member of this role."))
             return redirect("membership-detail", pk=membership.pk)
         except Membership.DoesNotExist:

@@ -472,7 +472,11 @@ class Command(BaseCommand):
                         days=random.randint(0, role.maximum_duration)
                     )
                     expire_date = start_date + datetime.timedelta(days=random.randint(0, role.maximum_duration))
-                    status = "expired" if expire_date < datetime.datetime.today() else "active"
+                    status = (
+                        Membership.Status.EXPIRED
+                        if expire_date < datetime.datetime.today()
+                        else Membership.Status.ACTIVE
+                    )
                     approver = None
                     if random.randint(0, 100) < 90:
                         inviter = user_inviter

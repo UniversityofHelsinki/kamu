@@ -443,16 +443,16 @@ class Membership(models.Model):
     identity = models.ForeignKey("identity.Identity", blank=True, null=True, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
 
-    STATUS_CHOICES = (
-        ("invited", _("Invited")),
-        ("require", _("Waiting requirements")),
-        ("approval", _("Waiting approval")),
-        ("pending", _("Pending")),
-        ("active", _("Active")),
-        ("expired", _("Expired")),
-    )
+    class Status(models.TextChoices):
+        INVITED = ("invited", _("Invited"))
+        REQUIRE = ("require", _("Waiting requirements"))
+        APPROVAL = ("approval", _("Waiting approval"))
+        PENDING = ("pending", _("Pending"))
+        ACTIVE = ("active", _("Active"))
+        EXPIRED = ("expired", _("Expired"))
+
     invite_email_address = models.EmailField(blank=True, null=True, verbose_name=_("Invite email address"))
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, verbose_name=_("Membership status"))
+    status = models.CharField(max_length=10, choices=Status.choices, verbose_name=_("Membership status"))
     approver = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="membership_approver", on_delete=models.SET_NULL, null=True, blank=True
     )
@@ -538,17 +538,17 @@ class Membership(models.Model):
         Sets membership status.
         """
         if timezone.now().date() > self.expire_date:
-            self.status = "expired"
+            self.status = Membership.Status.EXPIRED
         elif not self.identity:
-            self.status = "invited"
-        elif not self.test_requirements(allow_grace=self.status == "active"):
-            self.status = "require"
+            self.status = Membership.Status.INVITED
+        elif not self.test_requirements(allow_grace=self.status == Membership.Status.ACTIVE):
+            self.status = Membership.Status.REQUIRE
         elif not self.approver:
-            self.status = "approval"
+            self.status = Membership.Status.APPROVAL
         elif timezone.now().date() < self.start_date:
-            self.status = "pending"
+            self.status = Membership.Status.PENDING
         else:
-            self.status = "active"
+            self.status = Membership.Status.ACTIVE
 
     def save(self, *args: Any, **kwargs: Any) -> None:
         """

@@ -172,15 +172,15 @@ class RequirementsTests(TestData):
         self.nda.grace = 1
         self.nda.save()
         self.parent_membership.set_status()
-        self.assertEqual(self.parent_membership.status, "require")
-        self.parent_membership.status = "active"
+        self.assertEqual(self.parent_membership.status, Membership.Status.REQUIRE)
+        self.parent_membership.status = Membership.Status.ACTIVE
         self.parent_membership.requirements_failed_at = timezone.now() - datetime.timedelta(days=1, hours=-1)
         self.parent_membership.set_status()
         self.assertIsNotNone(self.parent_membership.requirements_failed_at)
-        self.assertEqual(self.parent_membership.status, "active")
+        self.assertEqual(self.parent_membership.status, Membership.Status.ACTIVE)
         self.parent_membership.requirements_failed_at = timezone.now() - datetime.timedelta(days=2, hours=-1)
         self.parent_membership.set_status()
-        self.assertEqual(self.parent_membership.status, "require")
+        self.assertEqual(self.parent_membership.status, Membership.Status.REQUIRE)
 
     def test_message_generation(self):
         factory = RequestFactory()
