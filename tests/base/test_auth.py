@@ -28,7 +28,9 @@ class ShibbolethBackendTests(TestCase):
     def setUp(self):
         self.user = UserModel.objects.create(username="testuser@example.org")
         self.identity = Identity.objects.create(user=self.user)
-        self.identifier = Identifier.objects.create(identity=self.identity, type="eppn", value="testuser@example.org")
+        self.identifier = Identifier.objects.create(
+            identity=self.identity, type=Identifier.Type.EPPN, value="testuser@example.org"
+        )
         self.factory = RequestFactory()
         self.request = self.factory.get(reverse("login-shibboleth"))
         self.request.user = AnonymousUser()
@@ -72,7 +74,9 @@ class ShibbolethBackendTests(TestCase):
         user = backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(user.username, "newuser@example.org")
         self.assertEqual(user.identity.assurance_level, Identity.AssuranceLevel.LOW)
-        self.assertEqual(Identifier.objects.get(type="eppn", value="newuser@example.org").identity, user.identity)
+        self.assertEqual(
+            Identifier.objects.get(type=Identifier.Type.EPPN, value="newuser@example.org").identity, user.identity
+        )
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Created user newuser@example.org", extra=ANY),
@@ -178,7 +182,9 @@ class GoogleBackendTests(TestCase):
     def setUp(self):
         self.user = UserModel.objects.create(username="testuser@example.org")
         self.identity = Identity.objects.create(user=self.user)
-        self.identifier = Identifier.objects.create(identity=self.identity, value="1234567890", type="google")
+        self.identifier = Identifier.objects.create(
+            identity=self.identity, value="1234567890", type=Identifier.Type.GOOGLE
+        )
         self.factory = RequestFactory()
 
     def test_login_google_with_existing_user(self):
@@ -201,7 +207,7 @@ class GoogleBackendTests(TestCase):
     def test_login_google_create_user_existing_identifier(self):
         request = self.factory.get(reverse("login-google"))
         identity = Identity.objects.create()
-        Identifier.objects.create(identity=identity, value="0123456789", type="google")
+        Identifier.objects.create(identity=identity, value="0123456789", type=Identifier.Type.GOOGLE)
         request.user = AnonymousUser()
         request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
@@ -242,7 +248,7 @@ class GoogleBackendTests(TestCase):
         request = self.factory.get(reverse("login-google"))
         request.user = self.user
         identity = Identity.objects.create()
-        Identifier.objects.create(identity=identity, value="0123456789", type="google")
+        Identifier.objects.create(identity=identity, value="0123456789", type=Identifier.Type.GOOGLE)
         request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
         with self.assertRaises(AuthenticationError) as e:
@@ -259,7 +265,9 @@ class SuomiFiBackendTests(TestCase):
     def setUp(self):
         self.user = UserModel.objects.create(username="testuser@example.org")
         self.identity = Identity.objects.create(user=self.user)
-        self.identifier = Identifier.objects.create(identity=self.identity, value="010181-900C", type="fpic")
+        self.identifier = Identifier.objects.create(
+            identity=self.identity, value="010181-900C", type=Identifier.Type.FPIC
+        )
         self.factory = RequestFactory()
 
     @override_settings(ALLOW_TEST_FPIC=True)
@@ -277,7 +285,7 @@ class SuomiFiBackendTests(TestCase):
     def test_login_with_eidas_identifier(self):
         request = self.factory.get(reverse("login-suomifi"))
         request.user = AnonymousUser()
-        Identifier.objects.create(identity=self.identity, value="ES/FI/abcdefg", type="eidas")
+        Identifier.objects.create(identity=self.identity, value="ES/FI/abcdefg", type=Identifier.Type.EIDAS)
         request.META = {settings.SAML_EIDAS_IDENTIFIER: "ES/FI/abcdefg", settings.SAML_EIDAS_DATEOFBIRTH: "1982-03-04"}
         backend = SuomiFiBackend()
         user = backend.authenticate(request=request, create_user=False)
@@ -287,7 +295,7 @@ class SuomiFiBackendTests(TestCase):
     @override_settings(EIDAS_IDENTIFIER_REGEX="^[A-Z]{2}/FI/.+$")
     def test_login_eidas_with_invalid_identifier(self):
         request = self.factory.get(reverse("login-suomifi"))
-        Identifier.objects.create(identity=self.identity, value="ES/ES/abcdefg", type="eidas")
+        Identifier.objects.create(identity=self.identity, value="ES/ES/abcdefg", type=Identifier.Type.EIDAS)
         request.META = {settings.SAML_EIDAS_IDENTIFIER: "ES/ES/abcdefg"}
         backend = SuomiFiBackend()
         with self.assertRaises(AuthenticationError) as e:

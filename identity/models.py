@@ -489,15 +489,15 @@ class Identifier(models.Model):
         related_name="identifiers",
     )
 
-    IDENTIFIER_CHOICES = (
-        ("fpic", _("Finnish national identification number")),
-        ("eidas", _("eIDAS identifier")),
-        ("eppn", _("eduPersonPrincipalName")),
-        ("google", _("Google account")),
-        ("microsoft", _("Microsoft account")),
-        ("kamu", _("Kamu identifier")),
-    )
-    type = models.CharField(max_length=10, choices=IDENTIFIER_CHOICES, verbose_name=_("Identifier type"))
+    class Type(models.TextChoices):
+        FPIC = ("fpic", _("Finnish national identification number"))
+        EIDAS = ("eidas", _("eIDAS identifier"))
+        EPPN = ("eppn", _("eduPersonPrincipalName"))
+        GOOGLE = ("google", _("Google account"))
+        MICROSOFT = ("microsoft", _("Microsoft account"))
+        KAMU = ("kamu", _("Kamu identifier"))
+
+    type = models.CharField(max_length=10, choices=Type.choices, verbose_name=_("Identifier type"))
     value = models.CharField(max_length=4000, verbose_name=_("Identifier value"))
     verified = models.BooleanField(default=False, verbose_name=_("Verified"))
 
@@ -654,7 +654,7 @@ class Contract(models.Model):
         """
         Validates the contract against all kamu_ids of the identity.
         """
-        other_ids = (i.value for i in Identifier.objects.filter(type="kamu", identity=self.identity))
+        other_ids = (i.value for i in Identifier.objects.filter(type=Identifier.Type.KAMU, identity=self.identity))
         for kamu_id in itertools.chain([self.identity.kamu_id], other_ids):
             if (
                 self.checksum

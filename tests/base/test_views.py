@@ -119,7 +119,7 @@ class LoginViewTests(BaseTestCase):
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
     def test_shibboleth_local_login(self):
-        Identifier.objects.create(type="eppn", value="testuser@example.org", identity=self.identity)
+        Identifier.objects.create(type=Identifier.Type.EPPN, value="testuser@example.org", identity=self.identity)
         url = reverse("login-shibboleth")
         response = self.client.get(url, follow=True, headers={"EPPN": "testuser@example.org"})
         self.assertEqual(response.status_code, 200)
@@ -132,7 +132,7 @@ class LoginViewTests(BaseTestCase):
     def test_shibboleth_local_login_with_owner_permissions(self):
         self.role.owner = self.user
         self.role.save()
-        Identifier.objects.create(type="eppn", value="testuser@example.org", identity=self.identity)
+        Identifier.objects.create(type=Identifier.Type.EPPN, value="testuser@example.org", identity=self.identity)
         url = reverse("login-shibboleth")
         self.client.get(url, follow=True, headers={"EPPN": "testuser@example.org"})
         self.assertEqual(self.user.user_permissions.count(), 2)
@@ -156,7 +156,7 @@ class LoginViewTests(BaseTestCase):
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
     def test_shibboleth_remote_login(self):
         url = reverse("login-edugain")
-        Identifier.objects.create(type="eppn", value="newuser@example.org", identity=self.identity)
+        Identifier.objects.create(type=Identifier.Type.EPPN, value="newuser@example.org", identity=self.identity)
         response = self.client.get(f"{url}?next=/identity/me", follow=True, headers={"EPPN": "newuser@example.org"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User</h1>", response.content.decode("utf-8"))
@@ -164,7 +164,7 @@ class LoginViewTests(BaseTestCase):
     @override_settings(OIDC_CLAIM_SUB="HTTP_SUB")
     def test_google_login(self):
         url = reverse("login-google")
-        Identifier.objects.create(type="google", value="1234567890", identity=self.identity)
+        Identifier.objects.create(type=Identifier.Type.GOOGLE, value="1234567890", identity=self.identity)
         response = self.client.get(f"{url}?next=/identity/me", follow=True, headers={"SUB": "1234567890"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User</h1>", response.content.decode("utf-8"))
@@ -180,7 +180,7 @@ class LoginViewTests(BaseTestCase):
     @override_settings(OIDC_MICROSOFT_ISSUER="HTTP_ISS")
     def _test_microsoft_login(self, iss, oid):
         url = reverse("login-microsoft")
-        Identifier.objects.create(type="microsoft", value=oid, identity=self.identity)
+        Identifier.objects.create(type=Identifier.Type.MICROSOFT, value=oid, identity=self.identity)
         response = self.client.get(
             f"{url}?next=/identity/me",
             follow=True,
@@ -205,7 +205,7 @@ class LoginViewTests(BaseTestCase):
     @override_settings(ALLOW_TEST_FPIC=True)
     def test_suomifi_login(self):
         url = reverse("login-suomifi")
-        Identifier.objects.create(type="fpic", value="010181-900C", identity=self.identity)
+        Identifier.objects.create(type=Identifier.Type.FPIC, value="010181-900C", identity=self.identity)
         response = self.client.get(f"{url}?next=/identity/me", follow=True, headers={"SSN": "010181-900C"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test User</h1>", response.content.decode("utf-8"))
@@ -683,7 +683,9 @@ class LinkIdentifierTests(TestCase):
         user = get_user_model()
         user2 = user.objects.create_user(username="testuser2", password="test_pass")
         identity2 = Identity.objects.create(user=user2, given_names="Test2", surname="User2")
-        Identifier.objects.create(type="eppn", value="localtest@example.org", identity=identity2, deactivated_at=None)
+        Identifier.objects.create(
+            type=Identifier.Type.EPPN, value="localtest@example.org", identity=identity2, deactivated_at=None
+        )
         url = reverse("login-shibboleth")
         response = self.client.get(url, follow=True, headers={"EPPN": "localtest@example.org"})
         self.assertEqual(response.status_code, 200)

@@ -441,7 +441,7 @@ class RoleInviteTests(BaseTestCase):
         self.assertEqual(identity.display_name(), "Ldap User")
         self.assertTrue(
             Identifier.objects.filter(
-                identity=identity, type="eppn", value=f"ldapuser{settings.LOCAL_EPPN_SUFFIX}"
+                identity=identity, type=Identifier.Type.EPPN, value=f"ldapuser{settings.LOCAL_EPPN_SUFFIX}"
             ).exists()
         )
         mock_logger.log.assert_has_calls(
@@ -458,7 +458,7 @@ class RoleInviteTests(BaseTestCase):
     @override_settings(ALLOW_TEST_FPIC=True)
     def test_join_role_with_ldap_existing_identity(self, mock_ldap):
         mock_ldap.return_value = MockLdapConn()
-        Identifier.objects.create(identity=self.identity, type="fpic", value="010181-900C")
+        Identifier.objects.create(identity=self.identity, type=Identifier.Type.FPIC, value="010181-900C")
         url = f"{self.url}ldap/ldapuser/"
         response = self.client.post(
             url,

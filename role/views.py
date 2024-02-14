@@ -602,7 +602,7 @@ class RoleInviteLdapView(BaseRoleInviteView):
             identity.fpic_verification = Identity.VerificationMethod.EXTERNAL
         identity.save()
         identifier, created = Identifier.objects.get_or_create(
-            type="eppn",
+            type=Identifier.Type.EPPN,
             value=f"{user['uid']}{settings.LOCAL_EPPN_SUFFIX}",
             identity=identity,
             deactivated_at=None,
@@ -618,7 +618,9 @@ class RoleInviteLdapView(BaseRoleInviteView):
                 log_to_db=True,
             )
         if fpic:
-            Identifier.objects.get_or_create(type="fpic", value=fpic, identity=identity, deactivated_at=None)
+            Identifier.objects.get_or_create(
+                type=Identifier.Type.FPIC, value=fpic, identity=identity, deactivated_at=None
+            )
         return identity
 
     def _check_existing_identity(self, user: dict) -> Identity | None:
@@ -633,7 +635,7 @@ class RoleInviteLdapView(BaseRoleInviteView):
             pass
         try:
             return Identifier.objects.get(
-                type="eppn",
+                type=Identifier.Type.EPPN,
                 value=f"{user['uid']}{settings.LOCAL_EPPN_SUFFIX}",
                 deactivated_at=None,
             ).identity
@@ -647,7 +649,7 @@ class RoleInviteLdapView(BaseRoleInviteView):
                 pass
             try:
                 return Identifier.objects.get(
-                    type="fpic",
+                    type=Identifier.Type.FPIC,
                     value=fpic,
                     deactivated_at=None,
                 ).identity

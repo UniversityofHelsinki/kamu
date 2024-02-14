@@ -293,7 +293,7 @@ class IdentifierTests(BaseTestCase):
         self.url = f"/identity/{self.identity.pk}/identifiers/"
         self.identifier = Identifier.objects.create(
             identity=self.identity,
-            type="eppn",
+            type=Identifier.Type.EPPN,
             value="identifier@example.org",
         )
         self.client = Client()
@@ -314,7 +314,7 @@ class IdentifierTests(BaseTestCase):
     def test_deactivate_identifier(self, mock_logger):
         Identifier.objects.create(
             identity=self.identity,
-            type="eppn",
+            type=Identifier.Type.EPPN,
             value="identifier@example.com",
         )
         self.assertIsNone(self.identifier.deactivated_at)
@@ -656,7 +656,7 @@ class ContractTests(BaseTestCase):
         contract.identity.kamu_id = uuid4()
         contract.identity.save()
         self.assertFalse(contract.validate())
-        Identifier.objects.create(identity=contract.identity, type="kamu", value=kamu_id)
+        Identifier.objects.create(identity=contract.identity, type=Identifier.Type.KAMU, value=kamu_id)
         self.assertTrue(contract.validate())
 
 
@@ -696,8 +696,8 @@ class IdentityCombineTests(BaseTestCase):
         EmailAddress.objects.create(identity=self.identity, address="test1@example.org", verified=True)
         EmailAddress.objects.create(identity=self.superidentity, address="supertest@example.org")
         EmailAddress.objects.create(identity=self.superidentity, address="test2@example.org")
-        Identifier.objects.create(identity=self.identity, type="eppn", value="test2@example.org")
-        Identifier.objects.create(identity=self.superidentity, type="eppn", value="super@example.org")
+        Identifier.objects.create(identity=self.identity, type=Identifier.Type.EPPN, value="test2@example.org")
+        Identifier.objects.create(identity=self.superidentity, type=Identifier.Type.EPPN, value="super@example.org")
         role2 = Role.objects.create(identifier="anotherrole", name_en="Another Role", maximum_duration=10)
         Membership.objects.create(
             role=self.role,
@@ -768,7 +768,9 @@ class IdentityCombineTests(BaseTestCase):
         self.assertEqual(self.superidentity.email_addresses.all().count(), 4)
         self.assertEqual(self.superidentity.contracts.all().count(), 3)
         self.assertEqual(self.superidentity.identifiers.all().count(), 3)
-        self.assertTrue(Identifier.objects.filter(identity=self.superidentity, type="kamu", value=kamu_id).exists())
+        self.assertTrue(
+            Identifier.objects.filter(identity=self.superidentity, type=Identifier.Type.KAMU, value=kamu_id).exists()
+        )
         with self.assertRaises(Identity.DoesNotExist):
             self.identity.refresh_from_db()
         with self.assertRaises(User.DoesNotExist):

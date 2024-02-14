@@ -200,7 +200,7 @@ def combine_identities(request: HttpRequest, primary_identity: Identity, seconda
     # Copy kamu_id as identifier to primary identity
     Identifier.objects.create(
         identity=primary_identity,
-        type="kamu",
+        type=Identifier.Type.KAMU,
         value=str(secondary_identity.kamu_id),
         created_at=secondary_identity.created_at,
         deactivated_at=timezone.now(),

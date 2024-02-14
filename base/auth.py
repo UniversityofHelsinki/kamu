@@ -16,6 +16,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User as UserType
 from django.core.exceptions import (
+    ImproperlyConfigured,
     MultipleObjectsReturned,
     ObjectDoesNotExist,
     ValidationError,
@@ -101,11 +102,11 @@ class LocalBaseBackend(BaseBackend):
         if backend not in settings.AUTHENTICATION_BACKENDS:
             raise Http404
 
-    def _get_identifier_type(self, request: HttpRequest) -> str:
+    def _get_identifier_type(self, request: HttpRequest) -> Identifier.Type:
         """
         Get identifier type. Values from the Identifier model choices.
         """
-        return ""
+        raise ImproperlyConfigured("LocalBaseBackend should not be used directly")
 
     @staticmethod
     def _get_username_suffix() -> str:
@@ -353,7 +354,7 @@ class LocalBaseBackend(BaseBackend):
         raise AuthenticationError(self.error_messages["identity_already_exists"])
 
     def _authenticate_create_user(
-        self, request: HttpRequest, identifier_type: str, unique_identifier: str
+        self, request: HttpRequest, identifier_type: Identifier.Type, unique_identifier: str
     ) -> UserType:
         """
         Creating a new user, or logging in with an existing user.
@@ -381,7 +382,7 @@ class LocalBaseBackend(BaseBackend):
         raise AuthenticationError(self.error_messages["unexpected"])
 
     def _authenticate_link_identifier(
-        self, request: HttpRequest, identifier_type: str, unique_identifier: str
+        self, request: HttpRequest, identifier_type: Identifier.Type, unique_identifier: str
     ) -> UserType:
         """
         Link identifier to user
@@ -451,11 +452,11 @@ class ShibbolethBaseBackend(LocalBaseBackend):
     - Updates groups with prefixes in SAML_ATTR_GROUPS.
     """
 
-    def _get_identifier_type(self, request: HttpRequest) -> str:
+    def _get_identifier_type(self, request: HttpRequest) -> Identifier.Type:
         """
         Get identifier type. Values from the Identifier model choices.
         """
-        return "eppn"
+        return Identifier.Type.EPPN
 
     @staticmethod
     def _get_assurance_level(request: HttpRequest) -> Identity.AssuranceLevel:
@@ -593,15 +594,15 @@ class SuomiFiBackend(LocalBaseBackend):
             return "eidas"
         raise AuthenticationError(self.error_messages["identifier_missing"])
 
-    def _get_identifier_type(self, request: HttpRequest) -> str:
+    def _get_identifier_type(self, request: HttpRequest) -> Identifier.Type:
         """
         Get identifier type. Values from the Identifier model choices.
         """
         identifier_type = self._get_type(request)
         if identifier_type == "suomifi":
-            return "fpic"
+            return Identifier.Type.FPIC
         else:
-            return identifier_type
+            return Identifier.Type(identifier_type)
 
     @staticmethod
     def _get_assurance_level(request: HttpRequest) -> Identity.AssuranceLevel:
@@ -742,11 +743,11 @@ class GoogleBackend(LocalBaseBackend):
     if same identifier does not already exist in the database for some other user.
     """
 
-    def _get_identifier_type(self, request: HttpRequest) -> str:
+    def _get_identifier_type(self, request: HttpRequest) -> Identifier.Type:
         """
         Get identifier type. Values from the Identifier model choices.
         """
-        return "google"
+        return Identifier.Type.GOOGLE
 
     @staticmethod
     def _get_username_suffix() -> str:
@@ -778,11 +779,11 @@ class MicrosoftBackend(LocalBaseBackend):
     Backend for Microsoft authentication.
     """
 
-    def _get_identifier_type(self, request: HttpRequest) -> str:
+    def _get_identifier_type(self, request: HttpRequest) -> Identifier.Type:
         """
         Get identifier type. Values from the Identifier model choices.
         """
-        return "microsoft"
+        return Identifier.Type.MICROSOFT
 
     @staticmethod
     def _get_username_suffix() -> str:
