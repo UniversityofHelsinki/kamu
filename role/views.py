@@ -44,7 +44,7 @@ from role.utils import (
 audit_log = AuditLog()
 
 
-class RoleJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateForm]):
+class MembershipJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateForm]):
     """
     View for joining a role.
     """
@@ -385,7 +385,7 @@ class RoleDetailView(LoginRequiredMixin, DetailView[Role]):
         return context
 
 
-class RoleInviteIdentitySearch(IdentitySearchView):
+class MembershipInviteIdentitySearch(IdentitySearchView):
     """
     Subclass of IdentitySearchView for adding identities to role.
     """
@@ -423,7 +423,9 @@ class RoleInviteIdentitySearch(IdentitySearchView):
         return context
 
 
-class BaseRoleInviteView(LoginRequiredMixin, CreateView[Membership, MembershipCreateForm | MembershipEmailCreateForm]):
+class BaseMembershipInviteView(
+    LoginRequiredMixin, CreateView[Membership, MembershipCreateForm | MembershipEmailCreateForm]
+):
     """
     Base view for inviting a user to a role.
     """
@@ -460,7 +462,7 @@ class BaseRoleInviteView(LoginRequiredMixin, CreateView[Membership, MembershipCr
         return kwargs
 
 
-class RoleInviteView(BaseRoleInviteView):
+class MembershipInviteView(BaseMembershipInviteView):
     """
     Invite view for identities found in the registry.
     """
@@ -502,7 +504,7 @@ class RoleInviteView(BaseRoleInviteView):
         return valid
 
 
-class RoleInviteLdapView(BaseRoleInviteView):
+class MembershipInviteLdapView(BaseMembershipInviteView):
     """
     Invite view for identities found in the LDAP.
     """
@@ -709,7 +711,7 @@ class RoleInviteLdapView(BaseRoleInviteView):
         return valid
 
 
-class RoleInviteEmailView(BaseRoleInviteView):
+class MembershipInviteEmailView(BaseMembershipInviteView):
     """
     View for inviting a user to a role with an email-address.
     """
