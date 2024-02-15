@@ -46,14 +46,14 @@ from base.auth import (
 from base.connectors.email import send_verification_email
 from base.connectors.sms import SmsConnector
 from base.forms import (
-    EmailAddressVerificationForm,
-    EmailPhoneForm,
-    EmailPhoneVerificationForm,
     InviteTokenForm,
+    LoginEmailPhoneForm,
+    LoginEmailPhoneVerificationForm,
     LoginForm,
-    PhoneNumberForm,
-    PhoneNumberVerificationForm,
+    RegistrationEmailAddressVerificationForm,
     RegistrationForm,
+    RegistrationPhoneNumberForm,
+    RegistrationPhoneNumberVerificationForm,
 )
 from base.models import TimeLimitError, Token
 from base.utils import AuditLog
@@ -101,7 +101,7 @@ class InviteView(FormView):
         return super().form_valid(form)
 
 
-class BaseRegisterView(View):
+class BaseRegistrationView(View):
     """
     Base class for registration views.
     """
@@ -158,7 +158,7 @@ class BaseRegisterView(View):
             return False
 
 
-class RegisterView(BaseRegisterView, FormView):
+class RegistrationView(BaseRegistrationView, FormView):
     """
     Registration view. Start Email and SMS registration process or forward to external methods.
     """
@@ -181,13 +181,13 @@ class RegisterView(BaseRegisterView, FormView):
         return redirect("login-register-email-verify")
 
 
-class VerifyEmailAddressView(BaseRegisterView, FormView):
+class RegistrationEmailAddressVerificationView(BaseRegistrationView, FormView):
     """
     Registration view for verifying email address.
     """
 
     template_name = "register_form.html"
-    form_class = EmailAddressVerificationForm
+    form_class = RegistrationEmailAddressVerificationForm
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """
@@ -215,7 +215,7 @@ class VerifyEmailAddressView(BaseRegisterView, FormView):
             return redirect("login-register-email-verify")
         return super().post(request, *args, **kwargs)
 
-    def form_valid(self, form: EmailAddressVerificationForm) -> HttpResponse:
+    def form_valid(self, form: RegistrationEmailAddressVerificationForm) -> HttpResponse:
         """
         Create and send a code when loading a page.
         """
@@ -224,13 +224,13 @@ class VerifyEmailAddressView(BaseRegisterView, FormView):
         return redirect("login-register-phone")
 
 
-class RegisterPhoneNumberView(BaseRegisterView, FormView):
+class RegistrationPhoneNumberView(BaseRegistrationView, FormView):
     """
     Registration view for asking a phone number.
     """
 
     template_name = "register_form.html"
-    form_class = PhoneNumberForm
+    form_class = RegistrationPhoneNumberForm
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """
@@ -240,7 +240,7 @@ class RegisterPhoneNumberView(BaseRegisterView, FormView):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form: PhoneNumberForm) -> HttpResponse:
+    def form_valid(self, form: RegistrationPhoneNumberForm) -> HttpResponse:
         """
         Create and send a code when loading a page.
         """
@@ -251,13 +251,13 @@ class RegisterPhoneNumberView(BaseRegisterView, FormView):
         return redirect("login-register-phone-verify")
 
 
-class VerifyPhoneNumberView(BaseRegisterView, FormView):
+class RegistrationPhoneNumberVerificationView(BaseRegistrationView, FormView):
     """
     Registration view for verifying phone number.
     """
 
     template_name = "register_form.html"
-    form_class = PhoneNumberVerificationForm
+    form_class = RegistrationPhoneNumberVerificationForm
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """
@@ -286,7 +286,7 @@ class VerifyPhoneNumberView(BaseRegisterView, FormView):
             return redirect("login-register-phone-verify")
         return super().post(request, *args, **kwargs)
 
-    def form_valid(self, form: PhoneNumberVerificationForm) -> HttpResponse:
+    def form_valid(self, form: RegistrationPhoneNumberVerificationForm) -> HttpResponse:
         """
         Create a new user identity with the linked user. Set basic information from the registration forms.
         """
@@ -360,7 +360,7 @@ class VerifyPhoneNumberView(BaseRegisterView, FormView):
         return redirect("identity-detail", pk=identity.id)
 
 
-class RemoteLoginView(View):
+class BaseRemoteLoginView(View):
     """
     Base class for remote login views.
 
@@ -495,7 +495,7 @@ class RemoteLoginView(View):
         return HttpResponseRedirect(redirect_to)
 
 
-class ShibbolethLocalLoginView(RemoteLoginView):
+class LoginShibbolethLocalView(BaseRemoteLoginView):
     """
     LoginView to authenticate user with local Shibboleth.
     Create user if it does not exist yet.
@@ -529,7 +529,7 @@ class ShibbolethLocalLoginView(RemoteLoginView):
         return user
 
 
-class ShibbolethEdugainLoginView(RemoteLoginView):
+class LoginShibbolethEdugainView(BaseRemoteLoginView):
     """
     LoginView to authenticate user with eduGAIN Shibboleth.
     """
@@ -537,7 +537,7 @@ class ShibbolethEdugainLoginView(RemoteLoginView):
     backend_class = ShibbolethEdugainBackend
 
 
-class ShibbolethHakaLoginView(RemoteLoginView):
+class LoginShibbolethHakaView(BaseRemoteLoginView):
     """
     LoginView to authenticate user with Haka Shibboleth.
     """
@@ -545,7 +545,7 @@ class ShibbolethHakaLoginView(RemoteLoginView):
     backend_class = ShibbolethHakaBackend
 
 
-class SuomiFiLoginView(RemoteLoginView):
+class LoginSuomiFiView(BaseRemoteLoginView):
     """
     LoginView to authenticate user with Suomi.fi and eIDAS.
     """
@@ -553,7 +553,7 @@ class SuomiFiLoginView(RemoteLoginView):
     backend_class = SuomiFiBackend
 
 
-class GoogleLoginView(RemoteLoginView):
+class LoginGoogleView(BaseRemoteLoginView):
     """
     LoginView to authenticate user with Google.
     """
@@ -561,7 +561,7 @@ class GoogleLoginView(RemoteLoginView):
     backend_class = GoogleBackend
 
 
-class MicrosoftLoginView(RemoteLoginView):
+class LoginMicrosoftView(BaseRemoteLoginView):
     """
     LoginView to authenticate user with Microsoft.
     """
@@ -569,15 +569,15 @@ class MicrosoftLoginView(RemoteLoginView):
     backend_class = MicrosoftBackend
 
 
-class EmailPhoneLoginView(FormView):
+class LoginEmailPhoneView(FormView):
     """
     View to ask email address and phone number for login.
     """
 
-    form_class = EmailPhoneForm
+    form_class = LoginEmailPhoneForm
     template_name = "login_email.html"
 
-    def form_valid(self, form: EmailPhoneForm) -> HttpResponse:
+    def form_valid(self, form: LoginEmailPhoneForm) -> HttpResponse:
         """
         Set session variables and redirect to verification form.
         """
@@ -591,12 +591,12 @@ class EmailPhoneLoginView(FormView):
         return response
 
 
-class EmailPhoneLoginVerificationView(LoginView):
+class LoginEmailPhoneVerificationView(LoginView):
     """
     LoginView to with email address and phone number verification.
     """
 
-    form_class = EmailPhoneVerificationForm
+    form_class = LoginEmailPhoneVerificationForm
     template_name = "login_email_verify.html"
 
     @method_decorator(sensitive_post_parameters())

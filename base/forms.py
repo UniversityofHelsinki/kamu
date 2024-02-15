@@ -28,7 +28,7 @@ from identity.validators import validate_phone_number
 from role.models import Membership
 
 
-class EmailPhoneForm(forms.Form):
+class LoginEmailPhoneForm(forms.Form):
     """
     Form for e-mail and SMS login.
     """
@@ -85,7 +85,7 @@ class EmailPhoneForm(forms.Form):
         raise ValidationError(_("Invalid email address or phone number."))
 
 
-class EmailPhoneVerificationForm(AuthenticationForm):
+class LoginEmailPhoneVerificationForm(AuthenticationForm):
     """
     Form for e-mail and SMS login verification.
     """
@@ -216,9 +216,9 @@ class RegistrationForm(forms.Form):
         return cleaned_data
 
 
-class EmailAddressVerificationForm(forms.Form):
+class RegistrationEmailAddressVerificationForm(forms.Form):
     """
-    Email address verification form
+    Email address verification form for login process
     """
 
     code = forms.CharField(label=_("E-mail verification code"), max_length=20, required=False)
@@ -247,7 +247,7 @@ class EmailAddressVerificationForm(forms.Form):
         return code
 
 
-class PhoneNumberForm(forms.Form):
+class RegistrationPhoneNumberForm(forms.Form):
     """
     Phone number form
     """
@@ -273,9 +273,9 @@ class PhoneNumberForm(forms.Form):
         return number
 
 
-class PhoneNumberVerificationForm(forms.Form):
+class RegistrationPhoneNumberVerificationForm(forms.Form):
     """
-    Phone number verification form
+    Phone number verification form for login process
     """
 
     code = forms.CharField(label=_("SMS verification code"), max_length=20, required=False)
