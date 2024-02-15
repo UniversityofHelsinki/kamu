@@ -14,10 +14,10 @@ from django.test import Client, RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
-from base.models import Token
-from base.utils import set_default_permissions
-from identity.models import Identifier, Identity, PhoneNumber
-from role.models import Membership, Role
+from kamu.models.base import Token
+from kamu.models.identity import Identifier, Identity, PhoneNumber
+from kamu.models.role import Membership, Role
+from kamu.utils.base import set_default_permissions
 from tests.setup import BaseTestCase
 
 UserModel = get_user_model()
@@ -97,7 +97,7 @@ class LoginViewTests(BaseTestCase):
         self.assertIn("Haka federation login", response.content.decode("utf-8"))
         self.assertIn("Login with a username and password", response.content.decode("utf-8"))
 
-    @override_settings(AUTHENTICATION_BACKENDS=["base.auth.ShibbolethLocalBackend"])
+    @override_settings(AUTHENTICATION_BACKENDS=["kamu.auth.ShibbolethLocalBackend"])
     def test_login_view_disable_methods(self):
         url = reverse("login")
         response = self.client.get(url, follow=True)
@@ -125,7 +125,7 @@ class LoginViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(self.user.is_authenticated)
         self.assertEqual(self.user.user_permissions.count(), 0)
-        self.assertEqual(self.client.session.get("external_login_backends"), "base.auth.ShibbolethLocalBackend;")
+        self.assertEqual(self.client.session.get("external_login_backends"), "kamu.auth.ShibbolethLocalBackend;")
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
@@ -211,7 +211,7 @@ class LoginViewTests(BaseTestCase):
         self.assertIn("Test User</h1>", response.content.decode("utf-8"))
 
     @override_settings(SMS_DEBUG=True)
-    @mock.patch("base.connectors.sms.logger")
+    @mock.patch("kamu.connectors.sms.logger")
     def test_email_login(self, mock_logger):
         phone_number = PhoneNumber.objects.create(identity=self.identity, number="+123456789", verified=True)
         self.email_address.verified = True
@@ -285,7 +285,7 @@ class LoginViewTests(BaseTestCase):
 
     @override_settings(TOKEN_TIME_LIMIT_NEW=0)
     @override_settings(SMS_DEBUG=True)
-    @mock.patch("base.connectors.sms.logger")
+    @mock.patch("kamu.connectors.sms.logger")
     def test_email_login_resend_phone_token(self, mock_logger):
         self._test_email_login_verification()
         self.client.post(
@@ -322,7 +322,7 @@ class LoginViewTests(BaseTestCase):
         response = self.client.get(url, follow=True, headers={"EPPN": "testuser@example.org"})
         self.assertEqual(response.status_code, 404)
 
-    @override_settings(AUTHENTICATION_BACKENDS=["base.auth.ShibbolethLocalBackend"])
+    @override_settings(AUTHENTICATION_BACKENDS=["kamu.auth.ShibbolethLocalBackend"])
     def test_disabled_password_login(self):
         url = reverse("login-local")
         response = self.client.get(url, follow=True)
@@ -355,13 +355,13 @@ class LogoutViewTests(BaseTestCase):
         self.client.force_login(self.user)
         self.assertEqual(self.client.session.get("_auth_user_backend"), "django.contrib.auth.backends.ModelBackend")
         self.session = self.client.session
-        self.session["external_login_backends"] = "base.auth.ShibbolethLocalBackend;base.auth.GoogleBackend;"
+        self.session["external_login_backends"] = "kamu.auth.ShibbolethLocalBackend;kamu.auth.GoogleBackend;"
         self.session.save()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Logout warning", response.content.decode("utf-8"))
         self.assertEqual(self.client.session.get("_auth_user_id"), str(self.user.pk))
-        self.assertEqual(self.client.session.get("_auth_user_backend"), "base.auth.ShibbolethLocalBackend")
+        self.assertEqual(self.client.session.get("_auth_user_backend"), "kamu.auth.ShibbolethLocalBackend")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
         self.assertIn("/", response.url)
@@ -373,7 +373,7 @@ class LogoutViewTests(BaseTestCase):
     def test_logout_saml(self):
         self.client.force_login(self.user)
         self.session = self.client.session
-        self.session["_auth_user_backend"] = "base.auth.ShibbolethLocalBackend"
+        self.session["_auth_user_backend"] = "kamu.auth.ShibbolethLocalBackend"
         self.session.save()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
@@ -387,7 +387,7 @@ class LogoutViewTests(BaseTestCase):
         self.client.force_login(self.user)
         self.assertEqual(self.client.session["_auth_user_id"], str(self.user.pk))
         self.session = self.client.session
-        self.session["_auth_user_backend"] = "base.auth.GoogleBackend"
+        self.session["_auth_user_backend"] = "kamu.auth.GoogleBackend"
         self.session.save()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
@@ -513,7 +513,7 @@ class RegistrationViewTests(TestCase):
         response = self.client.post(url, data={"phone_number": "+123456789"}, follow=True)
         self.assertEqual(response.status_code, 403)
 
-    @mock.patch("base.views.SmsConnector")
+    @mock.patch("kamu.views.base.SmsConnector")
     def test_registration_phone_number(self, mock_connector):
         mock_connector.return_value.send_sms.return_value = True
         url = reverse("login-register-phone")
@@ -539,7 +539,7 @@ class RegistrationViewTests(TestCase):
         self.assertTrue(hasattr(identity, "user"))
         self.assertEqual(response.url, reverse("identity-detail", kwargs={"pk": identity.pk}))
 
-    @mock.patch("base.views.SmsConnector")
+    @mock.patch("kamu.views.base.SmsConnector")
     def test_verify_phone_number_resend_code(self, mock_connector):
         mock_connector.return_value.send_sms.return_value = True
         url = reverse("login-register-phone-verify")
@@ -644,7 +644,7 @@ class LinkIdentifierTests(TestCase):
         )
 
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_link_haka_identifier(self, mock_logger):
         url = reverse("login-haka") + "?next=" + reverse("identity-identifier", kwargs={"pk": self.identity.pk})
         response = self.client.get(url, follow=True, headers={"EPPN": "haka@example.com"})

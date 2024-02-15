@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+  <h1 class="mb-4">{% trans "Error" %}</h1>
+  {% if message %}
+    <p>{% trans "Error" %}: {{ message }}</p>
+  {% endif %}
+  <p><a href="{% url 'front-page' %}">{% trans "Return to front page." %}</a></p>
+{% endblock %}

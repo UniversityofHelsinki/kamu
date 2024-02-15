@@ -12,10 +12,10 @@ from django.core import mail
 from django.test import Client, override_settings
 from django.utils import timezone
 
-from base.utils import set_default_permissions
-from identity.models import Identifier, Identity
-from role.models import Membership, Role
-from role.views import RoleListApproverView, RoleListInviterView, RoleListOwnerView
+from kamu.models.identity import Identifier, Identity
+from kamu.models.role import Membership, Role
+from kamu.utils.base import set_default_permissions
+from kamu.views.role import RoleListApproverView, RoleListInviterView, RoleListOwnerView
 from tests.setup import BaseTestCase
 from tests.utils import MockLdapConn
 
@@ -113,7 +113,7 @@ class MembershipViewTests(BaseTestCase):
         )
         self.assertEqual(response.status_code, 403)
 
-    @patch("base.utils.logger_audit")
+    @patch("kamu.utils.base.logger_audit")
     def test_edit_membership(self, mock_logger):
         self.role.approvers.add(self.group)
         url = f"{self.url}change/"
@@ -155,7 +155,7 @@ class MembershipViewTests(BaseTestCase):
         self.assertEqual(self.membership.start_date, timezone.now().date())
         self.assertEqual(self.membership.expire_date, expire_date)
 
-    @patch("base.utils.logger_audit")
+    @patch("kamu.utils.base.logger_audit")
     def test_end_membership(self, mock_logger):
         response = self.client.post(self.url, {"end_membership": "end"}, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -252,7 +252,7 @@ class RoleJoinTests(BaseTestCase):
             follow=True,
         )
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_join_role(self, mock_logger):
         group = Group.objects.create(name="approver")
         self.user.groups.add(group)
@@ -338,7 +338,7 @@ class RoleInviteTests(BaseTestCase):
         self.role.inviters.add(self.group)
         self.user.groups.add(self.group)
 
-    @mock.patch("identity.views.ldap_search")
+    @mock.patch("kamu.views.identity.ldap_search")
     def test_search_user(self, mock_ldap):
         mock_ldap.return_value = []
         url = f"{self.url}?given_names=test"
@@ -347,7 +347,7 @@ class RoleInviteTests(BaseTestCase):
         self.assertIn("Test User", response.content.decode("utf-8"))
         self.assertIn("Select", response.content.decode("utf-8"))
 
-    @mock.patch("base.connectors.ldap.logger")
+    @mock.patch("kamu.connectors.ldap.logger")
     def test_search_ldap_fail(self, mock_logger):
         url = f"{self.url}?uid=testuser"
         response = self.client.get(url)
@@ -355,7 +355,7 @@ class RoleInviteTests(BaseTestCase):
         self.assertIn("LDAP search failed", response.content.decode("utf-8"))
         mock_logger.error.assert_called_once()
 
-    @mock.patch("base.connectors.ldap._get_connection")
+    @mock.patch("kamu.connectors.ldap._get_connection")
     def test_search_ldap(self, mock_ldap):
         mock_ldap.return_value = MockLdapConn(limited_fields=True)
         url = f"{self.url}?uid=testuser&given_names=test"
@@ -364,14 +364,14 @@ class RoleInviteTests(BaseTestCase):
         self.assertIn("Test User", response.content.decode("utf-8"))
         self.assertEqual(response.content.decode("utf-8").count("ldap.user@example.org"), 1)
 
-    @mock.patch("base.connectors.ldap._get_connection")
+    @mock.patch("kamu.connectors.ldap._get_connection")
     def test_search_ldap_sizelimit_exceeded(self, mock_ldap):
         mock_ldap.return_value = MockLdapConn(limited_fields=True, size_exceeded=True)
         url = f"{self.url}?uid=testuser&given_names=test"
         response = self.client.get(url)
         self.assertIn("search returned too many results", response.content.decode("utf-8"))
 
-    @mock.patch("base.connectors.ldap._get_connection")
+    @mock.patch("kamu.connectors.ldap._get_connection")
     def test_search_ldap_escaping(self, mock_ldap):
         conn = MockLdapConn(limited_fields=True)
         mock_ldap.return_value = conn
@@ -380,7 +380,7 @@ class RoleInviteTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("(givenName=*t\\2aest*)", conn.search_args[0][2])
 
-    @mock.patch("identity.views.ldap_search")
+    @mock.patch("kamu.views.identity.ldap_search")
     def test_search_not_found_email(self, mock_ldap):
         mock_ldap.return_value = []
         url = f"{self.url}?email=nonexisting@example.org"
@@ -388,7 +388,7 @@ class RoleInviteTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Email address not found", response.content.decode("utf-8"))
 
-    @mock.patch("identity.views.ldap_search")
+    @mock.patch("kamu.views.identity.ldap_search")
     def test_search_email_found_kamu(self, mock_ldap):
         mock_ldap.return_value = []
         url = f"{self.url}?email=test@example.org"
@@ -396,7 +396,7 @@ class RoleInviteTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Email address not found", response.content.decode("utf-8"))
 
-    @mock.patch("base.connectors.ldap._get_connection")
+    @mock.patch("kamu.connectors.ldap._get_connection")
     def test_search_email_found_ldap(self, mock_ldap):
         mock_ldap.return_value = MockLdapConn()
         url = f"{self.url}?email=ldap.user@example.org"
@@ -419,8 +419,8 @@ class RoleInviteTests(BaseTestCase):
         self.assertTrue(Membership.objects.filter(role=self.role, identity=self.identity).exists())
         self.assertIn("Test User has added you a new role membership in Kamu", mail.outbox[0].body)
 
-    @mock.patch("base.connectors.ldap._get_connection")
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.connectors.ldap._get_connection")
+    @mock.patch("kamu.utils.base.logger_audit")
     @override_settings(ALLOW_TEST_FPIC=True)
     def test_add_role_with_ldap(self, mock_logger, mock_ldap):
         mock_ldap.return_value = MockLdapConn()
@@ -454,7 +454,7 @@ class RoleInviteTests(BaseTestCase):
         )
         self.assertIn("Test User has added you a new role membership in Kamu", mail.outbox[0].body)
 
-    @mock.patch("base.connectors.ldap._get_connection")
+    @mock.patch("kamu.connectors.ldap._get_connection")
     @override_settings(ALLOW_TEST_FPIC=True)
     def test_join_role_with_ldap_existing_identity(self, mock_ldap):
         mock_ldap.return_value = MockLdapConn()
@@ -486,7 +486,7 @@ class RoleInviteTests(BaseTestCase):
             follow=True,
         )
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_join_role_send_email_invite(self, mock_logger):
         response = self._test_join_role_send_email_invite()
         self.assertEqual(response.status_code, 200)
@@ -511,7 +511,7 @@ class RoleInviteTests(BaseTestCase):
 class AdminSiteTests(BaseTestCase):
     def setUp(self):
         super().setUp()
-        self.url = "/admin/role/"
+        self.url = "/admin/kamu/"
         self.client = Client()
         self.client.force_login(user=self.superuser)
         self.role_data = {

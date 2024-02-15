@@ -6,7 +6,7 @@ from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from identity.models import Contract, ContractTemplate
+from kamu.models.identity import Contract, ContractTemplate
 from tests.setup import BaseAPITestCase
 
 

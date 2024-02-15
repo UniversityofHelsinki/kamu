@@ -14,8 +14,7 @@ from django.core import mail
 from django.test import Client, override_settings
 from django.utils import timezone
 
-from base.utils import set_default_permissions
-from identity.models import (
+from kamu.models.identity import (
     Contract,
     ContractTemplate,
     EmailAddress,
@@ -23,7 +22,8 @@ from identity.models import (
     Identity,
     PhoneNumber,
 )
-from role.models import Membership, Role
+from kamu.models.role import Membership, Role
+from kamu.utils.base import set_default_permissions
 from tests.setup import BaseTestCase
 from tests.utils import MockLdapConn
 
@@ -57,7 +57,7 @@ class IdentityTests(BaseTestCase):
             ).exists()
         )
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_view_identity(self, mock_logger):
         response = self.client.get(f"{self.url}{self.identity.pk}/")
         self.assertEqual(response.status_code, 200)
@@ -69,8 +69,8 @@ class IdentityTests(BaseTestCase):
             ]
         )
 
-    @mock.patch("base.connectors.ldap._get_connection")
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.connectors.ldap._get_connection")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_search_identity(self, mock_logger, mock_ldap):
         mock_ldap.return_value = MockLdapConn(limited_fields=True)
         EmailAddress.objects.create(
@@ -137,7 +137,7 @@ class IdentityEditTests(BaseTestCase):
         self.assertIn('disabled id="id_given_names"', response.content.decode("utf-8"))
 
     @override_settings(ALLOW_TEST_FPIC=True)
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_edit_own_information(self, mock_logger):
         self.client.force_login(self.user)
         self.identity.surname_verification = Identity.VerificationMethod.EXTERNAL
@@ -198,7 +198,7 @@ class ContactTests(BaseTestCase):
         self.client = Client()
         self.client.force_login(self.user)
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_view_contacts(self, mock_logger):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -210,7 +210,7 @@ class ContactTests(BaseTestCase):
             ]
         )
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_post_new_email_contact(self, mock_logger):
         data = {"contact": "test@example.com"}
         response = self.client.post(self.url, data, follow=True)
@@ -223,7 +223,7 @@ class ContactTests(BaseTestCase):
             ]
         )
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_post_new_phone_contact(self, mock_logger):
         data = {"contact": "+358123456789"}
         response = self.client.post(self.url, data, follow=True)
@@ -273,7 +273,7 @@ class ContactTests(BaseTestCase):
         self.assertEqual(new_number.priority, 0)
         self.assertEqual(self.number.priority, 1)
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_remove_phone(self, mock_logger):
         data = {"phone_remove": self.number.pk}
         response = self.client.post(self.url, data, follow=True)
@@ -299,7 +299,7 @@ class IdentifierTests(BaseTestCase):
         self.client = Client()
         self.client.force_login(self.user)
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_view_identifiers(self, mock_logger):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -310,7 +310,7 @@ class IdentifierTests(BaseTestCase):
             ]
         )
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_deactivate_identifier(self, mock_logger):
         Identifier.objects.create(
             identity=self.identity,
@@ -365,7 +365,7 @@ class VerificationTests(BaseTestCase):
         data = {"code": code}
         return self.client.post(self.url, data, follow=True)
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_verify_address(self, mock_logger):
         response = self._verify_address()
         self.assertIn("test@example.org", response.content.decode("utf-8"))
@@ -378,7 +378,7 @@ class VerificationTests(BaseTestCase):
             ]
         )
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_verify_already_verified_address(self, mock_logger):
         email = EmailAddress.objects.create(identity=self.superidentity, address="test@example.org", verified=True)
         self._verify_address()
@@ -419,8 +419,8 @@ class VerificationTests(BaseTestCase):
         data = {"code": code}
         self.client.post(url, data, follow=True)
 
-    @mock.patch("identity.views.SmsConnector")
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.views.identity.SmsConnector")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_verify_sms(self, mock_logger, mock_connector):
         number = PhoneNumber.objects.create(identity=self.identity, number="+1234567890", priority=0, verified=False)
         self._verify_sms(mock_connector, number)
@@ -432,8 +432,8 @@ class VerificationTests(BaseTestCase):
             ]
         )
 
-    @mock.patch("identity.views.SmsConnector")
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.views.identity.SmsConnector")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_verify_existing_sms(self, mock_logger, mock_connector):
         verified_number = PhoneNumber.objects.create(identity=self.superidentity, number="+1234567890", verified=True)
         number = PhoneNumber.objects.create(identity=self.identity, number="+1234567890", priority=0, verified=False)
@@ -453,7 +453,7 @@ class VerificationTests(BaseTestCase):
 class AdminSiteTests(BaseTestCase):
     def setUp(self):
         super().setUp()
-        self.url = "/admin/identity/"
+        self.url = "/admin/kamu/"
         self.client = Client()
         self.client.force_login(user=self.superuser)
 
@@ -525,7 +525,7 @@ class ContractTests(BaseTestCase):
         self.assertIn(self.contract_template.text(), response.content.decode("utf-8"))
         self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_contract_sign_contract(self, mock_logger):
         response = self.client.post(
             f"/identity/{self.identity.pk}/contracts/{self.contract_template.pk}/sign/",
@@ -561,7 +561,7 @@ class ContractTests(BaseTestCase):
         self.assertFalse(Contract.objects.filter(identity=self.identity, template=self.contract_template).exists())
         self.assertIn("Contract version has changed", response.content.decode("utf-8"))
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_view_contract_list(self, mock_logger):
         self._create_templates()
         contract = Contract.objects.sign_contract(
@@ -584,7 +584,7 @@ class ContractTests(BaseTestCase):
             ]
         )
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_view_contract(self, mock_logger):
         self._create_templates()
         contract = Contract.objects.sign_contract(
@@ -604,7 +604,7 @@ class ContractTests(BaseTestCase):
         )
         response = self.client.get(f"/contract/{super_contract.pk}/")
         self.assertEqual(response.status_code, 404)
-        content_type = ContentType.objects.get(app_label="identity", model="identity")
+        content_type = ContentType.objects.get(app_label="kamu", model="identity")
         permission = Permission.objects.get(content_type=content_type, codename="view_contracts")
         self.user.user_permissions.add(permission)
         self.client.force_login(self.user)
@@ -733,7 +733,7 @@ class IdentityCombineTests(BaseTestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, f"/identity/combine/{self.superidentity.pk}/{self.identity.pk}/")
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_view_combine_identities(self, mock_logger):
         self._create_test_data()
         response = self.client.get(self.url)
@@ -748,7 +748,7 @@ class IdentityCombineTests(BaseTestCase):
             ],
         )
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_combine_identities(self, mock_logger):
         self._create_test_data()
         self.identity.date_of_birth = datetime.date(1999, 1, 1)
@@ -790,7 +790,7 @@ class IdentityCombineTests(BaseTestCase):
             any_order=True,
         )
 
-    @mock.patch("base.utils.logger_audit")
+    @mock.patch("kamu.utils.base.logger_audit")
     def test_combine_identities_identity_names(self, mock_logger):
         self.superidentity.given_names = ""
         self.superidentity.surname = ""

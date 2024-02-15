@@ -12,9 +12,9 @@ University of Helsinki application for managing external people, so. people who 
 ./manage.py test
 
 ### Running local server
-./manage.py runserver --settings=kamu.settings.test
+./manage.py runserver --settings=settings.test
 
-Or copy kamu/settings/local_settings_example.py to kamu/settings/local_settings.py
+Or copy settings/local_settings_example.py to settings/local_settings.py
 and modify as necessary to use production.py settings:
 
 ./manage.py runserver

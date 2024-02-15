@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+  <h1 class="mb-4">{{ object.display_name }}</h1>
+  <div class="row">
+    <div class="col-12 col-lg-6">
+      <dl class="row">
+        <dt class="col-sm-4">{% trans "Given names" %}</dt>
+        <dd class="col-sm-8">{{ object.given_names|default:"&nbsp;" }}{% if object.given_names_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+        <dt class="col-sm-4">{% trans "Surname" %}</dt>
+        <dd class="col-sm-8">{{ object.surname|default:"&nbsp;" }}{% if object.surname_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+        <dt class="col-sm-4">{% trans "Display name" %}</dt>
+        <dd class="col-sm-8">{{ object.display_name|default:"&nbsp;" }}</dd>
+        <dt class="col-sm-4">{% trans "Preferred language" %}</dt>
+        <dd class="col-sm-8">{{ object.get_preferred_language_display }}</dd>
+        {% if user == object.user or perms.kamu.view_restricted_information %}
+          <dt class="col-sm-4">{% trans "Date of birth" %}</dt>
+          <dd class="col-sm-8">{{ object.date_of_birth|default:"&nbsp;" }}{% if object.date_of_birth_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+          <dt class="col-sm-4">{% trans "Gender" %}</dt>
+          <dd class="col-sm-8">{{ object.get_gender_display }}</dd>
+          <dt class="col-sm-4">{% trans "Nationality" %}</dt>
+          <dd class="col-sm-8">{% for nationality in object.nationality.all %}{{ nationality.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if object.nationality_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+          <dt class="col-sm-4">{% trans "Finnish personal identity code" %}</dt>
+          <dd class="col-sm-8">{{ object.fpic|default:"&nbsp;" }}{% if object.fpic_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+        {% endif %}
+      </dl>
+    </div>
+    <div class="col-12 col-lg-6">
+      <dl>
+        {% if user == object.user or perms.kamu.view_contacts %}
+          <dt class="col-sm-4">{% trans "E-mail addresses" %}</dt>
+          <dd class="col-sm-8">{% for address in object.email_addresses.all %}{{ address.address }}{% if address.verified %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
+          <dt class="col-sm-4">{% trans "Phone numbers" %}</dt>
+          <dd class="col-sm-8">{% for number in object.phone_numbers.all %}{{ number.number }}{% if number.verified %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
+        {% endif %}
+        {% if user == object.user or perms.kamu.view_identifiers %}
+          <dt class="col-sm-4">{% trans "External identifiers" %}</dt>
+          <dd class="col-sm-8">{% for identifier in identifiers %}{{ identifier.get_type_display }}{% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
+        {% endif %}
+      </dl>
+    </div>
+  </div>
+  <p><span class="text-success"> *</span> {% trans "verified" %}</p>
+  <h2>{% trans "View details and update" %}</h2>
+  {% if user == object.user or perms.kamu.change_basic_information %}
+    <a href="{% url 'identity-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Basic information" %}</a>
+  {% endif %}
+  {% if user == object.user or perms.kamu.change_contacts %}
+    <a href="{% url 'contact-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Contact information" %}</a>
+  {% endif %}
+  {% if user == object.user or perms.kamu.change_identifiers %}
+    <a href="{% url 'identity-identifier' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Identifiers" %}</a>
+  {% endif %}
+  {% if user == object.user or perms.kamu.view_contracts %}
+    <a href="{% url 'contract-list' object.pk %}" class="btn btn-primary mb-2">{% trans "Contracts" %}</a>
+  {% endif %}
+  <h2 id="roles-list" class="mt-4">{% trans "Roles" %}</h2>
+  {% if memberships %}
+    <table class="table" aria-describedby="roles-list">
+      <thead>
+      <tr>
+        <th scope="col">{% trans "Role" %}</th>
+        <th scope="col">{% trans "Status" %}</th>
+        <th scope="col">{% trans "Expires" %}</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for membership in memberships %}
+        <tr>
+          <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{{ membership.role.name }}</a></th>
+          <td>{{ membership.status }}</td>
+          <td>{{ membership.expire_date }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>{% trans "You do not have any roles." %}</p>
+  {% endif %}
+  {% if perms.kamu.combine_identities %}
+    <h2>{% trans "Combine identities" %}</h2>
+    <form method="post">{% csrf_token %}
+      <input type="submit" name="combine_target" value="{% trans "Set as target" %}" class="btn btn-primary" id="combine_identity_target" />
+      <input type="submit" name="combine_source" value="{% trans "Set as source" %}" class="btn btn-warning" id="combine_identity_source" />
+    </form>
+  {% endif %}
+{% endblock %}

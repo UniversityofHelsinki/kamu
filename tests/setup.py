@@ -6,8 +6,8 @@ from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 from rest_framework.test import APIRequestFactory, APITestCase
 
-from identity.models import EmailAddress, Identity, Nationality
-from role.models import Permission, Role
+from kamu.models.identity import EmailAddress, Identity, Nationality
+from kamu.models.role import Permission, Role
 
 
 class TestData(TestCase):

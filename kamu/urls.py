@@ -14,7 +14,8 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 
-from base.views import (
+from kamu.routers import router
+from kamu.views.base import (
     CustomLoginView,
     FrontPageView,
     InviteView,
@@ -33,7 +34,7 @@ from base.views import (
     RegistrationPhoneNumberView,
     RegistrationView,
 )
-from identity.views import (
+from kamu.views.identity import (
     ContactView,
     ContractDetailView,
     ContractListView,
@@ -47,8 +48,7 @@ from identity.views import (
     IdentityUpdateView,
     PhoneNumberVerificationView,
 )
-from kamu.routers import router
-from role.views import (
+from kamu.views.role import (
     MembershipApprovalListView,
     MembershipClaimView,
     MembershipDetailView,
@@ -67,10 +67,10 @@ from role.views import (
 )
 
 # Overwrite default status views
-handler400 = "base.error_views.bad_request"
-handler403 = "base.error_views.permission_denied"
-handler404 = "base.error_views.page_not_found"
-handler500 = "base.error_views.server_error"
+handler400 = "kamu.views.error.bad_request"
+handler403 = "kamu.views.error.permission_denied"
+handler404 = "kamu.views.error.page_not_found"
+handler500 = "kamu.views.error.server_error"
 
 
 urlpatterns = [

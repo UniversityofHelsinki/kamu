@@ -5,7 +5,7 @@ Unit tests for role app.
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
-from identity.validators import validate_fpic, validate_phone_number
+from kamu.validators.identity import validate_fpic, validate_phone_number
 
 
 class ValidateSSNTests(TestCase):

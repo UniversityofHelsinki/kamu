@@ -10,9 +10,9 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.utils import timezone
 
-from base.management.commands.purge_data import UsageError
-from identity.models import Identifier, Identity
-from role.models import Membership, Role
+from kamu.management.commands.purge_data import UsageError
+from kamu.models.identity import Identifier, Identity
+from kamu.models.role import Membership, Role
 
 
 class ManagementCommandTestCase(TestCase):
