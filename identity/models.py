@@ -326,7 +326,7 @@ class Identity(models.Model):
             self.user.first_name = self.given_name_display
             self.user.last_name = self.surname_display
             self.user.save()
-        super(Identity, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def has_attribute(self, name: str, level: int = 0) -> bool:
         """
@@ -588,7 +588,7 @@ class ContractTemplate(models.Model):
         self.version = last.version + 1 if last else 1
         if self.pk:
             self.pk = None
-        super(ContractTemplate, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def log_values(self) -> dict[str, str | int]:
         """

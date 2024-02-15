@@ -91,7 +91,7 @@ class RoleJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateFo
         """
         Add role to form kwargs.
         """
-        kwargs = super(RoleJoinView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs["role"] = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
         return kwargs
 
@@ -363,7 +363,7 @@ class RoleDetailView(LoginRequiredMixin, DetailView[Role]):
         """
         Add memberships to context, if user is owner, approver or inviter.
         """
-        context = super(RoleDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         user = self.request.user
         if not user.is_authenticated:
             raise PermissionDenied
@@ -415,7 +415,7 @@ class RoleInviteIdentitySearch(IdentitySearchView):
         Add form and role to the context data.
         Add searched email and information if it has been found.
         """
-        context = super(RoleInviteIdentitySearch, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         email = self.request.GET.get("email")
         context["email_found"] = self._check_email(context, email)
         self.request.session["invitation_email_address"] = email
@@ -447,7 +447,7 @@ class BaseRoleInviteView(LoginRequiredMixin, CreateView[Membership, MembershipCr
         """
         Add role to context.
         """
-        context = super(BaseRoleInviteView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["role"] = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
         return context
 
@@ -455,7 +455,7 @@ class BaseRoleInviteView(LoginRequiredMixin, CreateView[Membership, MembershipCr
         """
         Add role to form kwargs.
         """
-        kwargs = super(BaseRoleInviteView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs["role"] = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
         return kwargs
 
@@ -471,7 +471,7 @@ class RoleInviteView(BaseRoleInviteView):
         """
         Add identity to context.
         """
-        context = super(RoleInviteView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["identity"] = get_object_or_404(Identity, pk=self.kwargs.get("identity_pk"))
         return context
 
@@ -523,7 +523,7 @@ class RoleInviteLdapView(BaseRoleInviteView):
         """
         Add user to context. Add identity to context if found.
         """
-        context = super(RoleInviteLdapView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         uid = self.kwargs.get("uid")
         try:
             ldap_user = ldap_search(
@@ -720,7 +720,7 @@ class RoleInviteEmailView(BaseRoleInviteView):
         """
         Add email to context.
         """
-        context = super(RoleInviteEmailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["email"] = self.request.session.get("invitation_email_address")
         if not context["email"]:
             raise PermissionDenied
@@ -730,7 +730,7 @@ class RoleInviteEmailView(BaseRoleInviteView):
         """
         Add email to form kwargs.
         """
-        kwargs = super(RoleInviteEmailView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs["email"] = self.request.session.get("invitation_email_address")
         return kwargs
 
@@ -869,7 +869,7 @@ class RoleSearchView(LoginRequiredMixin, ListView[Role]):
         """
         Add search form to ListView, including search parameters if present.
         """
-        context = super(RoleSearchView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         if "search" in self.request.GET:
             context["form"] = TextSearchForm(self.request.GET)
         else:

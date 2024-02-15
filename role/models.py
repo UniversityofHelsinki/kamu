@@ -555,4 +555,4 @@ class Membership(models.Model):
         Update status before saving membership.
         """
         self.set_status()
-        super(Membership, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)

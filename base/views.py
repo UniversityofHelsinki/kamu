@@ -83,7 +83,7 @@ class InviteView(FormView):
         """
         Add initial token to the form kwargs.
         """
-        kwargs = super(InviteView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs["token"] = self.request.GET.get("token", None)
         return kwargs
 
@@ -201,7 +201,7 @@ class VerifyEmailAddressView(BaseRegisterView, FormView):
         """
         Add email address to form kwargs.
         """
-        kwargs = super(VerifyEmailAddressView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs["email_address"] = self.request.session["register_email_address"]
         return kwargs
 
@@ -272,7 +272,7 @@ class VerifyPhoneNumberView(BaseRegisterView, FormView):
         """
         Add phone number to form kwargs.
         """
-        kwargs = super(VerifyPhoneNumberView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs["phone_number"] = self.request.session["register_phone_number"]
         return kwargs
 
@@ -614,7 +614,7 @@ class EmailPhoneLoginVerificationView(LoginView):
         """
         Add email address and phone_number to form kwargs.
         """
-        kwargs = super(EmailPhoneLoginVerificationView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs["email_address"] = self.request.session["login_email_address"]
         kwargs["phone_number"] = self.request.session["login_phone_number"]
         return kwargs

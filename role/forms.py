@@ -31,7 +31,7 @@ class TextSearchForm(forms.Form):
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
-        super(TextSearchForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = "row row-cols-lg-auto g-3 align-items-center"
         self.helper.form_show_labels = False
@@ -49,7 +49,7 @@ class MembershipCreateForm(forms.ModelForm[Membership]):
         Get role from kwargs for form validation and set Crispy Forms helper.
         """
         self.role = kwargs.pop("role")
-        super(MembershipCreateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Add member")))
 
@@ -130,7 +130,7 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
         """
         self.role = kwargs.pop("role")
         self.invite_email_address = kwargs.pop("email")
-        super(MembershipEmailCreateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if self.invite_email_address:
             self.fields["invite_email_address"].initial = self.invite_email_address
             self.fields["invite_email_address"].disabled = True

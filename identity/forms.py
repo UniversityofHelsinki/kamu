@@ -54,7 +54,7 @@ class IdentitySearchForm(forms.Form):
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
-        super(IdentitySearchForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "GET"
         self.helper.add_input(Submit("submit", _("Search")))
@@ -131,7 +131,7 @@ class ContactForm(forms.Form):
         Crispy Forms helper to set submit button.
         """
         self.identity = kwargs.pop("identity")
-        super(ContactForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         layout = Layout(
             Div("contact"),
@@ -187,7 +187,7 @@ class EmailAddressVerificationForm(forms.ModelForm):
         """
         Crispy Forms helper to set submit and resend buttons.
         """
-        super(EmailAddressVerificationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["address"].disabled = True
         self.fields["code"].widget.attrs.update(autocomplete="off")
         self.helper = FormHelper()
@@ -223,7 +223,7 @@ class PhoneNumberVerificationForm(forms.ModelForm):
         """
         Crispy Forms helper to set submit and resend buttons.
         """
-        super(PhoneNumberVerificationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["number"].disabled = True
         self.fields["code"].widget.attrs.update(autocomplete="off")
         self.helper = FormHelper()

@@ -49,7 +49,7 @@ class EmailPhoneForm(forms.Form):
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
-        super(EmailPhoneForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Login")))
 
@@ -101,7 +101,7 @@ class EmailPhoneVerificationForm(AuthenticationForm):
         self.user_cache: Any = None
         self.email_address = kwargs.pop("email_address", None)
         self.phone_number = kwargs.pop("phone_number", None)
-        super(EmailPhoneVerificationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields.pop("username")
         self.fields.pop("password")
         self.fields["email_verification_token"].widget.attrs.update(autocomplete="off")
@@ -189,7 +189,7 @@ class RegistrationForm(forms.Form):
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
-        super(RegistrationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Send verification code")))
 
@@ -229,7 +229,7 @@ class EmailAddressVerificationForm(forms.Form):
         Crispy Forms helper to set form styles, configuration and buttons.
         """
         self.email_address = kwargs.pop("email_address", None)
-        super(EmailAddressVerificationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["code"].widget.attrs.update(autocomplete="off")
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Verify")))
@@ -262,7 +262,7 @@ class PhoneNumberForm(forms.Form):
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
-        super(PhoneNumberForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Send verification code")))
 
@@ -286,7 +286,7 @@ class PhoneNumberVerificationForm(forms.Form):
         Crispy Forms helper to set form styles, configuration and buttons.
         """
         self.phone_number = kwargs.pop("phone_number", None)
-        super(PhoneNumberVerificationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["code"].widget.attrs.update(autocomplete="off")
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Verify")))
@@ -313,7 +313,7 @@ class LoginForm(AuthenticationForm):
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
-        super(LoginForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Login")))
 
@@ -343,7 +343,7 @@ class InviteTokenForm(forms.Form):
         Crispy Forms helper to set submit button.
         """
         token = kwargs.pop("token", None)
-        super(InviteTokenForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if token:
             self.fields["code"].initial = token
         self.fields["code"].widget.attrs.update(autocomplete="off")

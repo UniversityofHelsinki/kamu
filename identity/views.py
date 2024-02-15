@@ -74,7 +74,7 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
         """
         Add memberships to the context data.
         """
-        context = super(IdentityDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["memberships"] = Membership.objects.filter(
             identity=self.object, expire_date__gte=timezone.now().date()
         )
@@ -87,7 +87,7 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
          - user has permission to view all basic information,
          - or user is an approver or inviter for the one of identity's groups.
         """
-        queryset = super(IdentityDetailView, self).get_queryset()
+        queryset = super().get_queryset()
         if not self.request.user.has_perms(["identity.view_basic_information"]):
             groups = self.request.user.groups.all() if self.request.user.groups else Group.objects.none()
             return queryset.filter(
@@ -198,7 +198,7 @@ class IdentityUpdateView(UpdateView):
         """
         Add request object to the form class.
         """
-        kwargs = super(IdentityUpdateView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs["request"] = self.request
         return kwargs
 
@@ -206,7 +206,7 @@ class IdentityUpdateView(UpdateView):
         """
         Restrict update to user's own information, unless user has permission to modify all basic information.
         """
-        queryset = super(IdentityUpdateView, self).get_queryset()
+        queryset = super().get_queryset()
         if not self.request.user.has_perms(["identity.change_basic_information"]):
             return queryset.filter(user=self.request.user)
         return queryset
@@ -424,7 +424,7 @@ class ContactView(LoginRequiredMixin, FormView):
         """
         Add identity object to the form class.
         """
-        kwargs = super(ContactView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs["identity"] = self.identity
         return kwargs
 
@@ -432,7 +432,7 @@ class ContactView(LoginRequiredMixin, FormView):
         """
         Add lists of users email_addresses and phone_numbers to context.
         """
-        context = super(ContactView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         identity = Identity.objects.get(pk=self.kwargs.get("pk"))
         context["email_list"] = identity.email_addresses.all().order_by("priority")
         context["phone_list"] = identity.phone_numbers.all().order_by("priority")
@@ -599,7 +599,7 @@ class ContractListView(LoginRequiredMixin, ListView[Contract]):
 
         Signable contracts are the latest version of each public contract type, that the user has not signed.
         """
-        context = super(ContractListView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["identity"] = Identity.objects.get(pk=self.kwargs.get("pk"))
         type_query = ContractTemplate.objects.filter(public=True, type=OuterRef("type")).order_by("-version")
         context["signable_list"] = (
@@ -658,7 +658,7 @@ class ContractSignView(LoginRequiredMixin, TemplateView):
         """
         Add contract template and identity to context data.
         """
-        context = super(ContractSignView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["identity"] = Identity.objects.get(pk=self.kwargs.get("identity_pk"))
         context["template"] = ContractTemplate.objects.get(pk=self.kwargs.get("template_pk"))
         context["date"] = timezone.now().date()
@@ -729,7 +729,7 @@ class ContractDetailView(LoginRequiredMixin, DetailView):
         """
         Restrict access to user's own contracts, unless user has permission to view all contracts,
         """
-        queryset = super(ContractDetailView, self).get_queryset()
+        queryset = super().get_queryset()
         if not self.request.user.has_perms(["identity.view_contracts"]):
             queryset = queryset.filter(identity__user=self.request.user)
         return queryset
@@ -784,7 +784,7 @@ class IdentifierView(LoginRequiredMixin, TemplateView):
         """
         Add lists of users email_addresses and phone_numbers to context.
         """
-        context = super(IdentifierView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         identity = Identity.objects.get(pk=self.kwargs.get("pk"))
         context["identifier_active_list"] = Identifier.objects.filter(identity=identity, deactivated_at=None)
         context["identifier_deactivated_list"] = Identifier.objects.filter(
@@ -990,7 +990,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         """
         Add form and searched phone and email to context data.
         """
-        context = super(IdentitySearchView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["phone"] = self.request.GET.get("phone", "").replace(" ", "")
         context["email"] = self.request.GET.get("email")
         context["form"] = IdentitySearchForm(self.request.GET)
