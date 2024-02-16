@@ -69,6 +69,7 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
     """
 
     model = Identity
+    template_name = "identity/identity_detail.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
@@ -166,6 +167,7 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
 class IdentityUpdateView(UpdateView):
     model = Identity
     form_class = IdentityForm
+    template_name = "identity/identity_form.html"
 
     def form_valid(self, form: IdentityForm) -> HttpResponse:
         """
@@ -315,7 +317,7 @@ class EmailAddressVerificationView(BaseVerificationView):
     """
 
     form_class = EmailAddressVerificationForm
-    template_name = "verify_email_address.html"
+    template_name = "identity/email_address_verification.html"
     post_redirect = "email-verify"
     model = EmailAddress
 
@@ -351,7 +353,7 @@ class PhoneNumberVerificationView(BaseVerificationView):
     """
 
     form_class = PhoneNumberVerificationForm
-    template_name = "verify_phone_number.html"
+    template_name = "identity/phone_number_verification.html"
     post_redirect = "phone-verify"
     model = PhoneNumber
 
@@ -390,7 +392,7 @@ class ContactView(LoginRequiredMixin, FormView):
     """
 
     form_class = ContactForm
-    template_name = "contact_address.html"
+    template_name = "identity/contact_address.html"
     success_url = "#"
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
@@ -740,7 +742,7 @@ class IdentifierView(LoginRequiredMixin, TemplateView):
     List and deactivate identifiers.
     """
 
-    template_name = "identifier.html"
+    template_name = "identity/identifier.html"
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """
@@ -907,7 +909,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
     Identity search view with results list.
     """
 
-    template_name = "kamu/identity_search.html"
+    template_name = "identity/identity_search.html"
     model = Identity
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
@@ -1053,7 +1055,7 @@ class IdentityCombineView(LoginRequiredMixin, TemplateView):
     Combines two identities.
     """
 
-    template_name = "kamu/identity_combine.html"
+    template_name = "identity/identity_combine.html"
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         user = self.request.user if self.request.user.is_authenticated else None

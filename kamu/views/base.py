@@ -76,7 +76,7 @@ class InviteView(FormView):
     """
 
     form_class = InviteTokenForm
-    template_name = "invite.html"
+    template_name = "auth/invite.html"
     success_url = "#"
 
     def get_form_kwargs(self) -> dict[str, Any]:
@@ -106,7 +106,7 @@ class BaseRegistrationView(View):
     Base class for registration views.
     """
 
-    template_name = "register.html"
+    template_name = "auth/registration.html"
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """
@@ -163,7 +163,7 @@ class RegistrationView(BaseRegistrationView, FormView):
     Registration view. Start Email and SMS registration process or forward to external methods.
     """
 
-    template_name = "register.html"
+    template_name = "auth/registration.html"
     form_class = RegistrationForm
 
     def form_valid(self, form: RegistrationForm) -> HttpResponse:
@@ -186,7 +186,7 @@ class RegistrationEmailAddressVerificationView(BaseRegistrationView, FormView):
     Registration view for verifying email address.
     """
 
-    template_name = "register_form.html"
+    template_name = "auth/registration_form.html"
     form_class = RegistrationEmailAddressVerificationForm
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
@@ -229,7 +229,7 @@ class RegistrationPhoneNumberView(BaseRegistrationView, FormView):
     Registration view for asking a phone number.
     """
 
-    template_name = "register_form.html"
+    template_name = "auth/registration_form.html"
     form_class = RegistrationPhoneNumberForm
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
@@ -256,7 +256,7 @@ class RegistrationPhoneNumberVerificationView(BaseRegistrationView, FormView):
     Registration view for verifying phone number.
     """
 
-    template_name = "register_form.html"
+    template_name = "auth/registration_form.html"
     form_class = RegistrationPhoneNumberVerificationForm
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
@@ -575,7 +575,7 @@ class LoginEmailPhoneView(FormView):
     """
 
     form_class = LoginEmailPhoneForm
-    template_name = "login_email.html"
+    template_name = "auth/login_email.html"
 
     def form_valid(self, form: LoginEmailPhoneForm) -> HttpResponse:
         """
@@ -597,7 +597,7 @@ class LoginEmailPhoneVerificationView(LoginView):
     """
 
     form_class = LoginEmailPhoneVerificationForm
-    template_name = "login_email_verify.html"
+    template_name = "auth/login_email_verify.html"
 
     @method_decorator(sensitive_post_parameters())
     @method_decorator(csrf_protect)
@@ -685,7 +685,7 @@ class LocalLoginView(LoginView):
     LoginView with the custom login form.
     """
 
-    template_name = "login_local.html"
+    template_name = "auth/login_local.html"
     form_class = LoginForm
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
@@ -708,7 +708,7 @@ class CustomLoginView(View):
     View with login options
     """
 
-    template_name = "login.html"
+    template_name = "auth/login.html"
 
     def get(self, request: HttpRequest) -> HttpResponse:
         return render(request, self.template_name)
@@ -783,6 +783,6 @@ class LocalLogoutView(LogoutView):
             if len(external_backends) > 1:
                 self.request.session["_auth_user_backend"] = external_backends[0]
                 del self.request.session["external_login_backends"]
-                return render(request, "logout.html", {"multiple_backends": True})
+                return render(request, "auth/logout.html", {"multiple_backends": True})
             self.next_page = self._get_backend_logout_url()
         return super().dispatch(request, *args, **kwargs)

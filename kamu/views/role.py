@@ -51,6 +51,7 @@ class MembershipJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCr
 
     model = Membership
     form_class = MembershipCreateForm
+    template_name = "membership/membership_form.html"
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """
@@ -129,6 +130,7 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
     """
 
     model = Membership
+    template_name = "membership/membership_detail.html"
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """
@@ -273,7 +275,7 @@ class MembershipUpdateView(LoginRequiredMixin, UpdateView[Membership, Membership
 
     model = Membership
     form_class = MembershipEditForm
-    template_name = "kamu/membership_edit_form.html"
+    template_name = "membership/membership_edit_form.html"
 
     def form_valid(self, form: MembershipEditForm) -> HttpResponse:
         """
@@ -325,7 +327,7 @@ class MembershipApprovalListView(MembershipListBaseView):
     List memberships that require approval.
     """
 
-    template_name = "kamu/membership_approval_list.html"
+    template_name = "membership/membership_approval_list.html"
 
     def get_queryset(self) -> QuerySet[Membership]:
         """
@@ -341,7 +343,7 @@ class MembershipExpiringListView(MembershipListBaseView):
     List expiring memberships.
     """
 
-    template_name = "kamu/membership_expiring_list.html"
+    template_name = "membership/membership_expiring_list.html"
 
     def get_queryset(self) -> QuerySet[Membership]:
         """
@@ -358,6 +360,7 @@ class RoleDetailView(LoginRequiredMixin, DetailView[Role]):
     """
 
     model = Role
+    template_name = "role/role_detail.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
@@ -390,7 +393,7 @@ class MembershipInviteIdentitySearch(IdentitySearchView):
     Subclass of IdentitySearchView for adding identities to role.
     """
 
-    template_name = "kamu/role_invite_identity.html"
+    template_name = "membership/membership_invite_identity.html"
 
     @staticmethod
     def search_ldap() -> bool:
@@ -431,7 +434,7 @@ class BaseMembershipInviteView(
     """
 
     model = Membership
-    template_name = "kamu/role_invite.html"
+    template_name = "membership/membership_invite.html"
 
     def get_initial(self) -> dict[str, Any]:
         """
@@ -775,7 +778,7 @@ class RoleListApproverView(LoginRequiredMixin, ListView[Role]):
     """
 
     model = Role
-    template_name = "kamu/role_list_approver.html"
+    template_name = "role/role_list_approver.html"
 
     def get_queryset(self) -> QuerySet[Role]:
         """
@@ -795,7 +798,7 @@ class RoleListInviterView(LoginRequiredMixin, ListView[Role]):
     """
 
     model = Role
-    template_name = "kamu/role_list_inviter.html"
+    template_name = "role/role_list_inviter.html"
 
     def get_queryset(self) -> QuerySet[Role]:
         """
@@ -815,7 +818,7 @@ class RoleListOwnerView(LoginRequiredMixin, ListView[Role]):
     """
 
     model = Role
-    template_name = "kamu/role_list_owner.html"
+    template_name = "role/role_list_owner.html"
 
     def get_queryset(self) -> QuerySet[Role]:
         """
@@ -859,8 +862,8 @@ class RoleSearchView(LoginRequiredMixin, ListView[Role]):
     View for role search.
     """
 
-    template_name = "kamu/role_search.html"
     model = Role
+    template_name = "role/role_search.html"
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         if not self.request.user.has_perm("kamu.search_roles"):
