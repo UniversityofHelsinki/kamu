@@ -1,5 +1,5 @@
 """
-Base forms, shared between apps.
+Auth forms
 """
 
 from typing import Any
@@ -19,12 +19,12 @@ from django.core.validators import validate_email
 from django.http import HttpRequest
 from django.utils.translation import gettext as _
 
-from kamu.auth import AuthenticationError, EmailSMSBackend
+from kamu.backends import AuthenticationError, EmailSMSBackend
 from kamu.connectors.email import send_verification_email
 from kamu.connectors.sms import SmsConnector
-from kamu.models.base import TimeLimitError, Token
 from kamu.models.identity import EmailAddress, PhoneNumber
-from kamu.models.role import Membership
+from kamu.models.membership import Membership
+from kamu.models.token import TimeLimitError, Token
 from kamu.validators.identity import validate_phone_number
 
 

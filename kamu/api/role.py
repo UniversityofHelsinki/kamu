@@ -4,23 +4,9 @@ Role views for API endpoints.
 
 from rest_framework import viewsets
 
-from kamu.api.base import CustomDjangoModelPermissions
-from kamu.models.role import Membership, Permission, Role
-from kamu.serializers.role import (
-    MembershipSerializer,
-    PermissionSerializer,
-    RoleSerializer,
-)
-
-
-class MembershipViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint for role memberships.
-    """
-
-    queryset = Membership.objects.all()
-    permission_classes = [CustomDjangoModelPermissions]
-    serializer_class = MembershipSerializer
+from kamu.api.generic import CustomDjangoModelPermissions
+from kamu.models.role import Permission, Role
+from kamu.serializers.role import PermissionSerializer, RoleSerializer
 
 
 class PermissionViewSet(viewsets.ModelViewSet):

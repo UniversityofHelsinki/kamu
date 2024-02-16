@@ -32,7 +32,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import FormView
 
-from kamu.auth import (
+from kamu.backends import (
     AuthenticationError,
     GoogleBackend,
     LocalBaseBackend,
@@ -45,7 +45,7 @@ from kamu.auth import (
 )
 from kamu.connectors.email import send_verification_email
 from kamu.connectors.sms import SmsConnector
-from kamu.forms.base import (
+from kamu.forms.auth import (
     InviteTokenForm,
     LoginEmailPhoneForm,
     LoginEmailPhoneVerificationForm,
@@ -55,10 +55,10 @@ from kamu.forms.base import (
     RegistrationPhoneNumberForm,
     RegistrationPhoneNumberVerificationForm,
 )
-from kamu.models.base import TimeLimitError, Token
 from kamu.models.identity import EmailAddress, Identity, PhoneNumber
-from kamu.utils.base import AuditLog
-from kamu.utils.role import (
+from kamu.models.token import TimeLimitError, Token
+from kamu.utils.audit import AuditLog
+from kamu.utils.membership import (
     claim_membership,
     get_expiring_memberships,
     get_invitation_session_parameters,
@@ -351,7 +351,7 @@ class RegistrationPhoneNumberVerificationView(BaseRegistrationView, FormView):
             objects=[phone_object, identity],
             log_to_db=True,
         )
-        auth_login(self.request, user, backend="kamu.auth.EmailSMSBackend")
+        auth_login(self.request, user, backend="kamu.backends.EmailSMSBackend")
         claim_membership(self.request, identity)
         del self.request.session["verified_email_address"]
         del self.request.session["register_phone_number"]
@@ -441,7 +441,7 @@ class BaseRemoteLoginView(View):
         """
         Log user in using a correct backend.
 
-        # auth_login(request, user, backend="kamu.auth.ShibbolethBackend")
+        # auth_login(request, user, backend="kamu.backends.ShibbolethBackend")
         """
         backend = f"{self.backend_class.__module__}.{self.backend_class.__name__}"
         auth_login(request, user, backend=backend)
@@ -625,7 +625,7 @@ class LoginEmailPhoneVerificationView(LoginView):
         """
         del self.request.session["login_email_address"]
         del self.request.session["login_phone_number"]
-        backend = "kamu.auth.EmailSMSBackend"
+        backend = "kamu.backends.EmailSMSBackend"
         auth_login(self.request, form.get_user(), backend=backend)
         return HttpResponseRedirect(self.get_success_url())
 
@@ -752,13 +752,13 @@ class LocalLogoutView(LogoutView):
         saml_return_url = "?return=" + getattr(settings, "SERVICE_LINK_URL") + getattr(settings, "LOGOUT_REDIRECT_URL")
         logout_url = {
             "django.contrib.auth.backends.ModelBackend": getattr(settings, "LOGOUT_REDIRECT_URL"),
-            "kamu.auth.ShibbolethLocalBackend": getattr(settings, "SAML_LOGOUT_LOCAL_PATH") + saml_return_url,
-            "kamu.auth.ShibbolethEdugainBackend": getattr(settings, "SAML_LOGOUT_EDUGAIN_PATH") + saml_return_url,
-            "kamu.auth.ShibbolethHakaBackend": getattr(settings, "SAML_LOGOUT_HAKA_PATH") + saml_return_url,
-            "kamu.auth.SuomiFiBackend": getattr(settings, "SAML_LOGOUT_SUOMIFI_PATH") + saml_return_url,
-            "kamu.auth.GoogleBackend": getattr(settings, "OIDC_LOGOUT_PATH") + oidc_return_url,
-            "kamu.auth.MicrosoftBackend": getattr(settings, "OIDC_LOGOUT_PATH") + oidc_return_url,
-            "kamu.auth.EmailSMSBackend": getattr(settings, "LOGOUT_REDIRECT_URL"),
+            "kamu.backends.ShibbolethLocalBackend": getattr(settings, "SAML_LOGOUT_LOCAL_PATH") + saml_return_url,
+            "kamu.backends.ShibbolethEdugainBackend": getattr(settings, "SAML_LOGOUT_EDUGAIN_PATH") + saml_return_url,
+            "kamu.backends.ShibbolethHakaBackend": getattr(settings, "SAML_LOGOUT_HAKA_PATH") + saml_return_url,
+            "kamu.backends.SuomiFiBackend": getattr(settings, "SAML_LOGOUT_SUOMIFI_PATH") + saml_return_url,
+            "kamu.backends.GoogleBackend": getattr(settings, "OIDC_LOGOUT_PATH") + oidc_return_url,
+            "kamu.backends.MicrosoftBackend": getattr(settings, "OIDC_LOGOUT_PATH") + oidc_return_url,
+            "kamu.backends.EmailSMSBackend": getattr(settings, "LOGOUT_REDIRECT_URL"),
         }
         backend = self.request.session.get("_auth_user_backend", None)
         return logout_url.get(backend, None)

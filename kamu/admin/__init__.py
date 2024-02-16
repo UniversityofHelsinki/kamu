@@ -8,21 +8,12 @@ from kamu.admin.identity import (
     IdentityAdmin,
     PhoneNumberAdmin,
 )
-from kamu.admin.role import (
-    MembershipAdmin,
-    PermissionAdmin,
-    RequirementAdmin,
-    RoleAdmin,
-)
-from kamu.models.identity import (
-    Contract,
-    ContractTemplate,
-    EmailAddress,
-    Identifier,
-    Identity,
-    PhoneNumber,
-)
-from kamu.models.role import Membership, Permission, Requirement, Role
+from kamu.admin.membership import MembershipAdmin
+from kamu.admin.role import PermissionAdmin, RequirementAdmin, RoleAdmin
+from kamu.models.contract import Contract, ContractTemplate
+from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
+from kamu.models.membership import Membership
+from kamu.models.role import Permission, Requirement, Role
 
 admin.site.register(Contract, ContractAdmin)
 admin.site.register(ContractTemplate, ContractTemplateAdmin)

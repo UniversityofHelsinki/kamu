@@ -8,14 +8,8 @@ from rest_framework import serializers
 from rest_framework.fields import Field
 from rest_framework.validators import UniqueTogetherValidator
 
-from kamu.models.identity import (
-    Contract,
-    ContractTemplate,
-    EmailAddress,
-    Identifier,
-    Identity,
-    PhoneNumber,
-)
+from kamu.models.contract import Contract, ContractTemplate
+from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
 from kamu.validators.identity import FpicValidator
 
 

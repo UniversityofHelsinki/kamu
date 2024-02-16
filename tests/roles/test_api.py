@@ -8,7 +8,8 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from kamu.models.role import Membership, Role
+from kamu.models.membership import Membership
+from kamu.models.role import Role
 from tests.setup import BaseAPITestCase
 
 

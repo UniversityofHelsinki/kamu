@@ -15,7 +15,7 @@ from kamu.models.identity import (
     Identity,
     IdentityManager,
 )
-from kamu.models.role import Membership, MembershipManager
+from kamu.models.membership import Membership, MembershipManager
 
 
 class UsageError(CommandError):

@@ -15,7 +15,7 @@ from drf_spectacular.views import (
 )
 
 from kamu.routers import router
-from kamu.views.base import (
+from kamu.views.auth import (
     CustomLoginView,
     FrontPageView,
     InviteView,
@@ -48,7 +48,7 @@ from kamu.views.identity import (
     IdentityUpdateView,
     PhoneNumberVerificationView,
 )
-from kamu.views.role import (
+from kamu.views.membership import (
     MembershipApprovalListView,
     MembershipClaimView,
     MembershipDetailView,
@@ -59,6 +59,8 @@ from kamu.views.role import (
     MembershipInviteView,
     MembershipJoinView,
     MembershipUpdateView,
+)
+from kamu.views.role import (
     RoleDetailView,
     RoleListApproverView,
     RoleListInviterView,

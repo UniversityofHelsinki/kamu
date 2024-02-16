@@ -18,15 +18,10 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from faker import Faker
 
-from kamu.models.identity import (
-    Contract,
-    ContractTemplate,
-    EmailAddress,
-    Identity,
-    Nationality,
-    PhoneNumber,
-)
-from kamu.models.role import Membership, Permission, Requirement, Role
+from kamu.models.contract import Contract, ContractTemplate
+from kamu.models.identity import EmailAddress, Identity, Nationality, PhoneNumber
+from kamu.models.membership import Membership
+from kamu.models.role import Permission, Requirement, Role
 
 fake = Faker()
 

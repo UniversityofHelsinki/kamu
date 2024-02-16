@@ -14,8 +14,8 @@ from django.core.validators import validate_email
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from kamu.models.base import Token
 from kamu.models.identity import EmailAddress, Identity, PhoneNumber
+from kamu.models.token import Token
 from kamu.validators.identity import validate_phone_number
 
 

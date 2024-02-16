@@ -26,10 +26,11 @@ from django.db import IntegrityError, transaction
 from django.http import Http404, HttpRequest
 from django.utils.translation import gettext as _
 
-from kamu.models.base import Token
 from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
 from kamu.models.role import Role
-from kamu.utils.base import AuditLog, set_default_permissions
+from kamu.models.token import Token
+from kamu.utils.audit import AuditLog
+from kamu.utils.auth import set_default_permissions
 from kamu.validators.identity import validate_fpic
 
 audit_log = AuditLog()

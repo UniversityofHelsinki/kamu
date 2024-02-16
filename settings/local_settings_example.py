@@ -126,11 +126,11 @@ SAML_LOGOUT_EDUGAIN_PATH: str = "/Shibboleth.sso/edugain/Logout"
 # Uncomment login backends you want to activate.
 AUTHENTICATION_BACKENDS: Sequence[str] = (
     # "django.contrib.auth.backends.ModelBackend",
-    # "kamu.auth.ShibbolethLocalBackend",
-    # "kamu.auth.ShibbolethEdugainBackend",
-    # "kamu.auth.ShibbolethHakaBackend",
-    # "kamu.auth.GoogleBackend",
-    # "kamu.auth.MicrosoftBackend",
-    # "kamu.auth.SuomiFiBackend",
-    # "kamu.auth.EmailSMSBackend",
+    # "kamu.backends.ShibbolethLocalBackend",
+    # "kamu.backends.ShibbolethEdugainBackend",
+    # "kamu.backends.ShibbolethHakaBackend",
+    # "kamu.backends.GoogleBackend",
+    # "kamu.backends.MicrosoftBackend",
+    # "kamu.backends.SuomiFiBackend",
+    # "kamu.backends.EmailSMSBackend",
 )

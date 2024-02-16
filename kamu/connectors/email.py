@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import translation
 
-from kamu.models.role import Membership
+from kamu.models.membership import Membership
 
 
 def _send_email(subject: str, message: str, recipient_list: list[str], from_email: str | None = None) -> bool:

@@ -11,10 +11,12 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_stubs_ext import StrOrPromise
 
-from kamu.models.base import Token
-from kamu.models.identity import ContractTemplate, Identity
-from kamu.models.role import Membership, Requirement
-from kamu.utils.base import AuditLog
+from kamu.models.contract import ContractTemplate
+from kamu.models.identity import Identity
+from kamu.models.membership import Membership
+from kamu.models.role import Requirement
+from kamu.models.token import Token
+from kamu.utils.audit import AuditLog
 
 audit_log = AuditLog()
 

@@ -11,17 +11,13 @@ from django.contrib.auth.models import Group
 from django.test import RequestFactory, TestCase, override_settings
 from django.utils import timezone
 
-from kamu.models.base import TimeLimitError, Token
-from kamu.models.identity import (
-    Contract,
-    ContractTemplate,
-    EmailAddress,
-    Identifier,
-    Identity,
-    PhoneNumber,
-)
-from kamu.models.role import Membership, Role
-from kamu.utils.base import AuditLog, get_client_ip, set_default_permissions
+from kamu.models.contract import Contract, ContractTemplate
+from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
+from kamu.models.membership import Membership
+from kamu.models.role import Role
+from kamu.models.token import TimeLimitError, Token
+from kamu.utils.audit import AuditLog, get_client_ip
+from kamu.utils.auth import set_default_permissions
 from tests.setup import BaseTestCase
 
 audit_log = AuditLog()
@@ -54,8 +50,8 @@ class GetIPChecks(TestCase):
 
 
 class AuditLogTests(BaseTestCase):
-    @patch("kamu.utils.base.logger")
-    @patch("kamu.utils.base.logger_audit.log")
+    @patch("kamu.utils.audit.logger")
+    @patch("kamu.utils.audit.logger_audit.log")
     def test_logging(self, mock_audit_logger, mock_logger):
         audit_log.info("TestMsg", category="role", action="info", objects=[self.identity])
         mock_audit_logger.assert_called_with(
@@ -72,8 +68,8 @@ class AuditLogTests(BaseTestCase):
             },
         )
 
-    @patch("kamu.utils.base.logger")
-    @patch("kamu.utils.base.logger_audit.log")
+    @patch("kamu.utils.audit.logger")
+    @patch("kamu.utils.audit.logger_audit.log")
     def test_logging_request(self, mock_audit_logger, mock_logger):
         headers = {"REMOTE_ADDR": "10.1.2.3", "HTTP_USER_AGENT": "TestAgent"}
         request = self.factory.get("/", **headers)

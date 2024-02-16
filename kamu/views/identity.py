@@ -46,19 +46,13 @@ from kamu.forms.identity import (
     IdentitySearchForm,
     PhoneNumberVerificationForm,
 )
-from kamu.models.base import TimeLimitError, Token
-from kamu.models.identity import (
-    Contract,
-    ContractTemplate,
-    EmailAddress,
-    Identifier,
-    Identity,
-    PhoneNumber,
-)
-from kamu.models.role import Membership
-from kamu.utils.base import AuditLog
+from kamu.models.contract import Contract, ContractTemplate
+from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
+from kamu.models.membership import Membership
+from kamu.models.token import TimeLimitError, Token
+from kamu.utils.audit import AuditLog
 from kamu.utils.identity import combine_identities, combine_identities_requirements
-from kamu.utils.role import add_missing_requirement_messages
+from kamu.utils.membership import add_missing_requirement_messages
 
 audit_log = AuditLog()
 

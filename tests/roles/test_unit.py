@@ -10,9 +10,11 @@ from django.contrib.messages.storage.fallback import FallbackStorage
 from django.test import RequestFactory, TestCase, override_settings
 from django.utils import timezone
 
-from kamu.models.identity import Contract, ContractTemplate, Identity
-from kamu.models.role import Membership, Permission, Requirement, Role
-from kamu.utils.role import add_missing_requirement_messages
+from kamu.models.contract import Contract, ContractTemplate
+from kamu.models.identity import Identity
+from kamu.models.membership import Membership
+from kamu.models.role import Permission, Requirement, Role
+from kamu.utils.membership import add_missing_requirement_messages
 
 User = get_user_model()
 

@@ -12,7 +12,8 @@ from django.utils import timezone
 
 from kamu.management.commands.purge_data import UsageError
 from kamu.models.identity import Identifier, Identity
-from kamu.models.role import Membership, Role
+from kamu.models.membership import Membership
+from kamu.models.role import Role
 
 
 class ManagementCommandTestCase(TestCase):

@@ -9,15 +9,10 @@ from django.db import transaction
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
-from kamu.models.identity import (
-    Contract,
-    EmailAddress,
-    Identifier,
-    Identity,
-    PhoneNumber,
-)
-from kamu.models.role import Membership
-from kamu.utils.base import set_default_permissions
+from kamu.models.contract import Contract
+from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
+from kamu.models.membership import Membership
+from kamu.utils.auth import set_default_permissions
 
 
 @receiver(post_save, sender=Group)

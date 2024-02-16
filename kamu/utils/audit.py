@@ -1,5 +1,5 @@
 """
-Helper functions
+Audit logging
 """
 
 from __future__ import annotations
@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, Literal, Sequence
 from django.conf import settings
 from django.contrib.admin.models import ADDITION, CHANGE, DELETION, LogEntry
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import AbstractBaseUser, Group, Permission
+from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 
 from kamu.models.identity import Identity
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from django.contrib.auth.base_user import AbstractBaseUser
     from django.http import HttpRequest
 
-    from kamu.auth import LocalBaseBackend
+    from kamu.backends import LocalBaseBackend
 
 UserModel = get_user_model()
 logger = logging.getLogger(__name__)
@@ -325,26 +325,3 @@ class AuditLog:
             log_to_db=log_to_db,
             db_message=db_message,
         )
-
-
-def set_default_permissions(instance: AbstractBaseUser | Group, remove: bool = False) -> None:
-    """
-    Set default permissions for a group or user.
-    """
-
-    for app, model, codename in [
-        ("kamu", "role", "search_roles"),
-        ("kamu", "identity", "search_identities"),
-    ]:
-        content_type = ContentType.objects.get(app_label=app, model=model)
-        permission = Permission.objects.get(content_type=content_type, codename=codename)
-        if remove:
-            if hasattr(instance, "permissions"):
-                instance.permissions.remove(permission)
-            elif hasattr(instance, "user_permissions"):
-                instance.user_permissions.remove(permission)
-        else:
-            if hasattr(instance, "permissions"):
-                instance.permissions.add(permission)
-            elif hasattr(instance, "user_permissions"):
-                instance.user_permissions.add(permission)

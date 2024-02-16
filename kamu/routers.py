@@ -12,7 +12,8 @@ from kamu.api.identity import (
     IdentityViewSet,
     PhoneNumberViewSet,
 )
-from kamu.api.role import MembershipViewSet, PermissionViewSet, RoleViewSet
+from kamu.api.membership import MembershipViewSet
+from kamu.api.role import PermissionViewSet, RoleViewSet
 
 router = routers.DefaultRouter()
 router.register(r"contracts", ContractViewSet)

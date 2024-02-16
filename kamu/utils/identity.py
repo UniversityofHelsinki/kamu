@@ -10,18 +10,13 @@ from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from kamu.models.identity import (
-    Contract,
-    EmailAddress,
-    Identifier,
-    Identity,
-    PhoneNumber,
-)
-from kamu.models.role import Membership
-from kamu.utils.base import AuditLog
+from kamu.models.contract import Contract
+from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
+from kamu.models.membership import Membership
+from kamu.utils.audit import AuditLog
 
 if TYPE_CHECKING:
-    from kamu.utils.base import CategoryTypes
+    from kamu.utils.audit import CategoryTypes
 
 audit_log = AuditLog()
 

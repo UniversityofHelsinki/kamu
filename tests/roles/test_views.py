@@ -13,8 +13,9 @@ from django.test import Client, override_settings
 from django.utils import timezone
 
 from kamu.models.identity import Identifier, Identity
-from kamu.models.role import Membership, Role
-from kamu.utils.base import set_default_permissions
+from kamu.models.membership import Membership
+from kamu.models.role import Role
+from kamu.utils.auth import set_default_permissions
 from kamu.views.role import RoleListApproverView, RoleListInviterView, RoleListOwnerView
 from tests.setup import BaseTestCase
 from tests.utils import MockLdapConn
@@ -113,7 +114,7 @@ class MembershipViewTests(BaseTestCase):
         )
         self.assertEqual(response.status_code, 403)
 
-    @patch("kamu.utils.base.logger_audit")
+    @patch("kamu.utils.audit.logger_audit")
     def test_edit_membership(self, mock_logger):
         self.role.approvers.add(self.group)
         url = f"{self.url}change/"
@@ -155,7 +156,7 @@ class MembershipViewTests(BaseTestCase):
         self.assertEqual(self.membership.start_date, timezone.now().date())
         self.assertEqual(self.membership.expire_date, expire_date)
 
-    @patch("kamu.utils.base.logger_audit")
+    @patch("kamu.utils.audit.logger_audit")
     def test_end_membership(self, mock_logger):
         response = self.client.post(self.url, {"end_membership": "end"}, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -252,7 +253,7 @@ class RoleJoinTests(BaseTestCase):
             follow=True,
         )
 
-    @mock.patch("kamu.utils.base.logger_audit")
+    @mock.patch("kamu.utils.audit.logger_audit")
     def test_join_role(self, mock_logger):
         group = Group.objects.create(name="approver")
         self.user.groups.add(group)
@@ -420,7 +421,7 @@ class RoleInviteTests(BaseTestCase):
         self.assertIn("Test User has added you a new role membership in Kamu", mail.outbox[0].body)
 
     @mock.patch("kamu.connectors.ldap._get_connection")
-    @mock.patch("kamu.utils.base.logger_audit")
+    @mock.patch("kamu.utils.audit.logger_audit")
     @override_settings(ALLOW_TEST_FPIC=True)
     def test_add_role_with_ldap(self, mock_logger, mock_ldap):
         mock_ldap.return_value = MockLdapConn()
@@ -486,7 +487,7 @@ class RoleInviteTests(BaseTestCase):
             follow=True,
         )
 
-    @mock.patch("kamu.utils.base.logger_audit")
+    @mock.patch("kamu.utils.audit.logger_audit")
     def test_join_role_send_email_invite(self, mock_logger):
         response = self._test_join_role_send_email_invite()
         self.assertEqual(response.status_code, 200)

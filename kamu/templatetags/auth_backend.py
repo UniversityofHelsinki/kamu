@@ -12,13 +12,13 @@ register = template.Library()
 def enabled_backend(value: str) -> bool:
     backends = {
         "password": "django.contrib.auth.backends.ModelBackend",
-        "local": "kamu.auth.ShibbolethLocalBackend",
-        "haka": "kamu.auth.ShibbolethHakaBackend",
-        "edugain": "kamu.auth.ShibbolethEdugainBackend",
-        "google": "kamu.auth.GoogleBackend",
-        "microsoft": "kamu.auth.MicrosoftBackend",
-        "suomifi": "kamu.auth.SuomiFiBackend",
-        "emailsms": "kamu.auth.EmailSMSBackend",
+        "local": "kamu.backends.ShibbolethLocalBackend",
+        "haka": "kamu.backends.ShibbolethHakaBackend",
+        "edugain": "kamu.backends.ShibbolethEdugainBackend",
+        "google": "kamu.backends.GoogleBackend",
+        "microsoft": "kamu.backends.MicrosoftBackend",
+        "suomifi": "kamu.backends.SuomiFiBackend",
+        "emailsms": "kamu.backends.EmailSMSBackend",
     }
     backend = backends.get(value)
     if backend and backend in settings.AUTHENTICATION_BACKENDS:

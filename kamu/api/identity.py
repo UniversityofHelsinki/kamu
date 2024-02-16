@@ -4,15 +4,9 @@ Identity views for API endpoints.
 
 from rest_framework import viewsets
 
-from kamu.api.base import CustomDjangoModelPermissions
-from kamu.models.identity import (
-    Contract,
-    ContractTemplate,
-    EmailAddress,
-    Identifier,
-    Identity,
-    PhoneNumber,
-)
+from kamu.api.generic import CustomDjangoModelPermissions
+from kamu.models.contract import Contract, ContractTemplate
+from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
 from kamu.serializers.identity import (
     ContractSerializer,
     ContractTemplateSerializer,

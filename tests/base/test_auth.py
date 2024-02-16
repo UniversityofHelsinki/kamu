@@ -11,7 +11,7 @@ from django.contrib.messages.storage.fallback import FallbackStorage
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 
-from kamu.auth import (
+from kamu.backends import (
     AuthenticationError,
     GoogleBackend,
     ShibbolethEdugainBackend,
@@ -63,7 +63,7 @@ class ShibbolethBackendTests(TestCase):
         self.assertEqual(user.username, "testuser@example.org")
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
-    @patch("kamu.utils.base.logger_audit")
+    @patch("kamu.utils.audit.logger_audit")
     def test_login_create_user(self, mock_logger):
         self.request.META = {
             settings.SAML_ATTR_EPPN: "newuser@example.org",
@@ -112,7 +112,7 @@ class ShibbolethBackendTests(TestCase):
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_GROUP_PREFIXES=["saml_", "sso_"])
-    @patch("kamu.utils.base.logger_audit")
+    @patch("kamu.utils.audit.logger_audit")
     def test_login_update_groups(self, mock_logger):
         test_group = Group.objects.create(name="test_group")
         saml_group = Group.objects.create(name="saml_group")
@@ -145,7 +145,7 @@ class ShibbolethBackendTests(TestCase):
         self.assertEqual(user.identity.uid, "testuser")
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
-    @patch("kamu.utils.base.logger_audit")
+    @patch("kamu.utils.audit.logger_audit")
     def test_update_uid_already_exists(self, mock_logger):
         user2 = UserModel.objects.create(username="testuser2@example.org")
         Identity.objects.create(user=user2, uid="testuser")
@@ -243,7 +243,7 @@ class GoogleBackendTests(TestCase):
         self.assertEqual(user.username, "testuser@example.org")
         self.assertEqual(Identifier.objects.get(value="0123456789").identity, self.identity)
 
-    @patch("kamu.utils.base.logger_audit")
+    @patch("kamu.utils.audit.logger_audit")
     def test_login_google_link_existing_identifier(self, mock_logger):
         request = self.factory.get(reverse("login-google"))
         request.user = self.user

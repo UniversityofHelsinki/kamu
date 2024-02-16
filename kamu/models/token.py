@@ -2,10 +2,13 @@
 Base models.
 """
 
+from __future__ import annotations
+
 import hashlib
 import secrets
 import string
 from datetime import timedelta
+from typing import TYPE_CHECKING
 
 from django.conf import settings
 from django.core.validators import validate_email
@@ -13,8 +16,10 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from kamu.models.identity import EmailAddress, PhoneNumber
-from kamu.models.role import Membership
+from kamu.models.membership import Membership
+
+if TYPE_CHECKING:
+    from kamu.models.identity import EmailAddress, PhoneNumber
 
 
 class TimeLimitError(Exception):
