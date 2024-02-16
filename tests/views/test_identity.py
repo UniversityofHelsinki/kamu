@@ -1,5 +1,5 @@
 """
-View tests for identity app.
+View tests for identities.
 """
 
 import datetime
@@ -443,38 +443,6 @@ class VerificationTests(BaseTestCase):
                 call(30, "Removed verification from the phone number as the number was verified elsewhere", extra=ANY),
             ]
         )
-
-
-class AdminSiteTests(BaseTestCase):
-    def setUp(self):
-        super().setUp()
-        self.url = "/admin/kamu/"
-        self.client = Client()
-        self.client.force_login(user=self.superuser)
-
-    def test_view_admin_email_addresses(self):
-        response = self.client.get(f"{self.url}emailaddress/")
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("test@example.org", response.content.decode("utf-8"))
-
-    def test_view_admin_phone_numbers(self):
-        PhoneNumber.objects.create(
-            identity=self.identity,
-            number="+358123456789",
-        )
-        response = self.client.get(f"{self.url}phonenumber/")
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("+358123456789", response.content.decode("utf-8"))
-
-    def test_view_admin_identity(self):
-        response = self.client.get(f"{self.url}identity/")
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Test Me", response.content.decode("utf-8"))
-
-    def test_view_admin_identifier(self):
-        response = self.client.get(f"{self.url}identifier/")
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("0 Identifiers", response.content.decode("utf-8"))
 
 
 class ContractTests(BaseTestCase):

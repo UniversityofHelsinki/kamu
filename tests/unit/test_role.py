@@ -1,5 +1,5 @@
 """
-Unit tests for role app.
+Unit tests for roles.
 """
 
 import datetime

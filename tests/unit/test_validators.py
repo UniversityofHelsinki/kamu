@@ -1,5 +1,5 @@
 """
-Unit tests for role app.
+Unit tests for validators.
 """
 
 from django.core.exceptions import ValidationError
