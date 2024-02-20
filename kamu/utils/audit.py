@@ -184,20 +184,7 @@ class AuditLog:
         """
         Add entry to audit log.
 
-        - message should be a short description of the event.
-        - category is a high-level category of the event, like authentication, user or identity.
-        - action is a more specific action, like login or create.
-        - outcome is the result of the action, like success or failure.
-        - objects are linked objects, like user, identity or membership.
-        - extra is a dict of additional parameters.
-
-        Logs warning if category, action or outcome are not in the type lists.
-
-        Additional information, like actor user and IP address are parsed from the request, if given.
-
-        Other parameters are linked objects. If given, certain fields like id and name are parsed from them.
-
-        Optionally log message also to Identity admin log if actor and identity can be parsed.
+        Check info method for parameters.
         """
         params: dict[str, str | int | None] = {
             "category": category,
@@ -246,7 +233,16 @@ class AuditLog:
         """
         Add info entry to audit log.
 
-        Check _log method for parameters.
+        :param message: short description of the event.
+        :param category: high-level category of the event, allowed values in CategoryTypes.
+        :param action: specific action, allowed values in ActionTypes.
+        :param outcome: result of the action, allowed values in OutcomeTypes.
+        :param request: acting user and IP address are parsed from the request, if given.
+        :param objects: list of the linked objects, like user, identity or membership.
+        :param backend: backend class or name, if applicable.
+        :param extra: dict of additional parameters that are added to the log message.
+        :param log_to_db: Optionally log message also to Identity admin log, if actor and identity can be parsed.
+        :param db_message: Optional message for admin log, if it differs from the log message.
         """
         self._log(
             level=logging.INFO,
@@ -278,7 +274,7 @@ class AuditLog:
         """
         Add debug entry to audit log.
 
-        Check _log method for parameters.
+        Check info method for parameters.
         """
         self._log(
             level=logging.DEBUG,
@@ -310,7 +306,7 @@ class AuditLog:
         """
         Add warning entry to audit log.
 
-        Check _log method for parameters.
+        Check info method for parameters.
         """
         self._log(
             level=logging.WARNING,
