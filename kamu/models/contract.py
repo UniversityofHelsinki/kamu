@@ -18,7 +18,7 @@ from kamu.models.identity import Identifier, Identity
 
 class ContractManager(models.Manager["Contract"]):
     """
-    Manager methods for :model:`kamu.Contract`.
+    Manager methods for :class:`kamu.models.contract.Contract`.
     """
 
     def sign_contract(self, template: ContractTemplate, identity: Identity) -> "Contract":
@@ -37,7 +37,7 @@ class ContractManager(models.Manager["Contract"]):
 
 class Contract(models.Model):
     """
-    Stores a contract, related to :model:`kamu.Identity` and :model:`kamu.ContractTemplate`.
+    Stores a contract, related to :class:`kamu.models.identity.Identity` and :class:`kamu.models.contract.ContractTemplate`.
     """
 
     identity = models.ForeignKey(

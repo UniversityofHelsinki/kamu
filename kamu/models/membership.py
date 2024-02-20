@@ -19,7 +19,7 @@ from kamu.models.role import Requirement, Role
 
 class MembershipManager(models.Manager["Membership"]):
     """
-    Manager methods for :model:`kamu.Membership`.
+    Manager methods for :class:`kamu.models.membership.Membership`.
     """
 
     def get_stale(self, grace_days: int | None = None) -> QuerySet[Membership]:
@@ -39,7 +39,7 @@ class MembershipManager(models.Manager["Membership"]):
 
 class Membership(models.Model):
     """
-    Stores a membership between :model:`kamu.Identity` and :model:`kamu.Role`, related to :model:`auth.User`.
+    Stores a membership between :class:`kamu.models.identity.Identity` and :class:`kamu.models.role.Role`, related to :class:`django.contrib.auth.models.User`.
     """
 
     identity = models.ForeignKey("kamu.Identity", blank=True, null=True, on_delete=models.CASCADE)

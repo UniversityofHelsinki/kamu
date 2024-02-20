@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class MembershipSerializer(serializers.ModelSerializer[Membership]):
     """
-    Serializer for :model:`kamu.Membership`.
+    Serializer for :class:`kamu.models.membership.Membership`.
     """
 
     approver = serializers.SlugRelatedField(

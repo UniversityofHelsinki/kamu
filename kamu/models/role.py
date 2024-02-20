@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 class Role(models.Model):
     """
-    Stores a role, related to self, :model:`auth.Group` and :model:`kamu.Permission`.
+    Stores a role, related to self, :class:`django.contrib.auth.models.Group` and :class:`kamu.models.role.Permission`.
     """
 
     identifier = models.CharField(max_length=20, unique=True, verbose_name=_("Role identifier"))

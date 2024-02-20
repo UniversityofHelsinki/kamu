@@ -88,7 +88,7 @@ class CustomUserManager:
 
 class IdentityManager(models.Manager["Identity"]):
     """
-    Manager methods for :model:`kamu.Identity`.
+    Manager methods for :class:`kamu.models.identity.Identity`.
     """
 
     def get_stale(self, grace_days: int | None = None) -> QuerySet["Identity"]:
@@ -104,7 +104,7 @@ class IdentityManager(models.Manager["Identity"]):
 
 class Identity(models.Model):
     """
-    Stores an identity, extending :model:`auth.User`, related to :model:`kamu.Role`.
+    Stores an identity, extending :class:`django.contrib.auth.models.User`, related to :class:`kamu.models.role.Role`.
     """
 
     LANG_CHOICES = (
@@ -391,7 +391,7 @@ class Identity(models.Model):
 
 class EmailAddress(models.Model):
     """
-    Stores an email address, related to :model:`kamu.Identity`.
+    Stores an email address, related to :class:`kamu.models.identity.Identity`.
     """
 
     identity = models.ForeignKey(
@@ -427,7 +427,7 @@ class EmailAddress(models.Model):
 
 class PhoneNumber(models.Model):
     """
-    Stores a phone number, related to :model:`kamu.Identity`.
+    Stores a phone number, related to :class:`kamu.models.identity.Identity`.
     """
 
     identity = models.ForeignKey(
@@ -463,7 +463,7 @@ class PhoneNumber(models.Model):
 
 class IdentifierManager(models.Manager["Identifier"]):
     """
-    Manager methods for :model:`kamu.Identifier`.
+    Manager methods for :class:`kamu.models.identity.Identifier`.
     """
 
     def get_stale(self, grace_days: int | None = None) -> QuerySet["Identifier"]:
@@ -478,7 +478,7 @@ class IdentifierManager(models.Manager["Identifier"]):
 
 class Identifier(models.Model):
     """
-    Stores a unique identifier, related to :model:`kamu.Identity`.
+    Stores a unique identifier, related to :class:`kamu.models.identity.Identity`.
     """
 
     identity = models.ForeignKey(

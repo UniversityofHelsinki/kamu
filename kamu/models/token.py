@@ -32,7 +32,7 @@ class TimeLimitError(Exception):
 
 class TokenManager(models.Manager["Token"]):
     """
-    Manager methods for :model:`kamu.Token`.
+    Manager methods for :class:`kamu.models.token.Token`.
     """
 
     @staticmethod
@@ -281,7 +281,7 @@ class TokenManager(models.Manager["Token"]):
 
 class Token(models.Model):
     """
-    Stores a token, related to :model:`auth.User`, :model:`kamu.EmailAddress` and :model:`kamu.PhoneNumber`.
+    Stores a token, related to :class:`kamu.models.membership.Membership`, :class:`kamu.models.identity.EmailAddress` and :class:`kamu.models.identity.PhoneNumber`.
     """
 
     membership = models.ForeignKey("kamu.Membership", null=True, on_delete=models.CASCADE)

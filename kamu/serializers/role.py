@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 class PermissionSerializer(serializers.ModelSerializer[Permission]):
     """
-    Serializer for :model:`kamu.Permission`.
+    Serializer for :class:`kamu.models.role.Permission`.
     """
 
     class Meta:
@@ -42,7 +42,7 @@ class PermissionSerializer(serializers.ModelSerializer[Permission]):
 
 class RoleSerializer(serializers.ModelSerializer[Role]):
     """
-    Serializer for :model:`kamu.Role`.
+    Serializer for :class:`kamu.models.role.Role`.
     """
 
     owner = serializers.SlugRelatedField(

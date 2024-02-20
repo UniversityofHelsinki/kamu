@@ -15,7 +15,7 @@ from kamu.validators.identity import FpicValidator
 
 class ContractTemplateSerializer(serializers.ModelSerializer[Contract]):
     """
-    Serializer for :model:`kamu.ContractTemplate`.
+    Serializer for :class:`kamu.models.contract.ContractTemplate`.
     """
 
     class Meta:
@@ -40,7 +40,7 @@ class ContractTemplateSerializer(serializers.ModelSerializer[Contract]):
 
 class ContractSerializer(serializers.ModelSerializer[Contract]):
     """
-    Serializer for :model:`kamu.Contract`.
+    Serializer for :class:`kamu.models.contract.Contract`.
     """
 
     class Meta:
@@ -58,7 +58,7 @@ class ContractSerializer(serializers.ModelSerializer[Contract]):
 
 class ContractLimitedSerializer(serializers.ModelSerializer[Contract]):
     """
-    Serializer for :model:`kamu.Contract`.
+    Serializer for :class:`kamu.models.contract.Contract`.
     Limited information to use with IdentitySerializer.
     """
 
@@ -76,7 +76,7 @@ class ContractLimitedSerializer(serializers.ModelSerializer[Contract]):
 
 class EmailAddressSerializer(serializers.ModelSerializer[EmailAddress]):
     """
-    Serializer for :model:`kamu.EmailAddress`.
+    Serializer for :class:`kamu.models.identity.EmailAddress`.
     """
 
     class Meta:
@@ -111,7 +111,7 @@ class EmailAddressSerializer(serializers.ModelSerializer[EmailAddress]):
 
 class PhoneNumberSerializer(serializers.ModelSerializer[PhoneNumber]):
     """
-    Serializer for :model:`kamu.PhoneNumber`.
+    Serializer for :class:`kamu.models.identity.PhoneNumber`.
     """
 
     class Meta:
@@ -132,7 +132,7 @@ class PhoneNumberSerializer(serializers.ModelSerializer[PhoneNumber]):
 
 class IdentifierSerializer(serializers.ModelSerializer[Identifier]):
     """
-    Serializer for :model:`kamu.Identifier`.
+    Serializer for :class:`kamu.models.identity.Identifier`.
     """
 
     class Meta:
@@ -153,7 +153,7 @@ class IdentifierSerializer(serializers.ModelSerializer[Identifier]):
 
 class IdentitySerializer(serializers.ModelSerializer[Identity]):
     """
-    Serializer for :model:`kamu.Identity`.
+    Serializer for :class:`kamu.models.identity.Identity`.
     """
 
     contracts: Field = ContractLimitedSerializer(many=True, read_only=True)
