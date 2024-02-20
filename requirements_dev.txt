@@ -7,4 +7,6 @@ isort==5.13.2
 mypy==1.8.0
 django-stubs==4.2.7
 djangorestframework-stubs==3.14.5
+Sphinx==7.2.6
+sphinxcontrib-django==2.5
 tblib==3.0.0

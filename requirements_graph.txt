@@ -1,0 +1,4 @@
+# Requirements for creating graph model image
+-r requirements_dev.txt
+django-extensions==3.2.3
+pygraphviz==1.12
