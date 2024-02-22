@@ -21,6 +21,7 @@ stages:
   - prepare
   - lint
   - test
+  - docs
   - dependency-check
   - sonarqube-check
 
@@ -147,3 +148,27 @@ dependency-check:
   rules:
     - if: $runStages =~ /(dependency-check|sonarqube-check)/
       when: always
+
+pages:
+  stage: docs
+  script:
+    - make -C docs html
+    - mv docs/_build/html public
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+pages-test:
+  stage: docs
+  script:
+    - make -C docs html
+    - mv docs/_build/html test
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - test
+  rules:
+    - if: $CI_COMMIT_BRANCH != "main"
