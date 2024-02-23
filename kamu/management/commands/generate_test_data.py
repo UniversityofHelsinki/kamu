@@ -22,84 +22,21 @@ from kamu.models.contract import Contract, ContractTemplate
 from kamu.models.identity import EmailAddress, Identity, Nationality, PhoneNumber
 from kamu.models.membership import Membership
 from kamu.models.role import Permission, Requirement, Role
+from tests.data import CONTRACT_TEMPLATES, PERMISSIONS, REQUIREMENTS, ROLES, USERS
 
 fake = Faker()
 
-REQUIREMENTS: list = [
-    {
-        "name_en": "NDA signed",
-        "name_fi": "Salassapitositoumus allekirjoitettu",
-        "name_sv": "Sekretessavtal undertecknat",
-        "type": Requirement.Type.CONTRACT,
-        "value": "nda",
-        "grace": 0,
-    },
-    {
-        "name_en": "Secret contract signed",
-        "name_fi": "Salainen sopimus allekirjoitettu",
-        "name_sv": "Hemligt kontrakt undertecknat",
-        "type": Requirement.Type.CONTRACT,
-        "value": "secretcontract",
-        "grace": 0,
-    },
-    {
-        "name_en": "Phone number given",
-        "name_fi": "Puhelinnumero annettu",
-        "name_sv": "Telefonnummer angivet",
-        "type": Requirement.Type.ATTRIBUTE,
-        "value": "phone_number",
-        "grace": 30,
-    },
-]
-
-PERMISSIONS: list = [
-    {
-        "identifier": "useraccount",
-        "name_en": "User account",
-        "name_fi": "Käyttäjätunnus",
-        "name_sv": "Användarnamn",
-        "description_en": "Basic user account",
-        "description_fi": "Normaali käyttäjätunnus",
-        "description_sv": "Normalt användarnamn",
-        "cost": 130,
-    },
-    {
-        "identifier": "lightaccount",
-        "name_en": "Lightaccount",
-        "name_fi": "Kevyttunnus",
-        "name_sv": "Lättkonto",
-        "description_en": "User account with limited Access",
-        "description_fi": "Käyttäjätunnus rajoitetulla pääsyllä",
-        "description_sv": "Användarkonto med begränsad åtkomst",
-        "cost": 130,
-    },
-]
-
-ROLES: list = [
-    {
-        "identifier": "ext_employee",
-        "name_en": "External employee",
-        "name_fi": "Muun yrityksen työntekijä",
-        "name_sv": "Extern anställd",
-        "description_en": "External employee.",
-        "description_fi": "Muun yrityksen työntekijä.",
-        "description_sv": "Extern styrelseledamot.",
+ROLE_ADDONS: dict = {
+    "ext_employee": {
         "sub_roles": ["HY247", "HY+", "Unigrafia"],
         "permissions": ["useraccount"],
-        "requirements": [],
+        "requirements": ["contract:nda"],
         "purge_delay": 50,
         "set_inviters": False,
         "set_approvers": False,
         "set_owner": True,
     },
-    {
-        "identifier": "consultant",
-        "name_en": "Consultant",
-        "name_fi": "Konsultti",
-        "name_sv": "Konsult",
-        "description_en": "External consultant.",
-        "description_fi": "Ulkopuolinen konsultti.",
-        "description_sv": "Extern konsult.",
+    "consultant": {
         "sub_roles": ["TIKE", "OPA", "HY247", "KK"],
         "permissions": ["useraccount"],
         "requirements": ["attribute:phone_number"],
@@ -108,14 +45,7 @@ ROLES: list = [
         "set_approvers": True,
         "set_owner": True,
     },
-    {
-        "identifier": "ext_research",
-        "name_en": "Research group external member",
-        "name_fi": "Tutkimusryhmän ulkoinen jäsen",
-        "name_sv": "Forskningsgrupp extern medlem",
-        "description_en": "Research group external member.",
-        "description_fi": "Tutkimusryhmän ulkoinen jäsen.",
-        "description_sv": "Forskningsgrupp extern medlem.",
+    "ext_research": {
         "sub_roles": ["BYTDK", "HYMTDK", "MLTDK", "MMTDK"],
         "permissions": ["useraccount"],
         "requirements": [],
@@ -124,14 +54,7 @@ ROLES: list = [
         "set_approvers": False,
         "set_owner": True,
     },
-    {
-        "identifier": "guest_student",
-        "name_en": "Guest student",
-        "name_fi": "Vieraileva opiskelija",
-        "name_sv": "Gäststudent",
-        "description_en": "Guest student.",
-        "description_fi": "Vieraileva opiskelija.",
-        "description_sv": "Gäststudent.",
+    "guest_student": {
         "sub_roles": ["BYTDK", "HYMTDK", "MLTDK", "MMTDK"],
         "permissions": ["lightaccount"],
         "requirements": [],
@@ -140,14 +63,7 @@ ROLES: list = [
         "set_approvers": False,
         "set_owner": True,
     },
-    {
-        "identifier": "ext_board",
-        "name_en": "External board member",
-        "name_fi": "Hallituksen ulkoinen jäsen",
-        "name_sv": "Extern styrelseledamot",
-        "description_en": "External board member",
-        "description_fi": "Hallituksen ulkoinen jäsen",
-        "description_sv": "Extern styrelseledamot",
+    "ext_board": {
         "sub_roles": [],
         "permissions": ["useraccount"],
         "requirements": ["contract:secretcontract"],
@@ -155,43 +71,7 @@ ROLES: list = [
         "set_approvers": False,
         "set_owner": False,
     },
-]
-
-CONTRACTS: list = [
-    {
-        "type": "nda",
-        "name_en": "Non-disclosure agreement",
-        "name_fi": "Salassapitosopimus",
-        "name_sv": "Sekretessavtal",
-        "text_en": "Non-disclosure agreement text.",
-        "text_fi": "Salassapitosopimuksen teksti.",
-        "text_sv": "Texten om sekretessavtal.",
-        "public": True,
-        "version": "1",
-    },
-    {
-        "type": "textcontract",
-        "name_en": "Test contract",
-        "name_fi": "Testisopimus",
-        "name_sv": "Testkontrakt",
-        "text_en": "Test contract test.",
-        "text_fi": "Salassapitosopimuksen teksti.",
-        "text_sv": "Testkontrakttext.",
-        "public": True,
-        "version": "1",
-    },
-    {
-        "type": "secretcontract",
-        "name_en": "Secret contract",
-        "name_fi": "Salainen sopimus",
-        "name_sv": "Hemligt kontrakt",
-        "text_en": "Secret contract test.",
-        "text_fi": "Salaisen sopimuksen teksti.",
-        "text_sv": "Hemlig kontraktstext.",
-        "public": False,
-        "version": "1",
-    },
-]
+}
 
 
 class Command(BaseCommand):
@@ -210,18 +90,8 @@ class Command(BaseCommand):
         """
         if not self.silent:
             print("Creating contracts...")
-        for contract in CONTRACTS:
-            ContractTemplate.objects.get_or_create(
-                type=contract["type"],
-                name_en=contract["name_en"],
-                name_fi=contract["name_fi"],
-                name_sv=contract["name_sv"],
-                text_en=contract["text_en"],
-                text_fi=contract["text_fi"],
-                text_sv=contract["text_sv"],
-                version=contract["version"],
-                public=contract["public"],
-            )
+        for template in CONTRACT_TEMPLATES:
+            ContractTemplate.objects.get_or_create(**CONTRACT_TEMPLATES[template])
 
     def create_requirements(self) -> None:
         """
@@ -230,14 +100,7 @@ class Command(BaseCommand):
         if not self.silent:
             print("Creating requirements...")
         for requirement in REQUIREMENTS:
-            Requirement.objects.get_or_create(
-                name_en=requirement["name_en"],
-                name_fi=requirement["name_fi"],
-                name_sv=requirement["name_sv"],
-                type=requirement["type"],
-                value=requirement["value"],
-                grace=requirement["grace"],
-            )
+            Requirement.objects.get_or_create(**REQUIREMENTS[requirement])
 
     def create_users(self) -> None:
         """
@@ -246,16 +109,9 @@ class Command(BaseCommand):
         if not self.silent:
             print("Creating users...")
         usermodel = get_user_model()
-        users = ["user", "approver", "inviter", "owner"]
-        try:
-            usermodel.objects.create_superuser("admin", password="admin", first_name="Super", last_name="User")
-        except django.db.utils.IntegrityError:
-            pass
-        for user in users:
+        for user in USERS:
             try:
-                u = usermodel.objects.create_user(
-                    user, password=user, first_name=user.capitalize(), last_name="Tester"
-                )
+                u = usermodel.objects.create_user(**USERS[user])
                 g = Group.objects.get_or_create(name=user)[0]
                 u.groups.add(g)
             except django.db.utils.IntegrityError:
@@ -268,16 +124,7 @@ class Command(BaseCommand):
         if not self.silent:
             print("Creating permissions...")
         for permission in PERMISSIONS:
-            perm, created = Permission.objects.get_or_create(
-                identifier=permission["identifier"],
-                name_en=permission["name_en"],
-                name_fi=permission["name_fi"],
-                name_sv=permission["name_sv"],
-                description_en=permission["description_en"],
-                description_fi=permission["description_fi"],
-                description_sv=permission["description_sv"],
-                cost=permission["cost"],
-            )
+            perm, created = Permission.objects.get_or_create(**PERMISSIONS[permission])
             if created and perm.identifier == "useraccount":
                 perm.requirements.add(Requirement.objects.get(type=Requirement.Type.CONTRACT, value="nda"))
 
@@ -294,38 +141,50 @@ class Command(BaseCommand):
         """
         if not self.silent:
             print("Creating roles...")
+        local_roles = []
         for role in ROLES:
-            base_role = Role.objects.get_or_create(
-                identifier=role["identifier"],
-                name_en=role["name_en"],
-                name_fi=role["name_fi"],
-                name_sv=role["name_sv"],
-                description_en=role["description_en"],
-                description_fi=role["description_fi"],
-                description_sv=role["description_sv"],
-                organisation_unit="HY",
-                maximum_duration=365,
-            )[0]
+            r = ROLES[role].copy()
+            if ROLE_ADDONS.get(r["identifier"]):
+                r.update(ROLE_ADDONS[r["identifier"]])
+            local_roles.append(r)
+        for role in local_roles:
+            try:
+                base_role = Role.objects.get(identifier=role["identifier"])
+            except Role.DoesNotExist:
+                base_role = Role.objects.create(
+                    identifier=role["identifier"],
+                    name_en=role["name_en"],
+                    name_fi=role["name_fi"],
+                    name_sv=role["name_sv"],
+                    description_en=role["description_en"],
+                    description_fi=role["description_fi"],
+                    description_sv=role["description_sv"],
+                    organisation_unit=role["organisation_unit"],
+                    maximum_duration=role["maximum_duration"],
+                )
             for permission in role["permissions"]:
                 base_role.permissions.add(Permission.objects.get(identifier=permission))
             if "purge_delay" in role:
                 base_role.purge_delay = role["purge_delay"]
                 base_role.save()
             for sub_role in role["sub_roles"]:
-                sub_role_identifier = unicodedata.normalize("NFKD", sub_role).lower()
-                s_role, created = Role.objects.get_or_create(
-                    identifier=f"{sub_role_identifier}_{base_role.identifier}"[:20],
-                    name_en=f"{sub_role} - {base_role.name_en}",
-                    name_fi=f"{sub_role} - {base_role.name_fi}",
-                    name_sv=f"{sub_role} - {base_role.name_sv}",
-                    description_en=f"{sub_role} - {base_role.description_en}",
-                    description_fi=f"{sub_role} - {base_role.description_fi}",
-                    description_sv=f"{sub_role} - {base_role.description_sv}",
-                    parent=base_role,
-                    organisation_unit=sub_role,
-                    maximum_duration=365,
-                )
-                if created:
+                safe_sub_role_name = unicodedata.normalize("NFKD", sub_role).lower()
+                sub_role_identifier = f"{safe_sub_role_name}_{base_role.identifier}"[:20]
+                try:
+                    s_role = Role.objects.get(identifier=sub_role_identifier)
+                except Role.DoesNotExist:
+                    s_role = Role.objects.create(
+                        identifier=sub_role_identifier,
+                        name_en=f"{sub_role} - {base_role.name_en}",
+                        name_fi=f"{sub_role} - {base_role.name_fi}",
+                        name_sv=f"{sub_role} - {base_role.name_sv}",
+                        description_en=f"{sub_role} - {base_role.description_en}",
+                        description_fi=f"{sub_role} - {base_role.description_fi}",
+                        description_sv=f"{sub_role} - {base_role.description_sv}",
+                        parent=base_role,
+                        organisation_unit=sub_role,
+                        maximum_duration=role["maximum_duration"],
+                    )
                     for requirement in role["requirements"]:
                         reqtype, reqvalue = requirement.split(":", 1)
                         req = Requirement.objects.filter(type=Requirement.Type(reqtype), value=reqvalue).first()
