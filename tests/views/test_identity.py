@@ -26,6 +26,7 @@ from tests.utils import MockLdapConn
 class IdentityTests(BaseTestCase):
     def setUp(self):
         super().setUp()
+        self.create_user()
         self.url = "/identity/"
         self.client = Client()
         set_default_permissions(self.user)
@@ -38,9 +39,6 @@ class IdentityTests(BaseTestCase):
         self.assertIn("/login/", response["location"])
 
     def test_view_identity_without_identity(self):
-        self.identity.delete()
-        self.user.first_name = "Test"
-        self.user.last_name = "User"
         self.user.email = "test.user@example.org"
         self.user.save()
         response = self.client.get(f"{self.url}me/", follow=True)
@@ -48,16 +46,20 @@ class IdentityTests(BaseTestCase):
         self.assertIn("New identity created.", response.content.decode("utf-8"))
         self.assertTrue(
             Identity.objects.filter(
-                user=self.user, given_names="Test", surname="User", email_addresses__address="test.user@example.org"
+                user=self.user,
+                given_names=self.user.first_name,
+                surname=self.user.last_name,
+                email_addresses__address=self.user.email,
             ).exists()
         )
 
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_view_identity(self, mock_logger):
+        self.create_identity()
         response = self.client.get(f"{self.url}{self.identity.pk}/")
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("alert", response.content.decode("utf-8"))
-        self.assertIn("Test User</h1>", response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()}</h1>", response.content.decode("utf-8"))
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Read identity information", extra=ANY),
@@ -67,16 +69,14 @@ class IdentityTests(BaseTestCase):
     @mock.patch("kamu.connectors.ldap._get_connection")
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_search_identity(self, mock_logger, mock_ldap):
+        self.create_identity(email=True)
+        self.create_superidentity(email=True)
         mock_ldap.return_value = MockLdapConn(limited_fields=True)
-        EmailAddress.objects.create(
-            identity=self.superidentity,
-            address="super@example.org",
-        )
-        url = f"{self.url}search/?given_names=test&email=super@example.org"
+        url = f"{self.url}search/?given_names=test&email=super_test@example.org"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Test User", response.content.decode("utf-8"))
-        self.assertIn("Super User", response.content.decode("utf-8"))
+        self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
+        self.assertIn(self.superidentity.display_name(), response.content.decode("utf-8"))
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Searched identities", extra=ANY),
@@ -84,7 +84,7 @@ class IdentityTests(BaseTestCase):
         )
         self.assertEqual(
             mock_logger.log.call_args_list[0][1]["extra"]["search_terms"],
-            str({"given_names": "test", "email": "super@example.org"}),
+            str({"given_names": "test", "email": "super_test@example.org"}),
         )
 
     def test_search_identity_without_permission(self):
@@ -97,7 +97,9 @@ class IdentityTests(BaseTestCase):
 class IdentityEditTests(BaseTestCase):
     def setUp(self):
         super().setUp()
-        self.url = "/identity/1/change/"
+        self.create_identity(user=True)
+        self.nationality = self.create_nationality("fi")
+        self.url = f"/identity/{self.identity.pk}/change/"
         self.client = Client()
         self.data = {
             "given_names": self.identity.given_names,
@@ -107,7 +109,7 @@ class IdentityEditTests(BaseTestCase):
             "preferred_language": self.identity.preferred_language,
             "date_of_birth": "1999-01-01",
             "gender": self.identity.gender,
-            "nationality": 1,
+            "nationality": self.nationality.pk,
             "given_names_verification": self.identity.given_names_verification,
             "surname_verification": self.identity.surname_verification,
             "date_of_birth_verification": self.identity.date_of_birth_verification,
@@ -141,7 +143,7 @@ class IdentityEditTests(BaseTestCase):
         self.data["fpic"] = "010181-900C"
         response = self.client.post(self.url, self.data, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Test User</h1>", response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()}</h1>", response.content.decode("utf-8"))
         self.assertIn("New-User", response.content.decode("utf-8"))
         self.assertIn("Jan. 1, 1999", response.content.decode("utf-8"))
         self.assertIn("010181-900C", response.content.decode("utf-8"))
@@ -155,6 +157,7 @@ class IdentityEditTests(BaseTestCase):
         )
 
     def test_edit_identity_view_with_superuser(self):
+        self.create_superuser()
         self.client.force_login(self.superuser)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -162,6 +165,7 @@ class IdentityEditTests(BaseTestCase):
         self.assertIn("verification method", response.content.decode("utf-8"))
 
     def test_edit_strong_electrical_verification_error(self):
+        self.create_superuser()
         self.identity.given_names_verification = Identity.VerificationMethod.STRONG
         self.identity.save()
         self.data["given_names"] = "New Name"
@@ -172,6 +176,7 @@ class IdentityEditTests(BaseTestCase):
         self.assertIn("Cannot set strong electrical verification by hand", response.content.decode("utf-8"))
 
     def test_edit_lower_verification_level(self):
+        self.create_superuser()
         self.identity.given_names_verification = Identity.VerificationMethod.STRONG
         self.identity.save()
         self.data["given_names"] = "New Name"
@@ -184,12 +189,8 @@ class IdentityEditTests(BaseTestCase):
 class ContactTests(BaseTestCase):
     def setUp(self):
         super().setUp()
+        self.create_identity(user=True, email=True, phone=True)
         self.url = f"/identity/{self.identity.pk}/contacts/"
-        self.number = PhoneNumber.objects.create(
-            identity=self.identity,
-            number="+1234567890",
-            priority=0,
-        )
         self.client = Client()
         self.client.force_login(self.user)
 
@@ -197,8 +198,8 @@ class ContactTests(BaseTestCase):
     def test_view_contacts(self, mock_logger):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("+1234567890", response.content.decode("utf-8"))
-        self.assertIn("test@example.org", response.content.decode("utf-8"))
+        self.assertIn(self.phone_number.number, response.content.decode("utf-8"))
+        self.assertIn(self.email_address.address, response.content.decode("utf-8"))
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Listed contact information", extra=ANY),
@@ -210,7 +211,7 @@ class ContactTests(BaseTestCase):
         data = {"contact": "test@example.com"}
         response = self.client.post(self.url, data, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("test@example.org", response.content.decode("utf-8"))
+        self.assertIn(self.email_address.address, response.content.decode("utf-8"))
         self.assertIn("test@example.com</th>", response.content.decode("utf-8"))
         mock_logger.log.assert_has_calls(
             [
@@ -223,7 +224,7 @@ class ContactTests(BaseTestCase):
         data = {"contact": "+358123456789"}
         response = self.client.post(self.url, data, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("+1234567890</th>", response.content.decode("utf-8"))
+        self.assertIn("+358123456789</th>", response.content.decode("utf-8"))
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Added phone number", extra=ANY),
@@ -251,9 +252,9 @@ class ContactTests(BaseTestCase):
         data = {"phone_up": new_number.pk}
         self.client.post(self.url, data, follow=True)
         new_number.refresh_from_db()
-        self.number.refresh_from_db()
+        self.phone_number.refresh_from_db()
         self.assertEqual(new_number.priority, 0)
-        self.assertEqual(self.number.priority, 1)
+        self.assertEqual(self.phone_number.priority, 1)
 
     def test_post_change_priority_down(self):
         new_number = PhoneNumber.objects.create(
@@ -261,20 +262,20 @@ class ContactTests(BaseTestCase):
             number="+3580123456789",
             priority=1,
         )
-        data = {"phone_down": self.number.pk}
+        data = {"phone_down": self.phone_number.pk}
         self.client.post(self.url, data, follow=True)
         new_number.refresh_from_db()
-        self.number.refresh_from_db()
+        self.phone_number.refresh_from_db()
         self.assertEqual(new_number.priority, 0)
-        self.assertEqual(self.number.priority, 1)
+        self.assertEqual(self.phone_number.priority, 1)
 
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_remove_phone(self, mock_logger):
-        data = {"phone_remove": self.number.pk}
+        data = {"phone_remove": self.phone_number.pk}
         response = self.client.post(self.url, data, follow=True)
         self.assertNotIn("+1234567890", response.content.decode("utf-8"))
         with self.assertRaises(PhoneNumber.DoesNotExist):
-            self.number.refresh_from_db()
+            self.phone_number.refresh_from_db()
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Deleted phone number", extra=ANY),
@@ -285,6 +286,7 @@ class ContactTests(BaseTestCase):
 class IdentifierTests(BaseTestCase):
     def setUp(self):
         super().setUp()
+        self.create_identity(user=True)
         self.url = f"/identity/{self.identity.pk}/identifiers/"
         self.identifier = Identifier.objects.create(
             identity=self.identity,
@@ -345,6 +347,11 @@ class IdentifierTests(BaseTestCase):
 class VerificationTests(BaseTestCase):
     def setUp(self):
         super().setUp()
+        self.create_identity(user=True, email=True, phone=True)
+        self.email_address.verified = False
+        self.email_address.save()
+        self.phone_number.verified = False
+        self.phone_number.save()
         self.url = f"/email/{self.email_address.pk}/verify/"
         self.client = Client()
         self.client.force_login(self.user)
@@ -363,7 +370,7 @@ class VerificationTests(BaseTestCase):
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_verify_address(self, mock_logger):
         response = self._verify_address()
-        self.assertIn("test@example.org", response.content.decode("utf-8"))
+        self.assertIn(self.email_address.address, response.content.decode("utf-8"))
         self.assertIn("Verified", response.content.decode("utf-8"))
         self.email_address.refresh_from_db()
         self.assertTrue(self.email_address.verified)
@@ -375,7 +382,10 @@ class VerificationTests(BaseTestCase):
 
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_verify_already_verified_address(self, mock_logger):
-        email = EmailAddress.objects.create(identity=self.superidentity, address="test@example.org", verified=True)
+        self.create_superidentity()
+        email = EmailAddress.objects.create(
+            identity=self.superidentity, address=self.email_address.address, verified=True
+        )
         self._verify_address()
         self.email_address.refresh_from_db()
         self.assertTrue(self.email_address.verified)
@@ -417,10 +427,9 @@ class VerificationTests(BaseTestCase):
     @mock.patch("kamu.views.identity.SmsConnector")
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_verify_sms(self, mock_logger, mock_connector):
-        number = PhoneNumber.objects.create(identity=self.identity, number="+1234567890", priority=0, verified=False)
-        self._verify_sms(mock_connector, number)
-        number.refresh_from_db()
-        self.assertTrue(number.verified)
+        self._verify_sms(mock_connector, self.phone_number)
+        self.phone_number.refresh_from_db()
+        self.assertTrue(self.phone_number.verified)
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Verified phone number", extra=ANY),
@@ -430,13 +439,15 @@ class VerificationTests(BaseTestCase):
     @mock.patch("kamu.views.identity.SmsConnector")
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_verify_existing_sms(self, mock_logger, mock_connector):
-        verified_number = PhoneNumber.objects.create(identity=self.superidentity, number="+1234567890", verified=True)
-        number = PhoneNumber.objects.create(identity=self.identity, number="+1234567890", priority=0, verified=False)
-        self._verify_sms(mock_connector, number)
+        self.create_superidentity()
+        verified_number = PhoneNumber.objects.create(
+            identity=self.superidentity, number=self.phone_number.number, verified=True
+        )
+        self._verify_sms(mock_connector, self.phone_number)
         verified_number.refresh_from_db()
         self.assertFalse(verified_number.verified)
-        number.refresh_from_db()
-        self.assertTrue(number.verified)
+        self.phone_number.refresh_from_db()
+        self.assertTrue(self.phone_number.verified)
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Verified phone number", extra=ANY),
@@ -448,39 +459,15 @@ class VerificationTests(BaseTestCase):
 class ContractTests(BaseTestCase):
     def setUp(self):
         super().setUp()
-        self.contract_template = ContractTemplate.objects.create(
-            type="testtemplate",
-            version=1,
-            name_en="Test Contract en",
-            name_fi="Test Contract fi",
-            name_sv="Test Contract sv",
-            text_en="Test Content en",
-            text_fi="Test Content fi",
-            text_sv="Test Content sv",
-        )
+        self.create_identity(user=True)
+        self.contract_template = self.create_contract_template("nda")
         self.client = Client()
         self.client.force_login(self.user)
-
-    def _create_templates(self):
-        self.contract_templates = [
-            ContractTemplate.objects.create(
-                type=f"testtemplate {i}",
-                version=1,
-                name_en=f"Test Contract en {i}",
-                name_fi=f"Test Contract fi {i}",
-                name_sv=f"Test Contract sv {i}",
-                text_en=f"Test Content en {i}",
-                text_fi=f"Test Content fi {i}",
-                text_sv=f"Test Content sv {i}",
-                public=bool(i % 2),
-            )
-            for i in range(2)
-        ]
 
     def test_modify_contract_creates_new_version(self):
         self.contract_template.name_en = "New name"
         self.contract_template.save()
-        self.assertTrue(ContractTemplate.objects.filter(type="testtemplate", version=2).exists())
+        self.assertTrue(ContractTemplate.objects.filter(type=self.contract_template.type, version=2).exists())
 
     def test_contract_sign_page(self):
         response = self.client.get(f"/identity/{self.identity.pk}/contracts/{self.contract_template.pk}/sign/")
@@ -526,7 +513,9 @@ class ContractTests(BaseTestCase):
 
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_view_contract_list(self, mock_logger):
-        self._create_templates()
+        self.create_superidentity()
+        contract_template_public = self.create_contract_template("textcontract")
+        contract_template_secret = self.create_contract_template("secretcontract")
         contract = Contract.objects.sign_contract(
             identity=self.identity,
             template=self.contract_template,
@@ -539,8 +528,8 @@ class ContractTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(contract.checksum, response.content.decode("utf-8"))
         self.assertNotIn(super_contract.checksum, response.content.decode("utf-8"))
-        self.assertNotIn(self.contract_templates[0].name(), response.content.decode("utf-8"))
-        self.assertIn(self.contract_templates[1].name(), response.content.decode("utf-8"))
+        self.assertNotIn(contract_template_secret.name(), response.content.decode("utf-8"))
+        self.assertIn(contract_template_public.name(), response.content.decode("utf-8"))
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Listed contract information", extra=ANY),
@@ -549,7 +538,7 @@ class ContractTests(BaseTestCase):
 
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_view_contract(self, mock_logger):
-        self._create_templates()
+        self.create_superidentity()
         contract = Contract.objects.sign_contract(
             identity=self.identity,
             template=self.contract_template,
@@ -575,7 +564,6 @@ class ContractTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_view_contracts_list_only_latest(self):
-        self._create_templates()
         contract = Contract.objects.sign_contract(
             identity=self.identity,
             template=self.contract_template,
@@ -591,7 +579,6 @@ class ContractTests(BaseTestCase):
         self.assertIn(contract2.checksum, response.content.decode("utf-8"))
 
     def test_view_contracts_list_all(self):
-        self._create_templates()
         contract = Contract.objects.sign_contract(
             identity=self.identity,
             template=self.contract_template,
@@ -609,7 +596,6 @@ class ContractTests(BaseTestCase):
     def test_validate_contract(self):
         from uuid import uuid4
 
-        self._create_templates()
         contract = Contract.objects.sign_contract(
             identity=self.identity,
             template=self.contract_template,
@@ -626,6 +612,9 @@ class ContractTests(BaseTestCase):
 class IdentityCombineTests(BaseTestCase):
     def setUp(self):
         super().setUp()
+        self.create_identity(user=True)
+        self.create_superidentity(user=True)
+        self.role = self.create_role()
         self.client = Client()
         self.client.force_login(self.superuser)
         self.url = f"/identity/combine/{self.superidentity.pk}/{self.identity.pk}/"
@@ -716,19 +705,19 @@ class IdentityCombineTests(BaseTestCase):
         self._create_test_data()
         self.identity.date_of_birth = datetime.date(1999, 1, 1)
         self.identity.gender = Identity.Gender.OTHER
-        self.identity.uid = "tester"
+        self.identity.uid = "testuid"
         self.identity.save()
         kamu_id = self.identity.kamu_id
         response = self.client.post(self.url, self.data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Identities combined.", response.content.decode("utf-8"))
         self.superidentity.refresh_from_db()
-        self.assertEqual(self.superidentity.given_names, "Super")
+        self.assertEqual(self.superidentity.given_names, "Dr. Super")
         self.assertEqual(self.superidentity.gender, Identity.Gender.OTHER)
         self.assertEqual(self.superidentity.date_of_birth, datetime.date(1999, 1, 1))
         self.assertEqual(self.superidentity.membership_set.all().count(), 3)
         self.assertEqual(self.superidentity.phone_numbers.all().count(), 3)
-        self.assertEqual(self.superidentity.email_addresses.all().count(), 4)
+        self.assertEqual(self.superidentity.email_addresses.all().count(), 3)
         self.assertEqual(self.superidentity.contracts.all().count(), 3)
         self.assertEqual(self.superidentity.identifiers.all().count(), 3)
         self.assertTrue(
@@ -760,8 +749,8 @@ class IdentityCombineTests(BaseTestCase):
         self.superidentity.save()
         self.client.post(self.url, self.data)
         self.superidentity.refresh_from_db()
-        self.assertEqual(self.superidentity.given_names, "Test Me")
-        self.assertEqual(self.superidentity.surname, "User")
+        self.assertEqual(self.superidentity.given_names, self.identity.given_names)
+        self.assertEqual(self.superidentity.surname, self.identity.surname)
         mock_logger.log.assert_has_calls(
             [
                 call(20, f"Identity transfer: given_names from identity: {self.identity.pk}", extra=ANY),

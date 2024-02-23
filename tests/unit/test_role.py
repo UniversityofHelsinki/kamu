@@ -7,28 +7,25 @@ import datetime
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.messages.storage.fallback import FallbackStorage
-from django.test import RequestFactory, TestCase, override_settings
+from django.test import RequestFactory, override_settings
 from django.utils import timezone
 
 from kamu.models.contract import Contract, ContractTemplate
 from kamu.models.identity import Identity
 from kamu.models.membership import Membership
-from kamu.models.role import Permission, Requirement, Role
+from kamu.models.role import Permission, Requirement
 from kamu.utils.membership import add_missing_requirement_messages
+from tests.data import ROLES
+from tests.setup import BaseTestCase
 
 User = get_user_model()
 
 
-class TestData(TestCase):
+class BaseRoleTestCase(BaseTestCase):
     def setUp(self):
-        self.parent_role = Role.objects.create(identifier="parent", name_en="Parent Role", maximum_duration=20)
-        self.role = Role.objects.create(
-            identifier="testrole",
-            name_en="Test Role",
-            description_fi="Testirooli",
-            maximum_duration=10,
-            parent=self.parent_role,
-        )
+        super().setUp()
+        self.parent_role = self.create_role()
+        self.role = self.create_role("consultant", parent=self.parent_role)
         self.account_permission = Permission.objects.create(identifier="account", name_en="Account permission", cost=5)
         self.licence_permission = Permission.objects.create(
             identifier="license", name_en="License permission", cost=15
@@ -37,13 +34,13 @@ class TestData(TestCase):
         self.role.permissions.add(self.licence_permission)
 
 
-class RoleModelTests(TestData):
+class RoleModelTests(BaseRoleTestCase):
 
     def test_role_name(self):
-        self.assertEqual(self.role.name(), "Test Role")
+        self.assertEqual(self.role.name(), ROLES["consultant"]["name_en"])
 
     def test_role_description(self):
-        self.assertEqual(self.role.description(lang="fi"), "Testirooli")
+        self.assertEqual(self.role.description(lang="fi"), ROLES["consultant"]["description_fi"])
 
     def test_role_hierarchy(self):
         self.assertEqual(self.parent_role.get_role_hierarchy().count(), 1)
@@ -54,14 +51,8 @@ class RoleModelTests(TestData):
         self.assertEqual(self.role.get_role_hierarchy().count(), 1)
 
     def test_role_hierarchy_memberships(self):
-        identity = Identity.objects.create(given_names="Test User")
-        Membership.objects.create(
-            role=self.parent_role,
-            identity=identity,
-            reason="Because",
-            start_date=timezone.now().date(),
-            expire_date=timezone.now().date() + datetime.timedelta(days=1),
-        )
+        identity = self.create_identity(user=False)
+        self.create_membership(self.parent_role, identity, start_delta_days=0, expire_delta_days=1)
         self.assertEqual(self.role.get_hierarchy_memberships().count(), 1)
 
     def test_role_cost(self):
@@ -74,7 +65,7 @@ class RoleModelTests(TestData):
         self.assertEqual(self.role.get_permissions().count(), 2)
 
 
-class RequirementsTests(TestData):
+class RequirementsTests(BaseRoleTestCase):
     def setUp(self):
         super().setUp()
         self.date_of_birth = self.role.requirements.create(
@@ -93,20 +84,10 @@ class RequirementsTests(TestData):
         self.email = self.licence_permission.requirements.create(
             name_en="Email", type=Requirement.Type.ATTRIBUTE, value="email_address", grace=0
         )
-        self.identity = Identity.objects.create(given_names="Test User")
-        self.membership = Membership.objects.create(
-            identity=self.identity,
-            role=self.role,
-            start_date=timezone.now().date(),
-            expire_date=timezone.now().date() + datetime.timedelta(days=1),
-        )
-        self.user = User.objects.create_user(username="testuser")
-        self.parent_membership = Membership.objects.create(
-            identity=self.identity,
-            role=self.parent_role,
-            approver=self.user,
-            start_date=timezone.now().date(),
-            expire_date=timezone.now().date() + datetime.timedelta(days=15),
+        self.identity = self.create_identity(user=True)
+        self.membership = self.create_membership(self.role, self.identity, start_delta_days=0, expire_delta_days=1)
+        self.parent_membership = self.create_membership(
+            self.parent_role, self.identity, start_delta_days=0, expire_delta_days=15, approver=self.user
         )
 
     def _create_contract(self):

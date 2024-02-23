@@ -40,6 +40,10 @@ class GetIPChecks(TestCase):
 
 
 class AuditLogTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.identity = self.create_identity(user=True)
+
     @patch("kamu.utils.audit.logger")
     @patch("kamu.utils.audit.logger_audit.log")
     def test_logging(self, mock_audit_logger, mock_logger):
@@ -51,16 +55,17 @@ class AuditLogTests(BaseTestCase):
                 "category": "role",
                 "action": "info",
                 "outcome": "none",
-                "identity": "Test User",
                 "identity_id": self.identity.pk,
-                "user": "testuser",
+                "identity": self.identity.display_name(),
                 "user_id": self.user.pk,
+                "user": "user",
             },
         )
 
     @patch("kamu.utils.audit.logger")
     @patch("kamu.utils.audit.logger_audit.log")
     def test_logging_request(self, mock_audit_logger, mock_logger):
+        self.create_superuser()
         headers = {"REMOTE_ADDR": "10.1.2.3", "HTTP_USER_AGENT": "TestAgent"}
         request = self.factory.get("/", **headers)
         request.user = self.superuser
@@ -81,14 +86,14 @@ class AuditLogTests(BaseTestCase):
                 "category": "identity",
                 "action": "info",
                 "outcome": "success",
-                "identity": "Test User",
-                "identity_id": self.identity.pk,
-                "user": "testuser",
-                "user_id": self.user.pk,
                 "ip": "10.1.2.3",
                 "user_agent": "TestAgent",
-                "actor": "admin",
+                "actor": self.superuser.username,
                 "actor_id": self.superuser.pk,
+                "user_id": self.user.pk,
+                "user": "user",
+                "identity_id": self.identity.pk,
+                "identity": self.identity.display_name(),
                 "test": "test",
             },
         )

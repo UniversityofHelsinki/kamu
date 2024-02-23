@@ -40,6 +40,16 @@ CONTRACT_TEMPLATES: dict = {
     },
 }
 
+NATIONALITIES: dict = {
+    "fi": {"code": "FI", "name_fi": "Suomi", "name_en": "Finland", "name_sv": "Finland"},
+    "se": {
+        "code": "SE",
+        "name_fi": "Ruotsi",
+        "name_en": "Sweden",
+        "name_sv": "Sverige",
+    },
+}
+
 PERMISSIONS: dict = {
     "useraccount": {
         "identifier": "useraccount",

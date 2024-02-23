@@ -16,8 +16,8 @@ from django.utils import timezone
 
 from kamu.models.identity import Identifier, Identity, PhoneNumber
 from kamu.models.membership import Membership
-from kamu.models.role import Role
 from kamu.models.token import Token
+from tests.data import USERS
 from tests.setup import BaseTestCase
 
 UserModel = get_user_model()
@@ -26,6 +26,9 @@ UserModel = get_user_model()
 class LoginViewTests(BaseTestCase):
     def setUp(self):
         super().setUp()
+        self.user_data = USERS["user"]
+        self.superuser_data = USERS["superuser"]
+        self.create_identity(user=True, email=True, phone=True)
 
     def test_redirect_admin_site_to_login(self):
         url = reverse("admin:login")
@@ -54,11 +57,11 @@ class LoginViewTests(BaseTestCase):
         url = reverse("login-local") + "?next=/identity/1/"
         response = self.client.post(
             url,
-            {"username": "testuser", "password": "test_pass"},
+            {"username": self.user_data["username"], "password": self.user_data["password"]},
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Test User</h1>", response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()}</h1>", response.content.decode("utf-8"))
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
@@ -75,8 +78,9 @@ class LoginViewTests(BaseTestCase):
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
     def test_shibboleth_local_login_with_owner_permissions(self):
-        self.role.owner = self.user
-        self.role.save()
+        role = self.create_role()
+        role.owner = self.user
+        role.save()
         Identifier.objects.create(type=Identifier.Type.EPPN, value="testuser@example.org", identity=self.identity)
         url = reverse("login-shibboleth")
         self.client.get(url, follow=True, headers={"EPPN": "testuser@example.org"})
@@ -105,7 +109,7 @@ class LoginViewTests(BaseTestCase):
         Identifier.objects.create(type=Identifier.Type.EPPN, value="newuser@example.org", identity=self.identity)
         response = self.client.get(f"{url}?next=/identity/me", follow=True, headers={"EPPN": "newuser@example.org"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Test User</h1>", response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()}</h1>", response.content.decode("utf-8"))
 
     @override_settings(OIDC_CLAIM_SUB="HTTP_SUB")
     def test_google_login(self):
@@ -113,7 +117,7 @@ class LoginViewTests(BaseTestCase):
         Identifier.objects.create(type=Identifier.Type.GOOGLE, value="1234567890", identity=self.identity)
         response = self.client.get(f"{url}?next=/identity/me", follow=True, headers={"SUB": "1234567890"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Test User</h1>", response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()}</h1>", response.content.decode("utf-8"))
 
     @override_settings(OIDC_CLAIM_SUB="HTTP_SUB")
     def test_google_login_without_account(self):
@@ -139,7 +143,7 @@ class LoginViewTests(BaseTestCase):
         iss = "https://login.microsoftonline.com/12345678-1234-1234-1234-123456789abc/v2.0"
         response = self._test_microsoft_login(iss, oid)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Test User</h1>", response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()}</h1>", response.content.decode("utf-8"))
 
     def test_microsoft_login_with_incorrect_issuer(self):
         oid = "00000000-0000-0000-0123-456789abcdef"
@@ -154,14 +158,13 @@ class LoginViewTests(BaseTestCase):
         Identifier.objects.create(type=Identifier.Type.FPIC, value="010181-900C", identity=self.identity)
         response = self.client.get(f"{url}?next=/identity/me", follow=True, headers={"SSN": "010181-900C"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Test User</h1>", response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()}</h1>", response.content.decode("utf-8"))
 
     @override_settings(SMS_DEBUG=True)
     @mock.patch("kamu.connectors.sms.logger")
     def test_email_login(self, mock_logger):
         phone_number = PhoneNumber.objects.create(identity=self.identity, number="+123456789", verified=True)
-        self.email_address.verified = True
-        self.email_address.save()
+
         url = reverse("login-email") + "?next=/identity/me/"
         response = self.client.post(
             url,
@@ -173,30 +176,25 @@ class LoginViewTests(BaseTestCase):
         self.assertEqual("Kamu login verification", mail.outbox[0].subject)
         mock_logger.debug.assert_called_once()
 
-    def test_email_login_duplicate_number(self):
-        phone_number = PhoneNumber.objects.create(identity=self.identity, number="+123456789", verified=True)
-        PhoneNumber.objects.create(identity=self.superidentity, number="+123456789", verified=True)
-        self.email_address.verified = True
-        self.email_address.save()
+    def test_email_login_non_verified_number(self):
+        self.phone_number.verified = False
+        self.phone_number.save()
         url = reverse("login-email") + "?next=/identity/me/"
         response = self.client.post(
             url,
-            {"email_address": self.email_address.address, "phone_number": phone_number.number},
+            {"email_address": self.email_address.address, "phone_number": self.phone_number.number},
             follow=True,
         )
         self.assertIn("This contact information cannot be used to login", response.content.decode("utf-8"))
 
     def _test_email_login_verification(self):
         self.url = reverse("login-email-verify") + "?next=/identity/me/"
-        phone_number = PhoneNumber.objects.create(identity=self.identity, number="+123456789", verified=True)
-        self.email_address.verified = True
-        self.email_address.save()
         self.session = self.client.session
         self.session["login_email_address"] = self.email_address.address
-        self.session["login_phone_number"] = phone_number.number
+        self.session["login_phone_number"] = self.phone_number.number
         self.session.save()
         email_secret = Token.objects.create_email_object_verification_token(self.email_address)
-        phone_secret = Token.objects.create_phone_object_verification_token(phone_number)
+        phone_secret = Token.objects.create_phone_object_verification_token(self.phone_number)
         return email_secret, phone_secret
 
     def test_email_login_verification(self):
@@ -207,7 +205,7 @@ class LoginViewTests(BaseTestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Test User</h1>", response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()}</h1>", response.content.decode("utf-8"))
 
     def test_email_login_verification_incorrect_token(self):
         email_secret, phone_secret = self._test_email_login_verification()
@@ -219,6 +217,7 @@ class LoginViewTests(BaseTestCase):
         self.assertIn("Invalid verification code", response.content.decode("utf-8"))
 
     def test_email_login_verification_incorrect_user(self):
+        self.create_superidentity()
         email_secret, phone_secret = self._test_email_login_verification()
         self.email_address.identity = self.superidentity
         self.email_address.save()
@@ -278,6 +277,7 @@ class LoginViewTests(BaseTestCase):
 class LogoutViewTests(BaseTestCase):
     def setUp(self):
         super().setUp()
+        self.create_user()
         self.url = reverse("logout")
 
     @override_settings(LOGOUT_REDIRECT_URL="/test/")
@@ -350,12 +350,10 @@ class LogoutViewTests(BaseTestCase):
         self.assertIsNone(self.client.session.get("_auth_user_id"))
 
 
-class RegistrationViewTests(TestCase):
+class RegistrationViewTests(BaseTestCase):
     def setUp(self):
-        self.factory = RequestFactory()
-        user = get_user_model()
-        self.user = user.objects.create_user(username="testuser", password="test_pass")
-        self.role = Role.objects.create(identifier="testrole", name_en="Test Role", maximum_duration=10)
+        self.create_user()
+        self.role = self.create_role()
         self.membership = Membership.objects.create(
             role=self.role,
             reason="Test",
@@ -552,12 +550,10 @@ class RegistrationViewTests(TestCase):
         self.assertEqual(identity.surname, "User")
 
 
-class LinkIdentifierTests(TestCase):
+class LinkIdentifierTests(BaseTestCase):
     def setUp(self):
-        self.factory = RequestFactory()
-        user = get_user_model()
-        self.user = user.objects.create_user(username="testuser", password="test_pass")
-        self.identity = Identity.objects.create(user=self.user, given_names="Test", surname="User")
+        super().setUp()
+        self.create_identity(user=True)
         self.client = Client()
         self.session = self.client.session
         self.session["link_identifier"] = True
@@ -599,11 +595,14 @@ class LinkIdentifierTests(TestCase):
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Started identifier linking process", extra=ANY),
-                call(20, "Linked eppn identifier to identity Test User", extra=ANY),
+                call(20, f"Linked eppn identifier to identity {self.identity.display_name()}", extra=ANY),
             ]
         )
         self.assertEqual(
-            LogEntry.objects.filter(change_message="Linked eppn identifier to identity Test User").count(), 1
+            LogEntry.objects.filter(
+                change_message=f"Linked eppn identifier to identity {self.identity.display_name()}"
+            ).count(),
+            1,
         )
 
     @override_settings(LINK_IDENTIFIER_TIME_LIMIT=-1)

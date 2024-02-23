@@ -27,12 +27,14 @@ class FrontPageViewTests(BaseTestCase):
         self.assertIn("register here", response.content.decode("utf-8"))
 
     def test_front_page_view_logged_in(self):
+        self.create_user()
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Manage your own information", response.content.decode("utf-8"))
 
     def test_front_page_view_logged_in_with_role_permissions(self):
+        self.create_user()
         self.client.force_login(self.user)
         set_default_permissions(self.user)
         response = self.client.get(self.url, follow=True)
@@ -41,9 +43,11 @@ class FrontPageViewTests(BaseTestCase):
         self.assertIn("Role and membership management", response.content.decode("utf-8"))
 
     def test_front_page_view_logged_in_with_messages(self):
+        role = self.create_role()
+        self.create_superuser()
         self.client.force_login(self.superuser)
         Membership.objects.create(
-            role=self.role,
+            role=role,
             reason="Test",
             start_date=timezone.now().date(),
             expire_date=timezone.now().date() + datetime.timedelta(days=7),
@@ -57,9 +61,11 @@ class FrontPageViewTests(BaseTestCase):
 
     @override_settings(EXPIRING_LIMIT_DAYS=6)
     def test_front_page_view_logged_in_without_messages(self):
+        role = self.create_role()
+        self.create_superuser()
         self.client.force_login(self.superuser)
         Membership.objects.create(
-            role=self.role,
+            role=role,
             reason="Test",
             approver=self.superuser,
             start_date=timezone.now().date(),

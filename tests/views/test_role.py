@@ -2,14 +2,9 @@
 View tests for roles.
 """
 
-import datetime
-
 from django.contrib.auth.models import Group
 from django.test import Client
-from django.utils import timezone
 
-from kamu.models.membership import Membership
-from kamu.models.role import Role
 from kamu.utils.auth import set_default_permissions
 from kamu.views.role import RoleListApproverView, RoleListInviterView, RoleListOwnerView
 from tests.setup import BaseTestCase
@@ -18,8 +13,10 @@ from tests.setup import BaseTestCase
 class RoleListTests(BaseTestCase):
     def setUp(self):
         super().setUp()
+        self.create_user()
         self.url = "/role/"
-        self.another_role = Role.objects.create(identifier="another", name_en="Another Role", maximum_duration=10)
+        self.role = self.create_role()
+        self.another_role = self.create_role("consultant")
         self.group = Group.objects.create(name="group")
         self.client = Client()
         self.client.force_login(self.user)
@@ -60,11 +57,11 @@ class RoleListTests(BaseTestCase):
 
     def test_view_role_search(self):
         set_default_permissions(self.user)
-        url = f"{self.url}search/?search=anoth"
+        url = f"{self.url}search/?search={self.another_role.name()[:-1]}"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Another Role", response.content.decode("utf-8"))
-        self.assertNotIn("Test Role", response.content.decode("utf-8"))
+        self.assertIn(self.another_role.name(), response.content.decode("utf-8"))
+        self.assertNotIn(self.role.name(), response.content.decode("utf-8"))
 
     def test_view_role_search_without_permission(self):
         set_default_permissions(self.user, remove=True)
@@ -76,6 +73,8 @@ class RoleListTests(BaseTestCase):
 class RoleViewTests(BaseTestCase):
     def setUp(self):
         super().setUp()
+        self.create_user()
+        self.role = self.create_role()
         self.url = "/role/"
         self.client = Client()
         self.client.force_login(self.user)
@@ -84,32 +83,22 @@ class RoleViewTests(BaseTestCase):
         url = f"{self.url}{self.role.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Test Role", response.content.decode("utf-8"))
+        self.assertIn(self.role.name(), response.content.decode("utf-8"))
 
     def test_show_role_list(self):
-        Membership.objects.create(
-            role=self.role,
-            identity=self.superidentity,
-            reason="Because",
-            start_date=timezone.now().date(),
-            expire_date=timezone.now().date() + datetime.timedelta(days=1),
-        )
+        self.create_superidentity()
+        self.create_membership(self.role, self.superidentity)
         group = Group.objects.create(name="ApproverGroup")
         self.role.approvers.add(group)
         self.user.groups.add(group)
         url = f"{self.url}{self.role.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Super User", response.content.decode("utf-8"))
+        self.assertIn(self.superidentity.display_name(), response.content.decode("utf-8"))
 
     def test_restrict_role_list_to_role_managers(self):
-        Membership.objects.create(
-            role=self.role,
-            identity=self.superidentity,
-            reason="Because",
-            start_date=timezone.now().date(),
-            expire_date=timezone.now().date() + datetime.timedelta(days=1),
-        )
+        self.create_superidentity()
+        self.create_membership(self.role, self.superidentity)
         url = f"{self.url}{self.role.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)

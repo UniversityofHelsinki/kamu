@@ -22,14 +22,16 @@ from tests.utils import MockLdapConn
 class MembershipViewTests(BaseTestCase):
     def setUp(self):
         super().setUp()
-        self.membership = Membership.objects.create(
-            role=self.role,
-            identity=self.identity,
-            invite_email_address="invited_user@example.org",
+        self.create_identity(user=True)
+        self.create_superidentity(user=True)
+        self.role = self.create_role()
+        self.membership = self.create_membership(
+            self.role,
+            self.identity,
+            start_delta_days=0,
+            expire_delta_days=1,
             inviter=self.superuser,
-            reason="Because",
-            start_date=timezone.now().date(),
-            expire_date=timezone.now().date() + datetime.timedelta(days=1),
+            invite_email_address="invited_user@example.org",
         )
         self.url = f"/membership/{ self.membership.pk }/"
         self.group = Group.objects.create(name="group")
@@ -133,7 +135,11 @@ class MembershipViewTests(BaseTestCase):
         self.assertEqual(self.membership.expire_date, expire_date)
         mock_logger.log.assert_has_calls(
             [
-                call(20, "Membership modified, role: Test Role, identity: Test User", extra=ANY),
+                call(
+                    20,
+                    f"Membership modified, role: {self.role.name()}, identity: {self.identity.display_name()}",
+                    extra=ANY,
+                ),
             ]
         )
 
@@ -163,7 +169,11 @@ class MembershipViewTests(BaseTestCase):
         self.assertEqual(self.membership.expire_date, timezone.now().date())
         mock_logger.log.assert_has_calls(
             [
-                call(20, "Membership to Test Role ended for identity: Test User", extra=ANY),
+                call(
+                    20,
+                    f"Membership to {self.role.name()} ended for identity: {self.identity.display_name()}",
+                    extra=ANY,
+                ),
             ]
         )
 
@@ -177,6 +187,8 @@ class MembershipViewTests(BaseTestCase):
 class MembershipJoinTests(BaseTestCase):
     def setUp(self):
         super().setUp()
+        self.create_identity(user=True)
+        self.role = self.create_role()
         self.url = "/role/"
         self.client = Client()
         self.client.force_login(self.user)
@@ -204,7 +216,11 @@ class MembershipJoinTests(BaseTestCase):
         self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
         mock_logger.log.assert_has_calls(
             [
-                call(20, "Membership to Test Role added to identity: Test User", extra=ANY),
+                call(
+                    20,
+                    f"Membership to {self.role.name()} added to identity: {self.identity.display_name()}",
+                    extra=ANY,
+                ),
                 call(20, "Read membership information", extra=ANY),
             ]
         )
@@ -228,6 +244,8 @@ class MembershipJoinTests(BaseTestCase):
 class MembershipInviteTests(BaseTestCase):
     def setUp(self):
         super().setUp()
+        self.create_identity(user=True, email=True)
+        self.role = self.create_role()
         self.url = "/role/1/invite/"
         self.client = Client()
         self.client.force_login(self.user)
@@ -242,7 +260,7 @@ class MembershipInviteTests(BaseTestCase):
         url = f"{self.url}?given_names=test"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Test User", response.content.decode("utf-8"))
+        self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
         self.assertIn("Select", response.content.decode("utf-8"))
 
     @mock.patch("kamu.connectors.ldap.logger")
@@ -259,7 +277,7 @@ class MembershipInviteTests(BaseTestCase):
         url = f"{self.url}?uid=testuser&given_names=test"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Test User", response.content.decode("utf-8"))
+        self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
         self.assertEqual(response.content.decode("utf-8").count("ldap.user@example.org"), 1)
 
     @mock.patch("kamu.connectors.ldap._get_connection")
@@ -289,7 +307,7 @@ class MembershipInviteTests(BaseTestCase):
     @mock.patch("kamu.views.identity.ldap_search")
     def test_search_email_found_kamu(self, mock_ldap):
         mock_ldap.return_value = []
-        url = f"{self.url}?email=test@example.org"
+        url = f"{self.url}?email={self.email_address.address}"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Email address not found", response.content.decode("utf-8"))
@@ -315,7 +333,9 @@ class MembershipInviteTests(BaseTestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Membership.objects.filter(role=self.role, identity=self.identity).exists())
-        self.assertIn("Test User has added you a new role membership in Kamu", mail.outbox[0].body)
+        self.assertIn(
+            f"{self.identity.display_name()} has added you a new role membership in Kamu", mail.outbox[0].body
+        )
 
     @mock.patch("kamu.connectors.ldap._get_connection")
     @mock.patch("kamu.utils.audit.logger_audit")
@@ -347,10 +367,12 @@ class MembershipInviteTests(BaseTestCase):
                 call(20, "Identity created.", extra=ANY),
                 call(20, "Email address added to identity Ldap User", extra=ANY),
                 call(20, "Linked eppn identifier to identity Ldap User", extra=ANY),
-                call(20, "Membership to testrole added to identity: Ldap User", extra=ANY),
+                call(20, f"Membership to {self.role.identifier} added to identity: Ldap User", extra=ANY),
             ]
         )
-        self.assertIn("Test User has added you a new role membership in Kamu", mail.outbox[0].body)
+        self.assertIn(
+            f"{self.identity.display_name()} has added you a new role membership in Kamu", mail.outbox[0].body
+        )
 
     @mock.patch("kamu.connectors.ldap._get_connection")
     @override_settings(ALLOW_TEST_FPIC=True)
@@ -394,7 +416,7 @@ class MembershipInviteTests(BaseTestCase):
         self.assertIn("Your invite code is", mail.outbox[0].body)
         mock_logger.log.assert_has_calls(
             [
-                call(20, "Invited invite@example.org to role testrole", extra=ANY),
+                call(20, f"Invited invite@example.org to role {self.role.identifier}", extra=ANY),
             ]
         )
 
