@@ -11,7 +11,7 @@ from uuid import uuid4
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login
-from django.contrib.auth.backends import BaseBackend, ModelBackend
+from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User as UserType
@@ -76,7 +76,7 @@ def auth_login(request: HttpRequest, user: AbstractBaseUser | None, backend: typ
     post_login_tasks(request)
 
 
-class LocalBaseBackend(BaseBackend):
+class LocalBaseBackend(ModelBackend):
     """
     Local authentication backend base with some custom functions.
     """
@@ -146,16 +146,6 @@ class LocalBaseBackend(BaseBackend):
         email = request.META.get("email", None)
         preferred_username = request.META.get("preferred_username", None)
         return given_names, surname, email, preferred_username
-
-    def get_user(self, user_id: int) -> UserType | None:
-        """
-        Return user object if it exists and is active.
-        """
-        try:
-            user = UserModel.objects.get(pk=user_id)
-        except UserModel.DoesNotExist:
-            return None
-        return user if user.is_active else None
 
     def _create_identity(self, request: HttpRequest, user: UserType) -> Identity:
         """
@@ -418,13 +408,21 @@ class LocalBaseBackend(BaseBackend):
         raise AuthenticationError(self.error_messages["identity_already_exists"])
 
     def authenticate(
-        self, request: HttpRequest | None, create_user: bool = False, link_identifier: bool = False, **kwargs: Any
+        self,
+        request: HttpRequest | None,
+        username: str | None = None,
+        password: str | None = None,
+        create_user: bool = False,
+        link_identifier: bool = False,
+        **kwargs: Any,
     ) -> UserType:
         """
         Set create_user True to create user if it does not exist.
 
         Set link_identifier True to link a user account to the current user identity,
         if same identifier does not already exist in the database for some other user.
+
+        username and password fields are not used, but are included because superclass requires them.
         """
         if not request:
             raise AuthenticationError(self.error_messages["unexpected"])
@@ -825,11 +823,15 @@ class EmailSMSBackend(LocalBaseBackend):
     Backend to authenticate with email address and phone number.
 
     Authenticate only if exactly one address and number is found, they are for the same identity, and tokens match.
+
+    username and password fields are not used, but are included because superclass requires them.
     """
 
     def authenticate(
         self,
         request: HttpRequest | None,
+        username: str | None = None,
+        password: str | None = None,
         create_user: bool = False,
         link_identifier: bool = False,
         email_address: str | None = None,

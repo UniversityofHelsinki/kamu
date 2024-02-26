@@ -71,6 +71,7 @@ class LoginViewTests(BaseTestCase):
         self.assertEqual(self.user.user_permissions.count(), 0)
         self.assertEqual(self.client.session.get("external_login_backends"), "kamu.backends.ShibbolethLocalBackend;")
 
+    @override_settings(AUTHENTICATION_BACKENDS=["kamu.backends.ShibbolethLocalBackend"])
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
     def test_shibboleth_local_login_with_owner_permissions(self):
@@ -80,6 +81,7 @@ class LoginViewTests(BaseTestCase):
         url = reverse("login-shibboleth")
         self.client.get(url, follow=True, headers={"EPPN": "testuser@example.org"})
         self.assertEqual(self.user.user_permissions.count(), 2)
+        self.assertTrue(self.user.has_perm("kamu.search_roles"))
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
