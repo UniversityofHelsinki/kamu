@@ -536,6 +536,17 @@ class ContractTests(BaseTestCase):
             ]
         )
 
+    def test_view_signable_contract_list(self):
+        self.create_superidentity()
+        self.client.force_login(self.superuser)
+        contract_template_public = self.create_contract_template("textcontract")
+        response = self.client.get(f"/identity/{self.superidentity.pk}/contracts/")
+        self.assertIn("Signable contracts", response.content.decode("utf-8"))
+        self.assertIn(contract_template_public.name(), response.content.decode("utf-8"))
+        response = self.client.get(f"/identity/{self.identity.pk}/contracts/")
+        self.assertNotIn("Signable contracts", response.content.decode("utf-8"))
+        self.assertNotIn(contract_template_public.name(), response.content.decode("utf-8"))
+
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_view_contract(self, mock_logger):
         self.create_superidentity()
