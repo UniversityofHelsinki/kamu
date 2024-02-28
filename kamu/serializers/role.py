@@ -73,6 +73,8 @@ class RoleSerializer(serializers.ModelSerializer[Role]):
             "parent",
             "owner",
             "organisation_unit",
+            "notification_email_address",
+            "notification_language",
             "inviters",
             "approvers",
             "permissions",

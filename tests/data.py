@@ -111,6 +111,8 @@ ROLES: dict = {
         "description_sv": "Extern styrelseledamot.",
         "maximum_duration": 365,
         "organisation_unit": "external",
+        "notification_email_address": "hr@example.org",
+        "notification_language": "en",
     },
     "consultant": {
         "identifier": "consultant",
@@ -122,6 +124,8 @@ ROLES: dict = {
         "description_sv": "Extern konsult.",
         "maximum_duration": 180,
         "organisation_unit": "consulting",
+        "notification_email_address": "hr@example.org",
+        "notification_language": "sv",
     },
     "ext_research": {
         "identifier": "ext_research",
@@ -133,6 +137,8 @@ ROLES: dict = {
         "description_sv": "Forskningsgrupp extern medlem.",
         "maximum_duration": 90,
         "organisation_unit": "research",
+        "notification_email_address": "research@example.org",
+        "notification_language": "en",
     },
     "guest_student": {
         "identifier": "guest_student",
@@ -144,6 +150,8 @@ ROLES: dict = {
         "description_sv": "Gäststudent.",
         "maximum_duration": 30,
         "organisation_unit": "studies",
+        "notification_email_address": "teaching@example.org",
+        "notification_language": "en",
     },
     "ext_board": {
         "identifier": "ext_board",
@@ -155,6 +163,8 @@ ROLES: dict = {
         "description_sv": "Extern styrelseledamot",
         "maximum_duration": 365,
         "organisation_unit": "board",
+        "notification_email_address": "hr@example.org",
+        "notification_language": "fi",
     },
 }
 

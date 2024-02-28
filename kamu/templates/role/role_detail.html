@@ -19,6 +19,14 @@
     <dt class="col-sm-3">{% trans "Total cost" %}</dt>
     <dd class="col-sm-9">{{ object.get_cost }} €</dd>
 
+    <dt class="col-sm-3">{% trans "Notification address" %}</dt>
+    <dd class="col-sm-9">{{ object.notification_email_address|default:"&nbsp;" }}</dd>
+
+    {% if object.notification_email_address %}
+      <dt class="col-sm-3">{% trans "Notification language" %}</dt>
+      <dd class="col-sm-9">{{ object.get_notification_language_display }}</dd>
+    {% endif %}
+
     <dt class="col-sm-3">{% trans "Inviter groups" %}</dt>
     <dd class="col-sm-9">{% for inviter in object.inviters.all %}{{ inviter }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
 

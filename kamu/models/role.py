@@ -27,6 +27,12 @@ class Role(models.Model):
     Stores a role, related to self, :class:`django.contrib.auth.models.Group` and :class:`kamu.models.role.Permission`.
     """
 
+    LANG_CHOICES = (
+        ("en", _("English")),
+        ("fi", _("Finnish")),
+        ("sv", _("Swedish")),
+    )
+
     identifier = models.CharField(max_length=20, unique=True, verbose_name=_("Role identifier"))
     name_fi = models.CharField(max_length=50, verbose_name=_("Role name (fi)"))
     name_en = models.CharField(max_length=50, verbose_name=_("Role name (en)"))
@@ -39,7 +45,13 @@ class Role(models.Model):
 
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     organisation_unit = models.CharField(max_length=20, verbose_name=_("Organisation unit"))
-
+    notification_email_address = models.EmailField(blank=True, null=True, verbose_name=_("Notification email address"))
+    notification_language = models.CharField(
+        max_length=2,
+        choices=LANG_CHOICES,
+        default="en",
+        verbose_name=_("Notification language"),
+    )
     inviters = models.ManyToManyField(
         "auth.Group", related_name="role_inviters", verbose_name=_("Inviter groups"), blank=True
     )
