@@ -392,19 +392,40 @@ class MembershipInviteTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Membership.objects.filter(role=self.role, identity=self.identity).exists())
 
-    def _test_join_role_send_email_invite(self):
+    def _test_join_role_send_email_invite(self, preview=False):
         url = f"{self.url}email/"
+        data = {
+            "start_date": timezone.now().date(),
+            "expire_date": timezone.now().date() + datetime.timedelta(days=7),
+            "reason": "Because",
+            "invite_text": "Test text",
+            "invite_email_address": "invite@example.org",
+            "invite_language": "en",
+        }
+
+        if preview:
+            data["preview_message"] = ""
         return self.client.post(
             url,
-            {
-                "start_date": timezone.now().date(),
-                "expire_date": timezone.now().date() + datetime.timedelta(days=7),
-                "reason": "Because",
-                "invite_email_address": "invite@example.org",
-                "invite_language": "en",
-            },
+            data,
             follow=True,
         )
+
+    @mock.patch("kamu.utils.audit.logger_audit")
+    def test_join_role_send_email_invite_preview(self, mock_logger):
+        self.session = self.client.session
+        self.session["invitation_email_address"] = "invite@example.org"
+        self.session.save()
+        response = self._test_join_role_send_email_invite(preview=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(
+            Membership.objects.filter(
+                role=self.role, identity=None, invite_email_address="invite@example.org"
+            ).exists()
+        )
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertFalse(mock_logger.called)
+        self.assertIn("Preview message", response.content.decode("utf-8"))
 
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_join_role_send_email_invite(self, mock_logger):
@@ -414,6 +435,7 @@ class MembershipInviteTests(BaseTestCase):
         self.assertEqual(membership.inviter, self.user)
         self.assertIsNone(membership.approver)
         self.assertIn("Your invite code is", mail.outbox[0].body)
+        self.assertIn("Test text", mail.outbox[0].body)
         mock_logger.log.assert_has_calls(
             [
                 call(20, f"Invited invite@example.org to role {self.role.identifier}", extra=ANY),

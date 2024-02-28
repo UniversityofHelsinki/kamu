@@ -37,6 +37,13 @@
       </dl>
     </div>{% endif %}
   </div>
+  {% if preview_subject and preview_message %}
+    <h2 class="mb-3 mt-4">{% trans "Preview message" %}</h2>
+    <h3>{% trans "Subject" %}</h3>
+    <code>{{ preview_subject }}</code>
+    <h3>{% trans "Message" %}</h3>
+    <code>{{ preview_message|linebreaksbr }}</code>
+  {% endif %}
   <h2 class="mb-3 mt-4">{% trans "Member information" %}</h2>
   <form method="post">
     {% csrf_token %}

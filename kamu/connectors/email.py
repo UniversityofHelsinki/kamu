@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils import translation
 
 from kamu.models.membership import Membership
+from kamu.models.role import Role
 
 
 def _send_email(subject: str, message: str, recipient_list: list[str], from_email: str | None = None) -> bool:
@@ -63,15 +64,14 @@ def send_add_email(membership: Membership) -> bool:
     return _send_email(subject, message, recipient_list=[address.address])
 
 
-def send_invite_email(
-    membership: Membership, token: str, address: str, lang: str = "en", request: HttpRequest | None = None
-) -> bool:
+def create_invite_message(
+    role: Role, inviter: str, token: str, invite_text: str, lang: str = "en", request: HttpRequest | None = None
+) -> tuple[str, str]:
     """
-    Send a role invite by email.
+    Create an invitation message for the membership.
     """
     cur_language = translation.get_language()
     link_url = _get_link_url(request, "login-invite")
-    inviter = membership.inviter.get_full_name() if membership.inviter else None
     try:
         translation.activate(lang)
         subject = render_to_string("email/invite_email_subject.txt")
@@ -79,13 +79,31 @@ def send_invite_email(
             "email/invite_email_message.txt",
             {
                 "inviter": inviter,
-                "role": membership.role.name(),
+                "role": role.name(),
+                "invite_text": invite_text,
                 "token": token,
                 "link_url": link_url,
             },
         )
     finally:
         translation.activate(cur_language)
+    return subject, message
+
+
+def send_invite_email(
+    membership: Membership,
+    token: str,
+    address: str,
+    invite_text: str,
+    lang: str = "en",
+    request: HttpRequest | None = None,
+) -> bool:
+    """
+    Send a role invite by email.
+    """
+    inviter = membership.inviter.get_full_name() if membership.inviter else ""
+    role = membership.role
+    subject, message = create_invite_message(role, inviter, token, invite_text, lang, request)
     return _send_email(subject, message, recipient_list=[address])
 
 

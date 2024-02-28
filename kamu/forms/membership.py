@@ -99,6 +99,15 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
     """
 
     invite_language = forms.ChoiceField(label=_("Invite language"), choices=settings.LANGUAGES)
+    invite_text = forms.CharField(
+        label=_("Invite text"),
+        widget=forms.Textarea,
+        required=False,
+        help_text=_(
+            "Invite text is added to the invite message. Lines of the invite text are wrapped to 70 "
+            "characters. Use preview to see the final result."
+        ),
+    )
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -114,6 +123,7 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
             self.fields["invite_email_address"].disabled = True
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Invite")))
+        self.helper.add_input(Submit("preview_message", _("Preview message"), css_class="btn-info"))
 
     class Meta:
         model = Membership

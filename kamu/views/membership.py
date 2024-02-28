@@ -19,7 +19,11 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic import DetailView, ListView, View
 from django.views.generic.edit import CreateView, UpdateView
 
-from kamu.connectors.email import send_add_email, send_invite_email
+from kamu.connectors.email import (
+    create_invite_message,
+    send_add_email,
+    send_invite_email,
+)
 from kamu.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
 from kamu.forms.membership import (
     MembershipCreateForm,
@@ -215,7 +219,13 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
             raise PermissionDenied
         try:
             token = Token.objects.create_invite_token(membership=self.object)
-            if send_invite_email(self.object, token, self.object.invite_email_address, request=self.request):
+            if send_invite_email(
+                membership=self.object,
+                token=token,
+                address=self.object.invite_email_address,
+                invite_text="",
+                request=self.request,
+            ):
                 messages.add_message(request, messages.INFO, _("Invite email sent."))
             else:
                 messages.add_message(request, messages.ERROR, _("Could not send invite email."))
@@ -714,6 +724,7 @@ class MembershipInviteEmailView(BaseMembershipInviteView):
         if not user or not form.instance.invite_email_address:
             raise PermissionDenied
         invite_email_address = form.instance.invite_email_address
+        invite_text = form.cleaned_data["invite_text"]
         form.instance.inviter = user
         if form.instance.role.is_approver(user=user):
             form.instance.approver = user
@@ -721,6 +732,19 @@ class MembershipInviteEmailView(BaseMembershipInviteView):
             invite_language = form.cleaned_data["invite_language"]
         else:
             invite_language = "en"
+        if "preview_message" in self.request.POST:
+            subject, message = create_invite_message(
+                role=form.instance.role,
+                inviter=form.instance.inviter.get_full_name(),
+                token="...",
+                invite_text=invite_text,
+                lang=invite_language,
+                request=self.request,
+            )
+            context = self.get_context_data()
+            context["preview_subject"] = subject
+            context["preview_message"] = message
+            return self.render_to_response(context)
         membership = form.save()
         audit_log.info(
             f"Invited {membership.invite_email_address} to role {membership.role.identifier}",
@@ -732,7 +756,14 @@ class MembershipInviteEmailView(BaseMembershipInviteView):
             log_to_db=True,
         )
         token = Token.objects.create_invite_token(membership=membership)
-        send_invite_email(membership, token, invite_email_address, lang=invite_language, request=self.request)
+        send_invite_email(
+            membership=membership,
+            token=token,
+            address=invite_email_address,
+            invite_text=invite_text,
+            lang=invite_language,
+            request=self.request,
+        )
         messages.add_message(self.request, messages.INFO, _("Invite email sent."))
         return redirect("membership-detail", pk=membership.pk)
 
