@@ -1,0 +1,5 @@
+{% load i18n %}{% blocktrans %}Hi
+
+Role: {{ role }}
+
+Number of memberships expiring soon: {{ number_of_memberships }}{% endblocktrans %}

@@ -6,6 +6,7 @@ import datetime
 from io import StringIO
 
 from django.contrib.auth import get_user_model
+from django.core import mail
 from django.core.management import call_command
 from django.test import TestCase
 from django.utils import timezone
@@ -14,6 +15,7 @@ from kamu.management.commands.purge_data import UsageError
 from kamu.models.identity import Identifier, Identity
 from kamu.models.membership import Membership
 from kamu.models.role import Role
+from tests.setup import TestData
 
 
 class ManagementCommandTestCase(TestCase):
@@ -319,3 +321,45 @@ class PurgeUserTests(ManagementCommandTestCase):
         self.assertEqual(user.objects.all().count(), 4)
         self.call_command("-v=0", "--days=6", "-t=user")
         self.assertEqual(user.objects.all().count(), 3)
+
+
+class MembershipExpireNotifications(TestData, ManagementCommandTestCase):
+    command = "notify_expiring_memberships"
+
+    def setUp(self):
+        super().setUp()
+        self.role = self.create_role(name="ext_employee")
+        self.role_guest = self.create_role(name="ext_research")
+        self.create_identity(user=False, email=True)
+        self.create_superidentity(user=True, email=True)
+        self.create_membership(
+            self.role, identity=self.identity, start_delta_days=0, expire_delta_days=10, inviter=self.superuser
+        )
+        self.create_membership(self.role, identity=self.superidentity, start_delta_days=0, expire_delta_days=5)
+        self.create_membership(self.role_guest, identity=self.identity, start_delta_days=0, expire_delta_days=8)
+        self.create_membership(self.role, identity=self.superidentity, start_delta_days=-1, expire_delta_days=-1)
+
+    def test_member_notifications(self):
+        self.call_command("-v 0", "-d 11", "-m")
+        self.assertEqual(len(mail.outbox), 0)
+        self.call_command("-v 0", "-d 10", "-m")
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(f"Role:\n{self.role.name()}", mail.outbox[0].body)
+        self.assertIn(f"You were invited by {self.superuser.get_full_name()}", mail.outbox[0].body)
+        mail.outbox = []
+        self.call_command("-v 0", "-d 6", "-m")
+        self.assertEqual(len(mail.outbox), 0)
+        self.call_command("-v 0", "-d 5", "-m")
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_role_notifications(self):
+        self.call_command("-v 0", "-d 10", "-r")
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertIn("Number of memberships expiring soon: 2", mail.outbox[0].body)
+        self.assertIn("Number of memberships expiring soon: 1", mail.outbox[1].body)
+        mail.outbox = []
+        self.call_command("-v 0", "-d 5", "-r")
+        self.assertEqual(len(mail.outbox), 1)
+        mail.outbox = []
+        self.call_command("-v 0", "-d 4", "-r")
+        self.assertEqual(len(mail.outbox), 0)

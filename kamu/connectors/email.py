@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import render_to_string
@@ -119,6 +120,55 @@ def send_verification_email(
         translation.activate(lang)
         subject = render_to_string(f"email/{ template }_subject.txt")
         message = render_to_string(f"email/{ template }_message.txt", {"token": token})
+    except TemplateDoesNotExist:
+        return False
+    finally:
+        translation.activate(cur_language)
+    return _send_email(subject, message, recipient_list=[email_address])
+
+
+def send_expiration_notification_to_member(membership: Membership, email_address: str, lang: str = "en") -> bool:
+    """
+    Send a verification email.
+    """
+
+    inviter = membership.inviter.get_full_name() if membership.inviter else None
+    approver = membership.approver.get_full_name() if membership.approver else None
+    cur_language = translation.get_language()
+    try:
+        translation.activate(lang)
+        subject = render_to_string("email/expire_notification_member_subject.txt")
+        message = render_to_string(
+            "email/expire_notification_member_message.txt",
+            {
+                "role": membership.role.name(),
+                "expire_date": membership.expire_date,
+                "inviter": inviter,
+                "approver": approver,
+            },
+        )
+    except TemplateDoesNotExist:
+        return False
+    finally:
+        translation.activate(cur_language)
+    return _send_email(subject, message, recipient_list=[email_address])
+
+
+def send_expiration_notification_to_role(
+    role: Role, memberships: QuerySet[Membership], email_address: str, lang: str = "en"
+) -> bool:
+    """
+    Send a verification email.
+    """
+
+    cur_language = translation.get_language()
+    try:
+        translation.activate(lang)
+        subject = render_to_string("email/expire_notification_role_subject.txt", {"role": role.name()})
+        message = render_to_string(
+            "email/expire_notification_role_message.txt",
+            {"role": role.name(), "number_of_memberships": memberships.count()},
+        )
     except TemplateDoesNotExist:
         return False
     finally:

@@ -1,0 +1,13 @@
+{% load i18n %}{% blocktrans %}Hi
+
+Your role membership at the University of Helsinki is ending soon.
+
+Role:
+{{ role }}
+
+Expiring date:
+{{ expire_date }}
+
+Please contact your university contact if the membership should continue.{% endblocktrans %}{% if inviter %}
+{% blocktrans %}You were invited by {{ inviter }}.{% endblocktrans %}{% if inviter != approver and approver %}
+{% blocktrans %}Your membership was approved by {{ approver }}.{% endblocktrans %}{% endif %}{% endif %}
