@@ -152,4 +152,9 @@ class MembershipAPITests(BaseAPITestCase):
             },
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn(response.data["expire_date"][0], "Role duration cannot be more than maximum duration")
+        self.assertIn(
+            response.data["expire_date"][0],
+            "Maximum membership duration for this role is 10 days. Last possible date for this membership is "
+            + (timezone.now().date() + datetime.timedelta(days=self.new_role.maximum_duration)).strftime("%m/%d/%Y")
+            + ".",
+        )

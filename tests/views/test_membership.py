@@ -238,7 +238,7 @@ class MembershipJoinTests(BaseTestCase):
         self.role.maximum_duration = 3
         self.role.save()
         response = self._test_join_role(expire_date_delta=4)
-        self.assertIn("Role duration cannot be more than maximum duration", response.content.decode("utf-8"))
+        self.assertIn("Maximum membership duration for this role is 3 days.", response.content.decode("utf-8"))
 
 
 class MembershipInviteTests(BaseTestCase):
