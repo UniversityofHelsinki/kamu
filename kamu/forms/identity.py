@@ -391,5 +391,5 @@ class IdentityForm(forms.ModelForm):
             "fpic_verification",
         ]
         widgets = {
-            "date_of_birth": forms.DateInput(attrs={"type": "date"}),
+            "date_of_birth": forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
         }

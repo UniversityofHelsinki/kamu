@@ -35,8 +35,8 @@ class MembershipCreateForm(forms.ModelForm[Membership]):
         model = Membership
         fields = ["start_date", "expire_date", "reason"]
         widgets = {
-            "start_date": DateInput(attrs={"type": "date"}),
-            "expire_date": DateInput(attrs={"type": "date"}),
+            "start_date": DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
+            "expire_date": DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
         }
 
     def clean(self) -> None:
@@ -73,8 +73,8 @@ class MembershipEditForm(forms.ModelForm[Membership]):
         model = Membership
         fields = ["start_date", "expire_date", "reason"]
         widgets = {
-            "start_date": DateInput(attrs={"type": "date"}),
-            "expire_date": DateInput(attrs={"type": "date"}),
+            "start_date": DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
+            "expire_date": DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
         }
 
     def clean(self) -> None:
@@ -129,8 +129,8 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
         model = Membership
         fields = ["invite_email_address", "start_date", "expire_date", "reason"]
         widgets = {
-            "start_date": DateInput(attrs={"type": "date"}),
-            "expire_date": DateInput(attrs={"type": "date"}),
+            "start_date": DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
+            "expire_date": DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
         }
 
     def clean(self) -> None:
