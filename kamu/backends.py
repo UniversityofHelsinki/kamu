@@ -300,7 +300,7 @@ class LocalBaseBackend(ModelBackend):
                     objects=[group, user],
                 )
 
-    def _post_tasks(self, request: HttpRequest, user: UserType) -> None:
+    def post_authentication_tasks(self, request: HttpRequest, user: UserType) -> None:
         """
         Tasks to run after getting the user.
         """
@@ -326,11 +326,11 @@ class LocalBaseBackend(ModelBackend):
             raise AuthenticationError(self.error_messages["unexpected"])
         if not isinstance(request.user, UserType) or not request.user.is_authenticated:
             # Identifier exists and is linked to an unauthenticated user.
-            self._post_tasks(request, identifier.identity.user)
+            self.post_authentication_tasks(request, identifier.identity.user)
             return identifier.identity.user
         if request.user == identifier.identity.user:
             # Identifier exists and is linked to the current user.
-            self._post_tasks(request, request.user)
+            self.post_authentication_tasks(request, request.user)
             return request.user
         # Identifier exists for different user.
         audit_log.warning(
@@ -363,11 +363,11 @@ class LocalBaseBackend(ModelBackend):
             # Identifier does not exist. Create user and link identifier.
             user = self._create_user(username=username, email=email, given_names=given_names, surname=surname)
             self._link_identifier(request, user, identifier_type, unique_identifier)
-            self._post_tasks(request, user)
+            self.post_authentication_tasks(request, user)
             return user
         if identity.user:
             # Identifier exists and is linked to a user. Log in.
-            self._post_tasks(request, identity.user)
+            self.post_authentication_tasks(request, identity.user)
             return identity.user
         # Identifier exists but is not linked to a user. Should not happen.
         raise AuthenticationError(self.error_messages["unexpected"])
@@ -389,11 +389,11 @@ class LocalBaseBackend(ModelBackend):
         except Identifier.DoesNotExist:
             # Identifier does not exist. Link it to the current user.
             self._link_identifier(request, request.user, identifier_type, unique_identifier)
-            self._post_tasks(request, request.user)
+            self.post_authentication_tasks(request, request.user)
             return request.user
         if identifier.identity.user == request.user:
             # Identifier exists for the current user. Run post login tasks and continue with the current user.
-            self._post_tasks(request, request.user)
+            self.post_authentication_tasks(request, request.user)
             return request.user
         # Identifier exists for different user.
         audit_log.warning(
@@ -551,7 +551,7 @@ class ShibbolethLocalBackend(ShibbolethBaseBackend):
         if not identifier.endswith(settings.LOCAL_EPPN_SUFFIX):
             raise AuthenticationError(self.error_messages["invalid_identifier_format"])
 
-    def _post_tasks(self, request: HttpRequest, user: UserType) -> None:
+    def post_authentication_tasks(self, request: HttpRequest, user: UserType) -> None:
         """
         Set groups if user is using local authentication.
         """
@@ -684,7 +684,7 @@ class SuomiFiBackend(LocalBaseBackend):
         except ValueError:
             return None
 
-    def _post_tasks(self, request: HttpRequest, user: UserType) -> None:
+    def post_authentication_tasks(self, request: HttpRequest, user: UserType) -> None:
         """
         Set fpic and date of birth if available.
         """
