@@ -72,7 +72,7 @@ class LoginViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(self.user.is_authenticated)
         self.assertEqual(self.user.user_permissions.count(), 0)
-        self.assertEqual(self.client.session.get("external_login_backends"), "kamu.backends.ShibbolethLocalBackend;")
+        self.assertEqual(self.client.session.get("login_backends"), "kamu.backends.ShibbolethLocalBackend;")
 
     @override_settings(AUTHENTICATION_BACKENDS=["kamu.backends.ShibbolethLocalBackend"])
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
@@ -301,7 +301,9 @@ class LogoutViewTests(BaseTestCase):
         self.client.force_login(self.user)
         self.assertEqual(self.client.session.get("_auth_user_backend"), "django.contrib.auth.backends.ModelBackend")
         self.session = self.client.session
-        self.session["external_login_backends"] = "kamu.backends.ShibbolethLocalBackend;kamu.backends.GoogleBackend;"
+        self.session["login_backends"] = (
+            "kamu.backends.EmailSMSBackend;kamu.backends.GoogleBackend;kamu.backends.ShibbolethLocalBackend;"
+        )
         self.session.save()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)

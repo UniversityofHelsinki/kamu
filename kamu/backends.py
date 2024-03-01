@@ -73,7 +73,20 @@ def auth_login(request: HttpRequest, user: AbstractBaseUser | None, backend: typ
         request=request,
         objects=[request.user],
     )
+    request.session["login_backends"] = request.session.get("login_backends", "") + backend + ";"
     post_login_tasks(request)
+
+
+def get_login_backends(request: HttpRequest, external_only: bool = False) -> list[str]:
+    """
+    Get list of all login backends in the current session.
+
+    For external backends, keep the order in the config file.
+    """
+    login_backends: list[str] = list(filter(None, request.session.get("login_backends", "").split(";")))
+    if external_only:
+        return [backend for backend in settings.EXTERNAL_AUTHENTICATION_BACKENDS if backend in login_backends]
+    return login_backends
 
 
 class LocalBaseBackend(ModelBackend):

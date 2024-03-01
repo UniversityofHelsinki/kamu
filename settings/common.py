@@ -5,7 +5,7 @@ Loaded by environment specific settings files
 """
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
 
 import django_stubs_ext
 from django.contrib.messages import constants as messages
@@ -217,3 +217,14 @@ HTTP_CHECK_FORWARDING_HEADER: bool = True
 HTTP_FORWARDING_HEADER: str = "HTTP_X_FORWARDED_FOR"
 # True: use first IP in the HEADER, False: use last IP in the HEADER
 HTTP_FORWARDING_IP_FIRST: bool = True
+
+# List of external backends. When user has logged in with multiple backends,
+# the first matching is the one that is used to log out.
+EXTERNAL_AUTHENTICATION_BACKENDS: Sequence[str] = (
+    "kamu.backends.SuomiFiBackend",
+    "kamu.backends.ShibbolethLocalBackend",
+    "kamu.backends.ShibbolethHakaBackend",
+    "kamu.backends.MicrosoftBackend",
+    "kamu.backends.GoogleBackend",
+    "kamu.backends.ShibbolethEdugainBackend",
+)

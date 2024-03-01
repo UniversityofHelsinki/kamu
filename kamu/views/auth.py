@@ -42,6 +42,7 @@ from kamu.backends import (
     ShibbolethLocalBackend,
     SuomiFiBackend,
     auth_login,
+    get_login_backends,
 )
 from kamu.connectors.email import send_verification_email
 from kamu.connectors.sms import SmsConnector
@@ -445,9 +446,6 @@ class BaseRemoteLoginView(View):
         """
         backend = f"{self.backend_class.__module__}.{self.backend_class.__name__}"
         auth_login(request, user, backend=backend)
-        self.request.session["external_login_backends"] = (
-            self.request.session.get("external_login_backends", "") + backend + ";"
-        )
 
     def _handle_error(self, request: HttpRequest, error: Exception) -> str:
         """
@@ -777,12 +775,10 @@ class LocalLogoutView(LogoutView):
         if "action" in request.GET and request.GET.get("action") == "logout" and "return" in request.GET:
             self.next_page = request.GET.get("return")
         else:
-            external_backends: list[str] = list(
-                filter(None, self.request.session.get("external_login_backends", "").split(";"))
-            )
+            external_backends = get_login_backends(request, external_only=True)
             if len(external_backends) > 1:
                 self.request.session["_auth_user_backend"] = external_backends[0]
-                del self.request.session["external_login_backends"]
+                del self.request.session["login_backends"]
                 return render(request, "auth/logout.html", {"multiple_backends": True})
             self.next_page = self._get_backend_logout_url()
         return super().dispatch(request, *args, **kwargs)
