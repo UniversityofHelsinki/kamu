@@ -263,6 +263,12 @@ class LocalBaseBackend(ModelBackend):
             raise AuthenticationError(self.error_messages["identity_already_exists"])
         return None
 
+    def _get_groups(self, request: HttpRequest) -> list[str]:
+        """
+        Get groups from request.META.
+        """
+        return []
+
     def _get_username(self, preferred_username: str | None, unique_identifier: str) -> str:
         """
         Get username from preferred_username if it is available and not already in use.
@@ -293,7 +299,7 @@ class LocalBaseBackend(ModelBackend):
         removed = user_groups - login_groups
         added = login_groups - user_groups
         for group in removed:
-            if not prefixes or group.name.startswith(tuple(prefixes)):
+            if prefixes is None or group.name.startswith(tuple(prefixes)):
                 user.groups.remove(group)
                 audit_log.info(
                     f"Group { group } removed from user { user }",
@@ -303,7 +309,7 @@ class LocalBaseBackend(ModelBackend):
                     objects=[group, user],
                 )
         for group in added:
-            if not prefixes or group.name.startswith(tuple(prefixes)):
+            if prefixes is None or group.name.startswith(tuple(prefixes)):
                 user.groups.add(group)
                 audit_log.info(
                     f"Group { group } added to user { user }",
@@ -313,11 +319,26 @@ class LocalBaseBackend(ModelBackend):
                     objects=[group, user],
                 )
 
+    def _get_backend_class(self) -> str:
+        """
+        Get class path and name.
+        """
+        return self.__class__.__module__ + "." + self.__class__.__name__
+
     def post_authentication_tasks(self, request: HttpRequest, user: UserType) -> None:
         """
         Tasks to run after getting the user.
         """
-        pass
+        group_prefixes = settings.BACKEND_GROUP_PREFIXES.get(self._get_backend_class())
+        if group_prefixes is not None:
+            groups = self._get_groups(request)
+            self.update_groups(user, groups, group_prefixes)
+        if settings.REMOVE_GROUPS_WITH_OTHER_BACKENDS:
+            removed_prefixes = []
+            for key, values in settings.BACKEND_GROUP_PREFIXES.items():
+                if key != self._get_backend_class() and key not in get_login_backends(request):
+                    removed_prefixes.extend(values)
+            self.update_groups(user, [], removed_prefixes)
 
     def _identifier_validation(self, request: HttpRequest, identifier: str) -> None:
         """
@@ -564,12 +585,17 @@ class ShibbolethLocalBackend(ShibbolethBaseBackend):
         if not identifier.endswith(settings.LOCAL_EPPN_SUFFIX):
             raise AuthenticationError(self.error_messages["invalid_identifier_format"])
 
+    def _get_groups(self, request: HttpRequest) -> list[str]:
+        """
+        Get groups from request.META.
+        """
+        return request.META.get(settings.SAML_ATTR_GROUPS, "").split(";")
+
     def post_authentication_tasks(self, request: HttpRequest, user: UserType) -> None:
         """
         Set groups if user is using local authentication.
         """
-        groups = request.META.get(settings.SAML_ATTR_GROUPS, "").split(";")
-        self.update_groups(user, groups, settings.SAML_GROUP_PREFIXES)
+        super().post_authentication_tasks(request, user)
         self._set_uid(request, user, self._get_meta_unique_identifier(request))
 
 
@@ -701,6 +727,7 @@ class SuomiFiBackend(LocalBaseBackend):
         """
         Set fpic and date of birth if available.
         """
+        super().post_authentication_tasks(request, user)
         identity = user.identity if hasattr(user, "identity") else None
         if not identity:
             return None

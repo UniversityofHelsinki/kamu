@@ -162,6 +162,9 @@ AUTH_DEFAULT_ASSURANCE_LEVEL: str = "LOW"
 AUTH_DEFAULT_VERIFICATION_LEVEL: str = "EXTERNAL"
 AUTH_DEFAULT_USERNAME_SUFFIX: str = "@global"
 
+BACKEND_GROUP_PREFIXES: dict[str, list[str]] = {}
+REMOVE_GROUPS_WITH_OTHER_BACKENDS: bool = True
+
 LOCAL_EPPN_SUFFIX: str = "@helsinki.fi"
 LOCAL_UID_IGNORE_REGEX: str = r"^\dk\d{6}$"
 SAML_GROUP_PREFIXES: list[str] = ["grp-", "hy-", "sys-"]

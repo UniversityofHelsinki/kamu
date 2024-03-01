@@ -30,6 +30,11 @@ Unique identifiers provided by the backends are linked to the user's identity.
 
 The backends can be customized by subclassing them and overriding various methods, like:
 
+-  post_authentication_tasks
+    - Custom tasks to run after successful authentication. Like updating user information.
+    - Groups are updated if group prefixes for the backend are defined in the config (BACKEND_GROUP_PREFIXES).
+      Optionally groups with prefixes defined in other backends can be removed from the user
+      (REMOVE_GROUPS_WITH_OTHER_BACKENDS).
 - _get_identifier_type
     - Defines the Identifier type used to save backend's unique identifier. Values are from the Identifier model
       choices.
@@ -39,10 +44,6 @@ The backends can be customized by subclassing them and overriding various method
     - Parses user information from request.META.
 - _get_username_suffix
     - Custom username suffix to use when creating new user account.
-- _post_tasks
-    - Custom tasks to run after successful authentication. Like updating user information.
-    - ShibbolethLocalBackend updates user's groups and SuomiFiBackend sets user's Finnish personal unique code and
-      date of birth.
 - _validate_issuer
     - Custom issuer validation method. Authentication fails if this returns False.
 

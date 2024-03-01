@@ -51,12 +51,14 @@ class ShibbolethBackendTests(TestCase):
         self.assertEqual(str(e.exception), "Invalid identifier format.")
 
     def test_haka_local_login_with_existing_user(self):
+        setattr(self.request, "session", {})
         self.request.META = {settings.SAML_ATTR_EPPN: "testuser@example.org"}
         backend = ShibbolethHakaBackend()
         user = backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(user.username, "testuser@example.org")
 
     def test_edugain_local_login_with_existing_user(self):
+        setattr(self.request, "session", {})
         self.request.META = {settings.SAML_ATTR_EPPN: "testuser@example.org"}
         backend = ShibbolethEdugainBackend()
         user = backend.authenticate(request=self.request, create_user=True)
@@ -112,31 +114,6 @@ class ShibbolethBackendTests(TestCase):
         self.assertEqual(str(e.exception), "Identifier not found.")
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
-    @override_settings(SAML_GROUP_PREFIXES=["saml_", "sso_"])
-    @patch("kamu.utils.audit.logger_audit")
-    def test_login_update_groups(self, mock_logger):
-        test_group = Group.objects.create(name="test_group")
-        saml_group = Group.objects.create(name="saml_group")
-        sso_group = Group.objects.create(name="sso_group")
-        self.user.groups.add(test_group)
-        self.user.groups.add(saml_group)
-        self.request.META = {
-            settings.SAML_ATTR_EPPN: "testuser@example.org",
-            settings.SAML_ATTR_GROUPS: f"{sso_group.name};saml_nogroup",
-        }
-        backend = ShibbolethLocalBackend()
-        user = backend.authenticate(request=self.request, create_user=True)
-        self.assertEqual(user.groups.count(), 2)
-        self.assertIn(test_group, user.groups.all())
-        self.assertIn(sso_group, user.groups.all())
-        mock_logger.log.assert_has_calls(
-            [
-                call(20, "Group saml_group removed from user testuser@example.org", extra=ANY),
-                call(20, "Group sso_group added to user testuser@example.org", extra=ANY),
-            ]
-        )
-
-    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     def test_uid_update(self):
         self.request.META = {
             settings.SAML_ATTR_EPPN: "testuser@example.org",
@@ -190,6 +167,7 @@ class GoogleBackendTests(TestCase):
 
     def test_login_google_with_existing_user(self):
         request = self.factory.get(reverse("login-google"))
+        setattr(request, "session", {})
         request.user = AnonymousUser()
         request.META = {settings.OIDC_CLAIM_SUB: "1234567890"}
         backend = GoogleBackend()
@@ -198,6 +176,7 @@ class GoogleBackendTests(TestCase):
 
     def test_login_google_create_user(self):
         request = self.factory.get(reverse("login-google"))
+        setattr(request, "session", {})
         request.user = AnonymousUser()
         request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
@@ -237,6 +216,7 @@ class GoogleBackendTests(TestCase):
 
     def test_login_google_link_identifier(self):
         request = self.factory.get(reverse("login-google"))
+        setattr(request, "session", {})
         request.user = self.user
         request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
@@ -274,6 +254,7 @@ class SuomiFiBackendTests(TestCase):
     @override_settings(ALLOW_TEST_FPIC=True)
     def test_login_suomifi_with_existing_user(self):
         request = self.factory.get(reverse("login-suomifi"))
+        setattr(request, "session", {})
         request.user = AnonymousUser()
         request.META = {settings.SAML_SUOMIFI_SSN: self.identifier.value}
         backend = SuomiFiBackend()
@@ -285,6 +266,7 @@ class SuomiFiBackendTests(TestCase):
     @override_settings(EIDAS_IDENTIFIER_REGEX="^[A-Z]{2}/FI/.+$")
     def test_login_with_eidas_identifier(self):
         request = self.factory.get(reverse("login-suomifi"))
+        setattr(request, "session", {})
         request.user = AnonymousUser()
         Identifier.objects.create(identity=self.identity, value="ES/FI/abcdefg", type=Identifier.Type.EIDAS)
         request.META = {settings.SAML_EIDAS_IDENTIFIER: "ES/FI/abcdefg", settings.SAML_EIDAS_DATEOFBIRTH: "1982-03-04"}
@@ -317,3 +299,87 @@ class SuomiFiBackendTests(TestCase):
         with self.assertRaises(AuthenticationError) as e:
             backend.authenticate(request=request, create_user=False)
         self.assertIn("Valid identifier not found.", str(e.exception))
+
+
+class GroupUpdateTests(TestCase):
+    def setUp(self):
+        self.user = UserModel.objects.create(username="testuser@example.org")
+        self.identity = Identity.objects.create(user=self.user)
+        self.identifier = Identifier.objects.create(
+            identity=self.identity, type=Identifier.Type.EPPN, value="testuser@example.org"
+        )
+        self.test_group = Group.objects.create(name="test_group")
+        self.saml_group = Group.objects.create(name="saml_group")
+        self.sso_group = Group.objects.create(name="sso_group")
+        self.user.groups.add(self.test_group)
+        self.user.groups.add(self.saml_group)
+        self.factory = RequestFactory()
+        self.request = self.factory.get(reverse("login-shibboleth"))
+        self.request.user = AnonymousUser()
+        self.backend = ShibbolethLocalBackend()
+        self.request.META = {
+            settings.SAML_ATTR_EPPN: "testuser@example.org",
+            settings.SAML_ATTR_GROUPS: f"{self.sso_group.name};saml_group;saml_nogroup",
+        }
+
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    @override_settings(BACKEND_GROUP_PREFIXES={"kamu.backends.ShibbolethLocalBackend": ["saml_", "sso_"]})
+    @patch("kamu.utils.audit.logger_audit")
+    def test_login_update_groups(self, mock_logger):
+        self.request.META = {
+            settings.SAML_ATTR_EPPN: "testuser@example.org",
+            settings.SAML_ATTR_GROUPS: f"{self.sso_group.name};saml_nogroup",
+        }
+        user = self.backend.authenticate(request=self.request)
+        self.assertEqual(user.groups.count(), 2)
+        self.assertIn(self.test_group, user.groups.all())
+        self.assertIn(self.sso_group, user.groups.all())
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Group saml_group removed from user testuser@example.org", extra=ANY),
+                call(20, "Group sso_group added to user testuser@example.org", extra=ANY),
+            ]
+        )
+
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    @override_settings(
+        BACKEND_GROUP_PREFIXES={
+            "kamu.backends.AnotherBackend": ["test_"],
+            "kamu.backends.ShibbolethLocalBackend": ["saml_"],
+        }
+    )
+    @patch("kamu.utils.audit.logger_audit")
+    def test_login_remove_other_backend_prefixes(self, mock_logger):
+        setattr(self.request, "session", {})
+        user = self.backend.authenticate(request=self.request)
+        self.assertEqual(user.groups.count(), 1)
+        self.assertIn(self.saml_group, user.groups.all())
+
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    @override_settings(
+        BACKEND_GROUP_PREFIXES={
+            "kamu.backends.AnotherBackend": ["test_"],
+            "kamu.backends.ShibbolethLocalBackend": ["saml_"],
+        }
+    )
+    @patch("kamu.utils.audit.logger_audit")
+    def test_login_do_remove_prefixes_from_logged_in_backends(self, mock_logger):
+        setattr(self.request, "session", {"login_backends": "kamu.backends.AnotherBackend"})
+        user = self.backend.authenticate(request=self.request)
+        self.assertEqual(user.groups.count(), 2)
+        self.assertIn(self.test_group, user.groups.all())
+        self.assertIn(self.saml_group, user.groups.all())
+
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    @override_settings(
+        BACKEND_GROUP_PREFIXES={
+            "kamu.backends.AnotherBackend": ["test_"],
+            "kamu.backends.ShibbolethLocalBackend": ["saml_"],
+        }
+    )
+    @override_settings(REMOVE_GROUPS_WITH_OTHER_BACKENDS=False)
+    @patch("kamu.utils.audit.logger_audit")
+    def test_login_do_remove_other_backend_prefixes_option(self, mock_logger):
+        setattr(self.request, "session", {})
+        user = self.backend.authenticate(request=self.request)
+        self.assertEqual(user.groups.count(), 2)

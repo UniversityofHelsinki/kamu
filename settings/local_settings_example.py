@@ -134,3 +134,10 @@ AUTHENTICATION_BACKENDS: Sequence[str] = (
     # "kamu.backends.SuomiFiBackend",
     # "kamu.backends.EmailSMSBackend",
 )
+
+# List of group prefixes that are synced for each backend.
+BACKEND_GROUP_PREFIXES: dict[str, list[str]] = {
+    "kamu.backends.ShibbolethLocalBackend": ["grp-", "hy-", "sys-"],
+}
+# When logging in, remove user's groups that are matching prefixes from other backends.
+REMOVE_GROUPS_WITH_OTHER_BACKENDS: bool = True
