@@ -2,6 +2,7 @@
 Authentication backends
 """
 
+import ipaddress
 import logging
 import re
 from datetime import datetime
@@ -13,7 +14,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import AnonymousUser, Group
 from django.contrib.auth.models import User as UserType
 from django.core.exceptions import (
     ImproperlyConfigured,
@@ -29,7 +30,7 @@ from django.utils.translation import gettext as _
 from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
 from kamu.models.role import Role
 from kamu.models.token import Token
-from kamu.utils.audit import AuditLog
+from kamu.utils.audit import AuditLog, get_client_ip
 from kamu.utils.auth import set_default_permissions
 from kamu.validators.identity import validate_fpic
 
@@ -106,6 +107,11 @@ class LocalBaseBackend(ModelBackend):
         "invalid_email_or_phone": _("Invalid email address or phone number."),
         "user_authenticated": _("You are already logged in."),
         "link_user_not_authenticated": _("User must be authenticated to link identifier."),
+        "staff_access_denied": _("Staff and Superuser access is not allowed with this authentication method."),
+        "owner_access_denied": _("Role owner access is not allowed with this authentication method."),
+        "staff_restricted_to_ip": _("Staff and Superuser access is not allowed from this IP address."),
+        "group_restricted_to_ip": _("You belong to a group that is not allowed from this IP address."),
+        "configuration_error": _("Configuration error, service administrators have been notified."),
     }
 
     def check_enabled(self) -> None:
@@ -441,6 +447,78 @@ class LocalBaseBackend(ModelBackend):
         )
         raise AuthenticationError(self.error_messages["identity_already_exists"])
 
+    def _ip_in_network(self, ip: str, ip_network: str) -> bool:
+        """
+        Check if IP address is in the given network.
+        """
+        try:
+            return ipaddress.ip_address(ip) in ipaddress.ip_network(ip_network)
+        except ValueError as e:
+            log_msg = f"Error in IP range: { e }"
+            logger.error(log_msg)
+            raise AuthenticationError(self.error_messages["configuration_error"]) from e
+
+    def _validate_ip_access(
+        self,
+        request: HttpRequest,
+        user: UserType,
+    ) -> None:
+        """
+        Validate if user is allowed to login from the current IP address.
+        """
+        limit_staff_access = getattr(settings, "LIMIT_STAFF_ACCESS_TO_IPS", None)
+        ip = get_client_ip(request)
+        if limit_staff_access and (user.is_staff or user.is_superuser):
+            access = False
+            for ip_network in limit_staff_access:
+                if ip and self._ip_in_network(ip, ip_network):
+                    access = True
+                    break
+            if not access:
+                raise AuthenticationError(self.error_messages["staff_restricted_to_ip"])
+        for group in user.groups.all():
+            group_access = settings.LIMIT_GROUP_ACCESS_TO_IPS.get(group.name)
+            if group_access is not None:
+                access = False
+                for ip_network in group_access:
+                    if ip and self._ip_in_network(ip, ip_network):
+                        access = True
+                        break
+                if not access:
+                    raise AuthenticationError(self.error_messages["group_restricted_to_ip"])
+
+    def _validate_backend_access(self, user: UserType) -> None:
+        """
+        Validate if user has access to the requested login backend.
+        """
+        backend = self._get_backend_class()
+        limit_staff_access = getattr(settings, "LIMIT_STAFF_ACCESS_TO_BACKENDS", None)
+        if (
+            limit_staff_access is not None
+            and (user.is_staff or user.is_superuser)
+            and backend not in limit_staff_access
+        ):
+            raise AuthenticationError(self.error_messages["staff_access_denied"])
+        limit_owner_access = getattr(settings, "LIMIT_OWNER_ACCESS_TO_BACKENDS", None)
+        if (
+            limit_owner_access is not None
+            and backend not in limit_owner_access
+            and user
+            and Role.objects.filter(owner=user).exists()
+        ):
+            raise AuthenticationError(self.error_messages["owner_access_denied"])
+
+    def validate_access(self, request: HttpRequest, user: UserType | AnonymousUser | None) -> None:
+        """
+        Check if user has access to the requested login backend.
+        """
+        if not user:
+            user = request.user
+        if not isinstance(user, UserType):
+            raise AuthenticationError(self.error_messages["unexpected"])
+        self._validate_backend_access(user)
+        self._validate_ip_access(request, user)
+
     def authenticate(
         self,
         request: HttpRequest | None,
@@ -468,11 +546,14 @@ class LocalBaseBackend(ModelBackend):
         self._identifier_validation(request, unique_identifier)
         if link_identifier:
             user = self._authenticate_link_identifier(request, identifier_type, unique_identifier)
+            self.validate_access(request, user)
             return user
         if create_user:
             user = self._authenticate_create_user(request, identifier_type, unique_identifier)
+            self.validate_access(request, user)
             return user
         user = self._authenticate_login(request, identifier_type, unique_identifier)
+        self.validate_access(request, user)
         return user
 
 
@@ -894,5 +975,7 @@ class EmailSMSBackend(LocalBaseBackend):
             if Token.objects.validate_email_object_verification_token(
                 email_token, email_obj
             ) and Token.objects.validate_phone_object_verification_token(phone_token, phone_obj):
-                return email_obj.identity.user
+                user = email_obj.identity.user
+                self.validate_access(request, user)
+                return user
         raise AuthenticationError(self.error_messages["invalid_email_or_phone"])

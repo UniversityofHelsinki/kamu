@@ -231,3 +231,5 @@ EXTERNAL_AUTHENTICATION_BACKENDS: Sequence[str] = (
     "kamu.backends.GoogleBackend",
     "kamu.backends.ShibbolethEdugainBackend",
 )
+
+LIMIT_GROUP_ACCESS_TO_IPS: dict[str, list[str]] = {}

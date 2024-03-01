@@ -87,6 +87,19 @@ These methods are defined in the authentication views.
 ShibbolethLocalBackend uses the *create user* method instead of *login*. Other backends require that the invitation key
 has been verified and saved to the session, before *create user* is allowed.
 
+Login restrictions
+------------------
+Certain types of users can be limited to defined IP ranges or backends.
+
+Limitations are defined in the local settings and options are:
+
+  * Limiting role owner access to listed backends (LIMIT_OWNER_ACCESS_TO_BACKENDS).
+     * Owners are linked directly to the user object. Approver and identifier permissions can be removed by updating
+       user's groups during login.
+  * Limiting staff and superuser access to listed backends (LIMIT_STAFF_ACCESS_TO_BACKENDS).
+  * Limiting staff and superuser access to listed IP ranges (LIMIT_STAFF_ACCESS_TO_IPS).
+  * Limiting group members to listed IP ranges (LIMIT_GROUP_ACCESS_TO_IPS).
+
 Logout
 ------
 

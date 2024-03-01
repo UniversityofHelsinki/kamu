@@ -141,3 +141,17 @@ BACKEND_GROUP_PREFIXES: dict[str, list[str]] = {
 }
 # When logging in, remove user's groups that are matching prefixes from other backends.
 REMOVE_GROUPS_WITH_OTHER_BACKENDS: bool = True
+
+# Limit role owner access to listed backends
+# LIMIT_OWNER_ACCESS_TO_BACKENDS: Sequence[str] = ("kamu.backends.ShibbolethLocalBackend",)
+
+# Limit staff and superuser access to listed backends
+# LIMIT_STAFF_ACCESS_TO_BACKENDS: Sequence[str] = ("kamu.backends.ShibbolethLocalBackend",)
+
+# Limit staff and superuser access to listed ip ranges
+# LIMIT_STAFF_ACCESS_TO_IPS: Sequence[str] = "127.0.0.1/16"
+
+# Limit access to users with certain groups to ip ranges
+# LIMIT_GROUP_ACCESS_TO_IPS: dict[str, list[str]] = {
+#    "grp-admin": ["127.0.0.1/16"],
+# }
