@@ -97,11 +97,11 @@ class LoginEmailPhoneVerificationForm(AuthenticationForm):
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
-        self.request = request
         self.user_cache: Any = None
         self.email_address = kwargs.pop("email_address", None)
         self.phone_number = kwargs.pop("phone_number", None)
         super().__init__(*args, **kwargs)
+        self.request = request
         self.fields.pop("username")
         self.fields.pop("password")
         self.fields["email_verification_token"].widget.attrs.update(autocomplete="off")

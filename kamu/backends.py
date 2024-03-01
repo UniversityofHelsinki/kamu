@@ -880,6 +880,8 @@ class EmailSMSBackend(LocalBaseBackend):
         phone_token: str | None = None,
         **kwargs: Any,
     ) -> UserType:
+        if not request:
+            raise AuthenticationError(self.error_messages["unexpected"])
         self.check_enabled()
         if not email_address or not email_token or not phone_number or not phone_token:
             raise AuthenticationError(self.error_messages["invalid_parameters"])
