@@ -992,6 +992,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         context = super().get_context_data(**kwargs)
         context["phone"] = self.request.POST.get("phone", "").replace(" ", "")
         context["email"] = self.request.POST.get("email")
+        context["fpic"] = self.request.POST.get("fpic")
         context["form"] = IdentitySearchForm(self.request.POST, use_ldap=self.search_ldap())
         if self.search_ldap():
             ldap_results = self._get_ldap_results()
@@ -1013,6 +1014,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         email = self.request.POST.get("email")
         phone = self.request.POST.get("phone")
         uid = self.request.POST.get("uid")
+        fpic = self.request.POST.get("fpic")
         search_terms = {}
         if not given_names and not surname:
             queryset = queryset.none()
@@ -1043,6 +1045,12 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
             phone = phone.replace(" ", "")
             queryset = queryset.union(Identity.objects.filter(phone_numbers__number__exact=phone))
             search_terms["phone"] = phone
+        if fpic:
+            queryset = queryset.union(Identity.objects.filter(fpic=fpic))
+            queryset = queryset.union(
+                Identity.objects.filter(identifiers__type=Identifier.Type.FPIC, identifiers__value=fpic)
+            )
+            search_terms["fpic"] = fpic
         return queryset, search_terms
 
     def get_queryset(self) -> QuerySet[Identity]:

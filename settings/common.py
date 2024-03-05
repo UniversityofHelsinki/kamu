@@ -214,7 +214,7 @@ ACCOUNT_SUFFIX_MICROSOFT: str = "@microsoft"
 PURGE_DELAY_DAYS: int = 730
 
 LDAP_SETTINGS: dict[str, Any] = {}
-LDAP_ATTRIBUTES: list[str] = ["cn", "mail", "uid"]
+LDAP_ATTRIBUTES: list[str] = ["cn", "mail", "uid", "schacPersonalUniqueID"]
 
 HTTP_CHECK_FORWARDING_HEADER: bool = True
 HTTP_FORWARDING_HEADER: str = "HTTP_X_FORWARDED_FOR"
@@ -245,4 +245,11 @@ LDAP_SEARCH_ATTRIBUTES: dict[str, dict[str, LdapSearchAttributeType]] = {
     },
     "email": {"email": {"attribute": "mail", "wildcard": False, "value_prefix": ""}},
     "uid": {"uid": {"attribute": "uid", "wildcard": False, "value_prefix": ""}},
+    "fpic": {
+        "fpic": {
+            "attribute": "schacPersonalUniqueID",
+            "wildcard": False,
+            "value_prefix": "urn:schac:personalUniqueID:fi:FIC:",
+        }
+    },
 }

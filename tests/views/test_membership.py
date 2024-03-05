@@ -286,6 +286,17 @@ class MembershipInviteTests(BaseTestCase):
         self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
         self.assertEqual(response.content.decode("utf-8").count("ldap.user@example.org"), 1)
 
+    @override_settings(ALLOW_TEST_FPIC=True)
+    @mock.patch("kamu.connectors.ldap._get_connection")
+    def test_search_ldap_fpic(self, mock_ldap):
+        mock_ldap.return_value = MockLdapConn(limited_fields=True)
+        data = {
+            "fpic": "010181-900C",
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode("utf-8").count("ldap.user@example.org"), 1)
+
     @mock.patch("kamu.connectors.ldap._get_connection")
     def test_search_ldap_sizelimit_exceeded(self, mock_ldap):
         mock_ldap.return_value = MockLdapConn(limited_fields=True, size_exceeded=True)

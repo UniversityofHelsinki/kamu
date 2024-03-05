@@ -22,7 +22,7 @@ from kamu.utils.auth import set_default_permissions
 from tests.setup import BaseTestCase
 
 
-class IdentityTests(BaseTestCase):
+class IdentityViewTests(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.create_user()
@@ -65,13 +65,22 @@ class IdentityTests(BaseTestCase):
             ]
         )
 
+
+class IdentitySearchTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.create_user()
+        self.url = "/identity/search/"
+        self.client = Client()
+        set_default_permissions(self.user)
+        self.client.force_login(self.user)
+
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_search_identity(self, mock_logger):
         self.create_identity(email=True)
         self.create_superidentity(email=True)
         data = {"given_names": "test", "email": "super_test@example.org"}
-        url = f"{self.url}search/"
-        response = self.client.post(url, data)
+        response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
         self.assertIn(self.superidentity.display_name(), response.content.decode("utf-8"))
@@ -90,8 +99,7 @@ class IdentityTests(BaseTestCase):
         self.create_identity(email=True)
         self.create_superidentity(email=True)
         data = {"surname": "user"}
-        url = f"{self.url}search/"
-        response = self.client.post(url, data)
+        response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertIn(
             "Partial name matches returned too many results. Returning only exact matches.",
@@ -107,8 +115,7 @@ class IdentityTests(BaseTestCase):
         self.identity.save()
         self.create_superidentity(email=True)
         data = {"surname": "user"}
-        url = f"{self.url}search/"
-        response = self.client.post(url, data)
+        response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertIn(
             "please refine your search parameters",
@@ -118,13 +125,34 @@ class IdentityTests(BaseTestCase):
     def test_search_identity_without_permission(self):
         set_default_permissions(self.user, remove=True)
         data = {"given_names": "test", "email": "super@example.org"}
-        url = f"{self.url}search"
-        response = self.client.post(url, data, follow=True)
+        response = self.client.post(self.url, data, follow=True)
         self.assertEqual(response.status_code, 403)
 
+    def test_search_identity_phone(self):
+        self.create_identity(phone=True)
+        data = {"phone": "+1234567890"}
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
+
+    @override_settings(ALLOW_TEST_FPIC=True)
+    def test_search_identity_fpic(self):
+        self.create_identity()
+        self.identity.fpic = "010181-900C"
+        self.identity.save()
+        data = {"fpic": "010181-900C"}
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
+        data = {"fpic": "010181-9234"}
+        response = self.client.post(self.url, data)
+        self.assertNotIn(self.identity.display_name(), response.content.decode("utf-8"))
+        data = {"fpic": "010181-900D"}
+        response = self.client.post(self.url, data)
+        self.assertIn("Incorrect checksum", response.content.decode("utf-8"))
+
     def test_search_form_help_text(self):
-        url = f"{self.url}search/"
-        response = self.client.get(url)
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn(
             "Name search returns partial matches from Kamu.",

@@ -18,6 +18,7 @@ class MockLdapConn:
                 "uid": [b"ldapuser"],
                 "cn": [b"Ldap User"],
                 "mail": [b"ldap.user@example.org"],
+                "schacPersonalUniqueID": [b"urn:schac:personalUniqueID:fi:010181-900C"],
             },
         )
     ]

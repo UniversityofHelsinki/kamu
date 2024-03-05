@@ -16,7 +16,7 @@ from django.utils.translation import gettext as _
 
 from kamu.models.identity import EmailAddress, Identity, PhoneNumber
 from kamu.models.token import Token
-from kamu.validators.identity import validate_phone_number
+from kamu.validators.identity import validate_fpic, validate_phone_number
 
 
 class IdentityCombineForm(forms.Form):
@@ -49,6 +49,7 @@ class IdentitySearchForm(forms.Form):
     uid = forms.CharField(label=_("User account"), max_length=255, required=False)
     email = forms.CharField(label=_("E-mail address"), max_length=255, required=False)
     phone = forms.CharField(label=_("Phone number"), max_length=20, required=False)
+    fpic = forms.CharField(label=_("Finnish personal identity code"), max_length=11, required=False)
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -87,6 +88,7 @@ class IdentitySearchForm(forms.Form):
                 Div("uid", css_class="col-md-6"),
                 Div("email", css_class="col-md-6"),
                 Div("phone", css_class="col-md-6"),
+                Div("fpic", css_class="col-md-6"),
                 css_class="row mb-3",
             ),
         )
@@ -111,6 +113,16 @@ class IdentitySearchForm(forms.Form):
             return None
         validate_email(email)
         return email
+
+    def clean_fpic(self) -> str | None:
+        """
+        Only allow valid personal codes in search field.
+        """
+        fpic = self.cleaned_data["fpic"]
+        if not fpic:
+            return None
+        validate_fpic(fpic)
+        return fpic
 
 
 class ContactForm(forms.Form):
