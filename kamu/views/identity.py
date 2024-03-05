@@ -1004,11 +1004,9 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
                 )
         return context
 
-    def get_queryset(self) -> QuerySet[Identity]:
+    def build_queryset(self, names_exact: bool = False) -> tuple[QuerySet[Identity], dict[str, str]]:
         """
-        Filter results based on URL parameters.
-
-        Return all results with the exact email address or phone number, regardless of names.
+        Build queryset with an option to limit name search to exact results.
         """
         queryset = Identity.objects.all()
         given_names = self.request.POST.get("given_names")
@@ -1020,13 +1018,22 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         if not given_names and not surname:
             queryset = queryset.none()
         if given_names:
-            queryset = queryset.filter(
-                Q(given_names__icontains=given_names) | Q(given_name_display__icontains=given_names)
-            )
+            if not names_exact:
+                queryset = queryset.filter(
+                    Q(given_names__icontains=given_names) | Q(given_name_display__icontains=given_names)
+                )
+            else:
+                queryset = queryset.filter(
+                    Q(given_names__iexact=given_names) | Q(given_name_display__iexact=given_names)
+                )
             search_terms["given_names"] = given_names
         if surname:
-            queryset = queryset.filter(Q(surname__icontains=surname) | Q(surname_display__icontains=surname))
+            if not names_exact:
+                queryset = queryset.filter(Q(surname__icontains=surname) | Q(surname_display__icontains=surname))
+            else:
+                queryset = queryset.filter(Q(surname__iexact=surname) | Q(surname_display__iexact=surname))
             search_terms["surname"] = surname
+
         if email:
             queryset = queryset.union(Identity.objects.filter(email_addresses__address__iexact=email))
             search_terms["email"] = email
@@ -1037,6 +1044,30 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
             phone = phone.replace(" ", "")
             queryset = queryset.union(Identity.objects.filter(phone_numbers__number__exact=phone))
             search_terms["phone"] = phone
+        return queryset, search_terms
+
+    def get_queryset(self) -> QuerySet[Identity]:
+        """
+        Filter results based on URL parameters.
+
+        Return all results with the exact email address or phone number, regardless of names.
+        """
+        queryset, search_terms = self.build_queryset(names_exact=False)
+        if queryset.count() > getattr(settings, "KAMU_IDENTITY_SEARCH_LIMIT", 50):
+            queryset, search_terms = self.build_queryset(names_exact=True)
+            if queryset.count() > getattr(settings, "KAMU_IDENTITY_SEARCH_LIMIT", 50):
+                messages.add_message(
+                    self.request,
+                    messages.WARNING,
+                    _("Too many results, please refine your search parameters."),
+                )
+                return queryset.none()
+            else:
+                messages.add_message(
+                    self.request,
+                    messages.WARNING,
+                    _("Partial name matches returned too many results. Returning only exact matches."),
+                )
         audit_log.info(
             "Searched identities",
             category="identity",

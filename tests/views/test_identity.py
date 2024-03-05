@@ -20,7 +20,6 @@ from kamu.models.membership import Membership
 from kamu.models.role import Role
 from kamu.utils.auth import set_default_permissions
 from tests.setup import BaseTestCase
-from tests.utils import MockLdapConn
 
 
 class IdentityTests(BaseTestCase):
@@ -66,12 +65,10 @@ class IdentityTests(BaseTestCase):
             ]
         )
 
-    @mock.patch("kamu.connectors.ldap._get_connection")
     @mock.patch("kamu.utils.audit.logger_audit")
-    def test_search_identity(self, mock_logger, mock_ldap):
+    def test_search_identity(self, mock_logger):
         self.create_identity(email=True)
         self.create_superidentity(email=True)
-        mock_ldap.return_value = MockLdapConn(limited_fields=True)
         data = {"given_names": "test", "email": "super_test@example.org"}
         url = f"{self.url}search/"
         response = self.client.post(url, data)
@@ -86,6 +83,36 @@ class IdentityTests(BaseTestCase):
         self.assertEqual(
             mock_logger.log.call_args_list[0][1]["extra"]["search_terms"],
             str({"given_names": "test", "email": "super_test@example.org"}),
+        )
+
+    @override_settings(KAMU_IDENTITY_SEARCH_LIMIT=1)
+    def test_search_identity_partial_limit(self):
+        self.create_identity(email=True)
+        self.create_superidentity(email=True)
+        data = {"surname": "user"}
+        url = f"{self.url}search/"
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "Partial name matches returned too many results. Returning only exact matches.",
+            response.content.decode("utf-8"),
+        )
+        self.assertNotIn(self.identity.display_name(), response.content.decode("utf-8"))
+        self.assertIn(self.superidentity.display_name(), response.content.decode("utf-8"))
+
+    @override_settings(KAMU_IDENTITY_SEARCH_LIMIT=1)
+    def test_search_identity_total_limit(self):
+        self.create_identity(email=True)
+        self.identity.surname = "user"
+        self.identity.save()
+        self.create_superidentity(email=True)
+        data = {"surname": "user"}
+        url = f"{self.url}search/"
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "please refine your search parameters",
+            response.content.decode("utf-8"),
         )
 
     def test_search_identity_without_permission(self):

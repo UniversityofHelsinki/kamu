@@ -112,6 +112,8 @@ LDAP_SETTINGS: dict[str, Any] = {
 }
 # If LDAP search would return more results, ask users to refine search.
 LDAP_SEARCH_LIMIT: int = 50
+# If Identity search would return more results, ask users to refine search.
+KAMU_IDENTITY_SEARCH_LIMIT: int = 50
 
 # If OIDC_LOGOUT_PATH are given and login-view is in OIDC_VIEWS,
 # redirect user to logout url + redirect url, just before linking identifier.
