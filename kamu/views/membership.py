@@ -394,7 +394,7 @@ class MembershipInviteIdentitySearch(IdentitySearchView):
         Add searched email and information if it has been found.
         """
         context = super().get_context_data(**kwargs)
-        email = self.request.GET.get("email")
+        email = self.request.POST.get("email")
         context["email_found"] = self._check_email(context, email)
         self.request.session["invitation_email_address"] = email
         context["role"] = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))

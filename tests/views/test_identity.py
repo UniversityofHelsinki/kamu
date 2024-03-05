@@ -72,8 +72,9 @@ class IdentityTests(BaseTestCase):
         self.create_identity(email=True)
         self.create_superidentity(email=True)
         mock_ldap.return_value = MockLdapConn(limited_fields=True)
-        url = f"{self.url}search/?given_names=test&email=super_test@example.org"
-        response = self.client.get(url)
+        data = {"given_names": "test", "email": "super_test@example.org"}
+        url = f"{self.url}search/"
+        response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
         self.assertIn(self.superidentity.display_name(), response.content.decode("utf-8"))
@@ -89,8 +90,9 @@ class IdentityTests(BaseTestCase):
 
     def test_search_identity_without_permission(self):
         set_default_permissions(self.user, remove=True)
-        url = f"{self.url}search/?given_names=test&email=super@example.org"
-        response = self.client.get(url)
+        data = {"given_names": "test", "email": "super@example.org"}
+        url = f"{self.url}search"
+        response = self.client.post(url, data, follow=True)
         self.assertEqual(response.status_code, 403)
 
     def test_search_form_help_text(self):

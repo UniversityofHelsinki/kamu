@@ -908,6 +908,9 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
     model = Identity
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        """
+        Check that user has permission to search identities.
+        """
         if not self.request.user.has_perm("kamu.search_identities"):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
@@ -925,7 +928,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         ldap_values = []
         for attr in attribute:
             ldap_name, param_name, wildcard = attr
-            value = self.request.GET.get(param_name)
+            value = self.request.POST.get(param_name)
             if not value:
                 continue
             if wildcard:
@@ -988,9 +991,9 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         Add form and searched phone and email to context data.
         """
         context = super().get_context_data(**kwargs)
-        context["phone"] = self.request.GET.get("phone", "").replace(" ", "")
-        context["email"] = self.request.GET.get("email")
-        context["form"] = IdentitySearchForm(self.request.GET, use_ldap=self.search_ldap())
+        context["phone"] = self.request.POST.get("phone", "").replace(" ", "")
+        context["email"] = self.request.POST.get("email")
+        context["form"] = IdentitySearchForm(self.request.POST, use_ldap=self.search_ldap())
         if self.search_ldap():
             ldap_results = self._get_ldap_results()
             if isinstance(ldap_results, list):
@@ -1008,11 +1011,11 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         Return all results with the exact email address or phone number, regardless of names.
         """
         queryset = Identity.objects.all()
-        given_names = self.request.GET.get("given_names")
-        surname = self.request.GET.get("surname")
-        email = self.request.GET.get("email")
-        phone = self.request.GET.get("phone")
-        uid = self.request.GET.get("uid")
+        given_names = self.request.POST.get("given_names")
+        surname = self.request.POST.get("surname")
+        email = self.request.POST.get("email")
+        phone = self.request.POST.get("phone")
+        uid = self.request.POST.get("uid")
         search_terms = {}
         if not given_names and not surname:
             queryset = queryset.none()
@@ -1043,6 +1046,18 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
             extra={"search_terms": str(search_terms), "ldap": self.search_ldap()},
         )
         return queryset
+
+    @method_decorator(csrf_protect)
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Allow post method to be used in a same way as get method.
+        """
+        if IdentitySearchForm(self.request.POST, use_ldap=self.search_ldap()).is_valid():
+            self.object_list = self.get_queryset()
+        else:
+            self.object_list = Identity.objects.none()
+        context = self.get_context_data()
+        return self.render_to_response(context)
 
 
 class IdentityCombineView(LoginRequiredMixin, TemplateView):

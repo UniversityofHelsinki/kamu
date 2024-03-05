@@ -256,16 +256,20 @@ class MembershipInviteTests(BaseTestCase):
     @mock.patch("kamu.views.identity.ldap_search")
     def test_search_user(self, mock_ldap):
         mock_ldap.return_value = []
-        url = f"{self.url}?given_names=test"
-        response = self.client.get(url)
+        data = {
+            "given_names": "test",
+        }
+        response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
         self.assertIn("Select", response.content.decode("utf-8"))
 
     @mock.patch("kamu.connectors.ldap.logger")
     def test_search_ldap_fail(self, mock_logger):
-        url = f"{self.url}?uid=testuser"
-        response = self.client.get(url)
+        data = {
+            "uid": "testuser",
+        }
+        response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertIn("LDAP search failed", response.content.decode("utf-8"))
         mock_logger.error.assert_called_once()
@@ -273,8 +277,11 @@ class MembershipInviteTests(BaseTestCase):
     @mock.patch("kamu.connectors.ldap._get_connection")
     def test_search_ldap(self, mock_ldap):
         mock_ldap.return_value = MockLdapConn(limited_fields=True)
-        url = f"{self.url}?uid=testuser&given_names=test"
-        response = self.client.get(url)
+        data = {
+            "given_names": "test",
+            "uid": "testuser",
+        }
+        response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
         self.assertEqual(response.content.decode("utf-8").count("ldap.user@example.org"), 1)
@@ -282,40 +289,45 @@ class MembershipInviteTests(BaseTestCase):
     @mock.patch("kamu.connectors.ldap._get_connection")
     def test_search_ldap_sizelimit_exceeded(self, mock_ldap):
         mock_ldap.return_value = MockLdapConn(limited_fields=True, size_exceeded=True)
-        url = f"{self.url}?uid=testuser&given_names=test"
-        response = self.client.get(url)
+        data = {
+            "given_names": "test",
+            "uid": "testuser",
+        }
+        response = self.client.post(self.url, data)
         self.assertIn("search returned too many results", response.content.decode("utf-8"))
 
     @mock.patch("kamu.connectors.ldap._get_connection")
     def test_search_ldap_escaping(self, mock_ldap):
         conn = MockLdapConn(limited_fields=True)
         mock_ldap.return_value = conn
-        url = f"{self.url}?given_names=t*est"
-        response = self.client.get(url)
+        data = {
+            "given_names": "t*est",
+        }
+        response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertIn("(givenName=*t\\2aest*)", conn.search_args[0][2])
 
     @mock.patch("kamu.views.identity.ldap_search")
     def test_search_not_found_email(self, mock_ldap):
         mock_ldap.return_value = []
-        url = f"{self.url}?email=nonexisting@example.org"
-        response = self.client.get(url)
+        data = {"email": "nonexisting@example.org"}
+        response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Email address not found", response.content.decode("utf-8"))
 
     @mock.patch("kamu.views.identity.ldap_search")
     def test_search_email_found_kamu(self, mock_ldap):
         mock_ldap.return_value = []
-        url = f"{self.url}?email={self.email_address.address}"
-        response = self.client.get(url)
+        data = {"email": self.email_address.address}
+        response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Email address not found", response.content.decode("utf-8"))
 
     @mock.patch("kamu.connectors.ldap._get_connection")
     def test_search_email_found_ldap(self, mock_ldap):
         mock_ldap.return_value = MockLdapConn()
-        url = f"{self.url}?email=ldap.user@example.org"
-        response = self.client.get(url)
+        data = {"email": "ldap.user@example.org"}
+        response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Email address not found", response.content.decode("utf-8"))
 

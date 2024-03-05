@@ -57,7 +57,7 @@ class IdentitySearchForm(forms.Form):
         use_ldap = kwargs.pop("use_ldap", False)
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_method = "GET"
+        self.helper.form_method = "POST"
         self.helper.add_input(Submit("submit", _("Search")))
         if use_ldap:
             name_search_text = _(
