@@ -375,7 +375,7 @@ class MembershipInviteIdentitySearch(IdentitySearchView):
         """
         Enable LDAP search.
         """
-        return True
+        return getattr(settings, "LDAP_SEARCH_FOR_INVITES", True)
 
     def _check_email(self, context: dict[str, Any], email: str | None) -> bool:
         """

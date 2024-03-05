@@ -96,6 +96,9 @@ SMS_API_TIMEOUT: int = 3
 # SMS messages will be logged instead of sent to API if SMS_DEBUG is True.
 SMS_DEBUG: bool = False
 
+LDAP_SEARCH_FOR_INVITES: bool = True  # Defaults to True
+LDAP_SEARCH_FOR_IDENTITIES: bool = False  # Defaults to False
+
 LDAP_SETTINGS: dict[str, Any] = {
     "HOST": "127.0.0.1",
     "PORT": 389,

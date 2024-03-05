@@ -984,7 +984,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         """
         Check if LDAP should be searched.
         """
-        return False
+        return getattr(settings, "LDAP_SEARCH_FOR_IDENTITIES", False)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
