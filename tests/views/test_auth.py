@@ -10,7 +10,7 @@ from urllib.parse import unquote_plus
 from django.contrib.admin.models import LogEntry
 from django.contrib.auth import get_user_model
 from django.core import mail
-from django.test import Client, RequestFactory, TestCase, override_settings
+from django.test import Client, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -251,7 +251,7 @@ class LoginViewTests(BaseTestCase):
         self.assertEqual("Kamu login verification", mail.outbox[0].subject)
 
     @override_settings(TOKEN_TIME_LIMIT_NEW=60)
-    def test_email_login_resend_email_token(self):
+    def test_email_login_resend_email_token_time_limit(self):
         self._test_email_login_verification()
         response = self.client.post(
             self.url,

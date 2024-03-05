@@ -6,4 +6,4 @@ class BaseConfig(AppConfig):
     verbose_name = "Kamu service"
 
     def ready(self) -> None:
-        from . import signals
+        from . import signals  # noqa: F401

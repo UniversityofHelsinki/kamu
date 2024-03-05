@@ -427,7 +427,10 @@ class Migration(migrations.Migration):
                     "level",
                     models.IntegerField(
                         default=0,
-                        help_text="Require a minimum level of assurance or attribute verification level, or a minimum version of contract. Contract level must be positive integer. Assurance levels are from 1 (low) to 3 (high) and attribute verification levels are from 1 (self assured) to 4 (strong electrical verification)",
+                        help_text="Require a minimum level of assurance or attribute verification level, or a minimum "
+                        "version of contract. Contract level must be positive integer. Assurance levels are from 1 "
+                        "(low) to 3 (high) and attribute verification levels are from 1 (self assured) to 4 (strong "
+                        "electrical verification)",
                         verbose_name="Level or version required",
                     ),
                 ),

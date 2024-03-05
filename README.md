@@ -5,6 +5,7 @@ University of Helsinki application for managing external people, so. people who 
 
 ### Style guide
 * Use black for formatting, cmd: "black ."
+* Use flake8 for pep8 checks, cmd: "flake8"
 * Use isort for sorting imports, cmd: "isort ."
 * Use mypy for typing checks, cmd: "mypy ."
 

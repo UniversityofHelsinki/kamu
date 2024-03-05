@@ -13,9 +13,10 @@ We use black for code formatting and isort for import sorting. Check pyproject.t
 
 We use mypy for static type checking.
 
-Run tests with following commands::
+Run style and type checks with following commands::
 
     black .
+    flake8
     isort .
     mypy .
 

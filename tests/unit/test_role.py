@@ -175,11 +175,13 @@ class RequirementsTests(BaseRoleTestCase):
         missing = self.membership.get_missing_requirements()
         add_missing_requirement_messages(request, missing, self.identity)
         self.assertEqual(
-            f"Role requires higher assurance level: { Identity.AssuranceLevel.HIGH } (High, eIDAS substantial level or similar).",
+            f"Role requires higher assurance level: { Identity.AssuranceLevel.HIGH } "
+            "(High, eIDAS substantial level or similar).",
             messages._queued_messages[0].message,
         )
         self.assertEqual(
-            f'Role requires an attribute "date of birth" of at least verification level: {Identity.VerificationMethod.EXTERNAL} (External source).',
+            'Role requires an attribute "date of birth" of at least verification level: '
+            f"{Identity.VerificationMethod.EXTERNAL} (External source).",
             messages._queued_messages[1].message,
         )
         self.assertNotIn(

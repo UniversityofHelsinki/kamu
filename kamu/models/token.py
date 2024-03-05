@@ -281,7 +281,8 @@ class TokenManager(models.Manager["Token"]):
 
 class Token(models.Model):
     """
-    Stores a token, related to :class:`kamu.models.membership.Membership`, :class:`kamu.models.identity.EmailAddress` and :class:`kamu.models.identity.PhoneNumber`.
+    Stores a token, related to :class:`kamu.models.membership.Membership`, :class:`kamu.models.identity.EmailAddress`
+    and :class:`kamu.models.identity.PhoneNumber`.
     """
 
     membership = models.ForeignKey("kamu.Membership", null=True, on_delete=models.CASCADE)

@@ -89,7 +89,8 @@ class ShibbolethBackendTests(TestCase):
     def test_login_create_user_assurance(self):
         self.request.META = {
             settings.SAML_ATTR_EPPN: "newuser@example.org",
-            settings.SAML_ATTR_ASSURANCE: "https://refeds.org/assurance/IAP/medium;https://refeds.org/assurance/IAP/high",
+            settings.SAML_ATTR_ASSURANCE: "https://refeds.org/assurance/IAP/medium;"
+            "https://refeds.org/assurance/IAP/high",
         }
         backend = ShibbolethLocalBackend()
         user = backend.authenticate(request=self.request, create_user=True)
@@ -168,7 +169,7 @@ class ShibbolethBackendTests(TestCase):
         )
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
-    @override_settings(LOCAL_UID_IGNORE_REGEX="^\dk\d{6}$")
+    @override_settings(LOCAL_UID_IGNORE_REGEX=r"^\dk\d{6}$")
     def test_uid_update_ignore_regex(self):
         self.request.META = {
             settings.SAML_ATTR_EPPN: "0k123456@example.org",

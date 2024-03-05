@@ -74,6 +74,14 @@ black:
     - if: $runStages =~ /lint/
       when: always
 
+flake8:
+  stage: lint
+  script:
+    - flake8
+  rules:
+    - if: $runStages =~ /lint/
+      when: always
+
 isort:
   stage: lint
   script:

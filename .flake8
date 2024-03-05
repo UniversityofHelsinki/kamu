@@ -1,0 +1,5 @@
+[flake8]
+max-line-length = 119
+per-file-ignores =
+    settings/*: F401,F403,F405
+exclude = venv,.*,settings/local*

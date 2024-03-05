@@ -37,7 +37,8 @@ class ContractManager(models.Manager["Contract"]):
 
 class Contract(models.Model):
     """
-    Stores a contract, related to :class:`kamu.models.identity.Identity` and :class:`kamu.models.contract.ContractTemplate`.
+    Stores a contract, related to :class:`kamu.models.identity.Identity` and
+    :class:`kamu.models.contract.ContractTemplate`.
     """
 
     identity = models.ForeignKey(

@@ -193,7 +193,7 @@ class PurgeIdentityTests(ManagementCommandTestCase):
             for i in range(6)
         ]
 
-        self.role = Role.objects.create(identifier="test", name_en=f"Test Role", maximum_duration=400)
+        self.role = Role.objects.create(identifier="test", name_en="Test Role", maximum_duration=400)
 
     def _create_test_membership(self, identity, days):
         start = timezone.now().date() - datetime.timedelta(days=390)
@@ -260,7 +260,7 @@ class PurgeUserTests(ManagementCommandTestCase):
             for i in range(3)
         ]
 
-        self.role = Role.objects.create(identifier="test", name_en=f"Test Role", maximum_duration=400)
+        self.role = Role.objects.create(identifier="test", name_en="Test Role", maximum_duration=400)
 
     def _create_test_membership(self, identity, days, inviter=None, approver=None):
         start = timezone.now().date() - datetime.timedelta(days=390)

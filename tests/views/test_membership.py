@@ -147,7 +147,7 @@ class MembershipViewTests(BaseTestCase):
         self.role.approvers.add(self.group)
         url = f"{self.url}change/"
         expire_date = timezone.now().date() + datetime.timedelta(days=2)
-        response = self.client.post(
+        self.client.post(
             url,
             {
                 "start_date": timezone.now().date() + datetime.timedelta(days=1),
@@ -230,7 +230,6 @@ class MembershipJoinTests(BaseTestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_join_role_with_invalid_date(self):
-        url = f"{self.url}{self.role.pk}/join/"
         response = self._test_join_role(start_date_delta=7)
         self.assertIn("Role expire date cannot be earlier than start date", response.content.decode("utf-8"))
 

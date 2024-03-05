@@ -36,7 +36,7 @@ class Command(BaseCommand):
             "--days",
             type=int,
             dest="grace_days",
-            help=f"Force data purge after this many days since expiry (default varies by data type)",
+            help="Force data purge after this many days since expiry (default varies by data type)",
         )
         parser.add_argument(
             "-l", "--list-types", default=False, action="store_true", help="List purgeable types for --type option"

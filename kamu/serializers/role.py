@@ -48,7 +48,9 @@ class RoleSerializer(serializers.ModelSerializer[Role]):
     owner = serializers.SlugRelatedField(
         slug_field="username", required=False, queryset=get_user_model().objects.all()
     )
-    parent = serializers.SlugRelatedField(slug_field="identifier", required=False, queryset=Role.objects.all())  # type: ignore
+    parent = serializers.SlugRelatedField(
+        slug_field="identifier", required=False, queryset=Role.objects.all()
+    )  # type: ignore
     inviters = serializers.SlugRelatedField(slug_field="name", required=False, many=True, queryset=Group.objects.all())
     approvers = serializers.SlugRelatedField(
         slug_field="name", required=False, many=True, queryset=Group.objects.all()
