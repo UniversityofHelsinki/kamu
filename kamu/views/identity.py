@@ -989,7 +989,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         context = super().get_context_data(**kwargs)
         context["phone"] = self.request.GET.get("phone", "").replace(" ", "")
         context["email"] = self.request.GET.get("email")
-        context["form"] = IdentitySearchForm(self.request.GET)
+        context["form"] = IdentitySearchForm(self.request.GET, use_ldap=self.search_ldap())
         if self.search_ldap():
             ldap_results = self._get_ldap_results()
             if isinstance(ldap_results, list):

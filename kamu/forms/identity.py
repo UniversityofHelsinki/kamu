@@ -54,20 +54,21 @@ class IdentitySearchForm(forms.Form):
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
+        use_ldap = kwargs.pop("use_ldap", False)
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "GET"
         self.helper.add_input(Submit("submit", _("Search")))
+        if use_ldap:
+            name_search_text = _(
+                "Name search returns partial matches from Kamu and names starting with the search parameters "
+                "in the user directory."
+            )
+        else:
+            name_search_text = _("Name search returns partial matches from Kamu.")
         self.helper.layout = Layout(
             HTML("<h2 class='mb-3'>" + _("Name search") + "</h2>"),
-            HTML(
-                "<p>"
-                + _(
-                    "Name search returns partial matches from Kamu and names starting with the search parameters "
-                    "in the user directory."
-                )
-                + "</p>"
-            ),
+            HTML("<p>" + name_search_text + "</p>"),
             Div(
                 Div("given_names", css_class="col-md-6"),
                 Div("surname", css_class="col-md-6"),

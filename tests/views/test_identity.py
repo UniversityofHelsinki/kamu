@@ -98,8 +98,11 @@ class IdentityTests(BaseTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            "Name search returns partial matches from Kamu and names starting with the search parameters in "
-            "the user directory.",
+            "Name search returns partial matches from Kamu.",
+            response.content.decode("utf-8"),
+        )
+        self.assertNotIn(
+            "user directory",
             response.content.decode("utf-8"),
         )
 
