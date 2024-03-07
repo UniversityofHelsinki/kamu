@@ -63,8 +63,8 @@ class IdentitySearchForm(forms.Form):
             HTML(
                 "<p>"
                 + _(
-                    "Name search returns partial matches from the Kamu and names starting with the search parameters "
-                    "from the user directory."
+                    "Name search returns partial matches from Kamu and names starting with the search parameters "
+                    "in the user directory."
                 )
                 + "</p>"
             ),

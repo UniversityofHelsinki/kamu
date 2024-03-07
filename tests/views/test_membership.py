@@ -447,3 +447,12 @@ class MembershipInviteTests(BaseTestCase):
         membership = Membership.objects.get(role=self.role, identity=None, invite_email_address="invite@example.org")
         self.assertEqual(membership.inviter, self.user)
         self.assertEqual(membership.approver, self.user)
+
+    def test_invite_form_help_text(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "Name search returns partial matches from Kamu and names starting with the search parameters in "
+            "the user directory.",
+            response.content.decode("utf-8"),
+        )

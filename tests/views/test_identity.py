@@ -93,6 +93,16 @@ class IdentityTests(BaseTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
+    def test_search_form_help_text(self):
+        url = f"{self.url}search/"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "Name search returns partial matches from Kamu and names starting with the search parameters in "
+            "the user directory.",
+            response.content.decode("utf-8"),
+        )
+
 
 class IdentityEditTests(BaseTestCase):
     def setUp(self):
