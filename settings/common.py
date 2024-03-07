@@ -5,7 +5,7 @@ Loaded by environment specific settings files
 """
 
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any, Sequence, TypedDict
 
 import django_stubs_ext
 from django.contrib.messages import constants as messages
@@ -233,3 +233,16 @@ EXTERNAL_AUTHENTICATION_BACKENDS: Sequence[str] = (
 )
 
 LIMIT_GROUP_ACCESS_TO_IPS: dict[str, list[str]] = {}
+
+# LDAP search attributes for identities. Each list is a separate search and results are combined.
+LdapSearchAttributeType = TypedDict(
+    "LdapSearchAttributeType", {"attribute": str, "wildcard": bool, "value_prefix": str}
+)
+LDAP_SEARCH_ATTRIBUTES: dict[str, dict[str, LdapSearchAttributeType]] = {
+    "names": {
+        "given_names": {"attribute": "givenName", "wildcard": True, "value_prefix": ""},
+        "surname": {"attribute": "sn", "wildcard": True, "value_prefix": ""},
+    },
+    "email": {"email": {"attribute": "mail", "wildcard": False, "value_prefix": ""}},
+    "uid": {"uid": {"attribute": "uid", "wildcard": False, "value_prefix": ""}},
+}

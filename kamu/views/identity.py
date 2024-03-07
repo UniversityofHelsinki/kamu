@@ -53,6 +53,7 @@ from kamu.models.token import TimeLimitError, Token
 from kamu.utils.audit import AuditLog
 from kamu.utils.identity import combine_identities, combine_identities_requirements
 from kamu.utils.membership import add_missing_requirement_messages
+from settings.common import LdapSearchAttributeType
 
 audit_log = AuditLog()
 
@@ -915,7 +916,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
-    def _ldap_search_attribute(self, attribute: list[tuple[str, str, bool]]) -> list | None:
+    def _ldap_search_attribute(self, attribute: dict[str, LdapSearchAttributeType]) -> list | None:
         """
         Search LDAP for attribute(s).
 
@@ -926,16 +927,18 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         """
         ldap_parameters = []
         ldap_values = []
-        for attr in attribute:
-            ldap_name, param_name, wildcard = attr
-            value = self.request.POST.get(param_name)
+        for param, conf in attribute.items():
+            ldap_name = str(conf.get("attribute"))
+            wildcard = conf.get("wildcard", False)
+            value_prefix = conf.get("value_prefix", "")
+            value = self.request.POST.get(param)
             if not value:
                 continue
             if wildcard:
                 ldap_parameters.append("(" + ldap_name + "=*{}*)")
             else:
                 ldap_parameters.append("(" + ldap_name + "={})")
-            ldap_values.append(value)
+            ldap_values.append(f"{value_prefix}{value}")
         if not ldap_parameters:
             return []
         try:
@@ -958,13 +961,9 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         Return None if LDAP search does not succeed.
         """
         results: set = set()
-        search_attributes = [
-            [("givenName", "given_names", True), ("sn", "surname", True)],
-            [("mail", "email", False)],
-            [("uid", "uid", False)],
-        ]
-        for attribute in search_attributes:
-            search_result = self._ldap_search_attribute(attribute)
+        search_attributes = settings.LDAP_SEARCH_ATTRIBUTES
+        for attribute in search_attributes.keys():
+            search_result = self._ldap_search_attribute(search_attributes[attribute])
             if search_result is None:
                 return None
             else:
