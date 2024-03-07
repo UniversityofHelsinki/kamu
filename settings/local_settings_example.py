@@ -160,3 +160,6 @@ REMOVE_GROUPS_WITH_OTHER_BACKENDS: bool = True
 # LIMIT_GROUP_ACCESS_TO_IPS: dict[str, list[str]] = {
 #    "grp-admin": ["127.0.0.1/16"],
 # }
+
+# Emails with these domains are considered public and shown in identity search results
+PUBLIC_EMAIL_DOMAINS: list[str] = ["example.net", "example.org"]

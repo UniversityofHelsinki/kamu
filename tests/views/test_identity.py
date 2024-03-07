@@ -137,10 +137,11 @@ class IdentitySearchTests(BaseTestCase):
 
     @override_settings(ALLOW_TEST_FPIC=True)
     def test_search_identity_fpic(self):
+        fpic = "010181-900C"
         self.create_identity()
-        self.identity.fpic = "010181-900C"
+        self.identity.fpic = fpic
         self.identity.save()
-        data = {"fpic": "010181-900C"}
+        data = {"fpic": fpic}
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
@@ -150,6 +151,19 @@ class IdentitySearchTests(BaseTestCase):
         data = {"fpic": "010181-900D"}
         response = self.client.post(self.url, data)
         self.assertIn("Incorrect checksum", response.content.decode("utf-8"))
+
+    @override_settings(ALLOW_TEST_FPIC=True)
+    def test_search_identity_show_attributes(self):
+        fpic = "010181-900C"
+        self.create_identity(email=True, phone=True)
+        self.identity.fpic = fpic
+        self.identity.save()
+        data = {"fpic": fpic, "email": self.email_address.address, "phone": self.phone_number.number}
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(f"<b>{self.email_address.address}</b>", response.content.decode("utf-8"))
+        self.assertIn(f"<b>{self.phone_number.number}</b>", response.content.decode("utf-8"))
+        self.assertIn(f"<b>{fpic}</b>", response.content.decode("utf-8"))
 
     def test_search_form_help_text(self):
         response = self.client.get(self.url)

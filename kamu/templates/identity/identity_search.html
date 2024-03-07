@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load crispy_forms_tags %}
+{% load identity_tags %}
 
 {% block content %}
   <h1 class="mb-4">{% trans "Identity search" %}</h1>
@@ -13,8 +14,7 @@
     <tr>
       <th scope="col">{% trans "Name" %}</th>
       <th scope="col">{% trans "User account" %}</th>
-      <th scope="col">{% trans "Email" %}</th>
-      <th scope="col">{% trans "Phone" %}</th>
+      <th scope="col">{% trans "Attributes" %}</th>
     </tr>
     </thead>
     <tbody>
@@ -22,8 +22,7 @@
       <tr>
         <th scope="row"><a href="{% url 'identity-detail' identity.pk %}">{{ identity.display_name }}</a></th>
         <td>{% if identity.uid %}{{ identity.uid }}{% endif %}</td>
-        <td>{% for address in identity.email_addresses.all %}{% if address.address == email %}{{ address.address }}{% endif %}{% endfor %}</td>
-        <td>{% for number in identity.phone_numbers.all %}{% if number.number == phone %}{{ number.number }}{% endif %}{% endfor %}</td>
+        <td>{% matching_attributes identity=identity email=email phone=phone fpic=fpic as attributes %}{{ attributes|safe }}</td>
       </tr>
     {% endfor %}
     </tbody>
@@ -43,7 +42,7 @@
     <tr>
       <th scope="col">{% trans "Name" %}</th>
       <th scope="col">{% trans "User account" %}</th>
-      <th scope="col">{% trans "Email" %}</th>
+      <th scope="col">{% trans "Attributes" %}</th>
     </tr>
     </thead>
     <tbody>
@@ -51,7 +50,7 @@
       <tr>
         <th scope="row">{{ result.cn }}</th>
         <td>{{ result.uid }}</td>
-        <td>{{ result.mail }}</td>
+        <td>{% matching_attributes_ldap result=result email=email fpic=fpic as attributes %}{{ attributes|safe }}</td>
       </tr>
     {% endfor %}
     </tbody>
