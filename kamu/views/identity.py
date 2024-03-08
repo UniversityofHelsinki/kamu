@@ -908,6 +908,14 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
     template_name = "identity/identity_search.html"
     model = Identity
 
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """
+        Initialize exact match variables.
+        """
+        super().__init__()
+        self.exact_match_found = False
+        self.exact_match_skip = getattr(settings, "SKIP_NAME_SEARCH_IF_IDENTIFIER_MATCHES", True)
+
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """
         Check that user has permission to search identities.
@@ -958,12 +966,17 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
 
         Append separate search results to combined results and return them.
 
+        Return empty list if no results are found.
         Return None if LDAP search does not succeed.
         """
         results: set = set()
         search_attributes = settings.LDAP_SEARCH_ATTRIBUTES
-        for attribute in search_attributes.keys():
-            search_result = self._ldap_search_attribute(search_attributes[attribute])
+        for key, value in search_attributes.items():
+            if key == "names" and self.exact_match_skip and self.exact_match_found:
+                continue
+            search_result = self._ldap_search_attribute(value)
+            if key != "names" and search_result:
+                self.exact_match_found = True
             if search_result is None:
                 return None
             else:
@@ -985,6 +998,121 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         """
         return getattr(settings, "LDAP_SEARCH_FOR_IDENTITIES", False)
 
+    def log_search(self) -> None:
+        """
+        Log search terms.
+        """
+        search_terms = {}
+        for term in ["given_names", "surname", "email", "phone", "uid", "fpic"]:
+            value = self.request.POST.get(term)
+            if value:
+                search_terms[term] = value
+        audit_log.info(
+            "Searched identities",
+            category="identity",
+            action="search",
+            outcome="success",
+            request=self.request,
+            extra={"search_terms": str(search_terms), "ldap": self.search_ldap()},
+        )
+
+    def build_queryset_identifiers(self, fpic: str, uid: str, email: str, phone: str) -> QuerySet[Identity]:
+        """
+        Build queryset with identifier search terms.
+        """
+        queryset = Identity.objects.none()
+        if fpic:
+            queryset = queryset.union(Identity.objects.filter(fpic=fpic))
+            queryset = queryset.union(
+                Identity.objects.filter(identifiers__type=Identifier.Type.FPIC, identifiers__value=fpic)
+            )
+        if uid:
+            queryset = queryset.union(Identity.objects.filter(uid=uid))
+        if email:
+            queryset = queryset.union(Identity.objects.filter(email_addresses__address__iexact=email))
+        if phone:
+            phone = phone.replace(" ", "")
+            queryset = queryset.union(Identity.objects.filter(phone_numbers__number__exact=phone))
+        return queryset
+
+    def build_queryset_names(self, given_names: str, surname: str, exact_matches: bool = False) -> QuerySet[Identity]:
+        """
+        Build queryset with name search terms, with an option to limit to exact matches.
+        """
+        queryset = Identity.objects.all()
+        if given_names:
+            if exact_matches:
+                queryset = queryset.filter(
+                    Q(given_names__iexact=given_names) | Q(given_name_display__iexact=given_names)
+                )
+            else:
+                queryset = queryset.filter(
+                    Q(given_names__icontains=given_names) | Q(given_name_display__icontains=given_names)
+                )
+        if surname:
+            if exact_matches:
+                queryset = queryset.filter(Q(surname__iexact=surname) | Q(surname_display__iexact=surname))
+            else:
+                queryset = queryset.filter(Q(surname__icontains=surname) | Q(surname_display__icontains=surname))
+        return queryset
+
+    def name_search(self, given_names: str, surname: str) -> QuerySet[Identity]:
+        """
+        Search identities based on names.
+        """
+        queryset = self.build_queryset_names(given_names=given_names, surname=surname)
+        if queryset.count() > getattr(settings, "KAMU_IDENTITY_SEARCH_LIMIT", 50):
+            queryset = self.build_queryset_names(given_names=given_names, surname=surname, exact_matches=True)
+            if queryset.count() > getattr(settings, "KAMU_IDENTITY_SEARCH_LIMIT", 50):
+                messages.add_message(
+                    self.request,
+                    messages.WARNING,
+                    _("Too many results, please refine your search parameters."),
+                )
+                queryset = Identity.objects.none()
+            else:
+                messages.add_message(
+                    self.request,
+                    messages.WARNING,
+                    _("Partial name matches returned too many results. Returning only exact matches."),
+                )
+        return queryset
+
+    def search_results(self) -> dict[str, Any]:
+        """
+        Search Kamu and user directory based on URL parameters.
+
+        Limit search results to identifier matches if exact_match_skip is True and exact match is found.
+        """
+        given_names = self.request.POST.get("given_names", "")
+        surname = self.request.POST.get("surname", "")
+        email = self.request.POST.get("email", "")
+        phone = self.request.POST.get("phone", "")
+        uid = self.request.POST.get("uid", "")
+        fpic = self.request.POST.get("fpic", "")
+        queryset = self.build_queryset_identifiers(fpic=fpic, uid=uid, email=email, phone=phone)
+        if queryset.exists():
+            self.exact_match_found = True
+        ldap_results = None
+        if self.search_ldap():
+            ldap_results = self._get_ldap_results()
+            if ldap_results is None:
+                messages.add_message(
+                    self.request, messages.ERROR, _("LDAP search failed, could not search existing accounts.")
+                )
+        if (given_names or surname) and not (self.exact_match_skip and self.exact_match_found):
+            queryset = queryset.union(self.name_search(given_names=given_names, surname=surname))
+        elif given_names or surname:
+            messages.add_message(
+                self.request,
+                messages.INFO,
+                _("Identifier match found, skipping name search."),
+            )
+        if ldap_results and getattr(settings, "FILTER_KAMU_RESULTS_FROM_LDAP_RESULTS", True):
+            ldap_results = self._filter_ldap_list(queryset, ldap_results)
+        self.log_search()
+        return {"object_list": queryset, "ldap_results": ldap_results}
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add form and searched phone and email to context data.
@@ -995,110 +1123,25 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         context["fpic"] = self.request.POST.get("fpic")
         context["uid"] = self.request.POST.get("uid")
         context["form"] = IdentitySearchForm(self.request.POST, use_ldap=self.search_ldap())
-        if self.search_ldap():
-            ldap_results = self._get_ldap_results()
-            if isinstance(ldap_results, list):
-                context["ldap_results"] = self._filter_ldap_list(context["object_list"], ldap_results)
-            else:
-                messages.add_message(
-                    self.request, messages.ERROR, _("LDAP search failed, could not search existing accounts.")
-                )
+        if (
+            self.request.method == "POST"
+            and IdentitySearchForm(self.request.POST, use_ldap=self.search_ldap()).is_valid()
+        ):
+            context.update(self.search_results())
         return context
-
-    def build_queryset(self, names_exact: bool = False) -> tuple[QuerySet[Identity], dict[str, str]]:
-        """
-        Build queryset with an option to limit name search to exact results.
-        """
-        given_names = self.request.POST.get("given_names")
-        surname = self.request.POST.get("surname")
-        email = self.request.POST.get("email")
-        phone = self.request.POST.get("phone")
-        uid = self.request.POST.get("uid")
-        fpic = self.request.POST.get("fpic")
-        search_terms = {}
-        queryset = Identity.objects.none()
-        if fpic:
-            queryset = queryset.union(Identity.objects.filter(fpic=fpic))
-            queryset = queryset.union(
-                Identity.objects.filter(identifiers__type=Identifier.Type.FPIC, identifiers__value=fpic)
-            )
-            search_terms["fpic"] = fpic
-        if uid:
-            queryset = queryset.union(Identity.objects.filter(uid=uid))
-            search_terms["uid"] = uid
-        if email:
-            queryset = queryset.union(Identity.objects.filter(email_addresses__address__iexact=email))
-            search_terms["email"] = email
-        if phone:
-            phone = phone.replace(" ", "")
-            queryset = queryset.union(Identity.objects.filter(phone_numbers__number__exact=phone))
-            search_terms["phone"] = phone
-        if given_names or surname:
-            name_queryset = Identity.objects.all()
-            if given_names:
-                if not names_exact:
-                    name_queryset = name_queryset.filter(
-                        Q(given_names__icontains=given_names) | Q(given_name_display__icontains=given_names)
-                    )
-                else:
-                    name_queryset = name_queryset.filter(
-                        Q(given_names__iexact=given_names) | Q(given_name_display__iexact=given_names)
-                    )
-                search_terms["given_names"] = given_names
-            if surname:
-                if not names_exact:
-                    name_queryset = name_queryset.filter(
-                        Q(surname__icontains=surname) | Q(surname_display__icontains=surname)
-                    )
-                else:
-                    name_queryset = name_queryset.filter(
-                        Q(surname__iexact=surname) | Q(surname_display__iexact=surname)
-                    )
-                search_terms["surname"] = surname
-            queryset = queryset.union(name_queryset)
-        return queryset, search_terms
 
     def get_queryset(self) -> QuerySet[Identity]:
         """
-        Filter results based on URL parameters.
-
-        Return all results with the exact email address or phone number, regardless of names.
+        Return empty queryset. Required for ListView but overwritten in get_context_data.
         """
-        queryset, search_terms = self.build_queryset(names_exact=False)
-        if queryset.count() > getattr(settings, "KAMU_IDENTITY_SEARCH_LIMIT", 50):
-            queryset, search_terms = self.build_queryset(names_exact=True)
-            if queryset.count() > getattr(settings, "KAMU_IDENTITY_SEARCH_LIMIT", 50):
-                messages.add_message(
-                    self.request,
-                    messages.WARNING,
-                    _("Too many results, please refine your search parameters."),
-                )
-                return queryset.none()
-            else:
-                messages.add_message(
-                    self.request,
-                    messages.WARNING,
-                    _("Partial name matches returned too many results. Returning only exact matches."),
-                )
-        audit_log.info(
-            "Searched identities",
-            category="identity",
-            action="search",
-            outcome="success",
-            request=self.request,
-            extra={"search_terms": str(search_terms), "ldap": self.search_ldap()},
-        )
-        return queryset
+        return Identity.objects.none()
 
     @method_decorator(csrf_protect)
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """
         Allow post method to be used in a same way as get method.
         """
-        if IdentitySearchForm(self.request.POST, use_ldap=self.search_ldap()).is_valid():
-            self.object_list = self.get_queryset()
-        else:
-            self.object_list = Identity.objects.none()
+        self.object_list = self.get_queryset()
         context = self.get_context_data()
         return self.render_to_response(context)
 

@@ -275,6 +275,7 @@ class MembershipInviteTests(BaseTestCase):
         mock_logger.error.assert_called_once()
 
     @mock.patch("kamu.connectors.ldap._get_connection")
+    @override_settings(SKIP_NAME_SEARCH_IF_IDENTIFIER_MATCHES=False)
     def test_search_ldap(self, mock_ldap):
         mock_ldap.return_value = MockLdapConn(limited_fields=True)
         data = {

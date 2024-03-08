@@ -76,6 +76,7 @@ class IdentitySearchTests(BaseTestCase):
         self.client.force_login(self.user)
 
     @mock.patch("kamu.utils.audit.logger_audit")
+    @override_settings(SKIP_NAME_SEARCH_IF_IDENTIFIER_MATCHES=False)
     def test_search_identity(self, mock_logger):
         self.create_identity(email=True)
         self.create_superidentity(email=True)
@@ -90,9 +91,18 @@ class IdentitySearchTests(BaseTestCase):
             ]
         )
         self.assertEqual(
-            str({"email": "super_test@example.org", "given_names": "test"}),
+            str({"given_names": "test", "email": "super_test@example.org"}),
             mock_logger.log.call_args_list[0][1]["extra"]["search_terms"],
         )
+
+    def test_search_identity_skip_name_search_if_match_found(self):
+        self.create_identity(email=True)
+        self.create_superidentity(email=True)
+        data = {"given_names": "test", "email": "super_test@example.org"}
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(self.identity.display_name(), response.content.decode("utf-8"))
+        self.assertIn(self.superidentity.display_name(), response.content.decode("utf-8"))
 
     @override_settings(KAMU_IDENTITY_SEARCH_LIMIT=1)
     def test_search_identity_partial_limit(self):
@@ -153,6 +163,7 @@ class IdentitySearchTests(BaseTestCase):
         self.assertIn("Incorrect checksum", response.content.decode("utf-8"))
 
     @override_settings(ALLOW_TEST_FPIC=True)
+    @override_settings(SKIP_NAME_SEARCH_IF_IDENTIFIER_MATCHES=False)
     def test_search_identity_show_attributes(self):
         fpic = "010181-900C"
         uid = "testuseruid"

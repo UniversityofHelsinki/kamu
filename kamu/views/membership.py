@@ -383,7 +383,7 @@ class MembershipInviteIdentitySearch(IdentitySearchView):
         """
         if not email:
             return False
-        if "ldap_results" in context:
+        if context.get("ldap_results") is not None:
             if any(obj["mail"] == email for obj in context["ldap_results"]):
                 return True
         return Identity.objects.filter(email_addresses__address__iexact=email).exists()

@@ -163,3 +163,9 @@ REMOVE_GROUPS_WITH_OTHER_BACKENDS: bool = True
 
 # Emails with these domains are considered public and shown in identity search results
 PUBLIC_EMAIL_DOMAINS: list[str] = ["example.net", "example.org"]
+
+# When searching identities, do not search names if matching identifier is found.
+SKIP_NAME_SEARCH_IF_IDENTIFIER_MATCHES: bool = True
+
+# When searching identities, do not show LDAP search results which are also found from Kamu.
+FILTER_KAMU_RESULTS_FROM_LDAP_RESULTS: bool = True
