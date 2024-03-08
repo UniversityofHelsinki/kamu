@@ -993,6 +993,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         context["phone"] = self.request.POST.get("phone", "").replace(" ", "")
         context["email"] = self.request.POST.get("email")
         context["fpic"] = self.request.POST.get("fpic")
+        context["uid"] = self.request.POST.get("uid")
         context["form"] = IdentitySearchForm(self.request.POST, use_ldap=self.search_ldap())
         if self.search_ldap():
             ldap_results = self._get_ldap_results()

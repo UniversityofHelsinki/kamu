@@ -155,15 +155,30 @@ class IdentitySearchTests(BaseTestCase):
     @override_settings(ALLOW_TEST_FPIC=True)
     def test_search_identity_show_attributes(self):
         fpic = "010181-900C"
+        uid = "testuseruid"
         self.create_identity(email=True, phone=True)
         self.identity.fpic = fpic
+        self.identity.uid = uid
         self.identity.save()
-        data = {"fpic": fpic, "email": self.email_address.address, "phone": self.phone_number.number}
+        self.create_superidentity()
+        superuid = "superuseruid"
+        self.superidentity.uid = superuid
+        self.superidentity.save()
+        data = {
+            "fpic": fpic,
+            "email": self.email_address.address,
+            "phone": self.phone_number.number,
+            "uid": uid,
+            "surname": "user",
+        }
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertIn(f"<b>{self.email_address.address}</b>", response.content.decode("utf-8"))
         self.assertIn(f"<b>{self.phone_number.number}</b>", response.content.decode("utf-8"))
         self.assertIn(f"<b>{fpic}</b>", response.content.decode("utf-8"))
+        self.assertIn(f"<b>{uid}</b>", response.content.decode("utf-8"))
+        self.assertIn(superuid, response.content.decode("utf-8"))
+        self.assertNotIn(f"<b>{superuid}</b>", response.content.decode("utf-8"))
 
     def test_search_form_help_text(self):
         response = self.client.get(self.url)

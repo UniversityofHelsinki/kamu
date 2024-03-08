@@ -1,5 +1,5 @@
 """
-Unit tests for audit logs
+Unit tests for template tags
 """
 
 from django.test import override_settings

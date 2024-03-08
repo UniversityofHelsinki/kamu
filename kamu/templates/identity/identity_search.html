@@ -21,7 +21,7 @@
     {% for identity in object_list %}
       <tr>
         <th scope="row"><a href="{% url 'identity-detail' identity.pk %}">{{ identity.display_name }}</a></th>
-        <td>{% if identity.uid %}{{ identity.uid }}{% endif %}</td>
+        <td>{% if uid and uid == identity.uid %}<b>{{ identity.uid }}</b>{% elif identity.uid %}{{ identity.uid }}{% endif %}</td>
         <td>{% matching_attributes identity=identity email=email phone=phone fpic=fpic as attributes %}{{ attributes|safe }}</td>
       </tr>
     {% endfor %}
@@ -49,7 +49,7 @@
     {% for result in ldap_results %}
       <tr>
         <th scope="row">{{ result.cn }}</th>
-        <td>{{ result.uid }}</td>
+        <td>{% if uid and uid == result.uid %}<b>{{ result.uid }}</b>{% else %}{{ result.uid }}{% endif %}</td>
         <td>{% matching_attributes_ldap result=result email=email fpic=fpic as attributes %}{{ attributes|safe }}</td>
       </tr>
     {% endfor %}
