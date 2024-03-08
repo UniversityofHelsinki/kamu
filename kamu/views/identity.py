@@ -430,6 +430,7 @@ class ContactView(LoginRequiredMixin, FormView):
         """
         context = super().get_context_data(**kwargs)
         identity = Identity.objects.get(pk=self.kwargs.get("pk"))
+        context["identity"] = identity
         context["email_list"] = identity.email_addresses.all().order_by("priority")
         context["phone_list"] = identity.phone_numbers.all().order_by("priority")
         return context

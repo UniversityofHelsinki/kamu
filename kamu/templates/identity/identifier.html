@@ -6,7 +6,7 @@
 {% block content %}
   <form method='POST'>
     {% csrf_token %}
-    <h1 class="mb-4">{% trans "Identifier information" %}</h1>
+    <h1 class="mb-4">{{ identity.display_name }} | {% trans "Identifier information" %}</h1>
     <h2 id="identifier-active-list" class="mt-5">{% trans "Active identifiers" %}</h2>
     {% if identifier_active_list %}
       <table class="table" aria-describedby="identifier-active-list">

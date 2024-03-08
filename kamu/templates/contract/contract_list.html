@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-  <h1 id="contract-list" class="mb-4">{% trans "Contracts" %}</h1>
+  <h1 id="contract-list" class="mb-4">{{ identity.display_name }} | {% trans "Contracts" %}</h1>
   {% if object_list %}
     <table class="table" aria-describedby="contract-list">
       <thead>
