@@ -1009,7 +1009,6 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         """
         Build queryset with an option to limit name search to exact results.
         """
-        queryset = Identity.objects.all()
         given_names = self.request.POST.get("given_names")
         surname = self.request.POST.get("surname")
         email = self.request.POST.get("email")
@@ -1017,41 +1016,46 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         uid = self.request.POST.get("uid")
         fpic = self.request.POST.get("fpic")
         search_terms = {}
-        if not given_names and not surname:
-            queryset = queryset.none()
-        if given_names:
-            if not names_exact:
-                queryset = queryset.filter(
-                    Q(given_names__icontains=given_names) | Q(given_name_display__icontains=given_names)
-                )
-            else:
-                queryset = queryset.filter(
-                    Q(given_names__iexact=given_names) | Q(given_name_display__iexact=given_names)
-                )
-            search_terms["given_names"] = given_names
-        if surname:
-            if not names_exact:
-                queryset = queryset.filter(Q(surname__icontains=surname) | Q(surname_display__icontains=surname))
-            else:
-                queryset = queryset.filter(Q(surname__iexact=surname) | Q(surname_display__iexact=surname))
-            search_terms["surname"] = surname
-
-        if email:
-            queryset = queryset.union(Identity.objects.filter(email_addresses__address__iexact=email))
-            search_terms["email"] = email
-        if uid:
-            queryset = queryset.union(Identity.objects.filter(uid=uid))
-            search_terms["uid"] = uid
-        if phone:
-            phone = phone.replace(" ", "")
-            queryset = queryset.union(Identity.objects.filter(phone_numbers__number__exact=phone))
-            search_terms["phone"] = phone
+        queryset = Identity.objects.none()
         if fpic:
             queryset = queryset.union(Identity.objects.filter(fpic=fpic))
             queryset = queryset.union(
                 Identity.objects.filter(identifiers__type=Identifier.Type.FPIC, identifiers__value=fpic)
             )
             search_terms["fpic"] = fpic
+        if uid:
+            queryset = queryset.union(Identity.objects.filter(uid=uid))
+            search_terms["uid"] = uid
+        if email:
+            queryset = queryset.union(Identity.objects.filter(email_addresses__address__iexact=email))
+            search_terms["email"] = email
+        if phone:
+            phone = phone.replace(" ", "")
+            queryset = queryset.union(Identity.objects.filter(phone_numbers__number__exact=phone))
+            search_terms["phone"] = phone
+        if given_names or surname:
+            name_queryset = Identity.objects.all()
+            if given_names:
+                if not names_exact:
+                    name_queryset = name_queryset.filter(
+                        Q(given_names__icontains=given_names) | Q(given_name_display__icontains=given_names)
+                    )
+                else:
+                    name_queryset = name_queryset.filter(
+                        Q(given_names__iexact=given_names) | Q(given_name_display__iexact=given_names)
+                    )
+                search_terms["given_names"] = given_names
+            if surname:
+                if not names_exact:
+                    name_queryset = name_queryset.filter(
+                        Q(surname__icontains=surname) | Q(surname_display__icontains=surname)
+                    )
+                else:
+                    name_queryset = name_queryset.filter(
+                        Q(surname__iexact=surname) | Q(surname_display__iexact=surname)
+                    )
+                search_terms["surname"] = surname
+            queryset = queryset.union(name_queryset)
         return queryset, search_terms
 
     def get_queryset(self) -> QuerySet[Identity]:

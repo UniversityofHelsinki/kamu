@@ -239,17 +239,17 @@ LdapSearchAttributeType = TypedDict(
     "LdapSearchAttributeType", {"attribute": str, "wildcard": bool, "value_prefix": str}
 )
 LDAP_SEARCH_ATTRIBUTES: dict[str, dict[str, LdapSearchAttributeType]] = {
-    "names": {
-        "given_names": {"attribute": "givenName", "wildcard": True, "value_prefix": ""},
-        "surname": {"attribute": "sn", "wildcard": True, "value_prefix": ""},
-    },
-    "email": {"email": {"attribute": "mail", "wildcard": False, "value_prefix": ""}},
-    "uid": {"uid": {"attribute": "uid", "wildcard": False, "value_prefix": ""}},
     "fpic": {
         "fpic": {
             "attribute": "schacPersonalUniqueID",
             "wildcard": False,
             "value_prefix": "urn:schac:personalUniqueID:fi:FIC:",
         }
+    },
+    "uid": {"uid": {"attribute": "uid", "wildcard": False, "value_prefix": ""}},
+    "email": {"email": {"attribute": "mail", "wildcard": False, "value_prefix": ""}},
+    "names": {
+        "given_names": {"attribute": "givenName", "wildcard": True, "value_prefix": ""},
+        "surname": {"attribute": "sn", "wildcard": True, "value_prefix": ""},
     },
 }

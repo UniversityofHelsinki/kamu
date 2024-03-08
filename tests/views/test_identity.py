@@ -90,8 +90,8 @@ class IdentitySearchTests(BaseTestCase):
             ]
         )
         self.assertEqual(
+            str({"email": "super_test@example.org", "given_names": "test"}),
             mock_logger.log.call_args_list[0][1]["extra"]["search_terms"],
-            str({"given_names": "test", "email": "super_test@example.org"}),
         )
 
     @override_settings(KAMU_IDENTITY_SEARCH_LIMIT=1)
