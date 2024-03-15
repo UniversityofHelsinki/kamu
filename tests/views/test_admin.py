@@ -3,6 +3,7 @@ View tests for admin site.
 """
 
 import datetime
+from unittest.mock import patch
 
 from django.test import Client, override_settings
 from django.utils import timezone
@@ -68,7 +69,8 @@ class AdminSiteTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(permission.name(), response.content.decode("utf-8"))
 
-    def test_add_role(self):
+    @patch("kamu.utils.audit.logger_audit.log")
+    def test_add_role(self, mock_audit_logger):
         url = f"{self.url}role/add/"
         role_data = ROLES["guest_student"]
         role_data.update(
@@ -81,6 +83,19 @@ class AdminSiteTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(role_data["name_en"], response.content.decode("utf-8"))
         self.assertTrue(Role.objects.filter(identifier=role_data["identifier"]).exists())
+        mock_audit_logger.assert_called_with(
+            20,
+            "Added.",
+            extra={
+                "category": "admin",
+                "action": "create",
+                "outcome": "success",
+                "role_id": 1,
+                "role": "guest_student",
+                "actor": "superuser",
+                "actor_id": 1,
+            },
+        )
 
     def _create_role_hierarchy(self):
         role = self.create_role()

@@ -28,6 +28,7 @@ logger_audit = logging.getLogger("audit")
 
 
 CategoryTypes = Literal[
+    "admin",
     "authentication",
     "contact",
     "contract",
