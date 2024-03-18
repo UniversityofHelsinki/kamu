@@ -19,7 +19,7 @@ class IdentityAPITests(BaseAPITestCase):
     def test_anonymous_list_identities(self):
         self.client.force_authenticate(None)
         response = self.client.get(f"{self.url}identities/")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_list_identities(self):
         self.create_user()

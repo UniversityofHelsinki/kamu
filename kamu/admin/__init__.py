@@ -1,4 +1,5 @@
 from django.contrib import admin
+from rest_framework.authtoken.admin import TokenAdmin
 
 from kamu.admin.identity import (
     ContractAdmin,
@@ -25,3 +26,6 @@ admin.site.register(Membership, MembershipAdmin)
 admin.site.register(Permission, PermissionAdmin)
 admin.site.register(Requirement, RequirementAdmin)
 admin.site.register(Role, RoleAdmin)
+
+TokenAdmin.raw_id_fields = ["user"]
+TokenAdmin.list_display = ["user", "created"]

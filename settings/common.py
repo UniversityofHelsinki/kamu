@@ -35,6 +35,7 @@ INSTALLED_APPS: list[str] = [
     "crispy_forms",
     "crispy_bootstrap5",
     "rest_framework",
+    "rest_framework.authtoken",
     "django_filters",
     "drf_spectacular",
     "kamu",
@@ -56,7 +57,7 @@ MIDDLEWARE: list[str] = [
 ]
 
 REST_FRAMEWORK: dict[str, Any] = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework.authentication.SessionAuthentication",),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework.authentication.TokenAuthentication",),
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAdminUser",),

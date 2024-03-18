@@ -21,7 +21,7 @@ class RoleAPITests(BaseAPITestCase):
     def test_anonymous_list_roles(self):
         self.client.force_authenticate(None)
         response = self.client.get(f"{self.url}roles/")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_list_roles_without_permission(self):
         self.create_user()
@@ -57,7 +57,7 @@ class PermissionAPITests(BaseAPITestCase):
         client = APIClient()
         client.force_authenticate(None)
         response = client.get(f"{self.url}permissions/")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_list_permissions_without_access(self):
         self.create_user()
@@ -92,7 +92,7 @@ class MembershipAPITests(BaseAPITestCase):
         client = APIClient()
         client.force_authenticate(None)
         response = client.get(f"{self.url}")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_list_membership_without_access(self):
         client = APIClient()
