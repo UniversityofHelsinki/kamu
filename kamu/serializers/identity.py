@@ -17,6 +17,7 @@ from kamu.models.identity import (
     PhoneNumber,
 )
 from kamu.serializers.membership import MembershipLimitedIdentitySerializer
+from kamu.serializers.mixins import EagerLoadingMixin
 from kamu.validators.identity import FpicValidator
 
 
@@ -45,12 +46,14 @@ class ContractTemplateSerializer(serializers.ModelSerializer[Contract]):
         ]
 
 
-class ContractSerializer(serializers.ModelSerializer[Contract]):
+class ContractSerializer(serializers.ModelSerializer[Contract], EagerLoadingMixin):
     """
     Serializer for :class:`kamu.models.contract.Contract`.
     """
 
     template = ContractTemplateSerializer(read_only=True)
+
+    _SELECT_RELATED_FIELDS = ["template"]
 
     class Meta:
         model = Contract
@@ -214,7 +217,7 @@ class IdentifierLimitedSerializer(serializers.ModelSerializer[Identifier]):
         read_only_fields = fields
 
 
-class IdentitySerializer(serializers.ModelSerializer[Identity]):
+class IdentitySerializer(serializers.ModelSerializer[Identity], EagerLoadingMixin):
     """
     Serializer for :class:`kamu.models.identity.Identity`.
     """
@@ -258,6 +261,17 @@ class IdentitySerializer(serializers.ModelSerializer[Identity]):
             "created_at",
             "updated_at",
         ]
+
+    _PREFETCH_RELATED_FIELDS = [
+        "contracts",
+        "contracts__template",
+        "email_addresses",
+        "identifiers",
+        "membership_set",
+        "membership_set__role",
+        "nationality",
+        "phone_numbers",
+    ]
 
     def validate_fpic(self, value: str) -> str:
         """

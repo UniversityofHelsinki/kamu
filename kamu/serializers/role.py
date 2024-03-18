@@ -11,6 +11,7 @@ from django.utils.translation import gettext as _
 from rest_framework import serializers
 
 from kamu.models.role import Permission, Requirement, Role
+from kamu.serializers.mixins import EagerLoadingMixin
 from kamu.validators.role import validate_role_hierarchy
 
 logger = logging.getLogger(__name__)
@@ -66,7 +67,7 @@ class RequirementSerializer(serializers.ModelSerializer[Requirement]):
         ]
 
 
-class RoleSerializer(serializers.ModelSerializer[Role]):
+class RoleSerializer(serializers.ModelSerializer[Role], EagerLoadingMixin):
     """
     Serializer for :class:`kamu.models.role.Role`.
     """
@@ -84,6 +85,9 @@ class RoleSerializer(serializers.ModelSerializer[Role]):
     permissions = serializers.SlugRelatedField(
         slug_field="identifier", required=False, many=True, queryset=Permission.objects.all()
     )
+
+    _PREFETCH_RELATED_FIELDS = ["inviters", "approvers", "permissions", "requirements"]
+    _SELECT_RELATED_FIELDS = ["owner", "parent"]
 
     class Meta:
         model = Role

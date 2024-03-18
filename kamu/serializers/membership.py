@@ -11,12 +11,13 @@ from rest_framework import serializers
 from rest_framework.fields import Field
 
 from kamu.models.membership import Membership
+from kamu.serializers.mixins import EagerLoadingMixin
 from kamu.validators.membership import validate_membership
 
 logger = logging.getLogger(__name__)
 
 
-class MembershipSerializer(serializers.ModelSerializer[Membership]):
+class MembershipSerializer(serializers.ModelSerializer[Membership], EagerLoadingMixin):
     """
     Serializer for :class:`kamu.models.membership.Membership`.
     """
@@ -27,6 +28,8 @@ class MembershipSerializer(serializers.ModelSerializer[Membership]):
     inviter = serializers.SlugRelatedField(
         slug_field="username", queryset=get_user_model().objects.all(), required=False
     )
+
+    _SELECT_RELATED_FIELDS = ["approver", "inviter"]
 
     def validate(self, data: Any) -> Any:
         """

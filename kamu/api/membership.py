@@ -2,6 +2,7 @@
 Role views for API endpoints.
 """
 
+from django.db.models import QuerySet
 from rest_framework import viewsets
 
 from kamu.api.generic import CustomDjangoModelPermissions
@@ -17,3 +18,11 @@ class MembershipViewSet(viewsets.ModelViewSet):
     queryset = Membership.objects.all()
     permission_classes = [CustomDjangoModelPermissions]
     serializer_class = MembershipSerializer
+
+    def get_queryset(self) -> QuerySet:
+        """
+        Setup eager loading of related fields.
+        """
+        queryset = super().get_queryset()
+        queryset = MembershipSerializer.setup_eager_loading(queryset)
+        return queryset

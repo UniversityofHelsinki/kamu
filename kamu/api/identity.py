@@ -2,6 +2,7 @@
 Identity views for API endpoints.
 """
 
+from django.db.models import QuerySet
 from rest_framework import viewsets
 
 from kamu.api.generic import CustomDjangoModelPermissions
@@ -25,6 +26,14 @@ class ContractViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Contract.objects.all()
     permission_classes = [CustomDjangoModelPermissions]
     serializer_class = ContractSerializer
+
+    def get_queryset(self) -> QuerySet:
+        """
+        Setup eager loading of related fields.
+        """
+        queryset = super().get_queryset()
+        queryset = ContractSerializer.setup_eager_loading(queryset)
+        return queryset
 
 
 class ContractTemplateViewSet(viewsets.ModelViewSet):
@@ -75,3 +84,11 @@ class IdentityViewSet(viewsets.ModelViewSet):
     queryset = Identity.objects.all()
     permission_classes = [CustomDjangoModelPermissions]
     serializer_class = IdentitySerializer
+
+    def get_queryset(self) -> QuerySet:
+        """
+        Setup eager loading of related fields.
+        """
+        queryset = super().get_queryset()
+        queryset = IdentitySerializer.setup_eager_loading(queryset)
+        return queryset
