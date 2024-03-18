@@ -50,6 +50,8 @@ class ContractSerializer(serializers.ModelSerializer[Contract]):
     Serializer for :class:`kamu.models.contract.Contract`.
     """
 
+    template = ContractTemplateSerializer(read_only=True)
+
     class Meta:
         model = Contract
         fields = [
