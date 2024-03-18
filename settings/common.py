@@ -35,6 +35,7 @@ INSTALLED_APPS: list[str] = [
     "crispy_forms",
     "crispy_bootstrap5",
     "rest_framework",
+    "django_filters",
     "drf_spectacular",
     "kamu",
 ]
@@ -59,6 +60,7 @@ REST_FRAMEWORK: dict[str, Any] = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAdminUser",),
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.AnonRateThrottle",
         "rest_framework.throttling.UserRateThrottle",

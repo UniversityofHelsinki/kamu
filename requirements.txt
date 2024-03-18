@@ -2,6 +2,7 @@
 Django==4.2.9
 djangorestframework==3.14.0
 django-crispy-forms==2.1.0
+django-filter==24.1
 crispy-bootstrap5==2023.10
 django-stubs-ext==4.2.7
 drf-spectacular==0.27.1

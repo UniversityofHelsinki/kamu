@@ -23,9 +23,12 @@ Packages required for production use:
 - django-crispy-forms and crispy-bootstrap5
    - Used for rendering forms in a Bootstrap 5 compatible way.
    - https://django-crispy-forms.readthedocs.io/en/latest/
+- django-filter
+   - Filtering backend used in API.
+   - https://github.com/carltongibson/django-filter/
 - django-stubs-ext
    - Runtime monkey-patching for type hints.
-   - https://github.com/typeddjango/django-stubs
+   - https://github.com/typeddjango/django-stubs/
 - drf-spectacular
    - OpenAPI 3 schema generation.
    - https://drf-spectacular.readthedocs.io/en/latest/
