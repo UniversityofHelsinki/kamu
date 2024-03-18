@@ -301,7 +301,7 @@ class Command(BaseCommand):
                     identity.fpic = f"{year_part}{intermediate}{numeric_part}{checksum}"
                     identity.save()
                 except django.db.utils.IntegrityError:
-                    pass
+                    identity.fpic = None
             if contract_template and random.randint(0, 100) < 90:
                 Contract.objects.sign_contract(contract_template, identity)
             for r in range(random.randint(0, 2)):
