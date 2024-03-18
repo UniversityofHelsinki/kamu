@@ -15,7 +15,7 @@ from kamu.serializers.role import (
 
 class PermissionViewSet(viewsets.ModelViewSet):
     """
-    API endpoint for roles.
+    API endpoint for Kamu permissions.
     """
 
     queryset = Permission.objects.all()
