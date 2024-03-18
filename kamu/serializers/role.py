@@ -10,7 +10,7 @@ from django.contrib.auth.models import Group
 from django.utils.translation import gettext as _
 from rest_framework import serializers
 
-from kamu.models.role import Permission, Role
+from kamu.models.role import Permission, Requirement, Role
 from kamu.validators.role import validate_role_hierarchy
 
 logger = logging.getLogger(__name__)
@@ -33,6 +33,30 @@ class PermissionSerializer(serializers.ModelSerializer[Permission]):
             "description_en",
             "description_sv",
             "cost",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "created_at",
+            "updated_at",
+        ]
+
+
+class RequirementSerializer(serializers.ModelSerializer[Requirement]):
+    """
+    Serializer for :class:`kamu.models.role.Requirement`.
+    """
+
+    class Meta:
+        model = Requirement
+        fields = [
+            "id",
+            "name_fi",
+            "name_en",
+            "name_sv",
+            "type",
+            "level",
+            "grace",
             "created_at",
             "updated_at",
         ]
@@ -80,6 +104,7 @@ class RoleSerializer(serializers.ModelSerializer[Role]):
             "inviters",
             "approvers",
             "permissions",
+            "requirements",
             "iam_group",
             "maximum_duration",
             "purge_delay",
