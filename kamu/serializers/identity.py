@@ -9,7 +9,14 @@ from rest_framework.fields import Field
 from rest_framework.validators import UniqueTogetherValidator
 
 from kamu.models.contract import Contract, ContractTemplate
-from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
+from kamu.models.identity import (
+    EmailAddress,
+    Identifier,
+    Identity,
+    Nationality,
+    PhoneNumber,
+)
+from kamu.serializers.membership import MembershipLimitedIdentitySerializer
 from kamu.validators.identity import FpicValidator
 
 
@@ -58,8 +65,7 @@ class ContractSerializer(serializers.ModelSerializer[Contract]):
 
 class ContractLimitedSerializer(serializers.ModelSerializer[Contract]):
     """
-    Serializer for :class:`kamu.models.contract.Contract`.
-    Limited information to use with IdentitySerializer.
+    Limited read only serializer for :class:`kamu.models.contract.Contract` to use with IdentitySerializer.
     """
 
     template: Field = serializers.SlugRelatedField(read_only=True, slug_field="type")
@@ -111,6 +117,22 @@ class EmailAddressSerializer(serializers.ModelSerializer[EmailAddress]):
         return value
 
 
+class EmailAddressLimitedSerializer(serializers.ModelSerializer[EmailAddress]):
+    """
+    Limited read only serializer for :class:`kamu.models.identity.EmailAddress` to use with IdentitySerializer.
+    """
+
+    class Meta:
+        model = EmailAddress
+        fields = [
+            "id",
+            "address",
+            "priority",
+            "verified",
+        ]
+        read_only_fields = fields
+
+
 class PhoneNumberSerializer(serializers.ModelSerializer[PhoneNumber]):
     """
     Serializer for :class:`kamu.models.identity.PhoneNumber`.
@@ -132,6 +154,22 @@ class PhoneNumberSerializer(serializers.ModelSerializer[PhoneNumber]):
             "updated_at",
         ]
         validators = [UniqueTogetherValidator(queryset=PhoneNumber.objects.all(), fields=["identity", "number"])]
+
+
+class PhoneNumberLimitedSerializer(serializers.ModelSerializer[PhoneNumber]):
+    """
+    Limited read only serializer for :class:`kamu.models.identity.PhoneNumber` to use with IdentitySerializer.
+    """
+
+    class Meta:
+        model = PhoneNumber
+        fields = [
+            "id",
+            "number",
+            "priority",
+            "verified",
+        ]
+        read_only_fields = fields
 
 
 class IdentifierSerializer(serializers.ModelSerializer[Identifier]):
@@ -157,15 +195,36 @@ class IdentifierSerializer(serializers.ModelSerializer[Identifier]):
         ]
 
 
+class IdentifierLimitedSerializer(serializers.ModelSerializer[Identifier]):
+    """
+    Limited read only serializer for :class:`kamu.models.identity.Identifier` to use with IdentitySerializer.
+    """
+
+    class Meta:
+        model = Identifier
+        fields = [
+            "id",
+            "type",
+            "value",
+            "verified",
+            "deactivated_at",
+        ]
+        read_only_fields = fields
+
+
 class IdentitySerializer(serializers.ModelSerializer[Identity]):
     """
     Serializer for :class:`kamu.models.identity.Identity`.
     """
 
     contracts: Field = ContractLimitedSerializer(many=True, read_only=True)
-    email_addresses: Field = serializers.SlugRelatedField(many=True, read_only=True, slug_field="address")
-    phone_numbers: Field = serializers.SlugRelatedField(many=True, read_only=True, slug_field="number")
-    roles: Field = serializers.SlugRelatedField(many=True, read_only=True, slug_field="identifier")
+    email_addresses: Field = EmailAddressLimitedSerializer(many=True, read_only=True)
+    identifiers: Field = IdentifierLimitedSerializer(many=True, read_only=True)
+    memberships: Field = MembershipLimitedIdentitySerializer(source="membership_set", many=True, read_only=True)
+    nationality: Field = serializers.SlugRelatedField(
+        many=True, queryset=Nationality.objects.all(), allow_null=True, slug_field="code"
+    )
+    phone_numbers: Field = PhoneNumberLimitedSerializer(many=True, read_only=True)
 
     class Meta:
         model = Identity
@@ -186,9 +245,10 @@ class IdentitySerializer(serializers.ModelSerializer[Identity]):
             "user",
             "contracts",
             "email_addresses",
+            "identifiers",
+            "memberships",
             "nationality",
             "phone_numbers",
-            "roles",
             "created_at",
             "updated_at",
         ]

@@ -8,6 +8,7 @@ from typing import Any
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext as _
 from rest_framework import serializers
+from rest_framework.fields import Field
 
 from kamu.models.membership import Membership
 from kamu.validators.membership import validate_membership
@@ -72,3 +73,24 @@ class MembershipSerializer(serializers.ModelSerializer[Membership]):
             "created_at",
             "updated_at",
         ]
+
+
+class MembershipLimitedIdentitySerializer(serializers.ModelSerializer[Membership]):
+    """
+    Limited read only serializer for :class:`kamu.models.membership.Membership` to use with IdentitySerializer.
+    """
+
+    role: Field = serializers.SlugRelatedField(read_only=True, slug_field="identifier")
+
+    class Meta:
+        model = Membership
+        fields = [
+            "id",
+            "role",
+            "start_date",
+            "expire_date",
+            "status",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = fields
