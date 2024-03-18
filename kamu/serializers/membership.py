@@ -64,6 +64,8 @@ class MembershipSerializer(serializers.ModelSerializer[Membership]):
             "status",
             "start_date",
             "expire_date",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
             "status",

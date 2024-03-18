@@ -33,6 +33,8 @@ class PermissionSerializer(serializers.ModelSerializer[Permission]):
             "description_en",
             "description_sv",
             "cost",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
             "created_at",
@@ -81,6 +83,8 @@ class RoleSerializer(serializers.ModelSerializer[Role]):
             "iam_group",
             "maximum_duration",
             "purge_delay",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
             "created_at",

@@ -87,6 +87,8 @@ class EmailAddressSerializer(serializers.ModelSerializer[EmailAddress]):
             "address",
             "priority",
             "verified",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
             "created_at",
@@ -122,6 +124,8 @@ class PhoneNumberSerializer(serializers.ModelSerializer[PhoneNumber]):
             "number",
             "priority",
             "verified",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
             "created_at",
@@ -144,6 +148,8 @@ class IdentifierSerializer(serializers.ModelSerializer[Identifier]):
             "value",
             "verified",
             "deactivated_at",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
             "created_at",
@@ -165,24 +171,26 @@ class IdentitySerializer(serializers.ModelSerializer[Identity]):
         model = Identity
         fields = [
             "id",
-            "kamu_id",
-            "user",
-            "external",
-            "uid",
             "assurance_level",
-            "given_names",
-            "surname",
-            "given_name_display",
-            "surname_display",
             "date_of_birth",
-            "gender",
-            "nationality",
+            "external",
             "fpic",
+            "gender",
+            "given_names",
+            "given_name_display",
+            "kamu_id",
             "preferred_language",
-            "roles",
-            "email_addresses",
-            "phone_numbers",
+            "surname",
+            "surname_display",
+            "uid",
+            "user",
             "contracts",
+            "email_addresses",
+            "nationality",
+            "phone_numbers",
+            "roles",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
             "created_at",
