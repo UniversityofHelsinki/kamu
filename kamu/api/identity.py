@@ -3,6 +3,7 @@ Identity views for API endpoints.
 """
 
 from django.db.models import QuerySet
+from django_filters import rest_framework as filters
 from rest_framework import viewsets
 
 from kamu.api.generic import CustomDjangoModelPermissions
@@ -76,12 +77,26 @@ class IdentifierViewSet(viewsets.ModelViewSet):
     serializer_class = IdentifierSerializer
 
 
+class IdentityFilter(filters.FilterSet):
+    """
+    Custom filters for identities.
+    """
+
+    member = filters.CharFilter(field_name="membership__role__identifier")
+    updated = filters.DateTimeFilter(field_name="updated_at", lookup_expr="gte")
+
+    class Meta:
+        model = Identity
+        fields = ["kamu_id", "uid", "fpic"]
+
+
 class IdentityViewSet(viewsets.ModelViewSet):
     """
     API endpoint for identities.
     """
 
     queryset = Identity.objects.all()
+    filterset_class = IdentityFilter
     permission_classes = [CustomDjangoModelPermissions]
     serializer_class = IdentitySerializer
 
