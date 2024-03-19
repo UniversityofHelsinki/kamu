@@ -2,6 +2,8 @@
 API tests for identity app.
 """
 
+import json
+
 from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -56,6 +58,34 @@ class IdentityAPITests(BaseAPITestCase):
         response = self.client.patch(f"{self.url}identities/1/", data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("Incorrect numeric part", response.data["fpic"][0])
+
+
+class IdentityAPIDetailTests(BaseAPITestCase):
+    def setUp(self):
+        super().setUp()
+        self.create_identity(user=True, email=True, phone=True)
+        role = self.create_role("ext_employee")
+        role2 = self.create_role("ext_research", parent=role)
+        self.role3 = self.create_role("guest_student", parent=role2)
+        permission = self.create_permission("useraccount")
+        permission2 = self.create_permission("lightaccount")
+        role.permissions.add(permission)
+        self.role3.permissions.add(permission2)
+        self.create_membership(self.role3, self.identity)
+        self.create_superuser()
+        self.client = APIClient()
+
+    def test_get_identity(self):
+        self.client.force_authenticate(user=self.superuser)
+        response = self.client.get(f"{self.url}identities/{self.identity.pk}/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content)
+        self.assertEqual(data["kamu_id"], str(self.identity.kamu_id))
+        self.assertEqual(data["email_addresses"][0]["address"], self.email_address.address)
+        self.assertEqual(data["phone_numbers"][0]["number"], self.phone_number.number)
+        self.assertEqual(data["memberships"][0]["role"], self.role3.identifier)
+        self.assertEqual(set(data["memberships"][0]["parents"]), {"ext_employee", "ext_research"})
+        self.assertEqual(set(data["memberships"][0]["permissions"]), {"lightaccount", "useraccount"})
 
 
 class EmailAddressAPITests(BaseAPITestCase):

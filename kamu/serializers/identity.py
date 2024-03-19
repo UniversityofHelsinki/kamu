@@ -2,6 +2,7 @@
 Serializers for identity models.
 """
 
+from django.conf import settings
 from django.core.validators import EmailValidator
 from django.utils.translation import gettext as _
 from rest_framework import serializers
@@ -231,6 +232,34 @@ class IdentitySerializer(serializers.ModelSerializer[Identity], EagerLoadingMixi
     )
     phone_numbers: Field = PhoneNumberLimitedSerializer(many=True, read_only=True)
 
+    @staticmethod
+    def get_prefetch_fields() -> list[str]:
+        """
+        Create list of prefetch fields, taking into account the role hierarchy maximum depth.
+        """
+        max_depth = settings.ROLE_HIERARCHY_MAXIMUM_DEPTH
+        fields = [
+            "contracts",
+            "contracts__template",
+            "email_addresses",
+            "identifiers",
+            "nationality",
+            "phone_numbers",
+        ]
+        parent = ""
+        for i in range(max_depth):
+            fields.append(f"membership_set__role{parent}")
+            fields.append(f"membership_set__role{parent}__owner")
+            fields.append(f"membership_set__role{parent}__approvers")
+            fields.append(f"membership_set__role{parent}__inviters")
+            fields.append(f"membership_set__role{parent}__permissions")
+            fields.append(f"membership_set__role{parent}__permissions__requirements")
+            fields.append(f"membership_set__role{parent}__requirements")
+            parent += "__parent"
+        return fields
+
+    _PREFETCH_RELATED_FIELDS = get_prefetch_fields()
+
     class Meta:
         model = Identity
         fields = [
@@ -261,17 +290,6 @@ class IdentitySerializer(serializers.ModelSerializer[Identity], EagerLoadingMixi
             "created_at",
             "updated_at",
         ]
-
-    _PREFETCH_RELATED_FIELDS = [
-        "contracts",
-        "contracts__template",
-        "email_addresses",
-        "identifiers",
-        "membership_set",
-        "membership_set__role",
-        "nationality",
-        "phone_numbers",
-    ]
 
     def validate_fpic(self, value: str) -> str:
         """
