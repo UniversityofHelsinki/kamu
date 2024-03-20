@@ -8,6 +8,7 @@ from typing import Any, Type
 from django.contrib.admin.models import LogEntry
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
@@ -89,11 +90,15 @@ def audit_log_django_admin_site(instance: LogEntry, **kwargs: Any) -> None:
             json.loads(instance.change_message)
         except json.JSONDecodeError:
             return
+        try:
+            objects = [instance.get_edited_object()]
+        except ObjectDoesNotExist:
+            objects = []
         audit_log.info(
             message=instance.get_change_message(),
             category="admin",
             action=get_action(),
             outcome="success",
-            objects=[instance.get_edited_object()],
+            objects=objects,
             extra=extra,
         )
