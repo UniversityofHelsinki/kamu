@@ -3,14 +3,13 @@ Role views for API endpoints.
 """
 
 from django.db.models import QuerySet
-from rest_framework import viewsets
 
-from kamu.api.generic import CustomDjangoModelPermissions
+from kamu.api.generic import AuditLogModelViewSet, CustomDjangoModelPermissions
 from kamu.models.membership import Membership
 from kamu.serializers.membership import MembershipSerializer
 
 
-class MembershipViewSet(viewsets.ModelViewSet):
+class MembershipViewSet(AuditLogModelViewSet):
     """
     API endpoint for role memberships.
     """

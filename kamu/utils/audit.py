@@ -5,7 +5,7 @@ Audit logging
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any, Literal, Sequence
+from typing import TYPE_CHECKING, Any, Literal, Sequence, cast
 
 from django.conf import settings
 from django.contrib.admin.models import ADDITION, CHANGE, DELETION, LogEntry
@@ -88,6 +88,19 @@ class AuditLog:
     This is used in similar way as Python's logging module, giving
     info, debug and warn methods for logging events.
     """
+
+    @staticmethod
+    def get_category_type(cls: Any) -> CategoryTypes:
+        """
+        Get action type from class.
+        """
+        import re
+
+        if cls is UserModel:
+            category = "user"
+        else:
+            category = re.sub(r"(?<!^)(?=[A-Z])", "_", cls.__name__).lower()
+        return cast(CategoryTypes, category)
 
     def log_values_group(self, group: Group) -> dict[str, str | int]:
         """

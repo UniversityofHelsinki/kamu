@@ -4,9 +4,12 @@ Identity views for API endpoints.
 
 from django.db.models import QuerySet
 from django_filters import rest_framework as filters
-from rest_framework import viewsets
 
-from kamu.api.generic import CustomDjangoModelPermissions
+from kamu.api.generic import (
+    AuditLogModelViewSet,
+    AuditLogReadModelViewSet,
+    CustomDjangoModelPermissions,
+)
 from kamu.models.contract import Contract, ContractTemplate
 from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
 from kamu.serializers.identity import (
@@ -19,7 +22,7 @@ from kamu.serializers.identity import (
 )
 
 
-class ContractViewSet(viewsets.ReadOnlyModelViewSet):
+class ContractViewSet(AuditLogReadModelViewSet):
     """
     API endpoint for contracts.
     """
@@ -37,7 +40,7 @@ class ContractViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset
 
 
-class ContractTemplateViewSet(viewsets.ModelViewSet):
+class ContractTemplateViewSet(AuditLogModelViewSet):
     """
     API endpoint for contracts.
     """
@@ -47,7 +50,7 @@ class ContractTemplateViewSet(viewsets.ModelViewSet):
     serializer_class = ContractTemplateSerializer
 
 
-class EmailAddressViewSet(viewsets.ModelViewSet):
+class EmailAddressViewSet(AuditLogModelViewSet):
     """
     API endpoint for email addresses.
     """
@@ -57,7 +60,7 @@ class EmailAddressViewSet(viewsets.ModelViewSet):
     serializer_class = EmailAddressSerializer
 
 
-class PhoneNumberViewSet(viewsets.ModelViewSet):
+class PhoneNumberViewSet(AuditLogModelViewSet):
     """
     API endpoint for phone numbers.
     """
@@ -67,7 +70,7 @@ class PhoneNumberViewSet(viewsets.ModelViewSet):
     serializer_class = PhoneNumberSerializer
 
 
-class IdentifierViewSet(viewsets.ModelViewSet):
+class IdentifierViewSet(AuditLogModelViewSet):
     """
     API endpoint for unique identifiers.
     """
@@ -90,7 +93,7 @@ class IdentityFilter(filters.FilterSet):
         fields = ["kamu_id", "uid", "fpic"]
 
 
-class IdentityViewSet(viewsets.ModelViewSet):
+class IdentityViewSet(AuditLogModelViewSet):
     """
     API endpoint for identities.
     """

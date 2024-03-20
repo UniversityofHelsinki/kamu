@@ -3,9 +3,8 @@ Role views for API endpoints.
 """
 
 from django.db.models import QuerySet
-from rest_framework import viewsets
 
-from kamu.api.generic import CustomDjangoModelPermissions
+from kamu.api.generic import AuditLogModelViewSet, CustomDjangoModelPermissions
 from kamu.models.role import Permission, Requirement, Role
 from kamu.serializers.role import (
     PermissionSerializer,
@@ -14,7 +13,7 @@ from kamu.serializers.role import (
 )
 
 
-class PermissionViewSet(viewsets.ModelViewSet):
+class PermissionViewSet(AuditLogModelViewSet):
     """
     API endpoint for Kamu permissions.
     """
@@ -24,7 +23,7 @@ class PermissionViewSet(viewsets.ModelViewSet):
     serializer_class = PermissionSerializer
 
 
-class RequirementViewSet(viewsets.ModelViewSet):
+class RequirementViewSet(AuditLogModelViewSet):
     """
     API endpoint for requirements.
     """
@@ -34,7 +33,7 @@ class RequirementViewSet(viewsets.ModelViewSet):
     serializer_class = RequirementSerializer
 
 
-class RoleViewSet(viewsets.ModelViewSet):
+class RoleViewSet(AuditLogModelViewSet):
     """
     API endpoint for roles.
     """

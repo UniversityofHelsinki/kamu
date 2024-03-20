@@ -3,12 +3,15 @@ API tests for identity app.
 """
 
 import json
+from unittest.mock import ANY, call, patch
 
 from django.test import override_settings
+from django.utils.http import urlencode
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from kamu.models.contract import Contract
+from kamu.models.identity import Identity
 from tests.setup import BaseAPITestCase
 
 
@@ -35,29 +38,87 @@ class IdentityAPITests(BaseAPITestCase):
         response = self.client.get(f"{self.url}identities/1/")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_list_identities_superuser(self):
+    @patch("kamu.utils.audit.logger_audit")
+    def test_get_identity_superuser(self, mock_logger):
         self.create_superuser()
         self.client.force_authenticate(user=self.superuser)
-        response = self.client.get(f"{self.url}identities/")
+        response = self.client.get(f"{self.url}identities/1/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "API read", extra=ANY),
+            ]
+        )
+        self.assertEqual("superuser", mock_logger.log.call_args_list[0][1]["extra"]["actor"])
+
+    @patch("kamu.utils.audit.logger_audit")
+    def test_list_identities_superuser(self, mock_logger):
+        self.create_superuser()
+        self.client.force_authenticate(user=self.superuser)
+        params = {"updated": self.identity.created_at.isoformat()}
+        response = self.client.get(f"{self.url}identities/?{urlencode(params)}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "API list", extra=ANY),
+            ]
+        )
+        self.assertEqual(json.dumps(params), mock_logger.log.call_args_list[0][1]["extra"]["search_terms"])
+        self.assertEqual(self.superuser.pk, mock_logger.log.call_args_list[0][1]["extra"]["actor_id"])
 
+    @patch("kamu.utils.audit.logger_audit")
+    def test_create_identity_superuser(self, mock_logger):
+        self.create_superuser()
+        self.create_nationality()
+        self.client.force_authenticate(user=self.superuser)
+        data = {"given_names": "Created", "surname": "User", "nationality": ["FI"]}
+        response = self.client.post(f"{self.url}identities/", data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "API create", extra=ANY),
+            ]
+        )
+        self.assertEqual("Created User", mock_logger.log.call_args_list[0][1]["extra"]["identity"])
+
+    @patch("kamu.utils.audit.logger_audit")
     @override_settings(ALLOW_TEST_FPIC=True)
-    def test_update_identity_supseruser(self):
+    def test_update_identity_superuser(self, mock_logger):
         self.create_superuser()
         self.client.force_authenticate(user=self.superuser)
         data = {"name": "New Name", "fpic": "010181-900C"}
         response = self.client.patch(f"{self.url}identities/1/", data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "API update", extra=ANY),
+            ]
+        )
 
     @override_settings(ALLOW_TEST_FPIC=False)
-    def test_update_identity_supseruser_incorrect_fpic(self):
+    def test_update_identity_superuser_incorrect_fpic(self):
         self.create_superuser()
         self.client.force_authenticate(user=self.superuser)
         data = {"name": "New Name", "fpic": "010181-900C"}
         response = self.client.patch(f"{self.url}identities/1/", data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("Incorrect numeric part", response.data["fpic"][0])
+
+    @patch("kamu.utils.audit.logger_audit")
+    def test_delete_identity_superuser(self, mock_logger):
+        self.create_superuser()
+        self.client.force_authenticate(user=self.superuser)
+        response = self.client.delete(f"{self.url}identities/1/")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "API delete", extra=ANY),
+            ]
+        )
+        self.assertEqual(self.identity.pk, mock_logger.log.call_args_list[0][1]["extra"]["identity_id"])
+        with self.assertRaises(Identity.DoesNotExist):
+            self.identity.refresh_from_db()
 
 
 class IdentityAPIDetailTests(BaseAPITestCase):
