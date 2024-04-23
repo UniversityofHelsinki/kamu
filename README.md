@@ -1,21 +1,30 @@
 # Kamu
-University of Helsinki application for managing external people, so. people who are not employees or students.
+Kamu is the external user database for the University of Helsinki, built on top
+of Django and Bootstrap.
 
-## Development
+It’s used to store and manage information about external users and their
+relationship to the university.
 
-### Style guide
-* Use black for formatting, cmd: "black ."
-* Use flake8 for pep8 checks, cmd: "flake8"
-* Use isort for sorting imports, cmd: "isort ."
-* Use mypy for typing checks, cmd: "mypy ."
+Kamu is built for the needs of the University of Helsinki, but it’s designed to
+be adaptable to other similar use cases i.e. user information and role
+management.
 
-### Running tests
-./manage.py test
+Check out the [documentation](https://kamu.pages.helsinki.fi/kamu/) for more 
+information about Kamu, features etc.
 
-### Running local server
-./manage.py runserver --settings=settings.test
+## Installation and configuration
+See the [requirements and configuration guide](https://kamu.pages.helsinki.fi/kamu/content/installation.html)
+for development and production environments.
 
-Or copy settings/local_settings_example.py to settings/local_settings.py
-and modify as necessary to use production.py settings:
+## Contributing
+Kamu is currently developed in the local GitLab of the University of
+Helsinki, but we are planning to move to GitHub before 1.0.0 release.
 
-./manage.py runserver
+You are welcome to contribute to the project by creating issues or pull
+requests. Check [style and commit guidelines](https://kamu.pages.helsinki.fi/kamu/content/contributing.html)
+before creating any pull requests.
+
+## Versioning
+We use [Semantic Versioning](https://semver.org/). We are currently in the
+development phase, but plan to publish 1.0.0 release in the second half
+of 2024.
