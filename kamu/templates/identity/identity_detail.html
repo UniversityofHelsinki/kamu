@@ -68,7 +68,7 @@
       {% for membership in memberships %}
         <tr>
           <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{{ membership.role.name }}</a></th>
-          <td>{{ membership.status }}</td>
+          <td>{{ membership.get_status_display }}</td>
           <td>{{ membership.expire_date }}</td>
         </tr>
       {% endfor %}
