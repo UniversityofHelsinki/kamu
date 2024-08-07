@@ -1,5 +1,5 @@
 # Common requirements
-Django==4.2.9
+Django==4.2.15
 djangorestframework==3.14.0
 django-crispy-forms==2.1.0
 django-filter==24.1
