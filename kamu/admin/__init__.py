@@ -28,4 +28,4 @@ admin.site.register(Requirement, RequirementAdmin)
 admin.site.register(Role, RoleAdmin)
 
 TokenAdmin.raw_id_fields = ["user"]
-TokenAdmin.list_display = ["user", "created"]
+TokenAdmin.list_display = ["user", "created"]  # type: ignore

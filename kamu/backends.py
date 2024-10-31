@@ -13,7 +13,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.backends import ModelBackend
-from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import AnonymousUser, Group
 from django.contrib.auth.models import User as UserType
 from django.core.exceptions import (
@@ -60,7 +59,7 @@ def post_login_tasks(request: HttpRequest) -> None:
             set_default_permissions(request.user, remove=True)
 
 
-def auth_login(request: HttpRequest, user: AbstractBaseUser | None, backend: type[ModelBackend] | str | None) -> None:
+def auth_login(request: HttpRequest, user: UserType | None, backend: type[ModelBackend] | str | None) -> None:
     """
     Custom login function with post login tasks
     """

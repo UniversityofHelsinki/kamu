@@ -1,13 +1,13 @@
 # Requirements for development/testing environment
 -r requirements.txt
-black==24.1.0
-coverage==7.4.0
-Faker==22.5.1
-flake8==7.0.0
+black==24.10.0
+coverage==7.6.4
+Faker==30.8.1
+flake8==7.1.1
 isort==5.13.2
-mypy==1.8.0
-django-stubs==4.2.7
-djangorestframework-stubs==3.14.5
-Sphinx==7.2.6
+mypy==1.13.0
+django-stubs==5.1.1
+djangorestframework-stubs==3.15.1
+Sphinx==8.1.3
 sphinxcontrib-django==2.5
 tblib==3.0.0

@@ -8,8 +8,8 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
 from django.contrib.auth.backends import ModelBackend
-from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User as UserType
 from django.core.exceptions import (
     MultipleObjectsReturned,
     ObjectDoesNotExist,
@@ -170,7 +170,7 @@ class LoginEmailPhoneVerificationForm(AuthenticationForm):
             raise ValidationError(_("This account is disabled."))
         return self.cleaned_data
 
-    def get_user(self) -> AbstractBaseUser:
+    def get_user(self) -> UserType:
         return self.user_cache
 
 

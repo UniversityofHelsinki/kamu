@@ -100,5 +100,5 @@ def audit_log_django_admin_site(instance: LogEntry, **kwargs: Any) -> None:
             action=get_action(),
             outcome="success",
             objects=objects,
-            extra=extra,
+            extra=extra,  # type: ignore
         )

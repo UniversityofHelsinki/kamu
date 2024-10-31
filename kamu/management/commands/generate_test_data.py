@@ -287,7 +287,11 @@ class Command(BaseCommand):
             if identity.nationality.all().count() > 0:
                 identity.nationality_verification = verification_level
                 identity.save()
-            if date_of_birth and (random.randint(0, 100) < 10 or finnish_nationality in identity.nationality.all()):
+            if (
+                date_of_birth
+                and isinstance(date_of_birth, datetime.date)
+                and (random.randint(0, 100) < 10 or finnish_nationality in identity.nationality.all())
+            ):
                 year_part = date_of_birth.strftime("%d%m%y")
                 if date_of_birth.year < 2000:
                     intermediate = "-"
