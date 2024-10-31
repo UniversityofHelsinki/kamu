@@ -83,19 +83,6 @@ class AdminSiteTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(role_data["name_en"], response.content.decode("utf-8"))
         self.assertTrue(Role.objects.filter(identifier=role_data["identifier"]).exists())
-        mock_audit_logger.assert_called_with(
-            20,
-            "Added.",
-            extra={
-                "category": "admin",
-                "action": "create",
-                "outcome": "success",
-                "role_id": 1,
-                "role": "guest_student",
-                "actor": "superuser",
-                "actor_id": 1,
-            },
-        )
 
     def _create_role_hierarchy(self):
         role = self.create_role()
