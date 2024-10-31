@@ -12,6 +12,7 @@ from django.contrib.admin.models import ADDITION, CHANGE, DELETION, LogEntry
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
+from rest_framework.authtoken.models import TokenProxy
 
 from kamu.models.identity import Identity
 
@@ -26,10 +27,10 @@ UserModel = get_user_model()
 logger = logging.getLogger(__name__)
 logger_audit = logging.getLogger("audit")
 
-
 CategoryTypes = Literal[
     "admin",
     "authentication",
+    "authtoken",
     "contact",
     "contract",
     "email_address",
@@ -37,8 +38,10 @@ CategoryTypes = Literal[
     "identifier",
     "identity",
     "membership",
+    "permission",
     "phone_number",
     "registration",
+    "requirement",
     "role",
     "user",
 ]
@@ -48,6 +51,7 @@ ActionTypes = Literal[
     "delete",
     "info",
     "link",
+    "list",
     "login",
     "logout",
     "read",
@@ -61,6 +65,22 @@ OutcomeTypes = Literal[
     "success",
     "none",
 ]
+
+ModelToCategoryMap: dict[str, CategoryTypes] = {
+    "contact": "contact",
+    "contract": "contract",
+    "emailaddress": "email_address",
+    "group": "group",
+    "identifier": "identifier",
+    "identity": "identity",
+    "membership": "membership",
+    "permission": "permission",
+    "phonenumber": "phone_number",
+    "requirement": "requirement",
+    "role": "role",
+    "tokenproxy": "authtoken",
+    "user": "user",
+}
 
 
 def get_client_ip(request: HttpRequest) -> str | None:
@@ -109,6 +129,15 @@ class AuditLog:
         return {
             "group_id": group.pk,
             "group": group.name,
+        }
+
+    def log_values_authtoken(self, token: TokenProxy) -> dict[str, str | int]:
+        """
+        Return authtoken values for audit log.
+        """
+        return {
+            "token_id": token.pk,
+            "user": token.user,
         }
 
     def log_values_user(self, user: AbstractBaseUser) -> dict[str, str | int]:
@@ -214,6 +243,8 @@ class AuditLog:
         for obj in objects:
             if type(obj) is Group:
                 params.update(self.log_values_group(obj))
+            if type(obj) is TokenProxy:
+                params.update(self.log_values_authtoken(obj))
             elif type(obj) is UserModel and obj:
                 user = obj
                 params.update(self.log_values_user(obj))
