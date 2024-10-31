@@ -1,6 +1,8 @@
 from django.contrib import admin
-from rest_framework.authtoken.admin import TokenAdmin
+from django.contrib.auth.models import Group, User
+from rest_framework.authtoken.models import TokenProxy
 
+from kamu.admin.django import AuditGroupAdmin, AuditTokenAdmin, AuditUserAdmin
 from kamu.admin.identity import (
     ContractAdmin,
     ContractTemplateAdmin,
@@ -16,6 +18,13 @@ from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
 from kamu.models.membership import Membership
 from kamu.models.role import Permission, Requirement, Role
 
+admin.site.unregister(User)
+admin.site.register(User, AuditUserAdmin)
+admin.site.unregister(Group)
+admin.site.register(Group, AuditGroupAdmin)
+admin.site.unregister(TokenProxy)
+admin.site.register(TokenProxy, AuditTokenAdmin)
+
 admin.site.register(Contract, ContractAdmin)
 admin.site.register(ContractTemplate, ContractTemplateAdmin)
 admin.site.register(EmailAddress, EmailAddressAdmin)
@@ -26,6 +35,3 @@ admin.site.register(Membership, MembershipAdmin)
 admin.site.register(Permission, PermissionAdmin)
 admin.site.register(Requirement, RequirementAdmin)
 admin.site.register(Role, RoleAdmin)
-
-TokenAdmin.raw_id_fields = ["user"]
-TokenAdmin.list_display = ["user", "created"]  # type: ignore

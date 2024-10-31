@@ -2,10 +2,10 @@
 Django admin site configuration for the identity models.
 """
 
-from django.contrib import admin
+from kamu.admin.customization import AuditModelAdmin
 
 
-class ContractAdmin(admin.ModelAdmin):
+class ContractAdmin(AuditModelAdmin):
     list_display = ["identity", "template"]
     search_fields = [
         "identity__given_names",
@@ -18,7 +18,7 @@ class ContractAdmin(admin.ModelAdmin):
     autocomplete_fields = ["identity"]
 
 
-class ContractTemplateAdmin(admin.ModelAdmin):
+class ContractTemplateAdmin(AuditModelAdmin):
     list_display = ["type", "name", "version"]
     search_fields = [
         "type",
@@ -28,7 +28,7 @@ class ContractTemplateAdmin(admin.ModelAdmin):
     ]
 
 
-class EmailAddressAdmin(admin.ModelAdmin):
+class EmailAddressAdmin(AuditModelAdmin):
     list_display = ["identity", "address"]
     search_fields = [
         "identity__given_names",
@@ -41,7 +41,7 @@ class EmailAddressAdmin(admin.ModelAdmin):
     autocomplete_fields = ["identity"]
 
 
-class IdentifierAdmin(admin.ModelAdmin):
+class IdentifierAdmin(AuditModelAdmin):
     list_display = ["identity", "type"]
     search_fields = [
         "identity__given_names",
@@ -53,7 +53,7 @@ class IdentifierAdmin(admin.ModelAdmin):
     autocomplete_fields = ["identity"]
 
 
-class IdentityAdmin(admin.ModelAdmin):
+class IdentityAdmin(AuditModelAdmin):
     list_display = ["given_names", "surname", "assurance_level"]
     list_filter = ["roles__identifier"]
     search_fields = [
@@ -67,7 +67,7 @@ class IdentityAdmin(admin.ModelAdmin):
     autocomplete_fields = ["user"]
 
 
-class PhoneNumberAdmin(admin.ModelAdmin):
+class PhoneNumberAdmin(AuditModelAdmin):
     list_display = ["identity", "number"]
     search_fields = [
         "identity__given_names",

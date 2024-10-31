@@ -2,10 +2,10 @@
 Django admin site configuration for the membership models.
 """
 
-from django.contrib import admin
+from kamu.admin.customization import AuditModelAdmin
 
 
-class MembershipAdmin(admin.ModelAdmin):
+class MembershipAdmin(AuditModelAdmin):
     list_display = ["identity", "role", "start_date", "expire_date"]
     search_fields = [
         "identity__surname",
