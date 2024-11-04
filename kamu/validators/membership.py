@@ -30,11 +30,11 @@ def validate_membership(
     from the current date.
     """
     if expire_date < start_date:
-        raise error_class({"expire_date": [_("Role expire date cannot be earlier than start date")]})
+        raise error_class({"expire_date": [_("Membership expire date cannot be earlier than start date")]})
     if expire_date < timezone.now().date():
-        raise error_class({"expire_date": [_("Role expire date cannot be in the past")]})
+        raise error_class({"expire_date": [_("Membership expire date cannot be in the past")]})
     if not edit and start_date < timezone.now().date():
-        raise error_class({"start_date": [_("Role start date cannot be in the past")]})
+        raise error_class({"start_date": [_("Membership start date cannot be in the past")]})
     compare_date = max(start_date, timezone.now().date())
     if (expire_date - compare_date).days > role.maximum_duration:
         last_date = formats.date_format(compare_date + timedelta(days=role.maximum_duration), "SHORT_DATE_FORMAT")
