@@ -2,6 +2,7 @@
 Validators for the identity
 """
 
+import re
 import string
 from datetime import datetime
 
@@ -85,3 +86,36 @@ class PhoneNumberValidator:
 
 
 validate_phone_number = PhoneNumberValidator()
+
+
+@deconstructible
+class EidasIdentifierValidator:
+    """
+    Validate an eIDAS Unique Identifier.
+    """
+
+    code = "invalid"
+
+    def __init__(self, message: str | None = None, code: str | None = None) -> None:
+        self.message = message
+        if code is not None:
+            self.code = code
+
+    def __call__(self, value: str) -> None:
+        """
+        Unique Identifier has two-letter country codes for source and destination country, and a unique identifier
+        part, separated by slashes. Maximum total length is 256 characters and whitespace is not allowed.
+        """
+        if not re.match(r"^[A-Za-z]{2}/[A-Za-z]{2}/\S{1,250}$", value):
+            message = self.message or _("Invalid eIDAS identifier format")
+            raise ValidationError(message, self.code, params={"value": value})
+
+    def __eq__(self, other: object) -> bool:
+        return (
+            isinstance(other, EidasIdentifierValidator)
+            and (self.message == other.message)
+            and (self.code == other.code)
+        )
+
+
+validate_eidas_identifier = EidasIdentifierValidator()

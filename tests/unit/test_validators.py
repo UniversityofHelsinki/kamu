@@ -5,7 +5,11 @@ Unit tests for validators.
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
-from kamu.validators.identity import validate_fpic, validate_phone_number
+from kamu.validators.identity import (
+    validate_eidas_identifier,
+    validate_fpic,
+    validate_phone_number,
+)
 
 
 class ValidateSSNTests(TestCase):
@@ -59,3 +63,14 @@ class ValidatePhoneNumberTests(TestCase):
         with self.assertRaises(ValidationError) as e:
             validate_phone_number("+358501")
         self.assertEqual(e.exception.message, "Phone number is too short")
+
+
+class ValidateEidasIdentifierTests(TestCase):
+    def test_correct_identifier(self):
+        self.assertIsNone(validate_eidas_identifier("FI/ES/1234567"))
+
+    def test_invalid_identifiers(self):
+        for identifier in ["FIN/ES/1234567", "/FI/ES/1234567", "FI/ES/", "FI/12 123"]:
+            with self.assertRaises(ValidationError) as e:
+                validate_eidas_identifier(identifier)
+            self.assertEqual(e.exception.message, "Invalid eIDAS identifier format")
