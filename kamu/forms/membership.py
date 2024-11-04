@@ -2,7 +2,6 @@
 Role forms.
 """
 
-from datetime import date
 from typing import Any
 
 from crispy_forms.helper import FormHelper
@@ -48,10 +47,6 @@ class MembershipCreateForm(forms.ModelForm[Membership]):
             cleaned_data = self.cleaned_data
         start_date = cleaned_data.get("start_date")
         expire_date = cleaned_data.get("expire_date")
-        if not start_date or not isinstance(start_date, date):
-            raise ValidationError(_("Invalid start date format"))
-        if not expire_date or not isinstance(expire_date, date):
-            raise ValidationError(_("Invalid expire date format"))
         validate_membership(ValidationError, self.role, start_date, expire_date)
 
 
@@ -86,10 +81,6 @@ class MembershipEditForm(forms.ModelForm[Membership]):
             cleaned_data = self.cleaned_data
         start_date = cleaned_data.get("start_date")
         expire_date = cleaned_data.get("expire_date")
-        if not start_date or not isinstance(start_date, date):
-            raise ValidationError(_("Invalid start date format"))
-        if not expire_date or not isinstance(expire_date, date):
-            raise ValidationError(_("Invalid expire date format"))
         validate_membership(ValidationError, self.instance.role, start_date, expire_date, edit=True)
 
 
@@ -142,10 +133,6 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
             cleaned_data = self.cleaned_data
         start_date = cleaned_data.get("start_date")
         expire_date = cleaned_data.get("expire_date")
-        if not start_date or not isinstance(start_date, date):
-            raise ValidationError({"start_date": [_("Invalid start date format")]})
-        if not expire_date or not isinstance(expire_date, date):
-            raise ValidationError({"expire_date": [_("Invalid expire date format")]})
         invite_email_address = cleaned_data.get("invite_email_address")
         validate_membership(ValidationError, self.role, start_date, expire_date)
         if Membership.objects.filter(

@@ -5,7 +5,7 @@ Custom validators for roles.
 from __future__ import annotations
 
 from datetime import date, timedelta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from django.core.exceptions import ValidationError
 from django.utils import formats, timezone
@@ -19,8 +19,8 @@ if TYPE_CHECKING:
 def validate_membership(
     error_class: type[ValidationError] | type[DRFValidationError],
     role: Role,
-    start_date: date,
-    expire_date: date,
+    start_date: Any | None,
+    expire_date: Any | None,
     edit: bool = False,
 ) -> None:
     """
@@ -29,6 +29,10 @@ def validate_membership(
     Allow past start dates when editing a membership. In this case, compare maximum role duration
     from the current date.
     """
+    if not start_date or not isinstance(start_date, date):
+        raise error_class({"start_date": [_("Invalid start date format")]})
+    if not expire_date or not isinstance(expire_date, date):
+        raise error_class({"expire_date": [_("Invalid expire date format")]})
     if expire_date < start_date:
         raise error_class({"expire_date": [_("Membership expire date cannot be earlier than start date")]})
     if expire_date < timezone.now().date():
