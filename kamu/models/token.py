@@ -17,6 +17,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from kamu.models.membership import Membership
+from kamu.validators.identity import validate_phone_number
 
 if TYPE_CHECKING:
     from kamu.models.identity import EmailAddress, PhoneNumber
@@ -288,7 +289,9 @@ class Token(models.Model):
     membership = models.ForeignKey("kamu.Membership", null=True, on_delete=models.CASCADE)
     email_object = models.ForeignKey("kamu.EmailAddress", null=True, on_delete=models.CASCADE)
     phone_object = models.ForeignKey("kamu.PhoneNumber", null=True, on_delete=models.CASCADE)
-    phone_number = models.CharField(max_length=20, blank=True, verbose_name=_("Phone number"))
+    phone_number = models.CharField(
+        max_length=20, blank=True, validators=[validate_phone_number], verbose_name=_("Phone number")
+    )
     email_address = models.CharField(
         max_length=320, blank=True, verbose_name=_("Email address"), validators=[validate_email]
     )

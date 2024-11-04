@@ -8,6 +8,7 @@ import datetime
 from typing import Any
 
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 from django.db.models import Q, QuerySet
 from django.urls import reverse
@@ -15,6 +16,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from kamu.models.role import Requirement, Role
+from kamu.validators.membership import validate_membership
 
 
 class MembershipManager(models.Manager["Membership"]):
@@ -81,6 +83,21 @@ class Membership(models.Model):
         if self.identity:
             return f"{self.role.name()} - {self.identity.display_name()}"
         return f"{self.role.name()} - {self.invite_email_address}"
+
+    def clean(self) -> None:
+        """
+        Validates membership date limits.
+
+        When validating during form creation, related form fields is picked from the kwargs and does
+        not exist yet in the validated data. It is validated in the form validation.
+        """
+        if self.pk:
+            validate_membership(ValidationError, self.role, self.start_date, self.expire_date, edit=True)
+        else:
+            try:
+                validate_membership(ValidationError, self.role, self.start_date, self.expire_date, edit=False)
+            except ObjectDoesNotExist:
+                validate_membership(ValidationError, None, self.start_date, self.expire_date, edit=False)
 
     def log_values(self) -> dict[str, str | int]:
         """

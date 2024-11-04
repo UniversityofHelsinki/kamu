@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 def validate_membership(
     error_class: type[ValidationError] | type[DRFValidationError],
-    role: Role,
+    role: Role | None,
     start_date: Any | None,
     expire_date: Any | None,
     edit: bool = False,
@@ -40,7 +40,7 @@ def validate_membership(
     if not edit and start_date < timezone.now().date():
         raise error_class({"start_date": [_("Membership start date cannot be in the past")]})
     compare_date = max(start_date, timezone.now().date())
-    if (expire_date - compare_date).days > role.maximum_duration:
+    if role and (expire_date - compare_date).days > role.maximum_duration:
         last_date = formats.date_format(compare_date + timedelta(days=role.maximum_duration), "SHORT_DATE_FORMAT")
         raise error_class(
             {

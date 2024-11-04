@@ -9,6 +9,7 @@ from uuid import uuid4
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User as UserType
+from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import models
 from django.db.models import Q, QuerySet
@@ -18,7 +19,11 @@ from django.utils.translation import gettext_lazy as _
 from django_stubs_ext import StrOrPromise
 
 from kamu.models.role import Permission, Requirement, Role
-from kamu.validators.identity import validate_fpic
+from kamu.validators.identity import (
+    validate_eidas_identifier,
+    validate_fpic,
+    validate_phone_number,
+)
 
 
 class Nationality(models.Model):
@@ -435,7 +440,7 @@ class PhoneNumber(models.Model):
         on_delete=models.CASCADE,
         related_name="phone_numbers",
     )
-    number = models.CharField(max_length=20, verbose_name=_("Phone number"))
+    number = models.CharField(max_length=20, validators=[validate_phone_number], verbose_name=_("Phone number"))
     priority = models.SmallIntegerField(default=0, verbose_name=_("Priority"))
     verified = models.BooleanField(default=False, verbose_name=_("Verified"))
 
@@ -511,6 +516,20 @@ class Identifier(models.Model):
 
     def __str__(self) -> str:
         return f"{self.identity.display_name()}-{self.type}"
+
+    def clean(self) -> None:
+        """
+        Validates identifier values.
+        """
+        if self.type == self.Type.FPIC:
+            validate_fpic(self.value)
+        if self.type == self.Type.EIDAS:
+            validate_eidas_identifier(self.value)
+        if self.type == self.Type.EPPN:
+            try:
+                validate_email(self.value)
+            except ValidationError:
+                raise ValidationError(_("Invalid eduPersonPrincipalName format"), code="invalid")
 
     def log_values(self) -> dict[str, str | int]:
         """

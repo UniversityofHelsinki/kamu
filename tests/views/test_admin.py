@@ -8,6 +8,7 @@ from unittest.mock import ANY, call, patch
 from django.test import Client, override_settings
 from django.utils import timezone
 
+from kamu.models.identity import Identifier, PhoneNumber
 from kamu.models.membership import Membership
 from kamu.models.role import Role
 from tests.data import ROLES
@@ -78,6 +79,50 @@ class AdminSiteTests(BaseTestCase):
         response = self.client.get(f"{self.url}permission/")
         self.assertEqual(response.status_code, 200)
         self.assertIn(permission.name(), response.content.decode("utf-8"))
+
+    def _test_add_phone_number(self, number: str):
+        url = f"{self.url}phonenumber/add/"
+        identity = self.create_identity()
+        form_data = {
+            "identity": identity.pk,
+            "number": number,
+            "priority": 1,
+            "verified": False,
+        }
+        form_data.update(self.created_at)
+        return self.client.post(url, form_data, follow=True)
+
+    def test_add_invalid_phone_number(self):
+        response = self._test_add_phone_number("050123456")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Phone number must start with a plus sign", response.content.decode("utf-8"))
+
+    def test_add_phone_number(self):
+        response = self._test_add_phone_number("+35850123456")
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(PhoneNumber.objects.filter(number="+35850123456").exists())
+
+    def _test_add_identifier(self, identifier_type: str, identifier_value: str):
+        url = f"{self.url}identifier/add/"
+        identity = self.create_identity()
+        form_data = {
+            "identity": identity.pk,
+            "type": identifier_type,
+            "value": identifier_value,
+            "verified": False,
+        }
+        form_data.update(self.created_at)
+        return self.client.post(url, form_data, follow=True)
+
+    def test_add_invalid_eppn_identifier(self):
+        response = self._test_add_identifier("eppn", "eppn")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Invalid eduPersonPrincipalName format", response.content.decode("utf-8"))
+
+    def test_add_eppn_identifier(self):
+        response = self._test_add_identifier("eppn", "test@example.org")
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Identifier.objects.filter(type="eppn", value="test@example.org").exists())
 
     @patch("kamu.utils.audit.logger_audit.log")
     def test_add_role(self, mock_audit_logger):
