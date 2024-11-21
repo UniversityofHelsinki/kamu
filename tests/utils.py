@@ -39,10 +39,16 @@ class MockLdapConn:
         )
     ]
 
+    LDAP_EMPTY_VALUE = ("uid=ldapuser2,ou=users,dc=example,dc=org", {})
+
     def search_s(self, *args):
         self.search_args.append(args)
         if self.size_exceeded:
             raise SIZELIMIT_EXCEEDED
         if self.limited_fields:
-            return self.LDAP_RETURN_VALUE_LIMITED_FIELDS
-        return self.LDAP_RETURN_VALUE
+            results = self.LDAP_RETURN_VALUE_LIMITED_FIELDS
+        else:
+            results = self.LDAP_RETURN_VALUE
+        if "uid=" not in str(self.search_args):
+            results.append(self.LDAP_EMPTY_VALUE)
+        return results

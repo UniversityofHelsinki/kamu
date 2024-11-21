@@ -986,10 +986,13 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
     @staticmethod
     def _filter_ldap_list(object_list: QuerySet[Identity], ldap_results: list) -> list:
         """
-        Filter out LDAP results where uid is already in object_list and sort results.
+        Filter out LDAP results where uid does not exist or is already in object_list, and sort results.
         """
         result_uids = set(object_list.values_list("uid", flat=True))
-        return sorted([res for res in ldap_results if res["uid"] not in result_uids], key=lambda x: x["cn"])
+        return sorted(
+            [res for res in ldap_results if res.get("uid") and res["uid"] not in result_uids],
+            key=lambda x: x.get("cn", ""),
+        )
 
     @staticmethod
     def search_ldap() -> bool:
