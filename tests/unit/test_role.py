@@ -26,12 +26,10 @@ class BaseRoleTestCase(BaseTestCase):
         super().setUp()
         self.parent_role = self.create_role()
         self.role = self.create_role("consultant", parent=self.parent_role)
-        self.account_permission = Permission.objects.create(identifier="account", name_en="Account permission", cost=5)
-        self.licence_permission = Permission.objects.create(
-            identifier="license", name_en="License permission", cost=15
-        )
+        self.account_permission = self.create_permission("lightaccount")
+        self.service_permission = self.create_permission("service")
         self.parent_role.permissions.add(self.account_permission)
-        self.role.permissions.add(self.licence_permission)
+        self.role.permissions.add(self.service_permission)
 
 
 class RoleModelTests(BaseRoleTestCase):
@@ -57,12 +55,32 @@ class RoleModelTests(BaseRoleTestCase):
 
     def test_role_cost(self):
         self.assertEqual(self.parent_role.get_cost(), 5)
-        self.assertEqual(self.role.get_cost(), 20)
+        self.assertEqual(self.role.get_cost(), 7)
 
     def test_role_permissions(self):
         self.assertEqual(self.parent_role.get_permissions().count(), 1)
-        self.assertEqual(self.parent_role.get_permissions().first().name(), "Account permission")
+        self.assertEqual(self.parent_role.get_permissions().first().name(), "Lightaccount")
         self.assertEqual(self.role.get_permissions().count(), 2)
+
+
+class PermissionTests(BaseRoleTestCase):
+    def setUp(self):
+        super().setUp()
+        self.identity = self.create_identity(user=True)
+        self.membership = self.create_membership(
+            self.role, self.identity, start_delta_days=-2, expire_delta_days=1, approver=self.identity.user
+        )
+
+    def test_get_permissions(self):
+        self.assertEqual(self.role.get_permissions().count(), 2)
+        self.assertEqual(self.identity.get_permissions().count(), 2)
+        self.assertEqual(self.identity.get_permissions(permission_type=Permission.Type.ACCOUNT).count(), 1)
+
+    def test_get_permissions_expired(self):
+        self.membership.expire_date = timezone.now().date() - datetime.timedelta(days=1)
+        self.membership.save()
+        self.assertEqual(self.role.get_permissions().count(), 2)
+        self.assertEqual(self.identity.get_permissions().count(), 0)
 
 
 class RequirementsTests(BaseRoleTestCase):
@@ -81,11 +99,11 @@ class RequirementsTests(BaseRoleTestCase):
         self.assurance = self.account_permission.requirements.create(
             name_en="Assurance", type=Requirement.Type.ASSURANCE, level=Identity.AssuranceLevel.HIGH, grace=0
         )
-        self.email = self.licence_permission.requirements.create(
+        self.email = self.service_permission.requirements.create(
             name_en="Email", type=Requirement.Type.ATTRIBUTE, value="email_address", grace=0
         )
         self.identity = self.create_identity(user=True)
-        self.membership = self.create_membership(self.role, self.identity, start_delta_days=0, expire_delta_days=1)
+        self.membership = self.create_membership(self.role, self.identity, start_delta_days=-2, expire_delta_days=1)
         self.parent_membership = self.create_membership(
             self.parent_role, self.identity, start_delta_days=0, expire_delta_days=15, approver=self.user
         )
@@ -104,6 +122,12 @@ class RequirementsTests(BaseRoleTestCase):
     def test_get_requirements(self):
         self.assertEqual(self.role.get_requirements().count(), 4)
         self.assertEqual(self.parent_role.get_requirements().count(), 2)
+        self.assertEqual(self.identity.get_requirements().count(), 4)
+
+    def test_get_requirements_ignore_expired(self):
+        self.membership.expire_date = timezone.now().date() - datetime.timedelta(days=1)
+        self.membership.save()
+        self.assertEqual(self.identity.get_requirements().count(), 2)
 
     def test_contract_version(self):
         self.identity.assurance_level = Identity.AssuranceLevel.HIGH

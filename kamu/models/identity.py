@@ -3,7 +3,7 @@ Identity models.
 """
 
 import datetime
-from typing import Any
+from typing import Any, Sequence
 from uuid import uuid4
 
 from django.conf import settings
@@ -18,6 +18,7 @@ from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 from django_stubs_ext import StrOrPromise
 
+from kamu.models.membership import Membership
 from kamu.models.role import Permission, Requirement, Role
 from kamu.validators.identity import (
     validate_eidas_identifier,
@@ -267,6 +268,20 @@ class Identity(models.Model):
     def display_name(self) -> str:
         return f"{self.given_name_display} {self.surname_display}"
 
+    def email_address(self) -> str | None:
+        """
+        Returns the highest priority verified email address, if available.
+        """
+        email_address = self.email_addresses.filter(verified=True).order_by("priority").first()
+        return email_address.address if email_address else None
+
+    def phone_number(self) -> str | None:
+        """
+        Returns the highest priority verified phone number, if available.
+        """
+        phone_number = self.phone_numbers.filter(verified=True).order_by("priority").first()
+        return phone_number.number if phone_number else None
+
     def log_values(self) -> dict[str, str | int]:
         """
         Return values for audit log.
@@ -369,14 +384,38 @@ class Identity(models.Model):
         """
         return self.phone_numbers.filter(verified=True).exists()
 
+    def get_roles(self, membership_statuses: Sequence[Membership.Status] | None = None) -> QuerySet[Role]:
+        """
+        Returns combined roles of the identity, including hierarchical roles.
+
+        Include only active memberships by default.
+        """
+        if membership_statuses is None:
+            membership_statuses = [Membership.Status.ACTIVE]
+        all_roles = Role.objects.none()
+        for role in self.roles.filter(membership__status__in=membership_statuses):
+            all_roles |= role.get_role_hierarchy()
+        return all_roles.distinct()
+
+    def get_permissions(self, permission_type: Permission.Type | None = None) -> QuerySet[Permission]:
+        """Returns active permissions of the identity"""
+        roles = self.get_roles()
+        if permission_type:
+            return Permission.objects.filter(role__in=roles, type=permission_type).distinct()
+        return Permission.objects.filter(role__in=roles).distinct()
+
     def get_requirements(self) -> QuerySet[Requirement]:
         """
-        Returns combined requirements of all current or upcoming roles of the identity.
+        Returns combined requirements of all roles of the identity, excluding expired memberships.
         """
-        all_roles = Role.objects.none()
-        for role in self.roles.filter(membership__expire_date__gte=timezone.now().date()):
-            all_roles |= role.get_role_hierarchy()
-        roles = all_roles.distinct()
+        roles = self.get_roles(
+            membership_statuses=[
+                Membership.Status.REQUIRE,
+                Membership.Status.APPROVAL,
+                Membership.Status.PENDING,
+                Membership.Status.ACTIVE,
+            ]
+        )
         permissions = Permission.objects.filter(role__in=roles).distinct()
         return Requirement.objects.filter(
             Q(role_requirements__in=roles) | Q(permission_requirements__in=permissions)
