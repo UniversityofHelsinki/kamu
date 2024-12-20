@@ -98,7 +98,7 @@ class TestData(TestCase):
             invite_email_address=invite_email_address,
         )
 
-    def create_permission(self, name="useraccount"):
+    def create_permission(self, name="account"):
         return Permission.objects.create(**PERMISSIONS[name])
 
     def create_requirement(self, name="contract_nda"):

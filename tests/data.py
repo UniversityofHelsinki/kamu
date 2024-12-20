@@ -2,7 +2,7 @@
 Data used in tests and test data generation.
 """
 
-from kamu.models.role import Requirement
+from kamu.models.role import Permission, Requirement
 
 CONTRACT_TEMPLATES: dict = {
     "nda": {
@@ -51,8 +51,9 @@ NATIONALITIES: dict = {
 }
 
 PERMISSIONS: dict = {
-    "useraccount": {
-        "identifier": "useraccount",
+    "account": {
+        "type": Permission.Type.ACCOUNT,
+        "identifier": "account",
         "name_en": "User account",
         "name_fi": "Käyttäjätunnus",
         "name_sv": "Användarnamn",
@@ -62,6 +63,7 @@ PERMISSIONS: dict = {
         "cost": 130,
     },
     "lightaccount": {
+        "type": Permission.Type.ACCOUNT,
         "identifier": "lightaccount",
         "name_en": "Lightaccount",
         "name_fi": "Kevyttunnus",
@@ -69,7 +71,19 @@ PERMISSIONS: dict = {
         "description_en": "User account with limited Access",
         "description_fi": "Käyttäjätunnus rajoitetulla pääsyllä",
         "description_sv": "Användarkonto med begränsad åtkomst",
-        "cost": 130,
+        "cost": 5,
+    },
+    "service": {
+        "type": Permission.Type.SERVICE,
+        "identifier": "service",
+        "value": "service-identifier-1",
+        "name_en": "Service 1",
+        "name_fi": "Palvelu 1",
+        "name_sv": "Tjänst 1",
+        "description_en": "Service provider",
+        "description_fi": "Palveluntarjoaja",
+        "description_sv": "Tjänsteleverantör",
+        "cost": 2,
     },
 }
 

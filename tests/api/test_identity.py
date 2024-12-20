@@ -128,7 +128,7 @@ class IdentityAPIDetailTests(BaseAPITestCase):
         role = self.create_role("ext_employee")
         role2 = self.create_role("ext_research", parent=role)
         self.role3 = self.create_role("guest_student", parent=role2)
-        permission = self.create_permission("useraccount")
+        permission = self.create_permission("account")
         permission2 = self.create_permission("lightaccount")
         role.permissions.add(permission)
         self.role3.permissions.add(permission2)
@@ -146,7 +146,7 @@ class IdentityAPIDetailTests(BaseAPITestCase):
         self.assertEqual(data["phone_numbers"][0]["number"], self.phone_number.number)
         self.assertEqual(data["memberships"][0]["role"], self.role3.identifier)
         self.assertEqual(set(data["memberships"][0]["parents"]), {"ext_employee", "ext_research"})
-        self.assertEqual(set(data["memberships"][0]["permissions"]), {"lightaccount", "useraccount"})
+        self.assertEqual(set(data["memberships"][0]["permissions"]), {"lightaccount", "account"})
 
 
 class EmailAddressAPITests(BaseAPITestCase):

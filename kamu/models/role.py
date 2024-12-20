@@ -230,6 +230,16 @@ class Permission(models.Model):
     """
 
     identifier = models.CharField(max_length=20, unique=True, verbose_name=_("Permission identifier"))
+
+    class Type(models.TextChoices):
+        ACCOUNT = ("account", _("User account"))
+        GENERIC = ("generic", _("Generic permission"))
+        SERVICE = ("service", _("Service"))
+
+    type = models.CharField(
+        max_length=10, choices=Type.choices, default=Type.GENERIC, verbose_name=_("Permission type")
+    )
+
     name_fi = models.CharField(max_length=50, verbose_name=_("Permission name (fi)"))
     name_en = models.CharField(max_length=50, verbose_name=_("Permission name (en)"))
     name_sv = models.CharField(max_length=50, verbose_name=_("Permission name (sv)"))
@@ -238,6 +248,8 @@ class Permission(models.Model):
     description_sv = models.CharField(max_length=255, verbose_name=_("Permission description (sv)"))
 
     cost = models.IntegerField(verbose_name=_("Permission cost"))
+    value = models.CharField(max_length=4000, blank=True, verbose_name=_("Permission value"))
+
     requirements = models.ManyToManyField(
         "kamu.Requirement", related_name="permission_requirements", verbose_name=_("Requirements"), blank=True
     )

@@ -29,7 +29,7 @@ fake = Faker()
 ROLE_ADDONS: dict = {
     "ext_employee": {
         "sub_roles": ["HY247", "HY+", "Unigrafia"],
-        "permissions": ["useraccount"],
+        "permissions": ["account"],
         "requirements": ["contract:nda"],
         "purge_delay": 50,
         "set_inviters": False,
@@ -38,7 +38,7 @@ ROLE_ADDONS: dict = {
     },
     "consultant": {
         "sub_roles": ["TIKE", "OPA", "HY247", "KK"],
-        "permissions": ["useraccount"],
+        "permissions": ["account"],
         "requirements": ["attribute:phone_number"],
         "purge_delay": 70,
         "set_inviters": True,
@@ -47,7 +47,7 @@ ROLE_ADDONS: dict = {
     },
     "ext_research": {
         "sub_roles": ["BYTDK", "HYMTDK", "MLTDK", "MMTDK"],
-        "permissions": ["useraccount"],
+        "permissions": ["lightaccount"],
         "requirements": [],
         "purge_delay": 90,
         "set_inviters": False,
@@ -65,7 +65,7 @@ ROLE_ADDONS: dict = {
     },
     "ext_board": {
         "sub_roles": [],
-        "permissions": ["useraccount"],
+        "permissions": ["account"],
         "requirements": ["contract:secretcontract"],
         "set_inviters": False,
         "set_approvers": False,
@@ -125,7 +125,7 @@ class Command(BaseCommand):
             print("Creating permissions...")
         for permission in PERMISSIONS:
             perm, created = Permission.objects.get_or_create(**PERMISSIONS[permission])
-            if created and perm.identifier == "useraccount":
+            if created and perm.identifier == "account":
                 perm.requirements.add(Requirement.objects.get(type=Requirement.Type.CONTRACT, value="nda"))
 
     def create_roles(self) -> None:
@@ -135,7 +135,7 @@ class Command(BaseCommand):
         List elements:
         - String: Role name
         - List: Sub role names. Sub roles are created with name "Sub role name - Role name"
-        - Boolean: 1 for useraccount, 0 for lightaccount
+        - Boolean: 1 for account, 0 for lightaccount
         - Boolean: 1 for adding approver, inviter and owner information, 0 for no linked groups or users
 
         """
