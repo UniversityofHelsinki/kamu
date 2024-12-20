@@ -178,3 +178,39 @@ FILTER_KAMU_RESULTS_FROM_LDAP_RESULTS: bool = True
 
 HELP_LINK_MANAGERS: str = "https://helpdesk.it.helsinki.fi/"
 HELP_LINK_USERS: str = "https://helpdesk.it.helsinki.fi/"
+
+# Services that are allowed to each light account. List of identifiers.
+LIGHT_ACCOUNT_DEFAULT_SERVICES: list[str] = ["https://attributetest.it.helsinki.fi/sp"]
+
+# Account API URL, path is appended to this URL with urllib.parse.urljoin, so it should end with a slash.
+ACCOUNT_API_URL: str = "https://localhost/accountapi/v1/"
+ACCOUNT_API_KEY: str = "change-api-key"
+# ACCOUNT_AUTH_HEADER: str = "apikey"
+# ACCOUNT_API_TIMEOUT: int = 3
+# ACCOUNT_API_VERIFY_SSL: bool = True
+# ACCOUNT_API_CERT_FILE_PATH: str | None = "/path/to/cert.pem"
+# ACCOUNT_API_KEY_FILE_PATH: str | None = "/path/to/key.pem"
+# ACCOUNT_API_SUCCESS_CODES: list[int] = [200, 201, 204]
+
+# Change API default paths. These are appended to ACCOUNT_API_URL with urllib.parse.urljoin.
+# ACCOUNT_API_CREATE_PATH: str = "create"
+# ACCOUNT_API_DISABLE_PATH: str =  "disable"
+# ACCOUNT_API_ENABLE_PATH: str = "enable"
+# ACCOUNT_API_CHANGE_PASSWORD_PATH: str = "changePassword"
+# ACCOUNT_API_UPDATE_PATH: str = "update"
+
+# Actions to perform for external accounts. If value is create, create it through Accounts API.
+# If value is URL, redirect user to that URL.
+ACCOUNT_ACTIONS: dict[str, str] = {
+    "lightaccount": "create",
+    "account": "https://localhost/accountactivation",
+}
+# External account affiliations for create and update actions. First one is used as primary affiliation.
+ACCOUNT_AFFILIATIONS: dict[str, list[str]] = {
+    "lightaccount": ["affiliate"],
+}
+
+# External account types for create and update actions
+ACCOUNT_TYPES: dict[str, int | str] = {
+    "lightaccount": 9,
+}

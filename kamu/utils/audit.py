@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 logger_audit = logging.getLogger("audit")
 
 CategoryTypes = Literal[
+    "account",
     "admin",
     "authentication",
     "authtoken",

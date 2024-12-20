@@ -4,6 +4,7 @@ Tests for management commands.
 
 import datetime
 from io import StringIO
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.core import mail
@@ -12,10 +13,12 @@ from django.test import TestCase
 from django.utils import timezone
 
 from kamu.management.commands.purge_data import UsageError
+from kamu.models.account import AccountSynchronization
 from kamu.models.identity import Identifier, Identity
 from kamu.models.membership import Membership
 from kamu.models.role import Role
 from tests.setup import TestData
+from tests.views.test_account import AccountApiResponseMock
 
 
 class ManagementCommandTestCase(TestCase):
@@ -23,14 +26,15 @@ class ManagementCommandTestCase(TestCase):
 
     def call_command(self, *args, **kwargs):
         out = StringIO()
+        err = StringIO()
         call_command(
             self.command,
             *args,
             stdout=out,
-            stderr=StringIO(),
+            stderr=err,
             **kwargs,
         )
-        return out.getvalue()
+        return out.getvalue(), err.getvalue()
 
 
 class GenerateTestDataTests(ManagementCommandTestCase):
@@ -93,7 +97,7 @@ class PurgeMembershipTests(ManagementCommandTestCase):
     def test_purge_args(self):
         with self.assertRaises(UsageError):
             self.call_command("--type=foo")
-        out = self.call_command("-l")
+        out, _ = self.call_command("-l")
         self.assertIn("membership", out)
 
     def test_purge_settings(self):
@@ -150,7 +154,7 @@ class PurgeIdentifierTests(ManagementCommandTestCase):
     def test_purge_args(self):
         with self.assertRaises(UsageError):
             self.call_command("--type=foo")
-        out = self.call_command("-l")
+        out, _ = self.call_command("-l")
         self.assertIn("identifier", out)
 
     def test_purge_deactivated(self):
@@ -211,7 +215,7 @@ class PurgeIdentityTests(ManagementCommandTestCase):
     def test_purge_args(self):
         with self.assertRaises(UsageError):
             self.call_command("--type=foo")
-        out = self.call_command("-l")
+        out, _ = self.call_command("-l")
         self.assertIn("identity", out)
 
     def test_purge_inactive_without_roles(self):
@@ -280,7 +284,7 @@ class PurgeUserTests(ManagementCommandTestCase):
     def test_purge_args(self):
         with self.assertRaises(UsageError):
             self.call_command("--type=foo")
-        out = self.call_command("-l")
+        out, _ = self.call_command("-l")
         self.assertIn("user", out)
 
     def test_purge_inactive_without_identity(self):
@@ -363,3 +367,33 @@ class MembershipExpireNotifications(TestData, ManagementCommandTestCase):
         mail.outbox = []
         self.call_command("-v 0", "-d 4", "-r")
         self.assertEqual(len(mail.outbox), 0)
+
+
+class AccountSynchronizationTests(TestData, ManagementCommandTestCase):
+    command = "account_synchronization"
+
+    def setUp(self):
+        super().setUp()
+        self.role = self.create_role("consultant")
+        self.permission = self.create_permission("lightaccount")
+        self.role.permissions.add(self.permission)
+        self.identity = self.create_identity(user=True, email=True)
+        self.membership = self.create_membership(
+            self.role, self.identity, start_delta_days=-2, expire_delta_days=1, approver=self.identity.user
+        )
+        self.account = self.create_account()
+        self.identity.save()
+
+    def test_synchronization_error(self):
+        out, err = self.call_command("-v 2")
+        self.assertEqual(AccountSynchronization.objects.all().first().number_of_failures, 1)
+        self.assertIn(f"Syncing account {self.account.uid}", out)
+        self.assertIn("Failed to synchronize account", err)
+
+    @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_post")
+    def test_synchronization(self, mock_connector):
+        mock_connector.return_value = AccountApiResponseMock()
+        out, err = self.call_command("-v 2")
+        self.assertIn(f"Syncing account {self.account.uid}", out)
+        self.assertEqual("", err)
+        self.assertEqual(AccountSynchronization.objects.all().count(), 0)

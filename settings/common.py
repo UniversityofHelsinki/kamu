@@ -101,7 +101,7 @@ WSGI_APPLICATION: str = "wsgi.application"
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
+AUTH_PASSWORD_VALIDATORS: list[dict[str, str | dict]] = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
@@ -116,6 +116,21 @@ AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
     },
 ]
 
+ACCOUNT_PASSWORD_VALIDATORS: list[dict[str, str | dict]] = [
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {"min_length": 15},
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -256,4 +271,25 @@ LDAP_SEARCH_ATTRIBUTES: dict[str, dict[str, LdapSearchAttributeType]] = {
         "given_names": {"attribute": "givenName", "wildcard": True, "value_prefix": ""},
         "surname": {"attribute": "sn", "wildcard": True, "value_prefix": ""},
     },
+}
+
+ACCOUNT_ACTIONS: dict[str, str] = {}
+ACCOUNT_AFFILIATIONS: dict[str, list[str]] = {}
+ACCOUNT_TYPES: dict[str, int | str] = {}
+
+ACCOUNT_ATTRIBUTES: dict[str, str] = {
+    "accountType": "accountType",
+    "cn": "cn",
+    "displayName": "displayName",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "eduPersonPrimaryAffiliation": "eduPersonPrimaryAffiliation",
+    "gecos": "gecos",
+    "givenName": "givenName",
+    "kamuIdentifier": "kamuIdentifier",
+    "lightAccountExternalIdentifier": "lightAccountExternalIdentifier",
+    "lightAccountService": "lightAccountService",
+    "mail": "mail",
+    "organizationUnit": "organizationUnit",
+    "schacExpiryDate": "schacExpiryDate",
+    "sn": "sn",
 }

@@ -333,6 +333,7 @@ class Identity(models.Model):
     def save(self, *args: Any, **kwargs: Any) -> None:
         """
         Override save method to update the user's display names if they are not given.
+        Add linked accounts to synchronization queue.
         """
         if not self.given_name_display:
             self.given_name_display = self.given_names.split(" ")[0]
@@ -345,6 +346,9 @@ class Identity(models.Model):
             self.user.last_name = self.surname_display
             self.user.save()
         super().save(*args, **kwargs)
+        accounts = self.useraccount.filter(status="enabled")
+        for account in accounts:
+            account.accountsynchronization_set.create()
 
     def has_attribute(self, name: str, level: int = 0) -> bool:
         """

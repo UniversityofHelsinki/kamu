@@ -15,6 +15,7 @@ from drf_spectacular.views import (
 )
 
 from kamu.routers import router
+from kamu.views.account import AccountCreateView, AccountDetailView, AccountListView
 from kamu.views.auth import (
     CustomLoginView,
     FrontPageView,
@@ -100,8 +101,15 @@ urlpatterns = [
         name="contract-sign",
     ),
     path("identity/search/", IdentitySearchView.as_view(), name="identity-search"),
+    path("identity/<int:pk>/account/", AccountListView.as_view(), name="account-list"),
+    path(
+        "identity/<int:identity_pk>/account/<str:account_type>/",
+        AccountCreateView.as_view(),
+        name="account-create",
+    ),
     path("identity/<int:pk>/change/", IdentityUpdateView.as_view(), name="identity-change"),
     path("identity/<int:pk>/identifiers/", IdentifierView.as_view(), name="identity-identifier"),
+    path("account/<int:pk>/", AccountDetailView.as_view(), name="account-detail"),
     path("email/<int:pk>/verify/", EmailAddressVerificationView.as_view(), name="email-verify"),
     path("phone/<int:pk>/verify/", PhoneNumberVerificationView.as_view(), name="phone-verify"),
     path("membership/<int:pk>/", MembershipDetailView.as_view(), name="membership-detail"),

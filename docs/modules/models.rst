@@ -6,6 +6,11 @@ Models
 
    Database structural image
 
+Account
+--------
+.. automodule:: kamu.models.account
+    :members:
+
 Identity
 --------
 .. automodule:: kamu.models.identity

@@ -9,6 +9,7 @@ from django.test import RequestFactory, TestCase
 from django.utils import timezone
 from rest_framework.test import APIRequestFactory, APITestCase
 
+from kamu.models.account import Account
 from kamu.models.contract import ContractTemplate
 from kamu.models.identity import EmailAddress, Identity, Nationality, PhoneNumber
 from kamu.models.membership import Membership
@@ -109,6 +110,9 @@ class TestData(TestCase):
 
     def create_nationality(self, nationality="fi"):
         return Nationality.objects.create(**NATIONALITIES[nationality])
+
+    def create_account(self, account_type=Account.Type.LIGHT, uid="1k234567", status=Account.Status.ENABLED):
+        return Account.objects.create(identity=self.identity, type=account_type, uid=uid, status=status)
 
     def setUp(self):
         self.user = None

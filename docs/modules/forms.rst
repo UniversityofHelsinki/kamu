@@ -1,6 +1,11 @@
 Forms
 =====
 
+Account
+-------
+.. automodule:: kamu.forms.account
+    :members:
+
 Authentication
 --------------
 .. automodule:: kamu.forms.auth

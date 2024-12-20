@@ -1,6 +1,11 @@
 Connectors
 ==========
 
+Account
+-------
+.. automodule:: kamu.connectors.account
+    :members:
+
 Email
 -----
 .. automodule:: kamu.connectors.email

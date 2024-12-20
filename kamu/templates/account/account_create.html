@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block content %}
+  <h1 class="mb-4">{{ identity.display_name }} | {% trans "Create account" %}</h1>
+  <p>{% trans "Account will be created with the following information" %}</p>
+  <div class="row">
+    <div class="col-12 col-lg-6">
+      <dl class="row">
+        <dt class="col-sm-4">{% trans "Given name" %}</dt>
+        <dd class="col-sm-8">{{ account_info.givenName }}</dd>
+        <dt class="col-sm-4">{% trans "Surname" %}</dt>
+        <dd class="col-sm-8">{{ account_info.sn }}</dd>
+        <dt class="col-sm-4">{% trans "Display name" %}</dt>
+        <dd class="col-sm-8">{{ account_info.displayName }}</dd>
+        <dt class="col-sm-4">{% trans "E-mail address" %}</dt>
+        <dd class="col-sm-8">{{ account_info.mail }}</dd>
+      </dl>
+    </div>
+    <div class="col-12 col-lg-6">
+      <dl>
+        <dt class="col-sm-4">{% trans "Allowed services" %}</dt>
+        <dd class="col-sm-8">{% for service in services %}{{ service.name }}{% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
+      </dl>
+    </div>
+  </div>
+  <h2>{% trans "Give password to create an account" %}</h2>
+  <div class="alert alert-info" role="alert">
+    <p>{% trans "Password requirements:" %}</p>
+    <ul>
+      <li>{% blocktrans with min_length=min_password_length %}Minimum {{ min_length }} characters{% endblocktrans %}</li>
+      <li>{% trans "Not similar to other user attributes" %}</li>
+    </ul>
+  </div>
+  {% crispy form form.helper %}
+{% endblock %}

@@ -45,6 +45,11 @@ User points to the target user. Actor is the user who initiated the action and i
 
 If either User or Identity is given, information from the both are logged, if they are linked.
 
+Account
+~~~~~~~~
+.. literalinclude:: ../../kamu/models/account.py
+    :pyobject: Account.log_values
+
 Contract
 ~~~~~~~~
 .. literalinclude:: ../../kamu/models/contract.py

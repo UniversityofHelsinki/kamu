@@ -1,6 +1,11 @@
 Views
 =====
 
+Account
+-------
+.. automodule:: kamu.views.account
+    :members:
+
 Authentication
 --------------
 .. automodule:: kamu.views.auth

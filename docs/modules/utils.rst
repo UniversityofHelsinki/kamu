@@ -1,6 +1,11 @@
 Utilities
 =========
 
+Account
+-------
+.. automodule:: kamu.utils.account
+    :members:
+
 Audit log
 ---------
 .. automodule:: kamu.utils.audit

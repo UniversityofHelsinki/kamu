@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <form method='POST'>
+    {% csrf_token %}
+    <h1 class="mb-4">{{ identity.display_name }} | {% trans "Account information" %}</h1>
+    <h2 id="active-list" class="mt-5">{% trans "Accounts" %}</h2>
+    {% if object_list %}
+      <table class="table" aria-describedby="account-list">
+        <thead>
+        <tr>
+          <th scope="col">{% trans "Type" %}</th>
+          <th scope="col">{% trans "User ID" %}</th>
+          <th scope="col">{% trans "Status" %}</th>
+          {% if user == identity.user or perms.kamu.change_accounts %}<th scope="col">{% trans "Manage" %}</th>{% endif %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for account in object_list %}
+          <tr>
+            <th scope="row">{{ account.get_type_display }}</th>
+            <td>{{ account.uid }}</td>
+            <td>{{ account.get_status_display }}</td>
+            {% if perms.kamu.change_accounts or user == identity.user %}<td>
+              <a href="{% url 'account-detail' pk=account.pk %}" class="btn btn-primary mb-2">{% trans "Manage account" %}</a>
+            </td>{% endif %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>{% trans "You do not have any accounts." %}</p>
+    {% endif %}
+    {% if creatable_accounts %}
+      <h2 id="creatable-list" class="mt-5">{% trans "Allowed accounts" %}</h2>
+      <table class="table" aria-describedby="creatable-list">
+        <thead>
+        <tr>
+          <th scope="col">{% trans "Type" %}</th>
+          <th scope="col">{% trans "Action" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for account in creatable_accounts %}
+          <tr>
+            <th scope="row">{{ account.name }}</th>
+            <td>{% if account.action == "create" %}<a href="{% url 'account-create' identity_pk=identity.pk account_type=account.type %}" class="btn btn-primary">{% trans "Create" %}{% else %}
+                <a href="{{ account.action }}" class="btn btn-primary">{% trans "Manage in external service" %}</a>
+            {% endif %}</a></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </form>
+  <a class="btn btn-secondary" href="{% url 'identity-detail' pk=identity.pk %}">{% trans "Return" %}</a>
+{% endblock %}

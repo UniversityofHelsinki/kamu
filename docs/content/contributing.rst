@@ -45,7 +45,7 @@ We use Sphinx for documentation. Update docs/ directory as needed.
 
 To compile the documentation, run the following command::
 
-    pip install -r requirement_docs.txt  # If you haven't installed documentation requirements yet.
+    pip install -r requirement_dev.txt  # If you haven't installed development requirements yet.
     make -C docs html
 
 If you are making changes to database, also update the database graph. There is a script to do that::

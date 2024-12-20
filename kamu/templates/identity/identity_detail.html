@@ -74,6 +74,10 @@
   {% if user == object.user or perms.kamu.view_contracts %}
     <a href="{% url 'contract-list' object.pk %}" class="btn btn-primary mb-2">{% trans "Contracts" %}</a>
   {% endif %}
+  <h2 class="mt-4">{% trans "User accounts" %}</h2>
+  {% if user == object.user or perms.kamu.view_accounts %}
+    <a href="{% url 'account-list' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Manage user accounts" %}</a>
+  {% endif %}
   <h2 id="roles-list" class="mt-4">{% trans "Role memberships" %}</h2>
   {% if memberships %}
     <table class="table" aria-describedby="roles-list">

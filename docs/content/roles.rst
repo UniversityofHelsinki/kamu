@@ -33,11 +33,19 @@ Permissions
 -----------
 Defines the permissions a member of the role has.
 
-Permissions can have cost and requirements, in addition to identifier, name and description.
+Permissions can have cost, value and requirements, in addition to type, identifier, name and description.
 - Requirements work the same way as role requirements.
 - Costs are used to define the cost of the membership, or a single user's total cost for all their roles.
 
-Role permissions have no effect for the Kamu system itself, and are meant to be used by the external systems.
+Permission types are:
+
+- account
+   - User has permission to create account. Some accounts may be created through Kamu, others are linked to external
+     systems.
+- service
+   - User has permission to use a service. These are used to limit light account access to specific services.
+- generic
+   - Generic permissions have no effect for the Kamu system itself, and are meant to be used by the external systems.
 
 Requirements
 ------------

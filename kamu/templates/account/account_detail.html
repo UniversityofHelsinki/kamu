@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block content %}
+  <h1 class="mb-5">{% trans "Account details" %}</h1>
+  <div class="row">
+    <div class="col-md-6">
+      <h2>{% trans "Account" %}</h2>
+      <dl class="row">
+        <dt class="col-sm-3">{% trans "User ID" %}</dt>
+        <dd class="col-sm-9">{{ object.uid }}</dd>
+        <dt class="col-sm-3">{% trans "Type" %}</dt>
+        <dd class="col-sm-9">{{ object.get_type_display }}</dd>
+        <dt class="col-sm-3">{% trans "Status" %}</dt>
+        <dd class="col-sm-9 mb-5">{{ object.get_status_display }}{% if object.status == "disabled" %} ({{ object.deactivated_at }}){% endif %}</dd>
+      </dl>
+    </div>
+    {% if user.identity == object.identity or perms.kamu.change_accounts %}
+      <form method="post">{% csrf_token %}
+        {% if object.status == "enabled" %}
+          <button type="button" class="btn btn-danger me-2 mb-2" data-bs-toggle="modal" data-bs-target="#disableAccountModal">{% trans "Disable user account" %}</button>
+          <div class="modal fade" id="disableAccountModal" tabindex="-1" aria-labelledby="disableAccountModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="disableAccountModalLabel">{% trans "Confirm disabling user account" %}</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+                </div>
+                <div class="modal-body">
+                  <p class="text-break">{% trans "This account will be disabled immediately." %}</p>
+                  <dl class="row">
+                    <dt class="col-sm-3">{% trans "User ID" %}</dt>
+                    <dd class="col-sm-9">{{ object.uid }}</dd>
+                  </dl>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                    <button type="submit" name="disable_account" class="btn btn-danger">{% trans 'Confirm' %}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        {% if object.status == "disabled" %}
+          <button type="button" class="btn btn-success me-2 mb-2" data-bs-toggle="modal" data-bs-target="#enableAccountModal">{% trans "Enable user account" %}</button>
+          <div class="modal fade" id="enableAccountModal" tabindex="-1" aria-labelledby="enableAccountModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="enableAccountModalLabel">{% trans "Confirm enabling user account" %}</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+                </div>
+                <div class="modal-body">
+                  <p class="text-break">{% trans "This account will be enabled immediately." %}</p>
+                  <dl class="row">
+                    <dt class="col-sm-3">{% trans "User ID" %}</dt>
+                    <dd class="col-sm-9">{{ object.uid }}</dd>
+                  </dl>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                    <button type="submit" name="enable_account" class="btn btn-danger">{% trans "Confirm" %}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </form>
+      <h2 class="mt-4 mb-4">{% trans "Reset account password" %}</h2>
+      <div class="alert alert-info" role="alert">
+        <p>{% trans "Password requirements:" %}</p>
+        <ul>
+          <li>{% blocktrans with min_length=min_password_length %}Minimum {{ min_length }} characters{% endblocktrans %}</li>
+          <li>{% trans "Not similar to other user attributes" %}</li>
+        </ul>
+      </div>
+      {% crispy form form.helper %}
+    {% endif %}
+  </div>
+{% endblock %}
