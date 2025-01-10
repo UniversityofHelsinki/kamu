@@ -146,9 +146,15 @@ class RoleSearchView(LoginRequiredMixin, ListView[Role]):
             return queryset.none()
         search = self.request.GET["search"]
         if get_language() == "fi":
-            queryset = queryset.filter(Q(identifier__icontains=search) | Q(name_fi__icontains=search))
+            queryset = queryset.filter(
+                Q(identifier__icontains=search) | Q(name_fi__icontains=search) | Q(description_fi__icontains=search)
+            )
         elif get_language() == "sv":
-            queryset = queryset.filter(Q(identifier__icontains=search) | Q(name_sv__icontains=search))
+            queryset = queryset.filter(
+                Q(identifier__icontains=search) | Q(name_sv__icontains=search) | Q(description_sv__icontains=search)
+            )
         else:
-            queryset = queryset.filter(Q(identifier__icontains=search) | Q(name_en__icontains=search))
+            queryset = queryset.filter(
+                Q(identifier__icontains=search) | Q(name_en__icontains=search) | Q(description_en__icontains=search)
+            )
         return queryset.prefetch_related("owner", "parent")
