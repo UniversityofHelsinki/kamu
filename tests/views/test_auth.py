@@ -61,7 +61,7 @@ class LoginViewTests(BaseTestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn(f"{self.identity.display_name()}</h1>", response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()} |", response.content.decode("utf-8"))
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
@@ -109,7 +109,7 @@ class LoginViewTests(BaseTestCase):
         Identifier.objects.create(type=Identifier.Type.EPPN, value="newuser@example.org", identity=self.identity)
         response = self.client.get(f"{url}?next=/identity/me", follow=True, headers={"EPPN": "newuser@example.org"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn(f"{self.identity.display_name()}</h1>", response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()} |", response.content.decode("utf-8"))
 
     @override_settings(OIDC_CLAIM_SUB="HTTP_SUB")
     def test_google_login(self):
@@ -117,7 +117,7 @@ class LoginViewTests(BaseTestCase):
         Identifier.objects.create(type=Identifier.Type.GOOGLE, value="1234567890", identity=self.identity)
         response = self.client.get(f"{url}?next=/identity/me", follow=True, headers={"SUB": "1234567890"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn(f"{self.identity.display_name()}</h1>", response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()} |", response.content.decode("utf-8"))
 
     @override_settings(OIDC_CLAIM_SUB="HTTP_SUB")
     def test_google_login_without_account(self):
@@ -143,7 +143,7 @@ class LoginViewTests(BaseTestCase):
         iss = "https://login.microsoftonline.com/12345678-1234-1234-1234-123456789abc/v2.0"
         response = self._test_microsoft_login(iss, oid)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(f"{self.identity.display_name()}</h1>", response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()} |", response.content.decode("utf-8"))
 
     def test_microsoft_login_with_incorrect_issuer(self):
         oid = "00000000-0000-0000-0123-456789abcdef"
@@ -158,7 +158,7 @@ class LoginViewTests(BaseTestCase):
         Identifier.objects.create(type=Identifier.Type.FPIC, value="010181-900C", identity=self.identity)
         response = self.client.get(f"{url}?next=/identity/me", follow=True, headers={"SSN": "010181-900C"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn(f"{self.identity.display_name()}</h1>", response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()} |", response.content.decode("utf-8"))
 
     @override_settings(SMS_DEBUG=True)
     @mock.patch("kamu.connectors.sms.logger")
@@ -205,7 +205,7 @@ class LoginViewTests(BaseTestCase):
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn(f"{self.identity.display_name()}</h1>", response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()} |", response.content.decode("utf-8"))
 
     def test_email_login_verification_incorrect_token(self):
         email_secret, phone_secret = self._test_email_login_verification()

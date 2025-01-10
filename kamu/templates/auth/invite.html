@@ -15,7 +15,9 @@
       </div>
       <div class="col-md-6">
         <h2 class="mt-3">{% trans "Create identity" %}</h2>
-        <p>{% trans "If you don't have a user account or an identity yet, please create an identity." %}</p>
+        <p>{% blocktrans %}If you don't have a user account or an identity yet, please create an identity. You will
+          need an identity in order to gain roles, through which you will receive specific permissions. These include
+          the permission to activate a University of Helsinki user account.{% endblocktrans %}</p>
         <input type="submit" name="register" value="{% trans 'Create identity' %}" class="btn btn-primary" id="submit-id-submit"/>
       </div>
     </div>

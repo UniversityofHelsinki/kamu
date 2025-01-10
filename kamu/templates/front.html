@@ -8,41 +8,65 @@
     <div class="row">
       <div class="col-md-6">
         <h2 class="mt-4">{% trans "My information" %}</h2>
-        <p>{% trans "Manage your own information." %}</p>
+        <p>{% trans "Show and manage your own information. This includes your role memberships and basic information like names, contacts and contracts." %}</p>
         <a href="{% url 'identity-me' %}" class="btn btn-primary mb-3">{% trans "My information" %}</a>
       </div>
     </div>
     {% if perms.kamu.search_roles %}
-      <h2 class="mb-4 mt-4">{% trans "Role and membership management" %}</h2>
+      <h2 class="mb-4 mt-4">{% trans "Role and membership management" %}<button type="button" class="btn btn-info btn-sm info-button" data-bs-toggle="modal" data-bs-target="#infoModal">{% trans "info" %}</button></h2>
+      <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="infoModalLabel">{% trans "Manage role memberships" %}</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+            </div>
+            <div class="modal-body">
+              <p class="text-break">{% blocktrans %}All permissions provided to users are based on the active role
+                memberships. Role membership becomes active when all requirements of the membership are fulfilled:
+              {% endblocktrans %}</p>
+              <ul>
+                <li>{% trans "Membership has been approved" %}</li>
+                <li>{% trans "Membership is in active period, i.e. after start date and before expiration date." %}</li>
+                <li>{% trans "Role requirements are fulfilled. This may include signing agreements, giving certain user information and confirming user identity." %}</li>
+              </ul>
+              {% if HELP_LINK_MANAGERS %}<p class="text-break">{% blocktrans with link=HELP_LINK_MANAGERS %}Read more about role management from the <a href="{{ link }}">IT Helpdesk</a>.{% endblocktrans %}</p>{% endif %}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Close" %}</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="col-lg-4 col-md-6 mb-3">
           <h3>{% trans "Requiring approval" %}</h3>
-          <p>{% trans "Show memberships requiring approval." %}</p>
+          <p>{% blocktrans %}List memberships requiring approval.{% endblocktrans %}</p>
           <a href="{% url 'membership-approval' %}" class="btn btn-primary mb-3">{% trans "Requiring approval" %}</a>
         </div>
         <div class="col-lg-4 col-md-6 mb-3">
           <h3>{% trans "Expiring" %}</h3>
-          <p>{% trans "Show expiring memberships." %}</p>
+          <p>{% blocktrans %}List memberships expiring soon.{% endblocktrans %}</p>
           <a href="{% url 'membership-expiring' %}" class="btn btn-primary mb-3">{% trans "Expiring" %}</a>
         </div>
         <div class="col-lg-4 col-md-6 mb-3">
           <h3>{% trans "Role search" %}</h3>
-          <p>{% trans "Search roles." %}</p>
+          <p>{% blocktrans %}Search all possible roles here and see their details.{% endblocktrans %}</p>
           <a href="{% url 'role-search' %}" class="btn btn-primary mb-3">{% trans "Search" %}</a>
         </div>
         <div class="col-lg-4 col-md-6 mb-3">
           <h3>{% trans "Inviter" %}</h3>
-          <p>{% trans "Show roles with invite permissions." %}</p>
+          <p>{% blocktrans %}Show roles to which you have the right to invite others.{% endblocktrans %}</p>
           <a href="{% url 'role-list-inviter' %}" class="btn btn-primary mb-3">{% trans "Inviter" %}</a>
         </div>
         <div class="col-lg-4 col-md-6 mb-3">
           <h3>{% trans "Approver" %}</h3>
-          <p>{% trans "Show roles with approve permissions." %}</p>
+          <p>{% blocktrans %}Show roles that you have the approval rights to.{% endblocktrans %}</p>
           <a href="{% url 'role-list-approver' %}" class="btn btn-primary mb-3">{% trans "Approver" %}</a>
         </div>
         <div class="col-lg-4 col-md-6 mb-3">
           <h3>{% trans "Owner" %}</h3>
-          <p>{% trans "Show roles you own." %}</p>
+          <p>{% blocktrans %}Show roles that you have the owner rights to.{% endblocktrans %}</p>
           <a href="{% url 'role-list-owner' %}" class="btn btn-primary mb-3">{% trans "Owner" %}</a>
         </div>
       </div>
@@ -52,7 +76,8 @@
       <div class="row">
         <div class="col-lg-4 col-md-6 mb-3">
           <h3>{% trans "Admin site" %}</h3>
-          <p>{% trans "Manage roles and permissions " %}</p>
+          <p>{% blocktrans %}Admin site allows you to manage role and permission information, according to your
+            access rights.{% endblocktrans %}</p>
           <a href="{% url 'admin:index' %}" class="btn btn-primary mb-3">{% trans "Admin site" %}</a>
         </div>
       </div>

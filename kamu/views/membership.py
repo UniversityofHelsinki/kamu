@@ -354,6 +354,14 @@ class MembershipExpiringListView(MembershipListBaseView):
 
     template_name = "membership/membership_expiring_list.html"
 
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Add date limit to context.
+        """
+        context = super().get_context_data(**kwargs)
+        context["expiring_date_limit"] = getattr(settings, "EXPIRING_LIMIT_DAYS", 30)
+        return context
+
     def get_queryset(self) -> QuerySet[Membership]:
         """
         Include only memberships expiring in the next EXPIRING_LIMIT_DAYS (default 30) days.

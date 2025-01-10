@@ -45,7 +45,12 @@ class IdentitySearchForm(forms.Form):
     surname = forms.CharField(label=_("Surname"), max_length=255, required=False)
     uid = forms.CharField(label=_("User account"), max_length=255, required=False)
     email = forms.CharField(label=_("E-mail address"), max_length=255, required=False)
-    phone = forms.CharField(label=_("Phone number"), max_length=20, required=False)
+    phone = forms.CharField(
+        label=_("Phone number"),
+        max_length=20,
+        required=False,
+        help_text=_("Use international format, e.g. +358401234567, including only numbers and + sign."),
+    )
     fpic = forms.CharField(label=_("Finnish personal identity code"), max_length=11, required=False)
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -321,7 +326,7 @@ class IdentityForm(forms.ModelForm):
                 layout[10].append(Div("fpic_verification", css_class="col-md-4"))
             layout.append(
                 FormActions(
-                    Submit("submit", _("Save")),
+                    Submit("submit", _("Save changes")),
                     HTML(
                         '<a class="btn btn-secondary ms-2" href="'
                         + reverse("identity-detail", kwargs={"pk": self.instance.pk})

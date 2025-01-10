@@ -58,7 +58,7 @@ class IdentityViewTests(BaseTestCase):
         response = self.client.get(f"{self.url}{self.identity.pk}/")
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("alert", response.content.decode("utf-8"))
-        self.assertIn(f"{self.identity.display_name()}</h1>", response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()} |", response.content.decode("utf-8"))
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Read identity information", extra=ANY),
@@ -283,7 +283,7 @@ class IdentityEditTests(BaseTestCase):
         self.data["fpic"] = "010181-900C"
         response = self.client.post(self.url, self.data, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(f"{self.identity.display_name()}</h1>", response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()} |", response.content.decode("utf-8"))
         self.assertIn("New-User", response.content.decode("utf-8"))
         self.assertIn("Jan. 1, 1999", response.content.decode("utf-8"))
         self.assertIn("010181-900C", response.content.decode("utf-8"))

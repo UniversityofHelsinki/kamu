@@ -4,10 +4,17 @@
   margin-bottom: 1rem;
 }
 
-* {
-   border-radius: 0 !important;
+.btn {
+  border-radius: 0;
 }
 
+.info-button {
+  display: inline-block;
+  margin: 0 1rem 0 1rem;
+  line-height: 1;
+  --bs-btn-padding-y: 0.1rem;
+  vertical-align: top;
+}
 
 .btn-lang {
   --bs-btn-color: #000;

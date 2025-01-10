@@ -31,7 +31,7 @@ class FrontPageViewTests(BaseTestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Manage your own information", response.content.decode("utf-8"))
+        self.assertIn("manage your own information", response.content.decode("utf-8"))
 
     def test_front_page_view_logged_in_with_role_permissions(self):
         self.create_user()
@@ -39,7 +39,7 @@ class FrontPageViewTests(BaseTestCase):
         set_default_permissions(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Manage your own information", response.content.decode("utf-8"))
+        self.assertIn("manage your own information", response.content.decode("utf-8"))
         self.assertIn("Role and membership management", response.content.decode("utf-8"))
 
     def test_front_page_view_logged_in_with_messages(self):

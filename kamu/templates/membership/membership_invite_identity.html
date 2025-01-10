@@ -6,9 +6,10 @@
 {% block content %}
   <h1>{% trans "Invite to role" %} {{ role.name }}</h1>
   <div class="alert alert-success" role="alert">
-  <p>{% trans "To invite a new member, first check if the identity already exists." %}</p>
-  <p>{% trans "You can add a role directly to identities in the Kamu or the organization user directory." %}</p>
-  <p>{% trans "If the user is not listed in the directory, you can invite them by email." %}</p>
+  <p>{% trans "To invite a new member, first search for the identity with known user information like email and phone number." %}</p>
+  <p>{% trans "If person is already found from the Kamu or the user directory, you can add role directly to the person." %}</p>
+  <p>{% trans "Otherwise you you can invite them by email, by searching with the email address." %}</p>
+  {% if HELP_LINK_MANAGERS %}<p class="text-break">{% blocktrans with link=HELP_LINK_MANAGERS %}Read more about role management from the <a href="{{ link }}">IT Helpdesk</a>.{% endblocktrans %}</p>{% endif %}
   </div>
   {% crispy form form.helper %}
   {% if object_list or request.POST.submit %}
@@ -42,7 +43,7 @@
   {% endif %}
   {% if email and not email_found %}
     <h3>{% trans "Email invitation" %}</h3>
-    <p>{% trans "Email address not found" %}: {{ email }}</p>
+    <p>{% blocktrans with email=email %}Email address not found in the registry: {{ email }}{% endblocktrans %}</p>
     <a href="{% url 'role-invite-details-email' role.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Send invitation" %}</a>
   {% endif %}
   {% if ldap_results %}
