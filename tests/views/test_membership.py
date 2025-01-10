@@ -40,7 +40,16 @@ class MembershipViewTests(BaseTestCase):
         self.client = Client()
         self.client.force_login(self.user)
 
-    def test_show_membership(self):
+    def test_show_membership_in_identity_details(self):
+        response = self.client.get(f"/identity/{self.identity.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Role memberships", response.content.decode("utf-8"))
+        self.assertIn(self.role.name(), response.content.decode("utf-8"))
+        self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
+        self.assertNotIn("invited_user@example.org", response.content.decode("utf-8"))
+        self.assertNotIn("Approval required", response.content.decode("utf-8"))
+
+    def test_show_membership_details(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Membership details", response.content.decode("utf-8"))

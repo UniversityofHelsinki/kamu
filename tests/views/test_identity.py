@@ -65,6 +65,36 @@ class IdentityViewTests(BaseTestCase):
             ]
         )
 
+    def test_view_identity_list_memberships(self):
+        self.create_identity()
+        role = self.create_role()
+        self.create_membership(
+            role,
+            self.identity,
+            start_delta_days=0,
+            expire_delta_days=1,
+        )
+        response = self.client.get(f"{self.url}{self.identity.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Role memberships", response.content.decode("utf-8"))
+        self.assertNotIn("Expired memberships", response.content.decode("utf-8"))
+        self.assertIn(role.name(), response.content.decode("utf-8"))
+
+    def test_view_identity_list_expired_memberships(self):
+        self.create_identity()
+        role = self.create_role()
+        self.create_membership(
+            role,
+            self.identity,
+            start_delta_days=-2,
+            expire_delta_days=-1,
+        )
+        response = self.client.get(f"{self.url}{self.identity.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("You do not have any current or upcoming memberships.", response.content.decode("utf-8"))
+        self.assertIn("Expired memberships", response.content.decode("utf-8"))
+        self.assertIn(role.name(), response.content.decode("utf-8"))
+
 
 class IdentitySearchTests(BaseTestCase):
     def setUp(self):

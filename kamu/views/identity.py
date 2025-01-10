@@ -74,6 +74,9 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
         context["memberships"] = Membership.objects.filter(
             identity=self.object, expire_date__gte=timezone.now().date()
         )
+        context["expired_memberships"] = Membership.objects.filter(
+            identity=self.object, expire_date__lt=timezone.now().date()
+        )
         context["identifiers"] = Identifier.objects.filter(identity=self.object, deactivated_at=None)
         return context
 
