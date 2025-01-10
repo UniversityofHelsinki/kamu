@@ -39,9 +39,6 @@ class IdentityCombineForm(forms.Form):
 class IdentitySearchForm(forms.Form):
     """
     Form to search identities.
-
-    Using GET method to get a bookmarkable URL.
-    Only use with insensitive fields as search values are set to URL parameters.
     """
 
     given_names = forms.CharField(label=_("Given name(s)"), max_length=255, required=False)

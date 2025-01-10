@@ -6,32 +6,30 @@
 {% block content %}
   <h1 class="mb-4">{% trans "Identity search" %}</h1>
   {% crispy form form.helper %}
-  <h2 id="results-list" class="mt-4">{% trans "Kamu results" %}</h2>
-  {% if object_list %}
-  <p>{% trans "To protect user privacy, email addresses and phone numbers are only listed when exactly matching the search parameter." %}</p>
-  <table class="table" aria-describedby="results-list">
-    <thead>
-    <tr>
-      <th scope="col">{% trans "Name" %}</th>
-      <th scope="col">{% trans "User account" %}</th>
-      <th scope="col">{% trans "Attributes" %}</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for identity in object_list %}
-      <tr>
-        <th scope="row"><a href="{% url 'identity-detail' identity.pk %}">{{ identity.display_name }}</a></th>
-        <td>{% if uid and uid == identity.uid %}<b>{{ identity.uid }}</b>{% elif identity.uid %}{{ identity.uid }}{% endif %}</td>
-        <td>{% matching_attributes identity=identity email=email phone=phone fpic=fpic as attributes %}{{ attributes|safe }}</td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-    {% if request.GET.submit %}
-      <p>{% trans "No results with the provided search parameters." %}</p>
+  {% if object_list or request.POST.submit %}
+    <h2 id="results-list" class="mt-4">{% trans "Kamu results" %}</h2>
+    {% if object_list %}
+      <p>{% trans "To protect user privacy, email addresses and phone numbers are only listed when exactly matching the search parameter." %}</p>
+      <table class="table" aria-describedby="results-list">
+        <thead>
+        <tr>
+          <th scope="col">{% trans "Name" %}</th>
+          <th scope="col">{% trans "User account" %}</th>
+          <th scope="col">{% trans "Attributes" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for identity in object_list %}
+          <tr>
+            <th scope="row"><a href="{% url 'identity-detail' identity.pk %}">{{ identity.display_name }}</a></th>
+            <td>{% if uid and uid == identity.uid %}<b>{{ identity.uid }}</b>{% elif identity.uid %}{{ identity.uid }}{% endif %}</td>
+            <td>{% matching_attributes identity=identity email=email phone=phone fpic=fpic as attributes %}{{ attributes|safe }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
     {% else %}
-      <p>{% trans "Submit a search to get results." %}</p>
+      <p>{% trans "No results with the provided search parameters." %}</p>
     {% endif %}
   {% endif %}
 

@@ -11,29 +11,34 @@
   <p>{% trans "If the user is not listed in the directory, you can invite them by email." %}</p>
   </div>
   {% crispy form form.helper %}
-  {% if object_list %}
-  <h2 id="results-list">{% trans "Kamu results" %}</h2>
-  <p>{% trans "To protect user privacy, email addresses and phone numbers are only listed when exactly matching the search parameter." %}</p>
-  <table class="table" aria-describedby="results-list">
-    <thead>
-    <tr>
-      <th scope="col">{% trans "Name" %}</th>
-      <th scope="col">{% trans "User account" %}</th>
-      <th scope="col">{% trans "Attributes" %}</th>
-      <th scope="col">{% trans "Select" %}</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for identity in object_list %}
-      <tr>
-        <th scope="row"><a href="{% url 'identity-detail' identity.pk %}">{{ identity.display_name }}</a></th>
-        <td>{% if uid and uid == identity.uid %}<b>{{ identity.uid }}</b>{% elif identity.uid %}{{ identity.uid }}{% endif %}</td>
-        <td>{% matching_attributes identity=identity email=email phone=phone fpic=fpic as attributes %}{{ attributes|safe }}</td>
-        <td><a href="{% url 'role-invite-details' role.pk identity.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Add role" %}</a></td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+  {% if object_list or request.POST.submit %}
+    <h2 id="results-list">{% trans "Kamu results" %}</h2>
+    {% if object_list %}
+      <p>{% trans "To protect user privacy, email addresses and phone numbers are only listed when exactly matching the search parameter." %}</p>
+      <table class="table" aria-describedby="results-list">
+        <thead>
+        <tr>
+          <th scope="col">{% trans "Name" %}</th>
+          <th scope="col">{% trans "User account" %}</th>
+          <th scope="col">{% trans "Attributes" %}</th>
+          <th scope="col">{% trans "Select" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for identity in object_list %}
+          <tr>
+            <th scope="row"><a href="{% url 'identity-detail' identity.pk %}">{{ identity.display_name }}</a></th>
+            <td>{% if uid and uid == identity.uid %}<b>{{ identity.uid }}</b>{% elif identity.uid %}{{ identity.uid }}{% endif %}</td>
+            <td>{% matching_attributes identity=identity email=email phone=phone fpic=fpic as attributes %}{{ attributes|safe }}</td>
+            <td><a href="{% url 'role-invite-details' role.pk identity.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Add role" %}</a></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>{% trans "No results with the provided search parameters." %}</p>
+      {% if not email %}<p>{% trans "Please search with email address if you wish to send email invite to the role." %}</p>{% endif %}
+    {% endif %}
   {% endif %}
   {% if email and not email_found %}
     <h3>{% trans "Email invitation" %}</h3>
