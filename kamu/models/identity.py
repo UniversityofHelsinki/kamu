@@ -371,10 +371,10 @@ class Identity(models.Model):
 
     def get_requirements(self) -> QuerySet[Requirement]:
         """
-        Returns combined requirements of all roles of the identity.
+        Returns combined requirements of all current or upcoming roles of the identity.
         """
         all_roles = Role.objects.none()
-        for role in self.roles.all():
+        for role in self.roles.filter(membership__expire_date__gte=timezone.now().date()):
             all_roles |= role.get_role_hierarchy()
         roles = all_roles.distinct()
         permissions = Permission.objects.filter(role__in=roles).distinct()
