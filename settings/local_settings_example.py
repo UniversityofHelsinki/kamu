@@ -169,3 +169,6 @@ SKIP_NAME_SEARCH_IF_IDENTIFIER_MATCHES: bool = True
 
 # When searching identities, do not show LDAP search results which are also found from Kamu.
 FILTER_KAMU_RESULTS_FROM_LDAP_RESULTS: bool = True
+
+HELP_LINK_MANAGERS: str = "https://helpdesk.it.helsinki.fi/"
+HELP_LINK_USERS: str = "https://helpdesk.it.helsinki.fi/"
