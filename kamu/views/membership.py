@@ -3,7 +3,7 @@ Membership views for the UI.
 """
 
 import datetime
-from typing import Any
+from typing import Any, TypeVar
 
 from django.conf import settings
 from django.contrib import messages
@@ -45,6 +45,9 @@ from kamu.utils.membership import (
 from kamu.views.identity import IdentitySearchView
 
 audit_log = AuditLog()
+
+
+MembershipFormType = TypeVar("MembershipFormType", MembershipCreateForm, MembershipEmailCreateForm)
 
 
 class MembershipJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateForm]):
@@ -409,9 +412,7 @@ class MembershipInviteIdentitySearch(IdentitySearchView):
         return context
 
 
-class BaseMembershipInviteView(
-    LoginRequiredMixin, CreateView[Membership, MembershipCreateForm | MembershipEmailCreateForm]
-):
+class BaseMembershipInviteView(LoginRequiredMixin, CreateView[Membership, MembershipFormType]):
     """
     Base view for inviting a user to a role.
     """
@@ -463,7 +464,7 @@ class MembershipInviteView(BaseMembershipInviteView):
         context["identity"] = get_object_or_404(Identity, pk=self.kwargs.get("identity_pk"))
         return context
 
-    def form_valid(self, form: MembershipCreateForm | MembershipEmailCreateForm) -> HttpResponse:
+    def form_valid(self, form: MembershipFormType) -> HttpResponse:
         """
         Set role and other data to the membership.
         """
@@ -532,7 +533,7 @@ class MembershipInviteLdapView(BaseMembershipInviteView):
         context["ldapuser"] = user
         return context
 
-    def form_valid(self, form: MembershipCreateForm | MembershipEmailCreateForm) -> HttpResponse:
+    def form_valid(self, form: MembershipFormType) -> HttpResponse:
         """
         Create identity and membership.
 
@@ -588,7 +589,7 @@ class MembershipInviteEmailView(BaseMembershipInviteView):
         kwargs["email"] = self.request.session.get("invitation_email_address")
         return kwargs
 
-    def form_valid(self, form: MembershipCreateForm | MembershipEmailCreateForm) -> HttpResponse:
+    def form_valid(self, form: MembershipFormType) -> HttpResponse:
         """
         Set role and other data to the membership.
         """
