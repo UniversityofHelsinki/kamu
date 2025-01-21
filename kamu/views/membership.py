@@ -8,7 +8,7 @@ from typing import Any
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q, QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -30,18 +30,18 @@ from kamu.forms.membership import (
     MembershipEditForm,
     MembershipEmailCreateForm,
 )
-from kamu.models.identity import EmailAddress, Identifier, Identity
+from kamu.models.identity import Identity
 from kamu.models.membership import Membership
 from kamu.models.role import Role
 from kamu.models.token import TimeLimitError, Token
 from kamu.utils.audit import AuditLog
+from kamu.utils.identity import import_identity
 from kamu.utils.membership import (
     add_missing_requirement_messages,
     claim_membership,
     get_expiring_memberships,
     get_memberships_requiring_approval,
 )
-from kamu.validators.identity import validate_fpic
 from kamu.views.identity import IdentitySearchView
 
 audit_log = AuditLog()
@@ -532,119 +532,6 @@ class MembershipInviteLdapView(BaseMembershipInviteView):
         context["ldapuser"] = user
         return context
 
-    @staticmethod
-    def _parse_fpic(user: dict) -> str | None:
-        """
-        Parse fpic from user.
-        """
-        if "schacPersonalUniqueID" in user:
-            fpic = user["schacPersonalUniqueID"].rsplit(":", 1)[1]
-            try:
-                validate_fpic(fpic)
-                return fpic
-            except ValidationError:
-                return None
-        return None
-
-    def _create_identity_from_ldap(self, user: dict) -> Identity:
-        """
-        Create identity from LDAP attributes.
-
-        Use get_or_create to create eppn and fpic identifiers, to avoid duplicates.
-        """
-        identity = Identity.objects.create(
-            uid=user["uid"],
-            given_names=user["givenName"],
-            given_names_verification=Identity.VerificationMethod.EXTERNAL,
-            surname=user["sn"],
-            surname_verification=Identity.VerificationMethod.EXTERNAL,
-        )
-        audit_log.info(
-            "Identity created.",
-            category="identity",
-            action="create",
-            outcome="success",
-            request=self.request,
-            objects=[identity],
-            log_to_db=True,
-        )
-        if "mail" in user:
-            email_object = EmailAddress.objects.create(address=user["mail"], identity=identity)
-            audit_log.info(
-                f"Email address added to identity { identity }",
-                category="email_address",
-                action="create",
-                outcome="success",
-                request=self.request,
-                objects=[email_object, identity],
-                log_to_db=True,
-            )
-        if "schacDateOfBirth" in user:
-            identity.date_of_birth = datetime.datetime.strptime(user["schacDateOfBirth"], "%Y%m%d").date()
-            identity.date_of_birth_verification = Identity.VerificationMethod.EXTERNAL
-        if "preferredLanguage" in user and user["preferredLanguage"] in [k for k, v in settings.LANGUAGES]:
-            identity.preferred_language = user["preferredLanguage"]
-        fpic = self._parse_fpic(user)
-        if fpic:
-            identity.fpic = fpic
-            identity.fpic_verification = Identity.VerificationMethod.EXTERNAL
-        identity.save()
-        identifier, created = Identifier.objects.get_or_create(
-            type=Identifier.Type.EPPN,
-            value=f"{user['uid']}{settings.LOCAL_EPPN_SUFFIX}",
-            identity=identity,
-            deactivated_at=None,
-        )
-        if created:
-            audit_log.info(
-                f"Linked { identifier.type } identifier to identity { identity }",
-                category="identifier",
-                action="create",
-                outcome="success",
-                request=self.request,
-                objects=[identifier, identity],
-                log_to_db=True,
-            )
-        if fpic:
-            Identifier.objects.get_or_create(
-                type=Identifier.Type.FPIC, value=fpic, identity=identity, deactivated_at=None
-            )
-        return identity
-
-    def _check_existing_identity(self, user: dict) -> Identity | None:
-        """
-        Check if identity already exists.
-        - uid or fpic
-        - Identifier with type eppn or fpic
-        """
-        try:
-            return Identity.objects.get(uid=user["uid"])
-        except Identity.DoesNotExist:
-            pass
-        try:
-            return Identifier.objects.get(
-                type=Identifier.Type.EPPN,
-                value=f"{user['uid']}{settings.LOCAL_EPPN_SUFFIX}",
-                deactivated_at=None,
-            ).identity
-        except Identifier.DoesNotExist:
-            pass
-        fpic = self._parse_fpic(user)
-        if fpic:
-            try:
-                return Identity.objects.get(fpic=fpic)
-            except Identity.DoesNotExist:
-                pass
-            try:
-                return Identifier.objects.get(
-                    type=Identifier.Type.FPIC,
-                    value=fpic,
-                    deactivated_at=None,
-                ).identity
-            except Identifier.DoesNotExist:
-                pass
-        return None
-
     def form_valid(self, form: MembershipCreateForm | MembershipEmailCreateForm) -> HttpResponse:
         """
         Create identity and membership.
@@ -652,33 +539,12 @@ class MembershipInviteLdapView(BaseMembershipInviteView):
         If identity already exists with the same uid or fpic, use it instead.
         """
         uid = self.kwargs.get("uid")
-        try:
-            ldap_user = ldap_search(
-                search_filter="(uid={})",
-                search_values=[uid],
-                ldap_attributes=[
-                    "uid",
-                    "givenName",
-                    "sn",
-                    "mail",
-                    "schacDateOfBirth",
-                    "preferredLanguage",
-                    "schacPersonalUniqueID",
-                ],
-            )
-        except LDAP_SIZELIMIT_EXCEEDED:
+        inviter = self.request.user if self.request.user.is_authenticated else None
+        identity = import_identity(uid, request=self.request)
+        if not identity or not inviter:
             raise PermissionDenied
-        if not ldap_user or len(ldap_user) != 1:
-            raise PermissionDenied
-        user = ldap_user[0]
-        identity = self._check_existing_identity(user)
-        if not identity:
-            identity = self._create_identity_from_ldap(user)
         form.instance.identity = identity
         form.instance.role = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
-        inviter = self.request.user if self.request.user.is_authenticated else None
-        if not inviter:
-            raise PermissionDenied
         form.instance.inviter = inviter
         if form.instance.role.is_approver(user=inviter):
             form.instance.approver = inviter

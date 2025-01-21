@@ -2,18 +2,23 @@
 Helper functions for the identity
 """
 
+from datetime import datetime
 from typing import TYPE_CHECKING, Callable
 
+from django.conf import settings
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from kamu.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
 from kamu.models.contract import Contract
 from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
 from kamu.models.membership import Membership
 from kamu.utils.audit import AuditLog
+from kamu.validators.identity import validate_fpic
 
 if TYPE_CHECKING:
     from kamu.utils.audit import CategoryTypes
@@ -227,3 +232,158 @@ def combine_identities(request: HttpRequest, primary_identity: Identity, seconda
         log_to_db=True,
     )
     secondary_identity.delete()
+
+
+def _parse_fpic(user: dict) -> str | None:
+    """
+    Parse fpic from user.
+    """
+    if "schacPersonalUniqueID" in user:
+        fpic = user["schacPersonalUniqueID"].rsplit(":", 1)[1]
+        try:
+            validate_fpic(fpic)
+            return fpic
+        except ValidationError:
+            return None
+    return None
+
+
+def _check_existing_identity(user: dict) -> Identity | None:
+    """
+    Check if identity already exists.
+    - uid or fpic
+    - Identifier with type eppn or fpic
+    """
+    try:
+        return Identity.objects.get(uid=user["uid"])
+    except Identity.DoesNotExist:
+        pass
+    try:
+        return Identifier.objects.get(
+            type=Identifier.Type.EPPN,
+            value=f"{user['uid']}{settings.LOCAL_EPPN_SUFFIX}",
+            deactivated_at=None,
+        ).identity
+    except Identifier.DoesNotExist:
+        pass
+    fpic = _parse_fpic(user)
+    if fpic:
+        try:
+            return Identity.objects.get(fpic=fpic)
+        except Identity.DoesNotExist:
+            pass
+        try:
+            return Identifier.objects.get(
+                type=Identifier.Type.FPIC,
+                value=fpic,
+                deactivated_at=None,
+            ).identity
+        except Identifier.DoesNotExist:
+            pass
+    return None
+
+
+def get_user_from_ldap(uid: str) -> dict | None:
+    """
+    Get user from LDAP by uid.
+    """
+    try:
+        ldap_user = ldap_search(
+            search_filter="(uid={})",
+            search_values=[uid],
+            ldap_attributes=[
+                "uid",
+                "givenName",
+                "sn",
+                "mail",
+                "schacDateOfBirth",
+                "preferredLanguage",
+                "schacPersonalUniqueID",
+            ],
+        )
+    except LDAP_SIZELIMIT_EXCEEDED:
+        return None
+    if not ldap_user or len(ldap_user) != 1:
+        return None
+    return ldap_user[0]
+
+
+def create_identity_from_ldap(uid: str, request: HttpRequest | None = None) -> Identity | None:
+    """
+    Checks if identity already exists and if not, tries to create identity from LDAP attributes.
+
+    Use get_or_create to create eppn and fpic identifiers, to avoid duplicates.
+    """
+    user = get_user_from_ldap(uid)
+    if not user:
+        return None
+    identity = _check_existing_identity(user)
+    if identity:
+        return identity
+    identity = Identity.objects.create(
+        uid=user["uid"],
+        given_names=user["givenName"],
+        given_names_verification=Identity.VerificationMethod.EXTERNAL,
+        surname=user["sn"],
+        surname_verification=Identity.VerificationMethod.EXTERNAL,
+    )
+    audit_log.info(
+        "Identity created.",
+        category="identity",
+        action="create",
+        outcome="success",
+        request=request,
+        objects=[identity],
+        log_to_db=True,
+    )
+    if "mail" in user:
+        email_object = EmailAddress.objects.create(address=user["mail"], identity=identity)
+        audit_log.info(
+            f"Email address added to identity { identity }",
+            category="email_address",
+            action="create",
+            outcome="success",
+            request=request,
+            objects=[email_object, identity],
+            log_to_db=True,
+        )
+    if "schacDateOfBirth" in user:
+        identity.date_of_birth = datetime.strptime(user["schacDateOfBirth"], "%Y%m%d").date()
+        identity.date_of_birth_verification = Identity.VerificationMethod.EXTERNAL
+    if "preferredLanguage" in user and user["preferredLanguage"] in [k for k, v in settings.LANGUAGES]:
+        identity.preferred_language = user["preferredLanguage"]
+    fpic = _parse_fpic(user)
+    if fpic:
+        identity.fpic = fpic
+        identity.fpic_verification = Identity.VerificationMethod.EXTERNAL
+    identity.save()
+    identifier, created = Identifier.objects.get_or_create(
+        type=Identifier.Type.EPPN,
+        value=f"{user['uid']}{settings.LOCAL_EPPN_SUFFIX}",
+        identity=identity,
+        deactivated_at=None,
+    )
+    if created:
+        audit_log.info(
+            f"Linked { identifier.type } identifier to identity { identity }",
+            category="identifier",
+            action="create",
+            outcome="success",
+            request=request,
+            objects=[identifier, identity],
+            log_to_db=True,
+        )
+    if fpic:
+        Identifier.objects.get_or_create(type=Identifier.Type.FPIC, value=fpic, identity=identity, deactivated_at=None)
+    return identity
+
+
+def import_identity(uid: str | None = None, request: HttpRequest | None = None) -> Identity | None:
+    """
+    Imports and creates identity from external source, if possible.
+
+    Currently importing from LDAP with uid is supported.
+    """
+    if uid:
+        return create_identity_from_ldap(uid, request)
+    return None
