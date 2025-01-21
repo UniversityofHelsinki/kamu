@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, AnonymousUser
+from django.contrib.auth.models import User as UserType
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q, QuerySet
 from django.http import HttpRequest
@@ -249,3 +250,19 @@ def claim_membership(request: HttpRequest, identity: Identity) -> int:
         log_to_db=True,
     )
     return membership.pk
+
+
+def get_mass_invite_limit(user: UserType | AnonymousUser) -> int:
+    """
+    Return invite limit for user.
+    """
+    if not user or not user.is_authenticated:
+        return 0
+    permission_groups = getattr(settings, "MASS_INVITE_PERMISSION_GROUPS", {})
+    user_groups = user.groups.values_list("name", flat=True)
+    limit = 0
+    for group in user_groups:
+        value = permission_groups.get(group, 0)
+        if value > limit:
+            limit = value
+    return limit

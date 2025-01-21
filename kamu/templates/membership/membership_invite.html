@@ -44,6 +44,25 @@
     <h3>{% trans "Message" %}</h3>
     <code>{{ preview_message|linebreaksbr }}</code>
   {% endif %}
+  {% if to_be_added or to_be_invited %}
+    <h2 class="mb-3 mt-4">{% trans "Multiple invites" %}</h2>
+    {% if to_be_added %}
+      <p>{% trans "Following identities in Kamu will be added to the role:" %}</p>
+      <ul>
+        {% for identity in to_be_added %}
+          <li><a href="{% url 'identity-detail' identity.pk %}">{{ identity.display_name }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% if to_be_invited %}
+      <p>{% trans "Following email addresses will receive an invitation:" %}</p>
+      <ul>
+        {% for email in to_be_invited %}
+          <li>{{ email }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endif %}
   <h2 class="mb-3 mt-4">{% trans "Member information" %}</h2>
   <form method="post">
     {% csrf_token %}

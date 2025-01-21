@@ -48,6 +48,11 @@ When inviting users by email, unique invitation code is created and send to the 
 If the inviter has also approval permissions, the membership is automatically approved, otherwise the membership requires
 approval from another user with approval permissions.
 
+Multiple invites can be sent at once, if user has permissions given by the MASS_INVITE_PERMISSION_GROUPS setting. Setting
+defined how many users can be invited at once. Users are checked from the Kamu with given identifying information:
+email, phone number or Finnish personal identity code. Kamu users are added directly to the role, other users are
+invited by email.
+
 Claiming the invite
 -------------------
 User can claim the invitation by clicking the link in the invitation email or entering the invitation code on the registration

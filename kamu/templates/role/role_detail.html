@@ -42,6 +42,9 @@
   {% if is_approver %}
     <a href="{% url 'role-join' object.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Join" %}</a>
   {% endif %}
+  {% if mass_invite_limit > 1 %}
+    <a href="{% url 'role-invite-mass' object.pk %}" class="btn btn-primary mb-3 me-3">{% blocktrans with limit=mass_invite_limit %}Invite multiple members (max {{ limit }}){% endblocktrans %}</a>
+  {% endif %}
   {% if memberships %}
     <h2 id="members-list">{% trans "Members" %}</h2>
     <table class="table" aria-describedby="members-list">

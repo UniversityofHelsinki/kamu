@@ -399,7 +399,7 @@ class MembershipInviteTests(BaseTestCase):
                 call(20, "Identity created.", extra=ANY),
                 call(20, "Email address added to identity Ldap User", extra=ANY),
                 call(20, "Linked eppn identifier to identity Ldap User", extra=ANY),
-                call(20, f"Membership to {self.role.identifier} added to identity: Ldap User", extra=ANY),
+                call(20, f"Membership to {self.role.name()} added to identity: Ldap User", extra=ANY),
             ]
         )
         self.assertIn(
@@ -470,7 +470,7 @@ class MembershipInviteTests(BaseTestCase):
         self.assertIn("Test text", mail.outbox[0].body)
         mock_logger.log.assert_has_calls(
             [
-                call(20, f"Invited invite@example.org to role {self.role.identifier}", extra=ANY),
+                call(20, f"Invited invite@example.org to role {self.role.name()}", extra=ANY),
             ]
         )
 
@@ -489,3 +489,97 @@ class MembershipInviteTests(BaseTestCase):
             "the user directory.",
             response.content.decode("utf-8"),
         )
+
+
+class MembershipMassInviteViewTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.create_identity(user=True, email=True)
+        self.create_superidentity(user=True, phone=True)
+        self.role = self.create_role()
+        self.url = f"/role/{ self.role.pk }/invite/multiple/"
+        self.group = Group.objects.create(name="group")
+        self.role.inviters.add(self.group)
+        self.user.groups.add(self.group)
+        self.data = {
+            "start_date": timezone.now().date(),
+            "expire_date": timezone.now().date() + datetime.timedelta(days=7),
+            "reason": "Because",
+            "invite_language": "en",
+        }
+        self.client = Client()
+        self.client.force_login(self.user)
+
+    @override_settings(ALLOW_TEST_FPIC=True)
+    @override_settings(MASS_INVITE_PERMISSION_GROUPS={"group": 3})
+    def test_mass_invite_preview(self):
+        identifier = Identifier.objects.create(
+            identity=self.superidentity, type=Identifier.Type.FPIC, value="010181-900C"
+        )
+        response = self.client.post(
+            self.url,
+            self.data
+            | {"invited": f"{self.email_address}\n010181-900C\ninvited@example.org", "preview_message": "True"},
+        )
+        self.assertIn("Multiple invites", response.content.decode("utf-8"))
+        self.assertIn("Tester Mc.", response.content.decode("utf-8"))
+        self.assertIn("Dr. User", response.content.decode("utf-8"))
+        self.assertIn("invited@example.org", response.content.decode("utf-8"))
+        identifier.deactivated_at = timezone.now()
+        identifier.save()
+        response = self.client.post(
+            self.url,
+            self.data
+            | {"invited": f"{self.email_address}\n010181-900C\ninvited@example.org", "preview_message": "True"},
+        )
+        self.assertNotIn("Dr. User", response.content.decode("utf-8"))
+
+    @override_settings(ALLOW_TEST_FPIC=True)
+    @override_settings(MASS_INVITE_PERMISSION_GROUPS={"group": 3})
+    @mock.patch("kamu.utils.audit.logger_audit")
+    def test_mass_invite(self, mock_logger):
+        Identifier.objects.create(identity=self.superidentity, type=Identifier.Type.FPIC, value="010181-900C")
+        response = self.client.post(
+            self.url, self.data | {"invited": f"{self.email_address}\n010181-900C\ninvited@example.org"}, follow=True
+        )
+        self.assertIn("Role details", response.content.decode("utf-8"))
+        self.assertIn("Added following identities: Tester Mc., Dr. User", response.content.decode("utf-8"))
+        self.assertIn(
+            "Invite email sent to following addresses: invited@example.org", response.content.decode("utf-8")
+        )
+        mock_logger.log.assert_has_calls(
+            [
+                call(
+                    20, f"Membership to {self.role.name()} added to identity: {self.user.get_full_name()}", extra=ANY
+                ),
+                call(
+                    20,
+                    f"Membership to {self.role.name()} added to identity: {self.superuser.get_full_name()}",
+                    extra=ANY,
+                ),
+                call(20, f"Invited invited@example.org to role {self.role.name()}", extra=ANY),
+                call(20, "List role memberships", extra=ANY),
+            ]
+        )
+        self.assertIn("Tester Mc. has added you a new role membership in Kamu", mail.outbox[0].body)
+        self.assertIn("Tester Mc. has invited you to join the role", mail.outbox[1].body)
+
+    @override_settings(MASS_INVITE_PERMISSION_GROUPS={"group": 1})
+    def test_mass_invite_too_many_lines(self):
+        response = self.client.post(
+            self.url,
+            self.data | {"invited": f"{self.email_address}\n{self.phone_number}", "preview_message": "True"},
+        )
+        self.assertIn("Too many invited persons.", response.content.decode("utf-8"))
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(MASS_INVITE_PERMISSION_GROUPS={"group": 3})
+    def test_mass_invite_attribute_conflict(self):
+        self.phone_number.verified = True
+        self.phone_number.save()
+        response = self.client.post(
+            self.url,
+            self.data
+            | {"invited": f"{self.email_address},+1234000000\ninvited@example.org", "preview_message": "True"},
+        )
+        self.assertIn("are registered to different identities", response.content.decode("utf-8"))

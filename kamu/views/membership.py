@@ -29,8 +29,9 @@ from kamu.forms.membership import (
     MembershipCreateForm,
     MembershipEditForm,
     MembershipEmailCreateForm,
+    MembershipMassCreateForm,
 )
-from kamu.models.identity import Identity
+from kamu.models.identity import Identifier, Identity
 from kamu.models.membership import Membership
 from kamu.models.role import Role
 from kamu.models.token import TimeLimitError, Token
@@ -40,6 +41,7 @@ from kamu.utils.membership import (
     add_missing_requirement_messages,
     claim_membership,
     get_expiring_memberships,
+    get_mass_invite_limit,
     get_memberships_requiring_approval,
 )
 from kamu.views.identity import IdentitySearchView
@@ -47,7 +49,9 @@ from kamu.views.identity import IdentitySearchView
 audit_log = AuditLog()
 
 
-MembershipFormType = TypeVar("MembershipFormType", MembershipCreateForm, MembershipEmailCreateForm)
+MembershipFormType = TypeVar(
+    "MembershipFormType", MembershipCreateForm, MembershipEmailCreateForm, MembershipMassCreateForm
+)
 
 
 class MembershipJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCreateForm]):
@@ -552,7 +556,7 @@ class MembershipInviteLdapView(BaseMembershipInviteView):
         valid = super().form_valid(form)
         if self.object:
             audit_log.info(
-                f"Membership to {self.object.role.identifier} added to identity: {self.object.identity}",
+                f"Membership to {self.object.role} added to identity: {self.object.identity}",
                 category="membership",
                 action="create",
                 outcome="success",
@@ -603,10 +607,7 @@ class MembershipInviteEmailView(BaseMembershipInviteView):
         form.instance.inviter = user
         if form.instance.role.is_approver(user=user):
             form.instance.approver = user
-        if hasattr(form, "cleaned_data") and "invite_language" in form.cleaned_data:
-            invite_language = form.cleaned_data["invite_language"]
-        else:
-            invite_language = "en"
+        invite_language = form.cleaned_data.get("invite_language", "en")
         if "preview_message" in self.request.POST:
             subject, message = create_invite_message(
                 role=form.instance.role,
@@ -622,7 +623,7 @@ class MembershipInviteEmailView(BaseMembershipInviteView):
             return self.render_to_response(context)
         membership = form.save()
         audit_log.info(
-            f"Invited {membership.invite_email_address} to role {membership.role.identifier}",
+            f"Invited {membership.invite_email_address} to role {membership.role}",
             category="membership",
             action="create",
             outcome="success",
@@ -667,3 +668,173 @@ class MembershipClaimView(LoginRequiredMixin, View):
         if membership_pk == -1:
             return redirect("front-page")
         return redirect("membership-detail", pk=membership_pk)
+
+
+class MembershipMassInviteView(BaseMembershipInviteView):
+    """
+    Invite multiple members.
+    """
+
+    form_class = MembershipMassCreateForm
+
+    def get_form_kwargs(self) -> dict[str, Any]:
+        """
+        Add invite limit to form kwargs.
+        """
+        kwargs = super().get_form_kwargs()
+        kwargs["invite_limit"] = get_mass_invite_limit(self.request.user)
+        return kwargs
+
+    def find_identity(self, info: dict[str, str]) -> Identity | None:
+        """
+        Find identity by fpic, email or phone.
+        """
+        fpic = info.get("fpic")
+        fpic_identity = (
+            Identity.objects.filter(
+                Q(fpic=fpic)
+                | Q(identifiers__type=Identifier.Type.FPIC, identifiers__value=fpic, identifiers__deactivated_at=None)
+            )
+            .distinct()
+            .first()
+            if fpic
+            else None
+        )
+        email = info.get("email")
+        email_identity = (
+            Identity.objects.filter(email_addresses__address__iexact=email, email_addresses__verified=True).first()
+            if email
+            else None
+        )
+        phone = info.get("phone")
+        phone_identity = (
+            Identity.objects.filter(phone_numbers__number=phone, phone_numbers__verified=True).first()
+            if phone
+            else None
+        )
+        if fpic_identity and email_identity and fpic_identity != email_identity:
+            messages.add_message(
+                self.request,
+                messages.WARNING,
+                _(
+                    "Finnish personal identity code {fpic} and email address {email} are registered to different "
+                    "identities."
+                ).format(fpic=fpic, email=email),
+            )
+            return None
+        if fpic_identity and phone_identity and fpic_identity != phone_identity:
+            messages.add_message(
+                self.request,
+                messages.WARNING,
+                _(
+                    "Finnish personal identity code {fpic} and phone number {phone} are registered to different "
+                    "identities."
+                ).format(fpic=fpic, phone=phone),
+            )
+            return None
+        if email_identity and phone_identity and email_identity != phone_identity:
+            messages.add_message(
+                self.request,
+                messages.WARNING,
+                _("Email address {email} and phone number {phone} are registered to different identities.").format(
+                    email=email, phone=phone
+                ),
+            )
+            return None
+        return fpic_identity or email_identity or phone_identity
+
+    def form_valid(self, form: MembershipFormType) -> HttpResponse:
+        """
+        Parse invited users, role parameters.
+        Either show preview or add memberships and send invites.
+        """
+        form.instance.identity = None
+        form.instance.role = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
+        user = self.request.user if self.request.user.is_authenticated else None
+        if not user:
+            raise PermissionDenied
+        invite_text = form.cleaned_data["invite_text"]
+        form.instance.inviter = user
+        if form.instance.role.is_approver(user=user):
+            form.instance.approver = user
+        invite_language = form.cleaned_data.get("invite_language", "en")
+        invitees = form.cleaned_data["invited"]
+        to_be_invited = []
+        to_be_added = []
+        for invited in invitees:
+            if not invited or not isinstance(invited, dict):
+                continue
+            identity = self.find_identity(invited)
+            email = invited.get("email")
+            if identity:
+                to_be_added.append(identity)
+            elif email:
+                to_be_invited.append(email)
+        if "preview_message" in self.request.POST:
+            subject, message = create_invite_message(
+                role=form.instance.role,
+                inviter=form.instance.inviter.get_full_name(),
+                token="...",
+                invite_text=invite_text,
+                lang=invite_language,
+                request=self.request,
+            )
+            context = self.get_context_data()
+            context["to_be_invited"] = to_be_invited
+            context["to_be_added"] = to_be_added
+            context["preview_subject"] = subject
+            context["preview_message"] = message
+            return self.render_to_response(context)
+        invited_list = []
+        added_list = []
+        for identity in to_be_added:
+            form.instance.pk = None
+            form.instance.identity = identity
+            form.instance.invite_email_address = None
+            membership = form.save()
+            audit_log.info(
+                f"Membership to {membership.role} added to identity: {membership.identity}",
+                category="membership",
+                action="create",
+                outcome="success",
+                request=self.request,
+                objects=[membership, membership.identity, membership.role],
+                log_to_db=True,
+            )
+            send_add_email(membership)
+            added_list.append(identity.display_name())
+        for email in to_be_invited:
+            form.instance.pk = None
+            form.instance.identity = None
+            form.instance.invite_email_address = email
+            membership = form.save()
+            audit_log.info(
+                f"Invited {membership.invite_email_address} to role {membership.role}",
+                category="membership",
+                action="create",
+                outcome="success",
+                request=self.request,
+                objects=[membership, membership.role],
+                log_to_db=True,
+            )
+            token = Token.objects.create_invite_token(membership=membership)
+            send_invite_email(
+                membership=membership,
+                token=token,
+                address=email,
+                invite_text=invite_text,
+                lang=invite_language,
+                request=self.request,
+            )
+            invited_list.append(email)
+        if invited_list:
+            messages.add_message(
+                self.request,
+                messages.INFO,
+                _("Invite email sent to following addresses: {0}").format(", ".join(invited_list)),
+            )
+        if added_list:
+            messages.add_message(
+                self.request, messages.INFO, _("Added following identities: {0}").format(", ".join(added_list))
+            )
+        return redirect("role-detail", pk=form.instance.role.pk)

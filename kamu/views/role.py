@@ -16,6 +16,7 @@ from kamu.forms.generic import TextSearchForm
 from kamu.models.membership import Membership
 from kamu.models.role import Role
 from kamu.utils.audit import AuditLog
+from kamu.utils.membership import get_mass_invite_limit
 
 audit_log = AuditLog()
 
@@ -37,6 +38,7 @@ class RoleDetailView(LoginRequiredMixin, DetailView[Role]):
         if not user.is_authenticated:
             raise PermissionDenied
         if self.object.is_inviter(user):
+            context["mass_invite_limit"] = get_mass_invite_limit(user)
             context["memberships"] = Membership.objects.filter(
                 role=self.object, expire_date__gte=timezone.now().date()
             ).prefetch_related("identity")

@@ -60,6 +60,12 @@ CONTACT_LIMIT: int = 3
 # Used in locally created usernames, i.e. in email and SMS registration.
 LOCAL_IDENTITY_SUFFIX: str = "@local_identity"
 
+# Groups whose members have mass invite permissions top roles, up to INT members at time.
+# Users must also have invite permissions to the role.
+MASS_INVITE_PERMISSION_GROUPS: dict[str, int] = {
+    "mass_invite_2": 2,
+}
+
 # Will receive notifications of changes if error 500 occurs
 # Format should be a list of tuples of (Full name, email address).
 # Example: [('John', 'john@example.com'), ('Mary', 'mary@example.com')]
