@@ -95,8 +95,9 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
         widget=forms.Textarea,
         required=False,
         help_text=_(
-            "Invite text is added to the invite message. Lines of the invite text are wrapped to 70 "
-            "characters. Use preview to see the final result."
+            "This replaces beginning of the default invite message. Lines of the invite text are wrapped to 70 "
+            "characters. Invite code and link will be added to end of the message. Use preview to see the final "
+            "result."
         ),
     )
 
