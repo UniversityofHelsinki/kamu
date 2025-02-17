@@ -104,7 +104,7 @@ REQUIREMENTS: dict = {
         "value": "secretcontract",
         "grace": 0,
     },
-    "attribute_phone_nuber": {
+    "attribute_phone_number": {
         "name_en": "Phone number given",
         "name_fi": "Puhelinnumero annettu",
         "name_sv": "Telefonnummer angivet",
