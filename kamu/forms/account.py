@@ -40,14 +40,22 @@ class AccountBaseForm(forms.Form):
 
 class AccountCreateForm(AccountBaseForm):
     """
-    Form for creating a account.
+    Form for creating an account.
     """
+
+    uid = forms.ChoiceField(
+        label=_("User ID"), required=True, help_text=_("Select account name to be used."), widget=forms.RadioSelect
+    )
+    field_order = ["uid", "password", "confirm_password"]
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
+        self.uid_choices = kwargs.pop("uid_choices", [])
         super().__init__(*args, **kwargs)
+        if isinstance(self.uid_choices, list) and hasattr(self.fields["uid"], "choices"):
+            self.fields["uid"].choices = [(uid, uid) for uid in self.uid_choices]
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Create account")))
 

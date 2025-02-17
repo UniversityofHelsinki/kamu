@@ -198,6 +198,10 @@ ACCOUNT_API_KEY: str = "change-api-key"
 # ACCOUNT_API_ENABLE_PATH: str = "enable"
 # ACCOUNT_API_CHANGE_PASSWORD_PATH: str = "changePassword"
 # ACCOUNT_API_UPDATE_PATH: str = "update"
+# ACCOUNT_API_UID_CHOICES_PATH: str = "generateUids"
+
+# How many uid choices are given when creating a new account.
+# ACCOUNT_UID_CHOICES_NUMBER: int = 5
 
 # Actions to perform for external accounts. If value is create, create it through Accounts API.
 # If value is URL, redirect user to that URL.

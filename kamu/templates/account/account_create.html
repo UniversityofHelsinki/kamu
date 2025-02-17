@@ -32,5 +32,8 @@
       <li>{% trans "Not similar to other user attributes" %}</li>
     </ul>
   </div>
+  <form method="post">{% csrf_token %}
+    <button type="submit" name="regenerate_uids" class="btn btn-danger">{% trans 'Regenerate user IDs' %}</button>
+  </form>
   {% crispy form form.helper %}
 {% endblock %}

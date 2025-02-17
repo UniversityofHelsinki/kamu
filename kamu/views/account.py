@@ -91,6 +91,73 @@ class AccountCreateView(FormView):
         context["min_password_length"] = get_minimum_password_length()
         return context
 
+    def generate_uids(self, forced: bool = False) -> list[str]:
+        """
+        Generate user ID choices or return saved choices from the session.
+
+        Exclude 3 digit part from FPIC and all characters from names.
+        """
+        if not forced and self.request.session.get("uid_choices"):
+            return self.request.session["uid_choices"]
+        exclude_chars = ""
+        exclude_string = ""
+        if self.identity:
+            if self.identity.fpic:
+                try:
+                    exclude_string = self.identity.fpic[7:10]
+                except IndexError:
+                    pass
+            exclude_chars = "".join(
+                sorted(
+                    set(
+                        (
+                            self.identity.given_names
+                            + self.identity.surname
+                            + self.identity.given_name_display
+                            + self.identity.surname_display
+                        ).lower()
+                    )
+                )
+            )
+        try:
+            connector = AccountApiConnector()
+            uid_choices = connector.get_uid_choices(
+                number=getattr(settings, "ACCOUNT_UID_CHOICES_NUMBER", 5),
+                exclude_chars=exclude_chars,
+                exclude_string=exclude_string,
+            )
+            self.request.session["uid_choices"] = uid_choices
+            return uid_choices
+        except Exception:
+            messages.add_message(
+                self.request, messages.ERROR, _("Could not load user ID choices, please try again later.")
+            )
+        return []
+
+    def get_form_kwargs(self) -> dict[str, Any]:
+        """
+        Add uid choices to form kwargs.
+        """
+        kwargs = super().get_form_kwargs()
+        kwargs["uid_choices"] = self.generate_uids()
+        return kwargs
+
+    @method_decorator(sensitive_post_parameters("password"))
+    @method_decorator(csrf_protect)
+    @method_decorator(never_cache)
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Check for regeneration.
+        """
+        if "regenerate_uids" in self.request.POST:
+            self.generate_uids(forced=True)
+            return HttpResponseRedirect(self.get_success_url())
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
     def form_valid(self, form: AccountCreateForm) -> HttpResponse:
         """
         Create user account.
@@ -98,11 +165,12 @@ class AccountCreateView(FormView):
         if not self.identity or not self.account_type:
             raise PermissionDenied
         password = form.cleaned_data["password"]
+        uid = form.cleaned_data["uid"]
         if settings.ACCOUNT_ACTIONS.get(self.account_type) == "create":
             try:
                 connector = AccountApiConnector()
                 account = connector.create_account(
-                    identity=self.identity, password=password, account_type=self.account_type
+                    identity=self.identity, uid=uid, password=password, account_type=self.account_type
                 )
             except Exception as e:
                 audit_log.warning(
@@ -128,6 +196,7 @@ class AccountCreateView(FormView):
                 log_to_db=True,
             )
             messages.add_message(self.request, messages.INFO, _("Account created."))
+            del self.request.session["uid_choices"]
             self.success_url = reverse("account-detail", kwargs={"pk": account.pk})
             return super().form_valid(form)
         raise PermissionDenied

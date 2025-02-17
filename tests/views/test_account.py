@@ -7,7 +7,7 @@ import string
 from unittest import mock
 from unittest.mock import ANY, call
 
-from django.test import Client
+from django.test import Client, override_settings
 
 from kamu.models.account import Account
 from tests.setup import BaseTestCase
@@ -59,6 +59,16 @@ class AccountTests(BaseTestCase):
         self.assertIn("Account will be created with the following information", response.content.decode("utf-8"))
         self.assertIn("Service 1", response.content.decode("utf-8"))
 
+    @mock.patch("kamu.connectors.account.AccountApiConnector.get_uid_choices")
+    @override_settings(ALLOW_TEST_FPIC=True)
+    def test_account_choice_exclusions(self, mock_connector_get):
+        mock_connector_get.return_value = ["1k234567"]
+        self.identity.fpic = "010181-900C"
+        self.identity.save()
+        response = self.client.get(f"/identity/{self.identity.pk}/account/lightaccount/", follow=True)
+        self.assertEqual(response.status_code, 200)
+        mock_connector_get.assert_called_with(number=5, exclude_chars=" .cemrstu", exclude_string="900")
+
     def test_view_account_create_invalid_password(self):
         data = {
             "password": "password",
@@ -69,12 +79,16 @@ class AccountTests(BaseTestCase):
         self.assertIn("This password is too common.", response.content.decode("utf-8"))
         self.assertIn("Minimum 15 characters", response.content.decode("utf-8"))
 
+    @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_get")
     @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_post")
     @mock.patch("kamu.utils.audit.logger_audit")
-    def test_view_account_create(self, mock_logger, mock_connector):
-        mock_connector.return_value = AccountApiResponseMock()
+    def test_view_account_create(self, mock_logger, mock_connector_post, mock_connector_get):
+        mock_connector_post.return_value = AccountApiResponseMock()
+        mock_connector_get.return_value = AccountApiResponseMock(content='["1k234567", "2k234567"]')
+
         password = "".join(secrets.choice(string.ascii_letters) for _ in range(20))
         data = {
+            "uid": "1k234567",
             "password": password,
             "confirm_password": password,
         }
@@ -88,12 +102,15 @@ class AccountTests(BaseTestCase):
             ]
         )
 
+    @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_get")
     @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_post")
     @mock.patch("kamu.utils.audit.logger_audit")
-    def test_view_account_api_failure(self, mock_logger, mock_connector):
-        mock_connector.return_value = AccountApiResponseMock(status=500)
+    def test_view_account_api_failure(self, mock_logger, mock_connector_post, mock_connector_get):
+        mock_connector_post.return_value = AccountApiResponseMock(status=500)
+        mock_connector_get.return_value = AccountApiResponseMock(content='["uid1", "uid2"]')
         password = "".join(secrets.choice(string.ascii_letters) for _ in range(20))
         data = {
+            "uid": "uid1",
             "password": password,
             "confirm_password": password,
         }

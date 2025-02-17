@@ -78,7 +78,9 @@ class AccountApiConnector:
             data=json.dumps(data),
         )
 
-    def api_call(self, http_method: str, path: str, data: dict | None = None, headers: dict | None = None) -> dict:
+    def api_call(
+        self, http_method: str, path: str, data: dict | None = None, headers: dict | None = None
+    ) -> dict | list:
         """
         Makes a call to the API and returns either response content or raises an exception.
         """
@@ -122,17 +124,20 @@ class AccountApiConnector:
             logger.error(f"Account API status {response.status_code} : {error_msg}")
             raise AccountApiTryAgainError(f"API error, status {response.status_code}")
 
-    def create_account(self, identity: Identity, password: str, account_type: Account.Type) -> Account:
+    def create_account(self, identity: Identity, uid: str, password: str, account_type: Account.Type) -> Account:
         """
         Creates an account.
         """
         data = get_account_data(identity, account_type=account_type)
+        data["uid"] = uid
         data["userPassword"] = password
         response = self.api_call(
             path=getattr(settings, "ACCOUNT_API_CREATE_PATH", "create"), http_method="post", data=data
         )
-        uid = response.get("uid")
-        if not uid or not isinstance(uid, str) or not uid.replace("_", "").isalnum():
+        if not isinstance(response, dict):
+            raise AccountApiConfigurationError
+        r_uid = response.get("uid")
+        if r_uid != uid:
             raise AccountApiConfigurationError
         account = Account._default_manager.create(identity=identity, uid=uid, type=account_type)
         return account
@@ -174,3 +179,15 @@ class AccountApiConnector:
         data["uid"] = account.uid
         self.api_call(path=getattr(settings, "ACCOUNT_API_UPDATE_PATH", "update"), http_method="post", data=data)
         account.save()
+
+    def get_uid_choices(self, number: int = 5, exclude_chars: str = "", exclude_string: str = "") -> list:
+        """
+        Gets the account uid choices.
+        """
+        headers = {"amount": str(number), "exclude": exclude_chars, "ssnExclude": exclude_string}
+        uid_choices = self.api_call(
+            path=getattr(settings, "ACCOUNT_API_UID_CHOICES_PATH", "generateUids"), http_method="get", headers=headers
+        )
+        if not isinstance(uid_choices, list):
+            raise AccountApiConfigurationError
+        return uid_choices
