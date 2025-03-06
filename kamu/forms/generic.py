@@ -7,7 +7,7 @@ from typing import Any
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 class TextSearchForm(forms.Form):

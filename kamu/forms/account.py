@@ -8,7 +8,7 @@ from django.contrib.auth.password_validation import (
     get_password_validators,
     validate_password,
 )
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 class AccountBaseForm(forms.Form):

@@ -11,7 +11,8 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.forms.widgets import DateInput
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
+from django_stubs_ext import StrPromise
 
 from kamu.models.membership import Membership
 from kamu.validators.identity import validate_fpic, validate_phone_number
@@ -86,7 +87,7 @@ class MembershipEditForm(forms.ModelForm[Membership]):
         validate_membership(ValidationError, self.instance.role, start_date, expire_date, edit=True)
 
 
-help_text_invite_text: str = _(
+help_text_invite_text: StrPromise = _(
     "This replaces beginning of the default invite message. Lines of the invite text are wrapped to 70 "
     "characters. Invite code and link will be added to end of the message. Use preview to see the final "
     "result."

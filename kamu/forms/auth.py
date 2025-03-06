@@ -17,7 +17,7 @@ from django.core.exceptions import (
 )
 from django.core.validators import validate_email
 from django.http import HttpRequest
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from kamu.backends import AuthenticationError, EmailSMSBackend
 from kamu.connectors.email import send_verification_email

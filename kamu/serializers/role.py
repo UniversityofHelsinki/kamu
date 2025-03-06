@@ -7,7 +7,7 @@ from typing import Sequence
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from kamu.models.role import Permission, Requirement, Role
