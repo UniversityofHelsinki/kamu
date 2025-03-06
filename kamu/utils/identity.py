@@ -57,7 +57,7 @@ def combine_identities_requirements(
             request,
             messages.ERROR,
             _(
-                "Cannot combine two identities with Finnish Personal Identity Code. Please remove FPIC from the "
+                "Cannot combine two identities with Finnish personal identity code. Please remove FPIC from the "
                 "source first."
             ),
         )

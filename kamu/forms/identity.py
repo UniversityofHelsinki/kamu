@@ -44,7 +44,7 @@ class IdentitySearchForm(forms.Form):
     given_names = forms.CharField(label=_("Given name(s)"), max_length=255, required=False)
     surname = forms.CharField(label=_("Surname"), max_length=255, required=False)
     uid = forms.CharField(label=_("User account"), max_length=255, required=False)
-    email = forms.CharField(label=_("E-mail address"), max_length=255, required=False)
+    email = forms.CharField(label=_("Email address"), max_length=255, required=False)
     phone = forms.CharField(
         label=_("Phone number"),
         max_length=20,
@@ -133,10 +133,11 @@ class ContactForm(forms.Form):
     """
 
     contact = forms.CharField(
-        label=_("E-mail address or phone number"),
-        help_text=_("Phone number in international format, e.g. +358123456789.")
-        + " "
-        + _("Values containing @ are treated as e-mail addresses."),
+        label=_("Email address or phone number"),
+        help_text=_(
+            "Phone number in international format, e.g. +358123456789. Values containing @ are treated as email "
+            "addresses."
+        ),
         max_length=320,
         required=False,
     )
@@ -171,23 +172,23 @@ class ContactForm(forms.Form):
         """
         contact = self.cleaned_data["contact"]
         if not contact:
-            raise ValidationError(_("E-mail address or phone number is required"))
+            raise ValidationError(_("Email address or phone number is required."))
         contact_limit = getattr(settings, "CONTACT_LIMIT", 3)
         if "@" in contact:
             validate_email(contact)
             self.cleaned_data["contact_type"] = "email"
             if EmailAddress.objects.filter(identity=self.identity, address=contact).exists():
-                raise ValidationError(_("E-mail address already exists"))
+                raise ValidationError(_("Email address already exists."))
             if EmailAddress.objects.filter(identity=self.identity).count() >= contact_limit:
-                raise ValidationError(_("Maximum number of e-mail addresses reached"))
+                raise ValidationError(_("Maximum number of email addresses reached."))
         else:
             contact = contact.replace(" ", "")
             validate_phone_number(contact)
             self.cleaned_data["contact_type"] = "phone"
             if PhoneNumber.objects.filter(identity=self.identity, number=contact).exists():
-                raise ValidationError(_("Phone number already exists"))
+                raise ValidationError(_("Phone number already exists."))
             if PhoneNumber.objects.filter(identity=self.identity).count() >= contact_limit:
-                raise ValidationError(_("Maximum number of phone numbers reached"))
+                raise ValidationError(_("Maximum number of phone numbers reached."))
         return contact
 
 
@@ -196,7 +197,7 @@ class EmailAddressVerificationForm(forms.ModelForm):
     Verify an email address
     """
 
-    code = forms.CharField(label=_("E-mail verification code"), max_length=32, required=False)
+    code = forms.CharField(label=_("Email verification code"), max_length=32, required=False)
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -215,9 +216,9 @@ class EmailAddressVerificationForm(forms.ModelForm):
         """
         code = self.cleaned_data["code"]
         if not code:
-            raise ValidationError(_("Invalid verification code"))
+            raise ValidationError(_("Invalid verification code."))
         if not Token.objects.validate_email_object_verification_token(code, self.instance):
-            raise ValidationError(_("Invalid verification code"))
+            raise ValidationError(_("Invalid verification code."))
         return code
 
     class Meta:
@@ -251,9 +252,9 @@ class PhoneNumberVerificationForm(forms.ModelForm):
         """
         code = self.cleaned_data["code"]
         if not code:
-            raise ValidationError(_("Invalid verification code"))
+            raise ValidationError(_("Invalid verification code."))
         if not Token.objects.validate_phone_object_verification_token(code, self.instance):
-            raise ValidationError(_("Invalid verification code"))
+            raise ValidationError(_("Invalid verification code."))
         return code
 
     class Meta:
@@ -273,7 +274,7 @@ class IdentityForm(forms.ModelForm):
         Create layout for IdentityForm.
         """
         layout = Layout(
-            HTML(_("<h2 class='mb-3'>Basic information</h2>")),
+            HTML("<h2 class='mb-3'>" + _("Basic information") + "</h2>"),
             Div(
                 Div("given_names", css_class="col-md-8"),
                 css_class="row mb-3",
@@ -301,7 +302,7 @@ class IdentityForm(forms.ModelForm):
         if include_restricted_fields:
             layout.extend(
                 [
-                    HTML(_("<h2 class='mb-3 mt-5'>Restricted information</h2>")),
+                    HTML("<h2 class='mb-3 mt-5'>" + _("Restricted information") + "</h2>"),
                     Div(
                         Div("date_of_birth", css_class="col-md-8"),
                         css_class="row mb-3",
@@ -385,7 +386,7 @@ class IdentityForm(forms.ModelForm):
                 value != initial_value
                 or (initial_verification is not None and initial_verification < Identity.VerificationMethod.STRONG)
             ) and verification == Identity.VerificationMethod.STRONG:
-                self.add_error(f"{ field }_verification", _("Cannot set strong electrical verification by hand."))
+                self.add_error(f"{ field }_verification", _("Cannot set strong electrical verification manually."))
 
     class Meta:
         model = Identity

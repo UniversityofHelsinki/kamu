@@ -50,7 +50,7 @@ class Membership(models.Model):
 
     class Status(models.TextChoices):
         INVITED = ("invited", _("Invited"))
-        REQUIRE = ("require", _("Waiting requirements"))
+        REQUIRE = ("require", _("Missing requirements"))
         APPROVAL = ("approval", _("Waiting approval"))
         PENDING = ("pending", _("Pending"))
         ACTIVE = ("active", _("Active"))
@@ -66,7 +66,7 @@ class Membership(models.Model):
     )
     reason = models.TextField(verbose_name=_("Membership reason"))
     start_date = models.DateField(verbose_name=_("Membership start date"))
-    expire_date = models.DateField(verbose_name=_("Membership expire date"))
+    expire_date = models.DateField(verbose_name=_("Membership expiry date"))
 
     requirements_failed_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Requirements failed time"))
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
@@ -110,7 +110,7 @@ class Membership(models.Model):
 
     def ending_in_future(self) -> bool:
         """
-        Returns True if membership expire date is in the future.
+        Returns True if membership expiry date is in the future.
         """
         return self.expire_date > timezone.now().date()
 

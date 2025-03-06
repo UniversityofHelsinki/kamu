@@ -34,7 +34,7 @@
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans "Close" %}"></button>
                     </div>
                     <div class="modal-body">
-                      <p class="text-break">{% trans "You are deactivating" %} {{ identifier.get_type_display }} {% trans "with value" %} {{ identifier.value }}.</p>
+                      <p class="text-break">{% blocktrans with type=identifier.get_type_display value=identifier.value %}You are deactivating {{ type }} with value {{ value }}.{% endblocktrans %}</p>
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
@@ -49,7 +49,7 @@
         </tbody>
       </table>
     {% else %}
-      <p>{% trans "You have not have any linked identifiers." %}</p>
+      <p>{% trans "You do not have any linked identifiers." %}</p>
     {% endif %}
     {% if identifier_deactivated_list %}
       <h2 id="identifier-deactivated-list" class="mt-5">{% trans "Deactivated identifiers" %}</h2>

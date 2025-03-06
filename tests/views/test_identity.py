@@ -313,7 +313,7 @@ class IdentityEditTests(BaseTestCase):
         self.client.force_login(self.superuser)
         response = self.client.post(self.url, self.data)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Cannot set strong electrical verification by hand", response.content.decode("utf-8"))
+        self.assertIn("Cannot set strong electrical verification manually", response.content.decode("utf-8"))
 
     def test_edit_lower_verification_level(self):
         self.create_superuser()
@@ -381,7 +381,7 @@ class ContactTests(BaseTestCase):
         data = {"contact": "test@example.com"}
         with self.settings(CONTACT_LIMIT=1):
             response = self.client.post(self.url, data, follow=True)
-        self.assertIn("Maximum number of e-mail addresses reached", response.content.decode("utf-8"))
+        self.assertIn("Maximum number of email addresses reached", response.content.decode("utf-8"))
 
     def test_post_change_priority_up(self):
         new_number = PhoneNumber.objects.create(
@@ -953,5 +953,5 @@ class IdentityCombineTests(BaseTestCase):
         self.superidentity.save()
         response = self.client.post(self.url, self.data, follow=True)
         self.assertIn(
-            "Cannot combine two identities with Finnish Personal Identity Code", response.content.decode("utf-8")
+            "Cannot combine two identities with Finnish personal identity code", response.content.decode("utf-8")
         )

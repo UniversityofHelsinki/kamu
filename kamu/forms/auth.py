@@ -30,10 +30,10 @@ from kamu.validators.identity import validate_phone_number
 
 class LoginEmailPhoneForm(forms.Form):
     """
-    Form for e-mail and SMS login.
+    Form for email and SMS login.
     """
 
-    email_address = forms.CharField(label=_("E-mail address"), max_length=320, validators=[validate_email])
+    email_address = forms.CharField(label=_("Email address"), max_length=320, validators=[validate_email])
     phone_number = forms.CharField(
         label=_("Phone number"),
         max_length=32,
@@ -87,10 +87,10 @@ class LoginEmailPhoneForm(forms.Form):
 
 class LoginEmailPhoneVerificationForm(AuthenticationForm):
     """
-    Form for e-mail and SMS login verification.
+    Form for email and SMS login verification.
     """
 
-    email_verification_token = forms.CharField(label=_("E-mail verification code"), max_length=32, required=False)
+    email_verification_token = forms.CharField(label=_("Email verification code"), max_length=32, required=False)
     phone_verification_token = forms.CharField(label=_("SMS verification code"), max_length=32, required=False)
 
     def __init__(self, request: HttpRequest | None = None, *args: Any, **kwargs: Any) -> None:
@@ -108,8 +108,8 @@ class LoginEmailPhoneVerificationForm(AuthenticationForm):
         self.fields["phone_verification_token"].widget.attrs.update(autocomplete="off")
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Verify")))
-        self.helper.add_input(Submit("resend_email_code", _("Resend an email code"), css_class="btn-warning"))
-        self.helper.add_input(Submit("resend_phone_code", _("Resend a phone code"), css_class="btn-warning"))
+        self.helper.add_input(Submit("resend_email_code", _("Resend email code"), css_class="btn-warning"))
+        self.helper.add_input(Submit("resend_phone_code", _("Resend phone code"), css_class="btn-warning"))
 
     def clean_email_verification_token(self) -> str:
         """
@@ -180,10 +180,10 @@ class RegistrationForm(forms.Form):
     """
 
     given_names = forms.CharField(
-        max_length=200, label=_("Given names"), required=False, help_text=_("All official first names.")
+        max_length=200, label=_("Given names"), required=False, help_text=_("All official given names.")
     )
     surname = forms.CharField(label=_("Surname"), max_length=200, required=False, help_text=_("Official surname(s)."))
-    email_address = forms.CharField(label=_("E-mail address"), max_length=320, validators=[validate_email])
+    email_address = forms.CharField(label=_("Email address"), max_length=320, validators=[validate_email])
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -199,7 +199,7 @@ class RegistrationForm(forms.Form):
         """
         email_address = self.cleaned_data["email_address"]
         if EmailAddress.objects.filter(address=email_address, verified=True).exists():
-            raise ValidationError(_("This e-mail address is already linked to an account."))
+            raise ValidationError(_("This email address is already linked to an account."))
         return email_address
 
     def clean(self) -> dict[str, Any]:
@@ -208,7 +208,7 @@ class RegistrationForm(forms.Form):
         """
         cleaned_data = super().clean()
         if not cleaned_data:
-            raise ValidationError(_("Invalid form data"))
+            raise ValidationError(_("Invalid form data."))
         given_names = cleaned_data.get("given_names")
         surname = cleaned_data.get("surname")
         if not given_names and not surname:
@@ -221,7 +221,7 @@ class RegistrationEmailAddressVerificationForm(forms.Form):
     Email address verification form for login process
     """
 
-    code = forms.CharField(label=_("E-mail verification code"), max_length=20, required=False)
+    code = forms.CharField(label=_("Email verification code"), max_length=20, required=False)
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -241,9 +241,9 @@ class RegistrationEmailAddressVerificationForm(forms.Form):
         """
         code = self.cleaned_data["code"]
         if not code or len(code) < 4:
-            raise ValidationError(_("Invalid verification code"))
+            raise ValidationError(_("Invalid verification code."))
         if not Token.objects.validate_email_address_verification_token(code, self.email_address):
-            raise ValidationError(_("Invalid verification code"))
+            raise ValidationError(_("Invalid verification code."))
         return code
 
 
@@ -298,9 +298,9 @@ class RegistrationPhoneNumberVerificationForm(forms.Form):
         """
         code = self.cleaned_data["code"]
         if not code or len(code) < 4:
-            raise ValidationError(_("Invalid verification code"))
+            raise ValidationError(_("Invalid verification code."))
         if not Token.objects.validate_phone_number_verification_token(code, self.phone_number):
-            raise ValidationError(_("Invalid verification code"))
+            raise ValidationError(_("Invalid verification code."))
         return code
 
 
@@ -358,17 +358,17 @@ class InviteTokenForm(forms.Form):
         code = self.cleaned_data["code"]
         parts = code.split(":")
         if len(parts) != 2:
-            raise forms.ValidationError(_("Invalid invitation code"))
+            raise forms.ValidationError(_("Invalid invitation code."))
         membership_pk = parts[0]
         token = parts[1]
         try:
             membership_pk = int(membership_pk)
         except ValueError:
-            raise forms.ValidationError(_("Invalid invitation code"))
+            raise forms.ValidationError(_("Invalid invitation code."))
         try:
             membership = Membership.objects.get(pk=membership_pk)
         except Membership.DoesNotExist:
-            raise forms.ValidationError(_("Invalid invitation code"))
+            raise forms.ValidationError(_("Invalid invitation code."))
         if not Token.objects.validate_invite_token(token, membership=membership, remove_token=False):
-            raise forms.ValidationError(_("Invalid invitation code"))
+            raise forms.ValidationError(_("Invalid invitation code."))
         return code

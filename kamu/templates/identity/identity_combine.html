@@ -12,7 +12,7 @@
         <li>{% trans "Given names" %}</li>
         <li>{% trans "Surname" %}</li>
         <li>{% trans "Account name" %}</li>
-        <li>{% trans "Finnish Personal Identity Code" %}</li>
+        <li>{% trans "Finnish personal identity code" %}</li>
       </ul>
       <p>{% trans "The following information is transferred from the source identity to the target identity." %}</p>
       <ul>
@@ -108,7 +108,7 @@
           <td>{{ primary_identity.preferred_language }}</td>
         </tr>
         <tr>
-          <th scope="row">{% trans "Finnish Personal Identity Code" %}</th>
+          <th scope="row">{% trans "Finnish personal identity code" %}</th>
           <td>{{ primary_identity.fpic }}</td>
           <td>{{ secondary_identity.fpic }}</td>
           <td>{{ primary_identity.fpic|default:secondary_identity.fpic }}</td>

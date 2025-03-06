@@ -127,6 +127,6 @@ class RoleSerializer(serializers.ModelSerializer[Role], EagerLoadingMixin):
         In a normal situations, sequence data is never validated as create and update deal in single instances.
         """
         if isinstance(self.instance, Sequence):
-            raise ValueError(_("Cannot validate sequence data"))
+            raise ValueError(_("Cannot validate sequence data."))
         validate_role_hierarchy(serializers.ValidationError, self.instance, value)
         return value

@@ -9,10 +9,10 @@
     <h2 class="mb-5">{% trans "University of Helsinki account" %}</h2>
     <div class="row border-bottom mb-3">
       <div class="col-md-6 col-12 mb-3">
-        <a href="{% url 'login-shibboleth' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img src="{% static "images/hy-signin-logo.gif" %}" alt="{% trans "University of Helsinki signin" %}"></a>
+        <a href="{% url 'login-shibboleth' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img src="{% static "images/hy-signin-logo.gif" %}" alt="{% trans 'University of Helsinki sign-in' %}"></a>
       </div>
       <div class="col-md-6 col-12 mb-3">
-        <p>{% trans "Login with the University of Helsinki single sign on." %}</p>
+        <p>{% trans "Login with the University of Helsinki single sign-on." %}</p>
         <p>{% trans "Use this method, if you have a University of Helsinki user account." %}</p>
       </div>
     </div>
@@ -21,38 +21,38 @@
   <div class="row">
     {% if "suomifi"|enabled_backend %}
       <div class="col-md-6 col-12 mb-3">
-        <a href="{% url 'login-suomifi' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/suomifi-signin-logo.png" %}" height="40" alt="{% trans "Suomi.fi signin" %}"></a>
+        <a href="{% url 'login-suomifi' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/suomifi-signin-logo.png" %}" height="40" alt="{% trans 'Suomi.fi sign-in' %}"></a>
         <p>{% trans "Login with a Suomi.fi e-Identification or eIDAS." %}</p>
       </div>
     {% endif %}
     {% if "haka"|enabled_backend %}
       <div class="col-md-6 col-12 mb-3">
-        <a href="{% url 'login-haka' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/haka-signin-logo.svg" %}" height="40" alt="{% trans "Haka signin" %}"></a>
+        <a href="{% url 'login-haka' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/haka-signin-logo.svg" %}" height="40" alt="{% trans 'Haka sign-in' %}"></a>
         <p>{% trans "Haka federation login. Finnish universities, polytechnics and research institutions accounts." %}</p>
       </div>
     {% endif %}
     {% if "edugain"|enabled_backend %}
       <div class="col-md-6 col-12 mb-3">
-        <a href="{% url 'login-edugain' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/edugain-signin-logo.png" %}" height="40" alt="{% trans "eduGAIN signin" %}"></a>
+        <a href="{% url 'login-edugain' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/edugain-signin-logo.png" %}" height="40" alt="{% trans 'eduGAIN sign-in' %}"></a>
         <p>{% trans "eduGAIN federation login. Global research and education institution accounts." %}</p>
       </div>
     {% endif %}
     {% if "microsoft"|enabled_backend %}
       <div class="col-md-6 col-12 mb-3">
-        <a href="{% url 'login-microsoft' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/ms-signin-logo.svg" %}" alt="{% trans "Microsoft signin" %}"></a>
+        <a href="{% url 'login-microsoft' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/ms-signin-logo.svg" %}" alt="{% trans 'Microsoft sign-in' %}"></a>
         <p>{% trans "Login with a Microsoft account." %}</p>
       </div>
     {% endif %}
     {% if "google"|enabled_backend %}
       <div class="col-md-6 col-12 mb-3">
-        <a href="{% url 'login-google' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/google-signin-logo.svg" %}" alt="{% trans "Google signin" %}"></a>
+        <a href="{% url 'login-google' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/google-signin-logo.svg" %}" alt="{% trans 'Google sign-in' %}"></a>
         <p>{% trans "Login with a Google account." %}</p>
       </div>
     {% endif %}
     {% if "emailsms"|enabled_backend %}
       <div class="col-md-6 col-12 mb-3">
         <a href="{% url 'login-email' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" class="btn btn-outline-dark mb-3" role="button">{% trans "Email+SMS login" %}</a>
-        <p>{% trans "Login with an e-mail and SMS verification." %}</p>
+        <p>{% trans "Login with an email and SMS verification." %}</p>
       </div>
     {% endif %}
     {% if "password"|enabled_backend %}

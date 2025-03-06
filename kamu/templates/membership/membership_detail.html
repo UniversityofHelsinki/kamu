@@ -37,7 +37,7 @@
         </dl>
       {% else %}
         <p>{% trans "Identity has not yet been linked to this membership." %}</p>
-        <p>{% trans "Invite has been sent to"%} {{ membership.invite_email_address }}.</p>
+        <p>{% blocktrans with address=membership.invite_email_address %}Invite has been sent to {{ address }}.{% endblocktrans %}</p>
         {% if is_inviter %}
           <form method="post">{% csrf_token %}
             <input type="submit" name="resend_invite" value="{% trans 'Resend invite email' %}" class="btn btn-primary"/>
@@ -52,7 +52,7 @@
         <dd class="col-sm-9">{{ object.get_status_display }}</dd>
         <dt class="col-sm-3">{% trans "Start date" %}</dt>
         <dd class="col-sm-9">{{ object.start_date }}</dd>
-        <dt class="col-sm-3">{% trans "Expire date" %}</dt>
+        <dt class="col-sm-3">{% trans "Expiry date" %}</dt>
         <dd class="col-sm-9">{{ object.expire_date }}</dd>
         <dt class="col-sm-3">{% trans "Approver" %}</dt>
         <dd class="col-sm-9">{{ object.approver.get_full_name|default:"&nbsp;" }}</dd>

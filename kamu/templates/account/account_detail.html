@@ -70,8 +70,8 @@
       <div class="alert alert-info" role="alert">
         <p>{% trans "Password requirements:" %}</p>
         <ul>
-          <li>{% blocktrans with min_length=min_password_length %}Minimum {{ min_length }} characters{% endblocktrans %}</li>
-          <li>{% trans "Not similar to other user attributes" %}</li>
+          <li>{% blocktrans with min_length=min_password_length %}Minimum {{ min_length }} characters.{% endblocktrans %}</li>
+          <li>{% trans "Not similar to other user attributes." %}</li>
         </ul>
       </div>
       {% crispy form form.helper %}

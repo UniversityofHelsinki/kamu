@@ -100,7 +100,7 @@ class LocalBaseBackend(ModelBackend):
         "identity_already_exists": _("Identifier is already linked to another user."),
         "invalid_identifier_format": _("Invalid identifier format."),
         "generic": _("Could not authenticate. Please try again."),
-        "invalid_issuer": _("Identity provider is not authorized."),
+        "invalid_issuer": _("Identity provider is not authorised."),
         "unexpected": _("Unexpected error."),
         "invalid_parameters": _("Missing required parameters. Please try again with an another browser."),
         "invalid_email_or_phone": _("Invalid email address or phone number."),
@@ -837,7 +837,7 @@ class SuomiFiBackend(LocalBaseBackend):
                 )
                 messages.error(
                     request,
-                    _("Suspected duplicate user. Finnish Personal Identity Code already exists in the database: ")
+                    _("Suspected duplicate user. Finnish personal identity code already exists in the database: ")
                     + fpic,
                 )
         elif identifier_type == "eidas":

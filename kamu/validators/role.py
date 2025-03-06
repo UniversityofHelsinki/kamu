@@ -29,7 +29,7 @@ def validate_role_hierarchy(
     while parent:
         n += 1
         if n > settings.ROLE_HIERARCHY_MAXIMUM_DEPTH:
-            raise error_class(_("Role hierarchy cannot be more than maximum depth"))
+            raise error_class(_("Role hierarchy cannot be more than maximum depth."))
         if initial_role and parent == initial_role:
-            raise error_class(_("Role cannot be in its own hierarchy"))
+            raise error_class(_("Role cannot be in its own hierarchy."))
         parent = parent.parent

@@ -95,9 +95,9 @@ def add_missing_requirement_messages(
                 _("Role requires a contract you cannot currently sign."),
             )
         else:
-            message = _('"Role requires a contract "%(name)s"') % {"name": template.name()}
+            message = _('Role requires a contract "%(name)s".') % {"name": template.name()}
             if requirement.level:
-                message = _('"Role requires a contract "%(name)s", version %(version)d or higher.') % {
+                message = _('Role requires a contract "%(name)s", version %(version)d or higher.') % {
                     "name": template.name(),
                     "version": requirement.level,
                 }

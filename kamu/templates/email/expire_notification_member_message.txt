@@ -8,6 +8,7 @@ Role:
 Expiring date:
 {{ expire_date }}
 
-Please contact your university contact if the membership should continue.{% endblocktrans %}{% if inviter %}
+Please get in touch with your university contact if the membership should
+continue.{% endblocktrans %}{% if inviter %}
 {% blocktrans %}You were invited by {{ inviter }}.{% endblocktrans %}{% if inviter != approver and approver %}
 {% blocktrans %}Your membership was approved by {{ approver }}.{% endblocktrans %}{% endif %}{% endif %}

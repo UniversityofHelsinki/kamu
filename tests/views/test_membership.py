@@ -240,7 +240,7 @@ class MembershipJoinTests(BaseTestCase):
 
     def test_join_role_with_invalid_date(self):
         response = self._test_join_role(start_date_delta=7)
-        self.assertIn("Membership expire date cannot be earlier than start date", response.content.decode("utf-8"))
+        self.assertIn("Membership expiry date cannot be earlier than start date", response.content.decode("utf-8"))
 
     def test_join_role_with_too_long_duration(self):
         self.role.maximum_duration = 3

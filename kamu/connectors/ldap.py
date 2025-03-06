@@ -61,7 +61,7 @@ def _get_connection() -> LDAPObject | None:
         cacertfile = settings.LDAP_SETTINGS.get("CACERTFILE", None)
         ignore_tls_check = settings.LDAP_SETTINGS.get("IGNORE_TLS_CHECK", False)
     except KeyError as e:
-        log_msg = f"Incorrect LDAP settings, missing parameter LDAP_SETTINGS[{ e }]"
+        log_msg = f"Incorrect LDAP settings, missing parameter LDAP_SETTINGS[{ e }]."
         logger.error(log_msg)
         return None
     try:
@@ -98,7 +98,7 @@ def _get_search_base() -> str | None:
     try:
         search_base = settings.LDAP_SETTINGS["SEARCH_BASE"]
     except KeyError as e:
-        log_msg = f"Incorrect LDAP settings, missing parameter LDAP_SETTINGS[{ e }]"
+        log_msg = f"Incorrect LDAP settings, missing parameter LDAP_SETTINGS[{ e }]."
         logger.error(log_msg)
         return None
     return search_base
@@ -129,7 +129,7 @@ def ldap_search(
     try:
         result = ldap_connection.search_s(search_base, ldap.SCOPE_SUBTREE, search_filter, ldap_attributes)
     except ldap.NO_SUCH_OBJECT:
-        log_msg = f"LDAP NO SUCH OBJECT: { search_base }"
+        log_msg = f"LDAP NO SUCH OBJECT: { search_base }."
         logger.error(log_msg)
         return None
     except ldap.SIZELIMIT_EXCEEDED as e:

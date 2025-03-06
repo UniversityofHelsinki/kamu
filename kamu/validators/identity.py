@@ -27,23 +27,23 @@ class FpicValidator:
 
     def __call__(self, value: str) -> None:
         if len(value) != 11:
-            message = self.message or _("Personal identity code length should be 11 characters")
+            message = self.message or _("Personal identity code length should be 11 characters.")
             raise ValidationError(message, self.code, params={"value": value})
         try:
             datetime.strptime(value[:6], "%d%m%y")
         except ValueError:
-            message = self.message or _("Incorrect date part")
+            message = self.message or _("Incorrect date part.")
             raise ValidationError(message, self.code, params={"value": value}) from None
         if value[6] not in "+-ABCDEFYXWVU":
-            message = self.message or _("Incorrect intermediate character")
+            message = self.message or _("Incorrect intermediate character.")
             raise ValidationError(message, self.code, params={"value": value})
         allow_test_fpic = getattr(settings, "ALLOW_TEST_FPIC", False)
         if not value[7:10].isdigit() or int(value[7:10]) < 2 or (int(value[7:10]) > 899 and not allow_test_fpic):
-            message = self.message or _("Incorrect numeric part")
+            message = self.message or _("Incorrect numeric part.")
             raise ValidationError(message, self.code, params={"value": value})
         checksum_characters = "0123456789ABCDEFHJKLMNPRSTUVWXY"
         if checksum_characters[int(value[:6] + value[7:10]) % 31] != value[10]:
-            message = self.message or _("Incorrect checksum")
+            message = self.message or _("Incorrect checksum.")
             raise ValidationError(message, self.code, params={"value": value})
 
     def __eq__(self, other: object) -> bool:
@@ -70,13 +70,13 @@ class PhoneNumberValidator:
 
     def __call__(self, value: str) -> None:
         if value[0] != "+":
-            message = self.message or _("Phone number must start with a plus sign")
+            message = self.message or _("Phone number must start with a plus sign.")
             raise ValidationError(message, self.code, params={"value": value})
         if not set(value[1:]).issubset(string.digits):
-            message = self.message or _("Phone number contains invalid characters")
+            message = self.message or _("Phone number contains invalid characters.")
             raise ValidationError(message, self.code, params={"value": value})
         if len(value) < 8:
-            message = self.message or _("Phone number is too short")
+            message = self.message or _("Phone number is too short.")
             raise ValidationError(message, self.code, params={"value": value})
 
     def __eq__(self, other: object) -> bool:
@@ -107,7 +107,7 @@ class EidasIdentifierValidator:
         part, separated by slashes. Maximum total length is 256 characters and whitespace is not allowed.
         """
         if not re.match(r"^[A-Za-z]{2}/[A-Za-z]{2}/\S{1,250}$", value):
-            message = self.message or _("Invalid eIDAS identifier format")
+            message = self.message or _("Invalid eIDAS identifier format.")
             raise ValidationError(message, self.code, params={"value": value})
 
     def __eq__(self, other: object) -> bool:

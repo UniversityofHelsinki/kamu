@@ -328,7 +328,7 @@ class EmailAddressVerificationView(BaseVerificationView):
         except TimeLimitError:
             messages.add_message(self.request, messages.WARNING, _("Tried to send a new code too soon."))
             return False
-        subject = _("Kamu service email address verification")
+        subject = _("Kamu: email address verification")
         message = _("Your verification code is: %(token)s") % {"token": token}
         from_email = getattr(settings, "TOKEN_FROM_EMAIL", None)
         send_mail(subject, message, from_email, [self.object.address])

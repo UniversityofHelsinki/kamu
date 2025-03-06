@@ -386,14 +386,14 @@ class BaseRemoteLoginView(View):
         Check that link identifier has not expired.
         """
         if "link_identifier_time" not in request.session:
-            raise AuthenticationError(_("Link identifier not found"))
+            raise AuthenticationError(_("Link identifier not found."))
         link_identifier_time_limit = getattr(settings, "LINK_IDENTIFIER_TIME_LIMIT", 300)
         try:
             link_identifier_time = datetime.fromisoformat(request.session["link_identifier_time"])
         except ValueError:
-            raise AuthenticationError(_("Link identifier time not valid"))
+            raise AuthenticationError(_("Link identifier time not valid."))
         if timezone.now() - link_identifier_time > timedelta(seconds=link_identifier_time_limit):
-            raise AuthenticationError(_("Link identifier expired"))
+            raise AuthenticationError(_("Link identifier expired."))
         return True
 
     def _authenticate(self, request: HttpRequest, backend: LocalBaseBackend) -> UserType:

@@ -28,7 +28,7 @@
     <div class="col-12 col-lg-6">
       <dl>
         {% if user == object.user or perms.kamu.view_contacts %}
-          <dt class="col-sm-4">{% trans "E-mail addresses" %}</dt>
+          <dt class="col-sm-4">{% trans "Email addresses" %}</dt>
           <dd class="col-sm-8">{% for address in object.email_addresses.all %}{{ address.address }}{% if address.verified %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
           <dt class="col-sm-4">{% trans "Phone numbers" %}</dt>
           <dd class="col-sm-8">{% for number in object.phone_numbers.all %}{{ number.number }}{% if number.verified %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>

@@ -6,7 +6,7 @@
 {% block content %}
   <h1>{% trans "Invite to role" %} {{ role.name }}</h1>
   <div class="alert alert-success" role="alert">
-  <p>{% trans "To invite a new member, first search for the identity with known user information like email and phone number." %}</p>
+  <p>{% trans "To invite a new member, first search for the identity with known user information such as email and phone number." %}</p>
   <p>{% trans "If person is already found from the Kamu or the user directory, you can add role directly to the person." %}</p>
   <p>{% trans "Otherwise you you can invite them by email, by searching with the email address." %}</p>
   {% if HELP_LINK_MANAGERS %}<p class="text-break">{% blocktrans with link=HELP_LINK_MANAGERS %}Read more about role management from the <a href="{{ link }}">IT Helpdesk</a>.{% endblocktrans %}</p>{% endif %}
@@ -38,7 +38,7 @@
       </table>
     {% else %}
       <p>{% trans "No results with the provided search parameters." %}</p>
-      {% if not email %}<p>{% trans "Please search with email address if you wish to send email invite to the role." %}</p>{% endif %}
+      {% if not email %}<p>{% trans "Please search with email address if you wish to send an email invite to the role." %}</p>{% endif %}
     {% endif %}
   {% endif %}
   {% if email and not email_found %}

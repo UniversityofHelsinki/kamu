@@ -128,14 +128,14 @@ class Identity(models.Model):
     class AssuranceLevel(models.IntegerChoices):
         NONE = (0, _("No assurance level"))
         LOW = (1, _("Low, self-asserted with a verified email-address"))
-        MEDIUM = (2, _("Medium, verified from a government issued photo-ID"))
+        MEDIUM = (2, _("Medium, verified with a government issued photo-ID"))
         HIGH = (3, _("High, eIDAS substantial level or similar"))
 
     class VerificationMethod(models.IntegerChoices):
         UNVERIFIED = (0, _("No verification"))
         SELF_ASSURED = (1, _("Self assurance"))
         EXTERNAL = (2, _("External source"))
-        PHOTO_ID = (3, _("Verified from a government issued photo-ID"))
+        PHOTO_ID = (3, _("Verified with a government issued photo-ID"))
         STRONG = (4, _("Strong electrical verification"))
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
@@ -165,7 +165,7 @@ class Identity(models.Model):
         help_text=_("How strongly this user identity is identified."),
     )
     given_names = models.CharField(
-        blank=True, max_length=200, verbose_name=_("Given names"), help_text=_("All official first names.")
+        blank=True, max_length=200, verbose_name=_("Given names"), help_text=_("All official given names.")
     )
     given_names_verification = models.SmallIntegerField(
         choices=VerificationMethod.choices,
@@ -208,11 +208,12 @@ class Identity(models.Model):
         choices=Gender.choices,
         default=Gender.UNKNOWN,
         verbose_name=_("Gender"),
-        help_text=_("Used for statistical purposes."),
+        help_text=_("Required for the user identification from the official identity documents."),
     )
     nationality = models.ManyToManyField(
         Nationality,
         help_text=_("Required for the user identification from the official identity documents."),
+        verbose_name=_("Nationality"),
     )
     nationality_verification = models.SmallIntegerField(
         choices=VerificationMethod.choices,
@@ -457,8 +458,8 @@ class EmailAddress(models.Model):
     class Meta:
         constraints = [models.UniqueConstraint(fields=["identity", "address"], name="unique_email_address")]
         ordering = ["identity", "verified", "priority"]
-        verbose_name = _("E-mail address")
-        verbose_name_plural = _("E-mail addresses")
+        verbose_name = _("Email address")
+        verbose_name_plural = _("Email addresses")
 
     def __str__(self) -> str:
         return f"{self.address}"
@@ -536,7 +537,7 @@ class Identifier(models.Model):
     )
 
     class Type(models.TextChoices):
-        FPIC = ("fpic", _("Finnish national identification number"))
+        FPIC = ("fpic", _("Finnish personal identity code"))
         EIDAS = ("eidas", _("eIDAS identifier"))
         EPPN = ("eppn", _("eduPersonPrincipalName"))
         GOOGLE = ("google", _("Google account"))
@@ -572,7 +573,7 @@ class Identifier(models.Model):
             try:
                 validate_email(self.value)
             except ValidationError:
-                raise ValidationError(_("Invalid eduPersonPrincipalName format"), code="invalid")
+                raise ValidationError(_("Invalid eduPersonPrincipalName format."), code="invalid")
 
     def log_values(self) -> dict[str, str | int]:
         """

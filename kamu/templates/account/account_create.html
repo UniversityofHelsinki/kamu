@@ -13,7 +13,7 @@
         <dd class="col-sm-8">{{ account_info.sn }}</dd>
         <dt class="col-sm-4">{% trans "Display name" %}</dt>
         <dd class="col-sm-8">{{ account_info.displayName }}</dd>
-        <dt class="col-sm-4">{% trans "E-mail address" %}</dt>
+        <dt class="col-sm-4">{% trans "Email address" %}</dt>
         <dd class="col-sm-8">{{ account_info.mail }}</dd>
       </dl>
     </div>
@@ -28,8 +28,8 @@
   <div class="alert alert-info" role="alert">
     <p>{% trans "Password requirements:" %}</p>
     <ul>
-      <li>{% blocktrans with min_length=min_password_length %}Minimum {{ min_length }} characters{% endblocktrans %}</li>
-      <li>{% trans "Not similar to other user attributes" %}</li>
+      <li>{% blocktrans with min_length=min_password_length %}Minimum {{ min_length }} characters.{% endblocktrans %}</li>
+      <li>{% trans "Not similar to other user attributes." %}</li>
     </ul>
   </div>
   <form method="post">{% csrf_token %}

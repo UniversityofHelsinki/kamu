@@ -146,7 +146,7 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
             expire_date__gte=start_date,
             invite_email_address=invite_email_address,
         ).exists():
-            raise ValidationError(_("This email address has an invite during the time period."))
+            raise ValidationError(_("This email address already has an invite to the role during this time period."))
 
 
 class MembershipMassCreateForm(forms.ModelForm[Membership]):

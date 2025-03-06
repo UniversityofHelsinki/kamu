@@ -1,0 +1,2975 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-14 08:34+0200\n"
+"Language: EN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: backends.py:98
+msgid "Identifier not found."
+msgstr ""
+
+#: backends.py:99
+msgid "Valid identifier not found. This is probably a configuration error."
+msgstr ""
+
+#: backends.py:100
+msgid "Identifier is already linked to another user."
+msgstr ""
+
+#: backends.py:101
+msgid "Invalid identifier format."
+msgstr ""
+
+#: backends.py:102
+msgid "Could not authenticate. Please try again."
+msgstr ""
+
+#: backends.py:103
+msgid "Identity provider is not authorised."
+msgstr ""
+
+#: backends.py:104
+msgid "Unexpected error."
+msgstr ""
+
+#: backends.py:105
+msgid "Missing required parameters. Please try again with an another browser."
+msgstr ""
+
+#: backends.py:106 forms/auth.py:44 forms/auth.py:85
+msgid "Invalid email address or phone number."
+msgstr ""
+
+#: backends.py:107 views/auth.py:117
+msgid "You are already logged in."
+msgstr ""
+
+#: backends.py:108
+msgid "User must be authenticated to link identifier."
+msgstr ""
+
+#: backends.py:109
+msgid ""
+"Staff and Superuser access is not allowed with this authentication method."
+msgstr ""
+
+#: backends.py:110
+msgid "Role owner access is not allowed with this authentication method."
+msgstr ""
+
+#: backends.py:111
+msgid "Staff and Superuser access is not allowed from this IP address."
+msgstr ""
+
+#: backends.py:112
+msgid "You belong to a group that is not allowed from this IP address."
+msgstr ""
+
+#: backends.py:113
+msgid "Configuration error, service administrators have been notified."
+msgstr ""
+
+#: backends.py:638
+msgid "Suspected duplicate user. Username already exists in the database: "
+msgstr ""
+
+#: backends.py:652
+msgid "Suspected duplicate user. Identity already has a different username: "
+msgstr ""
+
+#: backends.py:840
+msgid ""
+"Suspected duplicate user. Finnish personal identity code already exists in "
+"the database: "
+msgstr ""
+
+#: forms/account.py:19
+msgid "Password"
+msgstr ""
+
+#: forms/account.py:20
+msgid "Confirm password"
+msgstr ""
+
+#: forms/account.py:37
+msgid "Passwords do not match."
+msgstr ""
+
+#: forms/account.py:47 models/account.py:32
+#: templates/account/account_detail.html:10
+#: templates/account/account_detail.html:32
+#: templates/account/account_detail.html:56
+#: templates/account/account_list.html:15
+msgid "User ID"
+msgstr ""
+
+#: forms/account.py:47
+msgid "Select account name to be used."
+msgstr ""
+
+#: forms/account.py:60 templates/account/account_create.html:5
+msgid "Create account"
+msgstr ""
+
+#: forms/account.py:74
+msgid "Reset password"
+msgstr ""
+
+#: forms/auth.py:36 forms/auth.py:186 forms/identity.py:47
+#: models/identity.py:451 models/identity.py:461 models/token.py:296
+#: templates/account/account_create.html:16
+msgid "Email address"
+msgstr ""
+
+#: forms/auth.py:38 forms/auth.py:256 forms/identity.py:49
+#: models/identity.py:487 models/identity.py:497 models/token.py:293
+msgid "Phone number"
+msgstr ""
+
+#: forms/auth.py:40 forms/auth.py:258
+msgid "Phone number in international format, e.g. +358123456789."
+msgstr ""
+
+#: forms/auth.py:45 views/auth.py:476
+msgid "This account is inactive."
+msgstr ""
+
+#: forms/auth.py:54 forms/auth.py:318 templates/auth/invite.html:12
+#: templates/auth/invite.html:14 templates/auth/login.html:7
+#: templates/auth/login_email.html:5 templates/auth/login_local.html:5
+#: templates/base.html:71 templates/front.html:86 templates/front.html:88
+msgid "Login"
+msgstr ""
+
+#: forms/auth.py:75
+msgid "This contact information cannot be used to login."
+msgstr ""
+
+#: forms/auth.py:83
+msgid ""
+"Tried to send new login tokens too soon. Please try again in one minute."
+msgstr ""
+
+#: forms/auth.py:93 forms/auth.py:224 forms/identity.py:200
+msgid "Email verification code"
+msgstr ""
+
+#: forms/auth.py:94 forms/auth.py:281 forms/identity.py:236
+msgid "SMS verification code"
+msgstr ""
+
+#: forms/auth.py:110 forms/auth.py:235 forms/auth.py:292
+#: templates/identity/contact_address.html:24
+#: templates/identity/contact_address.html:70
+msgid "Verify"
+msgstr ""
+
+#: forms/auth.py:111
+msgid "Resend email code"
+msgstr ""
+
+#: forms/auth.py:112
+msgid "Resend phone code"
+msgstr ""
+
+#: forms/auth.py:120 forms/auth.py:128 forms/auth.py:137 forms/auth.py:145
+#: forms/auth.py:244 forms/auth.py:246 forms/auth.py:301 forms/auth.py:303
+#: forms/identity.py:219 forms/identity.py:221 forms/identity.py:255
+#: forms/identity.py:257
+msgid "Invalid verification code."
+msgstr ""
+
+#: forms/auth.py:124 forms/auth.py:126
+msgid "This email address cannot be used to login."
+msgstr ""
+
+#: forms/auth.py:141 forms/auth.py:143
+msgid "This phone number cannot be used to login."
+msgstr ""
+
+#: forms/auth.py:155 forms/auth.py:166 forms/auth.py:168
+msgid "Error when logging in, please try again."
+msgstr ""
+
+#: forms/auth.py:170
+msgid "This account is disabled."
+msgstr ""
+
+#: forms/auth.py:183 models/identity.py:168
+#: templates/identity/identity_combine.html:12
+#: templates/identity/identity_combine.html:68
+#: templates/identity/identity_detail.html:8
+msgid "Given names"
+msgstr ""
+
+#: forms/auth.py:183 models/identity.py:168
+msgid "All official given names."
+msgstr ""
+
+#: forms/auth.py:185 forms/identity.py:45 models/identity.py:176
+#: templates/account/account_create.html:12
+#: templates/identity/identity_combine.html:13
+#: templates/identity/identity_combine.html:74
+#: templates/identity/identity_detail.html:10
+msgid "Surname"
+msgstr ""
+
+#: forms/auth.py:185 models/identity.py:176
+msgid "Official surname(s)."
+msgstr ""
+
+#: forms/auth.py:194 forms/auth.py:267
+msgid "Send verification code"
+msgstr ""
+
+#: forms/auth.py:202
+msgid "This email address is already linked to an account."
+msgstr ""
+
+#: forms/auth.py:211
+msgid "Invalid form data."
+msgstr ""
+
+#: forms/auth.py:215
+msgid "Either given names or surname must be filled in."
+msgstr ""
+
+#: forms/auth.py:236 forms/auth.py:293
+msgid "Resend verification code"
+msgstr ""
+
+#: forms/auth.py:338
+msgid "Invitation code"
+msgstr ""
+
+#: forms/auth.py:361 forms/auth.py:367 forms/auth.py:371 forms/auth.py:373
+msgid "Invalid invitation code."
+msgstr ""
+
+#: forms/generic.py:32 forms/identity.py:64 templates/base.html:32
+#: templates/front.html:53
+msgid "Search"
+msgstr ""
+
+#: forms/identity.py:27
+msgid "Target primary key"
+msgstr ""
+
+#: forms/identity.py:28
+msgid "Source primary key"
+msgstr ""
+
+#: forms/identity.py:36
+msgid "Combine"
+msgstr ""
+
+#: forms/identity.py:44
+msgid "Given name(s)"
+msgstr ""
+
+#: forms/identity.py:46 models/account.py:39 models/role.py:235
+#: templates/identity/identity_search.html:17
+#: templates/identity/identity_search.html:42
+#: templates/membership/membership_invite.html:34
+#: templates/membership/membership_invite_identity.html:23
+#: templates/membership/membership_invite_identity.html:55
+msgid "User account"
+msgstr ""
+
+#: forms/identity.py:52
+msgid ""
+"Use international format, e.g. +358401234567, including only numbers and + "
+"sign."
+msgstr ""
+
+#: forms/identity.py:54 models/identity.py:228 models/identity.py:540
+#: templates/identity/identity_combine.html:15
+#: templates/identity/identity_combine.html:111
+#: templates/identity/identity_detail.html:23
+msgid "Finnish personal identity code"
+msgstr ""
+
+#: forms/identity.py:67
+msgid ""
+"Name search returns partial matches from Kamu and names starting with the "
+"search parameters in the user directory."
+msgstr ""
+
+#: forms/identity.py:71
+msgid "Name search returns partial matches from Kamu."
+msgstr ""
+
+#: forms/identity.py:73
+msgid "Name search"
+msgstr ""
+
+#: forms/identity.py:80 models/identity.py:559
+#: templates/identity/identity_detail.html:72
+msgid "Identifiers"
+msgstr ""
+
+#: forms/identity.py:84
+msgid ""
+"Identifier search matches only exact identifiers. Each identifier is "
+"searched separately and the results are added to the final search results."
+msgstr ""
+
+#: forms/identity.py:136
+msgid "Email address or phone number"
+msgstr ""
+
+#: forms/identity.py:138
+msgid ""
+"Phone number in international format, e.g. +358123456789. Values containing "
+"@ are treated as email addresses."
+msgstr ""
+
+#: forms/identity.py:155
+msgid "Add"
+msgstr ""
+
+#: forms/identity.py:160 forms/identity.py:335
+#: templates/account/account_list.html:58
+#: templates/contract/contract_detail.html:26
+#: templates/contract/contract_list.html:60
+#: templates/identity/identifier.html:98
+msgid "Return"
+msgstr ""
+
+#: forms/identity.py:175
+msgid "Email address or phone number is required."
+msgstr ""
+
+#: forms/identity.py:181
+msgid "Email address already exists."
+msgstr ""
+
+#: forms/identity.py:183
+msgid "Maximum number of email addresses reached."
+msgstr ""
+
+#: forms/identity.py:189
+msgid "Phone number already exists."
+msgstr ""
+
+#: forms/identity.py:191
+msgid "Maximum number of phone numbers reached."
+msgstr ""
+
+#: forms/identity.py:210 forms/identity.py:246
+msgid "Save"
+msgstr ""
+
+#: forms/identity.py:211 forms/identity.py:247
+msgid "Resend a code"
+msgstr ""
+
+#: forms/identity.py:277 templates/identity/identity_detail.html:66
+msgid "Basic information"
+msgstr ""
+
+#: forms/identity.py:305
+msgid "Restricted information"
+msgstr ""
+
+#: forms/identity.py:330
+msgid "Save changes"
+msgstr ""
+
+#: forms/identity.py:389
+msgid "Cannot set strong electrical verification manually."
+msgstr ""
+
+#: forms/membership.py:34
+msgid "Add member"
+msgstr ""
+
+#: forms/membership.py:68
+msgid "Update"
+msgstr ""
+
+#: forms/membership.py:91
+msgid ""
+"This replaces beginning of the default invite message. Lines of the invite "
+"text are wrapped to 70 characters. Invite code and link will be added to end "
+"of the message. Use preview to see the final result."
+msgstr ""
+
+#: forms/membership.py:102 forms/membership.py:166
+msgid "Invite language"
+msgstr ""
+
+#: forms/membership.py:104 forms/membership.py:168
+msgid "Invite text"
+msgstr ""
+
+#: forms/membership.py:120 forms/membership.py:181
+#: templates/membership/membership_approval_list.html:19
+#: templates/membership/membership_expiring_list.html:19
+#: templates/role/role_detail.html:61
+msgid "Invite"
+msgstr ""
+
+#: forms/membership.py:121 forms/membership.py:182
+#: templates/membership/membership_invite.html:42
+msgid "Preview message"
+msgstr ""
+
+#: forms/membership.py:149
+msgid ""
+"This email address already has an invite to the role during this time period."
+msgstr ""
+
+#: forms/membership.py:158
+msgid "Invited persons"
+msgstr ""
+
+#: forms/membership.py:161
+msgid ""
+"Invited persons, one per line. Each line should contain email address, "
+"followed by optional phone number and/or Finnish personal identity code, "
+"values separated by comma. Phone number must be in international format. "
+"Example: \"person@example.org,+358501234567,010181-900C\""
+msgstr ""
+
+#: forms/membership.py:217
+msgid "No invited persons."
+msgstr ""
+
+#: forms/membership.py:220
+msgid "Too many invited persons."
+msgstr ""
+
+#: forms/membership.py:231
+#, python-format
+msgid "Invalid value: %(part)s"
+msgstr ""
+
+#: forms/membership.py:234
+#, python-format
+msgid "Invalid line: %(line)s"
+msgstr ""
+
+#: models/account.py:22
+msgid "Enabled"
+msgstr ""
+
+#: models/account.py:23
+msgid "Disabled"
+msgstr ""
+
+#: models/account.py:26 templates/account/account_detail.html:8
+msgid "Account"
+msgstr ""
+
+#: models/account.py:27
+msgid "Light Account"
+msgstr ""
+
+#: models/account.py:29 templates/account/account_detail.html:14
+#: templates/account/account_list.html:16
+#: templates/identity/identity_detail.html:87
+#: templates/membership/membership_approval_list.html:12
+#: templates/membership/membership_detail.html:51
+#: templates/membership/membership_expiring_list.html:12
+#: templates/role/role_detail.html:54
+msgid "Status"
+msgstr ""
+
+#: models/account.py:30
+msgid "Account type"
+msgstr ""
+
+#: models/account.py:34 models/identity.py:551
+msgid "Deactivated at"
+msgstr ""
+
+#: models/account.py:35 models/account.py:63 models/contract.py:55
+#: models/contract.py:112 models/identity.py:40 models/identity.py:244
+#: models/identity.py:455 models/identity.py:491 models/identity.py:552
+#: models/membership.py:72 models/role.py:78 models/role.py:257
+#: models/role.py:340 models/token.py:313
+msgid "Created at"
+msgstr ""
+
+#: models/account.py:36 models/identity.py:41 models/identity.py:245
+#: models/identity.py:456 models/identity.py:492 models/identity.py:553
+#: models/membership.py:73 models/role.py:79 models/role.py:258
+#: models/role.py:341
+msgid "Updated at"
+msgstr ""
+
+#: models/account.py:40 templates/identity/identity_detail.html:77
+msgid "User accounts"
+msgstr ""
+
+#: models/account.py:62
+msgid "Number of failures"
+msgstr ""
+
+#: models/account.py:66
+msgid "Account synchronisation"
+msgstr ""
+
+#: models/account.py:67
+msgid "Account synchronisations"
+msgstr ""
+
+#: models/contract.py:53 templates/contract/contract_list.html:14
+msgid "Checksum"
+msgstr ""
+
+#: models/contract.py:54
+msgid "Language"
+msgstr ""
+
+#: models/contract.py:63
+msgid "Contract"
+msgstr ""
+
+#: models/contract.py:64 templates/contract/contract_list.html:6
+#: templates/identity/identity_combine.html:20
+#: templates/identity/identity_detail.html:75
+msgid "Contracts"
+msgstr ""
+
+#: models/contract.py:103
+msgid "Contract type"
+msgstr ""
+
+#: models/contract.py:104 templates/contract/contract_detail.html:21
+msgid "Contract version"
+msgstr ""
+
+#: models/contract.py:105
+msgid "Contract name (fi)"
+msgstr ""
+
+#: models/contract.py:106
+msgid "Contract name (en)"
+msgstr ""
+
+#: models/contract.py:107
+msgid "Contract name (sv)"
+msgstr ""
+
+#: models/contract.py:108
+msgid "Contract text (fi)"
+msgstr ""
+
+#: models/contract.py:109
+msgid "Contract text (en)"
+msgstr ""
+
+#: models/contract.py:110
+msgid "Contract text (sv)"
+msgstr ""
+
+#: models/contract.py:111
+msgid "Public"
+msgstr ""
+
+#: models/contract.py:118
+msgid "Contract template"
+msgstr ""
+
+#: models/contract.py:119
+msgid "Contract templates"
+msgstr ""
+
+#: models/identity.py:35
+msgid "Country code"
+msgstr ""
+
+#: models/identity.py:36
+msgid "Country name (fi)"
+msgstr ""
+
+#: models/identity.py:37
+msgid "Country name (en)"
+msgstr ""
+
+#: models/identity.py:38
+msgid "Country name (sv)"
+msgstr ""
+
+#: models/identity.py:44 models/identity.py:216
+#: templates/identity/identity_combine.html:117
+#: templates/identity/identity_detail.html:21
+msgid "Nationality"
+msgstr ""
+
+#: models/identity.py:45
+msgid "Nationalities"
+msgstr ""
+
+#: models/identity.py:117 models/role.py:31
+msgid "English"
+msgstr ""
+
+#: models/identity.py:118 models/role.py:32
+msgid "Finnish"
+msgstr ""
+
+#: models/identity.py:119 models/role.py:33
+msgid "Swedish"
+msgstr ""
+
+#: models/identity.py:123
+msgid "Male"
+msgstr ""
+
+#: models/identity.py:124
+msgid "Female"
+msgstr ""
+
+#: models/identity.py:125
+msgid "Other"
+msgstr ""
+
+#: models/identity.py:126
+msgid "Unknown"
+msgstr ""
+
+#: models/identity.py:129
+msgid "No assurance level"
+msgstr ""
+
+#: models/identity.py:130
+msgid "Low, self-asserted with a verified email-address"
+msgstr ""
+
+#: models/identity.py:131
+msgid "Medium, verified with a government issued photo-ID"
+msgstr ""
+
+#: models/identity.py:132
+msgid "High, eIDAS substantial level or similar"
+msgstr ""
+
+#: models/identity.py:135
+msgid "No verification"
+msgstr ""
+
+#: models/identity.py:136
+msgid "Self assurance"
+msgstr ""
+
+#: models/identity.py:137
+msgid "External source"
+msgstr ""
+
+#: models/identity.py:138
+msgid "Verified with a government issued photo-ID"
+msgstr ""
+
+#: models/identity.py:139
+msgid "Strong electrical verification"
+msgstr ""
+
+#: models/identity.py:145
+msgid "Kamu ID"
+msgstr ""
+
+#: models/identity.py:146
+msgid "Unique identifier for this identity."
+msgstr ""
+
+#: models/identity.py:154
+msgid "User identifier"
+msgstr ""
+
+#: models/identity.py:158 templates/identity/identity_combine.html:56
+msgid "External identity"
+msgstr ""
+
+#: models/identity.py:159
+msgid "This identity is managed in another registry."
+msgstr ""
+
+#: models/identity.py:164 templates/identity/identity_combine.html:62
+msgid "Assurance level"
+msgstr ""
+
+#: models/identity.py:165
+msgid "How strongly this user identity is identified."
+msgstr ""
+
+#: models/identity.py:173
+msgid "Given names verification method"
+msgstr ""
+
+#: models/identity.py:181
+msgid "Surname verification method"
+msgstr ""
+
+#: models/identity.py:186 templates/identity/identity_combine.html:81
+msgid "Displayed given name"
+msgstr ""
+
+#: models/identity.py:187
+msgid "A given name or nickname part of the user's display name."
+msgstr ""
+
+#: models/identity.py:192 templates/identity/identity_combine.html:87
+msgid "Displayed surname"
+msgstr ""
+
+#: models/identity.py:193
+msgid "A surname part of the user's display name."
+msgstr ""
+
+#: models/identity.py:198 templates/identity/identity_combine.html:93
+#: templates/identity/identity_detail.html:17
+msgid "Date of birth"
+msgstr ""
+
+#: models/identity.py:199 models/identity.py:211 models/identity.py:215
+msgid ""
+"Required for the user identification from the official identity documents."
+msgstr ""
+
+#: models/identity.py:204
+msgid "Date of birth verification method"
+msgstr ""
+
+#: models/identity.py:210 templates/identity/identity_combine.html:99
+#: templates/identity/identity_detail.html:19
+msgid "Gender"
+msgstr ""
+
+#: models/identity.py:221
+msgid "Nationality verification method"
+msgstr ""
+
+#: models/identity.py:230
+msgid "Used for the strong electrical identification."
+msgstr ""
+
+#: models/identity.py:235
+msgid "FPIC verification method"
+msgstr ""
+
+#: models/identity.py:241 templates/identity/identity_combine.html:105
+#: templates/identity/identity_detail.html:14
+#: templates/membership/membership_detail.html:35
+#: templates/membership/membership_invite.html:26
+msgid "Preferred language"
+msgstr ""
+
+#: models/identity.py:242
+msgid "Preferred service language."
+msgstr ""
+
+#: models/identity.py:263 templates/membership/membership_approval_list.html:10
+#: templates/membership/membership_detail.html:26
+#: templates/membership/membership_detail.html:87
+#: templates/membership/membership_expiring_list.html:10
+#: templates/membership/membership_invite.html:22
+#: templates/membership/membership_invite.html:30
+#: templates/role/role_detail.html:53
+msgid "Identity"
+msgstr ""
+
+#: models/identity.py:264
+msgid "Identities"
+msgstr ""
+
+#: models/identity.py:452 models/identity.py:488
+#: templates/identity/contact_address.html:16
+#: templates/identity/contact_address.html:62
+msgid "Priority"
+msgstr ""
+
+#: models/identity.py:453 models/identity.py:489 models/identity.py:549
+#: templates/identity/contact_address.html:15
+#: templates/identity/contact_address.html:24
+#: templates/identity/contact_address.html:61
+#: templates/identity/contact_address.html:70
+#: templates/identity/identity_combine.html:124
+#: templates/identity/identity_combine.html:125
+#: templates/identity/identity_combine.html:126
+#: templates/identity/identity_combine.html:127
+#: templates/identity/identity_combine.html:131
+#: templates/identity/identity_combine.html:132
+#: templates/identity/identity_combine.html:133
+#: templates/identity/identity_combine.html:134
+msgid "Verified"
+msgstr ""
+
+#: models/identity.py:462 templates/identity/contact_address.html:9
+#: templates/identity/identity_detail.html:31
+msgid "Email addresses"
+msgstr ""
+
+#: models/identity.py:498 templates/identity/contact_address.html:55
+#: templates/identity/identity_detail.html:33
+msgid "Phone numbers"
+msgstr ""
+
+#: models/identity.py:541
+msgid "eIDAS identifier"
+msgstr ""
+
+#: models/identity.py:542
+msgid "eduPersonPrincipalName"
+msgstr ""
+
+#: models/identity.py:543
+msgid "Google account"
+msgstr ""
+
+#: models/identity.py:544
+msgid "Microsoft account"
+msgstr ""
+
+#: models/identity.py:545 templates/identity/identity_combine.html:44
+msgid "Kamu identifier"
+msgstr ""
+
+#: models/identity.py:547
+msgid "Identifier type"
+msgstr ""
+
+#: models/identity.py:548
+msgid "Identifier value"
+msgstr ""
+
+#: models/identity.py:558
+msgid "Identifier"
+msgstr ""
+
+#: models/identity.py:576
+msgid "Invalid eduPersonPrincipalName format."
+msgstr ""
+
+#: models/membership.py:52
+msgid "Invited"
+msgstr ""
+
+#: models/membership.py:53
+msgid "Missing requirements"
+msgstr ""
+
+#: models/membership.py:54
+msgid "Waiting approval"
+msgstr ""
+
+#: models/membership.py:55
+msgid "Pending"
+msgstr ""
+
+#: models/membership.py:56
+msgid "Active"
+msgstr ""
+
+#: models/membership.py:57 templates/identity/identity_detail.html:111
+msgid "Expired"
+msgstr ""
+
+#: models/membership.py:59
+msgid "Invite email address"
+msgstr ""
+
+#: models/membership.py:60
+msgid "Membership status"
+msgstr ""
+
+#: models/membership.py:67
+msgid "Membership reason"
+msgstr ""
+
+#: models/membership.py:68
+msgid "Membership start date"
+msgstr ""
+
+#: models/membership.py:69
+msgid "Membership expiry date"
+msgstr ""
+
+#: models/membership.py:71
+msgid "Requirements failed time"
+msgstr ""
+
+#: models/membership.py:79
+msgid "Membership"
+msgstr ""
+
+#: models/membership.py:80 templates/base.html:41
+msgid "Memberships"
+msgstr ""
+
+#: models/role.py:36
+msgid "Role identifier"
+msgstr ""
+
+#: models/role.py:37
+msgid "Role name (fi)"
+msgstr ""
+
+#: models/role.py:38
+msgid "Role name (en)"
+msgstr ""
+
+#: models/role.py:39
+msgid "Role name (sv)"
+msgstr ""
+
+#: models/role.py:40
+msgid "Role description (fi)"
+msgstr ""
+
+#: models/role.py:41
+msgid "Role description (en)"
+msgstr ""
+
+#: models/role.py:42
+msgid "Role description (sv)"
+msgstr ""
+
+#: models/role.py:47
+msgid "Organisation unit"
+msgstr ""
+
+#: models/role.py:48
+msgid "Notification email address"
+msgstr ""
+
+#: models/role.py:53 templates/role/role_detail.html:26
+msgid "Notification language"
+msgstr ""
+
+#: models/role.py:56 templates/role/role_detail.html:30
+msgid "Inviter groups"
+msgstr ""
+
+#: models/role.py:59 templates/role/role_detail.html:33
+msgid "Approver groups"
+msgstr ""
+
+#: models/role.py:62 models/role.py:263
+#: templates/membership/membership_detail.html:19
+#: templates/membership/membership_invite.html:13
+#: templates/role/role_detail.html:16
+msgid "Permissions"
+msgstr ""
+
+#: models/role.py:64 models/role.py:254 models/role.py:349
+msgid "Requirements"
+msgstr ""
+
+#: models/role.py:67
+msgid "IAM Group"
+msgstr ""
+
+#: models/role.py:69
+msgid "Maximum duration (days)"
+msgstr ""
+
+#: models/role.py:72
+msgid "Purge delay (days)"
+msgstr ""
+
+#: models/role.py:73
+msgid "Grace period from membership expiration to purge (days)"
+msgstr ""
+
+#: models/role.py:85 templates/identity/identity_detail.html:86
+#: templates/identity/identity_detail.html:109
+#: templates/membership/membership_approval_list.html:11
+#: templates/membership/membership_detail.html:15
+#: templates/membership/membership_detail.html:85
+#: templates/membership/membership_expiring_list.html:11
+#: templates/membership/membership_invite.html:9
+#: templates/role/role_list.html:11 templates/role/role_search.html:14
+msgid "Role"
+msgstr ""
+
+#: models/role.py:86 templates/base.html:30
+msgid "Roles"
+msgstr ""
+
+#: models/role.py:232
+msgid "Permission identifier"
+msgstr ""
+
+#: models/role.py:236
+msgid "Generic permission"
+msgstr ""
+
+#: models/role.py:237
+msgid "Service"
+msgstr ""
+
+#: models/role.py:240
+msgid "Permission type"
+msgstr ""
+
+#: models/role.py:243
+msgid "Permission name (fi)"
+msgstr ""
+
+#: models/role.py:244
+msgid "Permission name (en)"
+msgstr ""
+
+#: models/role.py:245
+msgid "Permission name (sv)"
+msgstr ""
+
+#: models/role.py:246
+msgid "Permission description (fi)"
+msgstr ""
+
+#: models/role.py:247
+msgid "Permission description (en)"
+msgstr ""
+
+#: models/role.py:248
+msgid "Permission description (sv)"
+msgstr ""
+
+#: models/role.py:250
+msgid "Permission cost"
+msgstr ""
+
+#: models/role.py:251
+msgid "Permission value"
+msgstr ""
+
+#: models/role.py:262
+msgid "Permission"
+msgstr ""
+
+#: models/role.py:309
+msgid "Requirement name (fi)"
+msgstr ""
+
+#: models/role.py:310
+msgid "Requirement name (en)"
+msgstr ""
+
+#: models/role.py:311
+msgid "Requirement name (sv)"
+msgstr ""
+
+#: models/role.py:314
+msgid "Requires a signed contract of type (value)"
+msgstr ""
+
+#: models/role.py:315
+msgid "User attribute (value) is defined"
+msgstr ""
+
+#: models/role.py:316
+msgid "Assurance level at least level"
+msgstr ""
+
+#: models/role.py:317
+msgid "External requirement"
+msgstr ""
+
+#: models/role.py:319
+msgid "Requirement type"
+msgstr ""
+
+#: models/role.py:323
+msgid "Requirement value"
+msgstr ""
+
+#: models/role.py:327
+msgid "Level or version required"
+msgstr ""
+
+#: models/role.py:329
+msgid ""
+"Require a minimum level of assurance or attribute verification level, or a "
+"minimum version of contract. Contract level must be a positive integer. "
+"Assurance levels are from 1 (low) to 3 (high) and attribute verification "
+"levels are from 1 (self assured) to 4 (strong electrical verification)"
+msgstr ""
+
+#: models/role.py:336
+msgid "Grace period (days)"
+msgstr ""
+
+#: models/role.py:337
+msgid "Grace period (days) before membership status is changed."
+msgstr ""
+
+#: models/role.py:348
+msgid "Requirement"
+msgstr ""
+
+#: models/role.py:384
+msgid "Contract requirement needs contract type as a value."
+msgstr ""
+
+#: models/role.py:386
+msgid "Contract version must be a positive integer."
+msgstr ""
+
+#: models/role.py:394
+msgid "Allowed assurance levels are from %(min) (low) to %(max) (high)."
+msgstr ""
+
+#: models/role.py:404
+msgid "Invalid attribute name."
+msgstr ""
+
+#: models/role.py:409
+msgid "Attribute does not have verification level."
+msgstr ""
+
+#: models/role.py:416
+msgid "Allowed levels are from %(min) to %(max)."
+msgstr ""
+
+#: models/token.py:300
+msgid "Email login token"
+msgstr ""
+
+#: models/token.py:301
+msgid "SMS login token"
+msgstr ""
+
+#: models/token.py:302
+msgid "Email object verification token"
+msgstr ""
+
+#: models/token.py:303
+msgid "Phone object verification token"
+msgstr ""
+
+#: models/token.py:304
+msgid "Email address verification token"
+msgstr ""
+
+#: models/token.py:305
+msgid "Phone number verification token"
+msgstr ""
+
+#: models/token.py:306
+msgid "Invite token"
+msgstr ""
+
+#: models/token.py:308
+msgid "Token type"
+msgstr ""
+
+#: models/token.py:310
+msgid "Salt and a hashed token"
+msgstr ""
+
+#: models/token.py:311
+msgid "Number of tries left"
+msgstr ""
+
+#: models/token.py:317
+msgid "Login token"
+msgstr ""
+
+#: models/token.py:318
+msgid "Login tokens"
+msgstr ""
+
+#: serializers/identity.py:113
+msgid "This identity already has the given email address."
+msgstr ""
+
+#: serializers/membership.py:51
+#, python-format
+msgid "Field %(attribute)s is required."
+msgstr ""
+
+#: serializers/role.py:130
+msgid "Cannot validate sequence data."
+msgstr ""
+
+#: templates/account/account_create.html:6
+msgid "Account will be created with the following information"
+msgstr ""
+
+#: templates/account/account_create.html:10
+msgid "Given name"
+msgstr ""
+
+#: templates/account/account_create.html:14
+#: templates/identity/identity_detail.html:12
+msgid "Display name"
+msgstr ""
+
+#: templates/account/account_create.html:22
+msgid "Allowed services"
+msgstr ""
+
+#: templates/account/account_create.html:27
+msgid "Give password to create an account"
+msgstr ""
+
+#: templates/account/account_create.html:29
+#: templates/account/account_detail.html:71
+msgid "Password requirements:"
+msgstr ""
+
+#: templates/account/account_create.html:31
+#: templates/account/account_detail.html:73
+#, python-format
+msgid "Minimum %(min_length)s characters."
+msgstr ""
+
+#: templates/account/account_create.html:32
+#: templates/account/account_detail.html:74
+msgid "Not similar to other user attributes."
+msgstr ""
+
+#: templates/account/account_create.html:36
+msgid "Regenerate user IDs"
+msgstr ""
+
+#: templates/account/account_detail.html:5
+msgid "Account details"
+msgstr ""
+
+#: templates/account/account_detail.html:12
+#: templates/account/account_list.html:14
+#: templates/account/account_list.html:41 templates/identity/identifier.html:15
+#: templates/identity/identifier.html:59
+msgid "Type"
+msgstr ""
+
+#: templates/account/account_detail.html:21
+msgid "Disable user account"
+msgstr ""
+
+#: templates/account/account_detail.html:26
+msgid "Confirm disabling user account"
+msgstr ""
+
+#: templates/account/account_detail.html:27
+#: templates/account/account_detail.html:51 templates/front.html:22
+#: templates/front.html:34 templates/identity/identifier.html:34
+#: templates/identity/identity_detail.html:50
+#: templates/identity/identity_detail.html:60
+#: templates/membership/membership_detail.html:80
+msgid "Close"
+msgstr ""
+
+#: templates/account/account_detail.html:30
+msgid "This account will be disabled immediately."
+msgstr ""
+
+#: templates/account/account_detail.html:36
+#: templates/account/account_detail.html:60
+#: templates/contract/contract_sign.html:19
+#: templates/identity/contact_address.html:40
+#: templates/identity/contact_address.html:86
+#: templates/identity/identifier.html:40
+#: templates/membership/membership_detail.html:93
+#: templates/membership/membership_edit_form.html:10
+msgid "Cancel"
+msgstr ""
+
+#: templates/account/account_detail.html:37
+#: templates/account/account_detail.html:61
+msgid "Confirm"
+msgstr ""
+
+#: templates/account/account_detail.html:45
+msgid "Enable user account"
+msgstr ""
+
+#: templates/account/account_detail.html:50
+msgid "Confirm enabling user account"
+msgstr ""
+
+#: templates/account/account_detail.html:54
+msgid "This account will be enabled immediately."
+msgstr ""
+
+#: templates/account/account_detail.html:69
+msgid "Reset account password"
+msgstr ""
+
+#: templates/account/account_list.html:8
+msgid "Account information"
+msgstr ""
+
+#: templates/account/account_list.html:9
+msgid "Accounts"
+msgstr ""
+
+#: templates/account/account_list.html:17
+msgid "Manage"
+msgstr ""
+
+#: templates/account/account_list.html:27
+msgid "Manage account"
+msgstr ""
+
+#: templates/account/account_list.html:34
+msgid "You do not have any accounts."
+msgstr ""
+
+#: templates/account/account_list.html:37
+msgid "Allowed accounts"
+msgstr ""
+
+#: templates/account/account_list.html:42
+msgid "Action"
+msgstr ""
+
+#: templates/account/account_list.html:49
+msgid "Create"
+msgstr ""
+
+#: templates/account/account_list.html:50
+msgid "Manage in external service"
+msgstr ""
+
+#: templates/auth/invite.html:6
+msgid "Claim invite"
+msgstr ""
+
+#: templates/auth/invite.html:7
+msgid ""
+"You have received an invite to a new role at the University of Helsinki."
+msgstr ""
+
+#: templates/auth/invite.html:13
+msgid ""
+"If you already have a University of Helsinki account or a Kamu registered "
+"identity, please log in."
+msgstr ""
+
+#: templates/auth/invite.html:17 templates/auth/invite.html:20
+msgid "Register identity"
+msgstr ""
+
+#: templates/auth/invite.html:18
+msgid ""
+"If you don't have a user account or a Kamu identity yet, please register "
+"here. You will\n"
+"          need to register in order to gain University of Helsinki user "
+"account and other permissions."
+msgstr ""
+
+#: templates/auth/login.html:9 templates/identity/identifier.html:79
+msgid "University of Helsinki account"
+msgstr ""
+
+#: templates/auth/login.html:12
+msgid "University of Helsinki sign-in"
+msgstr ""
+
+#: templates/auth/login.html:15
+msgid "Login with the University of Helsinki single sign-on."
+msgstr ""
+
+#: templates/auth/login.html:16
+msgid "Use this method, if you have a University of Helsinki user account."
+msgstr ""
+
+#: templates/auth/login.html:20
+msgid "Other methods"
+msgstr ""
+
+#: templates/auth/login.html:24 templates/auth/registration.html:14
+msgid "Suomi.fi sign-in"
+msgstr ""
+
+#: templates/auth/login.html:25
+msgid "Login with a Suomi.fi e-Identification or eIDAS."
+msgstr ""
+
+#: templates/auth/login.html:30 templates/auth/registration.html:20
+msgid "Haka sign-in"
+msgstr ""
+
+#: templates/auth/login.html:31
+msgid ""
+"Haka federation login. Finnish universities, polytechnics and research "
+"institutions accounts."
+msgstr ""
+
+#: templates/auth/login.html:36 templates/auth/registration.html:26
+msgid "eduGAIN sign-in"
+msgstr ""
+
+#: templates/auth/login.html:37
+msgid ""
+"eduGAIN federation login. Global research and education institution accounts."
+msgstr ""
+
+#: templates/auth/login.html:42 templates/auth/registration.html:32
+msgid "Microsoft sign-in"
+msgstr ""
+
+#: templates/auth/login.html:43
+msgid "Login with a Microsoft account."
+msgstr ""
+
+#: templates/auth/login.html:48 templates/auth/registration.html:38
+msgid "Google sign-in"
+msgstr ""
+
+#: templates/auth/login.html:49
+msgid "Login with a Google account."
+msgstr ""
+
+#: templates/auth/login.html:54
+msgid "Email+SMS login"
+msgstr ""
+
+#: templates/auth/login.html:55
+msgid "Login with an email and SMS verification."
+msgstr ""
+
+#: templates/auth/login.html:60
+msgid "Local login"
+msgstr ""
+
+#: templates/auth/login.html:61
+msgid ""
+"Login with a username and password. Only for testing, this will be removed "
+"before production version."
+msgstr ""
+
+#: templates/auth/login_email_verify.html:5
+msgid "Login verification"
+msgstr ""
+
+#: templates/auth/logout.html:6
+msgid "Logout warning"
+msgstr ""
+
+#: templates/auth/logout.html:8
+msgid ""
+"You have logged in with multiple sign-in methods. This might happen if you "
+"have been linking external identifiers to your identity."
+msgstr ""
+
+#: templates/auth/logout.html:9
+msgid ""
+"Logging out all external methods is not possible. Clear your browser cache "
+"after logging out, if you are using a shared device."
+msgstr ""
+
+#: templates/auth/logout.html:11
+msgid "Continue to logout"
+msgstr ""
+
+#: templates/auth/logout.html:13 templates/base.html:69
+msgid "Logout"
+msgstr ""
+
+#: templates/auth/logout.html:14
+msgid "You have been logged out."
+msgstr ""
+
+#: templates/auth/logout.html:15
+msgid "Return to front page"
+msgstr ""
+
+#: templates/auth/registration.html:8 templates/auth/registration_form.html:6
+msgid "Registration"
+msgstr ""
+
+#: templates/auth/registration.html:9
+msgid ""
+"Welcome to Kamu registration. We recommend using an external identity but "
+"you can also register with an email address or an SMS-capable phone number."
+msgstr ""
+
+#: templates/auth/registration.html:10
+msgid "Register with an external identity"
+msgstr ""
+
+#: templates/auth/registration.html:15
+msgid "Register with a Suomi.fi e-Identification or eIDAS."
+msgstr ""
+
+#: templates/auth/registration.html:21
+msgid ""
+"Register with a Haka federation account. Finnish universities, polytechnics "
+"and research institutions accounts."
+msgstr ""
+
+#: templates/auth/registration.html:27
+msgid ""
+"Register with an eduGAIN federation account. Global research and education "
+"institution accounts."
+msgstr ""
+
+#: templates/auth/registration.html:33
+msgid "Register with a Microsoft account."
+msgstr ""
+
+#: templates/auth/registration.html:39
+msgid "Register with a Google account."
+msgstr ""
+
+#: templates/auth/registration.html:44 templates/auth/registration_form.html:7
+msgid "Register with email and SMS verification"
+msgstr ""
+
+#: templates/auth/registration.html:46
+msgid ""
+"Registration with an email account and an SMS-capable phone number is "
+"possible but we recommend using external identities."
+msgstr ""
+
+#: templates/base.html:12 templates/base.html:18 templates/front.html:5
+msgid "Kamu"
+msgstr ""
+
+#: templates/base.html:17
+msgid "Go to Kamu front page"
+msgstr ""
+
+#: templates/base.html:18
+msgid "University of Helsinki Kamu front page"
+msgstr ""
+
+#: templates/base.html:18
+msgid "University of Helsinki"
+msgstr ""
+
+#: templates/base.html:19
+msgid "Toggle navigation"
+msgstr ""
+
+#: templates/base.html:26 templates/front.html:10 templates/front.html:12
+msgid "My information"
+msgstr ""
+
+#: templates/base.html:33 templates/front.html:56 templates/front.html:58
+#: templates/membership/membership_detail.html:59
+msgid "Inviter"
+msgstr ""
+
+#: templates/base.html:34 templates/front.html:61 templates/front.html:63
+#: templates/membership/membership_detail.html:57
+msgid "Approver"
+msgstr ""
+
+#: templates/base.html:35 templates/front.html:66 templates/front.html:68
+#: templates/role/role_detail.html:10 templates/role/role_list.html:13
+#: templates/role/role_search.html:16
+msgid "Owner"
+msgstr ""
+
+#: templates/base.html:43 templates/front.html:41 templates/front.html:43
+msgid "Requiring approval"
+msgstr ""
+
+#: templates/base.html:44 templates/front.html:46 templates/front.html:48
+msgid "Expiring"
+msgstr ""
+
+#: templates/base.html:45
+msgid "Search identities"
+msgstr ""
+
+#: templates/contract/contract_detail.html:8
+msgid "Contract information"
+msgstr ""
+
+#: templates/contract/contract_detail.html:11
+#: templates/contract/contract_sign.html:11
+msgid "Details"
+msgstr ""
+
+#: templates/contract/contract_detail.html:13
+msgid "Signatory"
+msgstr ""
+
+#: templates/contract/contract_detail.html:15
+msgid "Signing time"
+msgstr ""
+
+#: templates/contract/contract_detail.html:17
+msgid "Signing language"
+msgstr ""
+
+#: templates/contract/contract_detail.html:19
+msgid "Signing checksum"
+msgstr ""
+
+#: templates/contract/contract_detail.html:23
+msgid "Validation"
+msgstr ""
+
+#: templates/contract/contract_detail.html:24
+msgid "Validation was successful"
+msgstr ""
+
+#: templates/contract/contract_detail.html:24
+msgid "Validation failed"
+msgstr ""
+
+#: templates/contract/contract_list.html:11
+#: templates/contract/contract_list.html:41
+#: templates/contract/contract_sign.html:13
+#: templates/identity/identity_search.html:16
+#: templates/identity/identity_search.html:41
+#: templates/membership/membership_detail.html:17
+#: templates/membership/membership_detail.html:29
+#: templates/membership/membership_invite.html:11
+#: templates/membership/membership_invite.html:24
+#: templates/membership/membership_invite.html:32
+#: templates/membership/membership_invite_identity.html:22
+#: templates/membership/membership_invite_identity.html:54
+#: templates/role/role_detail.html:7
+msgid "Name"
+msgstr ""
+
+#: templates/contract/contract_list.html:12
+#: templates/contract/contract_list.html:42
+msgid "Version"
+msgstr ""
+
+#: templates/contract/contract_list.html:13
+msgid "Sign date"
+msgstr ""
+
+#: templates/contract/contract_list.html:29
+msgid "You do not have any signed contracts."
+msgstr ""
+
+#: templates/contract/contract_list.html:32
+msgid "Hiding old contract versions by default."
+msgstr ""
+
+#: templates/contract/contract_list.html:33
+msgid "List all versions."
+msgstr ""
+
+#: templates/contract/contract_list.html:36
+msgid "Signable contracts"
+msgstr ""
+
+#: templates/contract/contract_list.html:43
+msgid "Sign"
+msgstr ""
+
+#: templates/contract/contract_list.html:51 utils/membership.py:107
+msgid "Open contract"
+msgstr ""
+
+#: templates/contract/contract_list.html:57
+msgid "You do not have any signable contracts."
+msgstr ""
+
+#: templates/contract/contract_sign.html:8
+#: templates/contract/contract_sign.html:18
+msgid "Sign contract"
+msgstr ""
+
+#: templates/contract/contract_sign.html:15
+msgid "Date"
+msgstr ""
+
+#: templates/email/expire_notification_member_message.txt:1
+#, python-format
+msgid ""
+"Hi\n"
+"\n"
+"Your role membership at the University of Helsinki is ending soon.\n"
+"\n"
+"Role:\n"
+"%(role)s\n"
+"\n"
+"Expiring date:\n"
+"%(expire_date)s\n"
+"\n"
+"Please get in touch with your university contact if the membership should\n"
+"continue."
+msgstr ""
+
+#: templates/email/expire_notification_member_message.txt:13
+#, python-format
+msgid "You were invited by %(inviter)s."
+msgstr ""
+
+#: templates/email/expire_notification_member_message.txt:14
+#, python-format
+msgid "Your membership was approved by %(approver)s."
+msgstr ""
+
+#: templates/email/expire_notification_member_subject.txt:1
+msgid "Your membership is ending soon"
+msgstr ""
+
+#: templates/email/expire_notification_role_message.txt:1
+#, python-format
+msgid ""
+"Hi\n"
+"\n"
+"Role: %(role)s\n"
+"\n"
+"Number of memberships expiring soon: %(number_of_memberships)s"
+msgstr ""
+
+#: templates/email/expire_notification_role_subject.txt:1
+#, python-format
+msgid "Expiring memberships for %(role)s"
+msgstr ""
+
+#: templates/email/invite_email_message.txt:2
+#: templates/email/membership_add_message.txt:1
+msgid "Hi"
+msgstr ""
+
+#: templates/email/invite_email_message.txt:4
+#, python-format
+msgid "%(inviter)s has invited you to join the role:"
+msgstr ""
+
+#: templates/email/invite_email_message.txt:4
+msgid "You have been invited to join the role:"
+msgstr ""
+
+#: templates/email/invite_email_message.txt:7
+msgid "Your invite code is:"
+msgstr ""
+
+#: templates/email/invite_email_message.txt:10
+msgid "Click the following link to accept the invitation:"
+msgstr ""
+
+#: templates/email/invite_email_subject.txt:1
+msgid "Kamu role invite"
+msgstr ""
+
+#: templates/email/login_verification_email_message.txt:1
+#, python-format
+msgid ""
+"Hi\n"
+"\n"
+"Your verification code is:\n"
+"%(token)s\n"
+"\n"
+"If you haven't tried to sign in to a Kamu account, you can safely ignore "
+"this\n"
+"email."
+msgstr ""
+
+#: templates/email/login_verification_email_subject.txt:1
+msgid "Kamu login verification"
+msgstr ""
+
+#: templates/email/membership_add_message.txt:3
+#, python-format
+msgid "%(inviter)s has added you a new role membership in Kamu:"
+msgstr ""
+
+#: templates/email/membership_add_message.txt:3
+msgid "You have a new role membership in Kamu:"
+msgstr ""
+
+#: templates/email/membership_add_subject.txt:1
+msgid "New role membership in Kamu"
+msgstr ""
+
+#: templates/email/verification_email_message.txt:1
+#, python-format
+msgid ""
+"Hi\n"
+"\n"
+"Please verify your email address. If you haven't tried to sign up for a Kamu "
+"account, you can safely ignore this email.\n"
+"\n"
+"Your verification code is:\n"
+"%(token)s"
+msgstr ""
+
+#: templates/email/verification_email_subject.txt:1
+msgid "Kamu email verification"
+msgstr ""
+
+#: templates/error.html:5 templates/error.html:7
+msgid "Error"
+msgstr ""
+
+#: templates/error.html:9 templates/info.html:9
+msgid "Return to front page."
+msgstr ""
+
+#: templates/errors/400.html:5
+msgid "Bad request"
+msgstr ""
+
+#: templates/errors/400.html:6
+msgid ""
+"There is something wrong in the request. Please check the address and "
+"restart your browser if it's correct."
+msgstr ""
+
+#: templates/errors/400.html:7 templates/errors/403.html:7
+#: templates/errors/404.html:7 templates/errors/500.html:7
+msgid "Front page"
+msgstr ""
+
+#: templates/errors/403.html:5
+msgid "Permission denied"
+msgstr ""
+
+#: templates/errors/403.html:6
+msgid "You have insufficient permissions to access this page."
+msgstr ""
+
+#: templates/errors/404.html:5
+msgid "Page not found"
+msgstr ""
+
+#: templates/errors/404.html:6
+msgid ""
+"The page you are looking for does not exist or you have insufficient "
+"permissions for it."
+msgstr ""
+
+#: templates/errors/500.html:5
+msgid "Internal error"
+msgstr ""
+
+#: templates/errors/500.html:6
+msgid "Something went wrong and the service administrators have been notified."
+msgstr ""
+
+#: templates/front.html:6
+msgid "University of Helsinki registry for external identities."
+msgstr ""
+
+#: templates/front.html:11
+msgid ""
+"Show and manage your own information. This includes your role memberships "
+"and basic information such as names, contacts and contracts."
+msgstr ""
+
+#: templates/front.html:16
+msgid "Role and membership management"
+msgstr ""
+
+#: templates/front.html:16 templates/identity/identity_detail.html:44
+msgid "info"
+msgstr ""
+
+#: templates/front.html:21
+msgid "Manage role memberships"
+msgstr ""
+
+#: templates/front.html:25
+msgid ""
+"All permissions provided to users are based on the active role memberships. "
+"Role membership becomes active when all requirements of the membership are "
+"fulfilled:"
+msgstr ""
+
+#: templates/front.html:27
+msgid "Membership has been approved"
+msgstr ""
+
+#: templates/front.html:28
+msgid ""
+"Membership is in active period, i.e. after start date and before expiration "
+"date."
+msgstr ""
+
+#: templates/front.html:29
+msgid ""
+"Role requirements are fulfilled. This may include signing agreements, giving "
+"certain user information and confirming user identity."
+msgstr ""
+
+#: templates/front.html:31 templates/identity/identity_detail.html:57
+#: templates/membership/membership_invite_identity.html:12
+#, python-format
+msgid ""
+"Read more about role management from the <a href=\"%(link)s\">IT Helpdesk</"
+"a>."
+msgstr ""
+
+#: templates/front.html:42 templates/membership/membership_approval_list.html:6
+msgid "List memberships requiring approval."
+msgstr ""
+
+#: templates/front.html:47
+msgid "List memberships expiring soon."
+msgstr ""
+
+#: templates/front.html:51 templates/role/role_search.html:6
+msgid "Role search"
+msgstr ""
+
+#: templates/front.html:52
+msgid "Search all possible roles here and see their details."
+msgstr ""
+
+#: templates/front.html:57
+msgid "Show roles which you have the right to invite others to."
+msgstr ""
+
+#: templates/front.html:62
+msgid "Show roles that you have the approval rights to."
+msgstr ""
+
+#: templates/front.html:67
+msgid "Show roles that you have the owner rights to."
+msgstr ""
+
+#: templates/front.html:73
+msgid "Admin utilities"
+msgstr ""
+
+#: templates/front.html:76 templates/front.html:79
+msgid "Admin site"
+msgstr ""
+
+#: templates/front.html:77
+msgid ""
+"Admin site allows you to manage role and permission information, according "
+"to your\n"
+"            access rights."
+msgstr ""
+
+#: templates/front.html:87
+msgid "Manage your information or roles."
+msgstr ""
+
+#: templates/front.html:91 templates/front.html:93
+msgid "Register"
+msgstr ""
+
+#: templates/front.html:92
+msgid "If you have an invite code, register here."
+msgstr ""
+
+#: templates/identity/contact_address.html:8
+#: templates/identity/identity_detail.html:69
+msgid "Contact information"
+msgstr ""
+
+#: templates/identity/contact_address.html:14
+msgid "Address"
+msgstr ""
+
+#: templates/identity/contact_address.html:17
+#: templates/identity/contact_address.html:28
+#: templates/identity/contact_address.html:63
+#: templates/identity/contact_address.html:74
+msgid "Remove"
+msgstr ""
+
+#: templates/identity/contact_address.html:25
+#: templates/identity/contact_address.html:71
+msgid "Up"
+msgstr ""
+
+#: templates/identity/contact_address.html:26
+#: templates/identity/contact_address.html:72
+msgid "Down"
+msgstr ""
+
+#: templates/identity/contact_address.html:33
+#: templates/identity/contact_address.html:41
+#: templates/identity/contact_address.html:79
+#: templates/identity/contact_address.html:87
+msgid "Confirm removal"
+msgstr ""
+
+#: templates/identity/contact_address.html:37
+msgid "You are removing the email address"
+msgstr ""
+
+#: templates/identity/contact_address.html:51
+msgid ""
+"First verified address in the list is used as the default contact address. "
+"Any verified address can be used to log in to Kamu."
+msgstr ""
+
+#: templates/identity/contact_address.html:53
+msgid "You have not specified any email addresses."
+msgstr ""
+
+#: templates/identity/contact_address.html:60
+msgid "Number"
+msgstr ""
+
+#: templates/identity/contact_address.html:83
+msgid "You are removing the phone number"
+msgstr ""
+
+#: templates/identity/contact_address.html:97
+msgid ""
+"First verified phone number in the list is used as the default contact "
+"number. Any verified number can be used to log in to Kamu."
+msgstr ""
+
+#: templates/identity/contact_address.html:99
+msgid "You have not specified any phone numbers."
+msgstr ""
+
+#: templates/identity/contact_address.html:102
+msgid "Add a new contact"
+msgstr ""
+
+#: templates/identity/email_address_verification.html:6
+msgid "Email address verification"
+msgstr ""
+
+#: templates/identity/identifier.html:9
+msgid "Identifier information"
+msgstr ""
+
+#: templates/identity/identifier.html:10
+msgid "Active identifiers"
+msgstr ""
+
+#: templates/identity/identifier.html:16 templates/identity/identifier.html:60
+msgid "Creation time"
+msgstr ""
+
+#: templates/identity/identifier.html:17
+msgid "Value"
+msgstr ""
+
+#: templates/identity/identifier.html:18 templates/identity/identifier.html:28
+msgid "Deactivate"
+msgstr ""
+
+#: templates/identity/identifier.html:33 templates/identity/identifier.html:41
+msgid "Confirm deactivation"
+msgstr ""
+
+#: templates/identity/identifier.html:37
+#, python-format
+msgid "You are deactivating %(type)s with value %(value)s."
+msgstr ""
+
+#: templates/identity/identifier.html:52
+msgid "You do not have any linked identifiers."
+msgstr ""
+
+#: templates/identity/identifier.html:55
+msgid "Deactivated identifiers"
+msgstr ""
+
+#: templates/identity/identifier.html:61
+msgid "Deactivation time"
+msgstr ""
+
+#: templates/identity/identifier.html:76
+msgid "Link a new identifier"
+msgstr ""
+
+#: templates/identity/identifier.html:77
+msgid ""
+"Link a new identifier to your identity. After linking a new identifier, you "
+"can use it to manage your information in Kamu, or when using light accounts."
+msgstr ""
+
+#: templates/identity/identifier.html:82
+msgid "Haka"
+msgstr ""
+
+#: templates/identity/identifier.html:85
+msgid "eduGAIN"
+msgstr ""
+
+#: templates/identity/identifier.html:88
+msgid "Google"
+msgstr ""
+
+#: templates/identity/identifier.html:91
+msgid "Microsoft"
+msgstr ""
+
+#: templates/identity/identifier.html:94
+msgid "Suomi.fi and eIDAS"
+msgstr ""
+
+#: templates/identity/identity_combine.html:7
+#: templates/identity/identity_detail.html:126
+msgid "Combine identities"
+msgstr ""
+
+#: templates/identity/identity_combine.html:9
+msgid ""
+"Transfer information from the source identity to the target identity, and "
+"delete the source identity and the corresponding user."
+msgstr ""
+
+#: templates/identity/identity_combine.html:10
+msgid ""
+"The following information is transferred if source identity has it defined "
+"and target doesn't."
+msgstr ""
+
+#: templates/identity/identity_combine.html:14
+#: templates/identity/identity_combine.html:50
+#: templates/membership/membership_detail.html:31
+msgid "Account name"
+msgstr ""
+
+#: templates/identity/identity_combine.html:17
+msgid ""
+"The following information is transferred from the source identity to the "
+"target identity."
+msgstr ""
+
+#: templates/identity/identity_combine.html:19
+msgid "Contact information: email addresses and phone numbers."
+msgstr ""
+
+#: templates/identity/identity_combine.html:21
+msgid "Linked identifiers."
+msgstr ""
+
+#: templates/identity/identity_combine.html:22
+msgid "Role memberships."
+msgstr ""
+
+#: templates/identity/identity_combine.html:23
+msgid "Kamu identifier is added to target's extra identifiers."
+msgstr ""
+
+#: templates/identity/identity_combine.html:25
+msgid "For other information, target's values are used."
+msgstr ""
+
+#: templates/identity/identity_combine.html:30
+msgid "Attribute"
+msgstr ""
+
+#: templates/identity/identity_combine.html:31
+msgid "Target"
+msgstr ""
+
+#: templates/identity/identity_combine.html:32
+msgid "Source"
+msgstr ""
+
+#: templates/identity/identity_combine.html:33
+msgid "Result"
+msgstr ""
+
+#: templates/identity/identity_combine.html:38
+msgid "Internal primary key"
+msgstr ""
+
+#: templates/identity/identity_combine.html:123
+msgid "Phone numbers, verified"
+msgstr ""
+
+#: templates/identity/identity_combine.html:124
+#: templates/identity/identity_combine.html:125
+#: templates/identity/identity_combine.html:126
+#: templates/identity/identity_combine.html:127
+#: templates/identity/identity_combine.html:131
+#: templates/identity/identity_combine.html:132
+#: templates/identity/identity_combine.html:133
+#: templates/identity/identity_combine.html:134
+msgid "Unverified"
+msgstr ""
+
+#: templates/identity/identity_combine.html:130
+msgid "Email addresses, verified"
+msgstr ""
+
+#: templates/identity/identity_combine.html:137
+msgid "Identifiers, deactivated"
+msgstr ""
+
+#: templates/identity/identity_combine.html:145
+msgid "Memberships, status"
+msgstr ""
+
+#: templates/identity/identity_combine.html:153
+msgid ""
+"To prevent accidents, you are required to enter primary keys of the "
+"identities you want to combine."
+msgstr ""
+
+#: templates/identity/identity_detail.html:4
+msgid "Identity information"
+msgstr ""
+
+#: templates/identity/identity_detail.html:37
+msgid "External identifiers"
+msgstr ""
+
+#: templates/identity/identity_detail.html:43
+msgid "verified"
+msgstr ""
+
+#: templates/identity/identity_detail.html:44
+msgid "View details and update"
+msgstr ""
+
+#: templates/identity/identity_detail.html:49
+msgid "View and manage your information"
+msgstr ""
+
+#: templates/identity/identity_detail.html:53
+msgid ""
+"Basic information includes personal details such as names, preferred "
+"language, date of birth, and nationality."
+msgstr ""
+
+#: templates/identity/identity_detail.html:54
+msgid ""
+"Contact information includes external email addresses and phone numbers."
+msgstr ""
+
+#: templates/identity/identity_detail.html:55
+msgid ""
+"Identifiers include external login methods such as Google and Microsoft "
+"accounts or accounts from other universities."
+msgstr ""
+
+#: templates/identity/identity_detail.html:56
+msgid ""
+"The Contracts section allows you to sign agreements required for certain "
+"roles, such as the Acceptable Use Policy and NDA."
+msgstr ""
+
+#: templates/identity/identity_detail.html:79
+msgid "Manage user accounts"
+msgstr ""
+
+#: templates/identity/identity_detail.html:81
+msgid "Role memberships"
+msgstr ""
+
+#: templates/identity/identity_detail.html:88
+#: templates/membership/membership_expiring_list.html:13
+#: templates/role/role_detail.html:55
+msgid "Expires"
+msgstr ""
+
+#: templates/identity/identity_detail.html:102
+msgid "You do not have any current or upcoming memberships."
+msgstr ""
+
+#: templates/identity/identity_detail.html:105
+msgid "Expired memberships"
+msgstr ""
+
+#: templates/identity/identity_detail.html:110
+msgid "Started"
+msgstr ""
+
+#: templates/identity/identity_detail.html:128
+msgid "Set as target"
+msgstr ""
+
+#: templates/identity/identity_detail.html:129
+msgid "Set as source"
+msgstr ""
+
+#: templates/identity/identity_form.html:5
+msgid "Change identity information"
+msgstr ""
+
+#: templates/identity/identity_search.html:7
+msgid "Identity search"
+msgstr ""
+
+#: templates/identity/identity_search.html:10
+#: templates/membership/membership_invite_identity.html:16
+msgid "Kamu results"
+msgstr ""
+
+#: templates/identity/identity_search.html:12
+#: templates/membership/membership_invite_identity.html:18
+msgid ""
+"To protect user privacy, email addresses and phone numbers are only listed "
+"when exactly matching the search parameter."
+msgstr ""
+
+#: templates/identity/identity_search.html:18
+#: templates/identity/identity_search.html:43
+#: templates/membership/membership_invite_identity.html:24
+#: templates/membership/membership_invite_identity.html:56
+msgid "Attributes"
+msgstr ""
+
+#: templates/identity/identity_search.html:32
+#: templates/membership/membership_invite_identity.html:40
+#: templates/role/role_search.html:31
+msgid "No results with the provided search parameters."
+msgstr ""
+
+#: templates/identity/identity_search.html:37
+#: templates/membership/membership_invite_identity.html:50
+msgid "User directory results"
+msgstr ""
+
+#: templates/identity/phone_number_verification.html:6
+msgid "Phone number verification"
+msgstr ""
+
+#: templates/info.html:5
+msgid "For your information"
+msgstr ""
+
+#: templates/membership/membership_approval_list.html:5
+msgid "Memberships requiring approval"
+msgstr ""
+
+#: templates/membership/membership_approval_list.html:6
+#: templates/membership/membership_expiring_list.html:6
+msgid "Includes memberships in roles that you have approve or invite rights."
+msgstr ""
+
+#: templates/membership/membership_approval_list.html:13
+msgid "Starts"
+msgstr ""
+
+#: templates/membership/membership_detail.html:4
+msgid "Role membership"
+msgstr ""
+
+#: templates/membership/membership_detail.html:7
+msgid "Approval required"
+msgstr ""
+
+#: templates/membership/membership_detail.html:9
+msgid "Approve"
+msgstr ""
+
+#: templates/membership/membership_detail.html:21
+#: templates/membership/membership_invite.html:15
+#: templates/role/role_detail.html:19
+msgid "Total cost"
+msgstr ""
+
+#: templates/membership/membership_detail.html:33
+#: templates/membership/membership_invite.html:36
+msgid "Email"
+msgstr ""
+
+#: templates/membership/membership_detail.html:39
+msgid "Identity has not yet been linked to this membership."
+msgstr ""
+
+#: templates/membership/membership_detail.html:40
+#, python-format
+msgid "Invite has been sent to %(address)s."
+msgstr ""
+
+#: templates/membership/membership_detail.html:43
+msgid "Resend invite email"
+msgstr ""
+
+#: templates/membership/membership_detail.html:49
+msgid "Membership details"
+msgstr ""
+
+#: templates/membership/membership_detail.html:53
+msgid "Start date"
+msgstr ""
+
+#: templates/membership/membership_detail.html:55
+msgid "Expiry date"
+msgstr ""
+
+#: templates/membership/membership_detail.html:61
+msgid "Reason"
+msgstr ""
+
+#: templates/membership/membership_detail.html:70
+msgid "Update membership"
+msgstr ""
+
+#: templates/membership/membership_detail.html:74
+msgid "End membership"
+msgstr ""
+
+#: templates/membership/membership_detail.html:79
+#: templates/membership/membership_detail.html:94
+msgid "Confirm ending membership"
+msgstr ""
+
+#: templates/membership/membership_detail.html:83
+msgid "This membership will be set to end after today."
+msgstr ""
+
+#: templates/membership/membership_detail.html:89
+msgid "End date"
+msgstr ""
+
+#: templates/membership/membership_edit_form.html:6
+msgid "Edit membership"
+msgstr ""
+
+#: templates/membership/membership_expiring_list.html:5
+msgid "Expiring memberships"
+msgstr ""
+
+#: templates/membership/membership_expiring_list.html:6
+#, python-format
+msgid "List memberships expiring in %(day_limit)s days."
+msgstr ""
+
+#: templates/membership/membership_form.html:6
+msgid "Join role"
+msgstr ""
+
+#: templates/membership/membership_invite.html:6
+#: templates/role/role_detail.html:40
+msgid "Invite a new member"
+msgstr ""
+
+#: templates/membership/membership_invite.html:17
+#: templates/role/role_detail.html:36
+msgid "Maximum duration"
+msgstr ""
+
+#: templates/membership/membership_invite.html:18
+#: templates/role/role_detail.html:37
+msgid "days"
+msgstr ""
+
+#: templates/membership/membership_invite.html:43
+msgid "Subject"
+msgstr ""
+
+#: templates/membership/membership_invite.html:45
+msgid "Message"
+msgstr ""
+
+#: templates/membership/membership_invite.html:49
+msgid "Multiple invites"
+msgstr ""
+
+#: templates/membership/membership_invite.html:51
+msgid "Following identities in Kamu will be added to the role:"
+msgstr ""
+
+#: templates/membership/membership_invite.html:59
+msgid "Following email addresses will receive an invitation:"
+msgstr ""
+
+#: templates/membership/membership_invite.html:67
+msgid "Member information"
+msgstr ""
+
+#: templates/membership/membership_invite_identity.html:7
+msgid "Invite to role"
+msgstr ""
+
+#: templates/membership/membership_invite_identity.html:9
+msgid ""
+"To invite a new member, first search for the identity with known user "
+"information such as email and phone number."
+msgstr ""
+
+#: templates/membership/membership_invite_identity.html:10
+msgid ""
+"If person is already found from the Kamu or the user directory, you can add "
+"role directly to the person."
+msgstr ""
+
+#: templates/membership/membership_invite_identity.html:11
+msgid ""
+"Otherwise you you can invite them by email, by searching with the email "
+"address."
+msgstr ""
+
+#: templates/membership/membership_invite_identity.html:25
+#: templates/membership/membership_invite_identity.html:57
+msgid "Select"
+msgstr ""
+
+#: templates/membership/membership_invite_identity.html:34
+#: templates/membership/membership_invite_identity.html:66
+msgid "Add role"
+msgstr ""
+
+#: templates/membership/membership_invite_identity.html:41
+msgid ""
+"Please search with email address if you wish to send an email invite to the "
+"role."
+msgstr ""
+
+#: templates/membership/membership_invite_identity.html:45
+msgid "Email invitation"
+msgstr ""
+
+#: templates/membership/membership_invite_identity.html:46
+#, python-format
+msgid "Email address not found in the registry: %(email)s"
+msgstr ""
+
+#: templates/membership/membership_invite_identity.html:47
+msgid "Send invitation"
+msgstr ""
+
+#: templates/role/role_detail.html:5
+msgid "Role details"
+msgstr ""
+
+#: templates/role/role_detail.html:13 templates/role/role_list.html:12
+#: templates/role/role_search.html:15
+msgid "Parent"
+msgstr ""
+
+#: templates/role/role_detail.html:22
+msgid "Notification address"
+msgstr ""
+
+#: templates/role/role_detail.html:43
+msgid "Join"
+msgstr ""
+
+#: templates/role/role_detail.html:46
+#, python-format
+msgid "Invite multiple members (max %(limit)s)"
+msgstr ""
+
+#: templates/role/role_detail.html:49
+msgid "Members"
+msgstr ""
+
+#: templates/role/role_list.html:5
+msgid "Role list"
+msgstr ""
+
+#: templates/role/role_list.html:27
+msgid "No roles."
+msgstr ""
+
+#: templates/role/role_list_approver.html:4
+msgid "Roles you have approver permission for"
+msgstr ""
+
+#: templates/role/role_list_inviter.html:4
+msgid "Roles you have inviter permission for"
+msgstr ""
+
+#: templates/role/role_list_owner.html:4
+msgid "Roles you own"
+msgstr ""
+
+#: templates/role/role_search.html:7
+msgid "Search roles with role name or description."
+msgstr ""
+
+#: templates/role/role_search.html:9
+msgid "Results"
+msgstr ""
+
+#: templates/role/role_search.html:33
+msgid "Submit a search to get results."
+msgstr ""
+
+#: utils/identity.py:38
+msgid "Cannot combine identity with itself."
+msgstr ""
+
+#: utils/identity.py:45
+msgid "Source identity cannot have higher assurance level than target."
+msgstr ""
+
+#: utils/identity.py:52
+msgid ""
+"Cannot combine two identities with uid. Please remove uid from the source "
+"first."
+msgstr ""
+
+#: utils/identity.py:60
+msgid ""
+"Cannot combine two identities with Finnish personal identity code. Please "
+"remove FPIC from the source first."
+msgstr ""
+
+#: utils/identity.py:69
+msgid "Source identity is linked to user and target identity is not."
+msgstr ""
+
+#: utils/identity.py:80
+msgid "Current user's identity cannot be the source identity."
+msgstr ""
+
+#: utils/membership.py:95
+msgid "Role requires a contract you cannot currently sign."
+msgstr ""
+
+#: utils/membership.py:98
+#, python-format
+msgid "Role requires a contract \"%(name)s\"."
+msgstr ""
+
+#: utils/membership.py:100
+#, python-format
+msgid "Role requires a contract \"%(name)s\", version %(version)d or higher."
+msgstr ""
+
+#: utils/membership.py:120
+msgid "Role requires a verified email address."
+msgstr ""
+
+#: utils/membership.py:122 utils/membership.py:128 utils/membership.py:148
+msgid "Add here"
+msgstr ""
+
+#: utils/membership.py:126
+msgid "Role requires a verified phone number."
+msgstr ""
+
+#: utils/membership.py:139
+#, python-format
+msgid ""
+"Role requires an attribute \"%(name)s\" of at least verification level: "
+"%(level)d (%(level_text)s)."
+msgstr ""
+
+#: utils/membership.py:146
+#, python-format
+msgid "Role requires an attribute \"%(name)s\"."
+msgstr ""
+
+#: utils/membership.py:157
+msgid "Role requires higher assurance level: "
+msgstr ""
+
+#: utils/membership.py:167
+#, python-format
+msgid "Role requires a requirement you cannot currently fulfill: %(name)s."
+msgstr ""
+
+#: utils/membership.py:223
+msgid "Invitation process has taken too long."
+msgstr ""
+
+#: utils/membership.py:229
+msgid "This invitation has already been used."
+msgstr ""
+
+#: utils/membership.py:233
+msgid "This invitation has expired."
+msgstr ""
+
+#: utils/membership.py:237
+msgid "Invalid invitation token."
+msgstr ""
+
+#: utils/membership.py:240
+msgid "Membership created."
+msgstr ""
+
+#: validators/identity.py:30
+msgid "Personal identity code length should be 11 characters."
+msgstr ""
+
+#: validators/identity.py:35
+msgid "Incorrect date part."
+msgstr ""
+
+#: validators/identity.py:38
+msgid "Incorrect intermediate character."
+msgstr ""
+
+#: validators/identity.py:42
+msgid "Incorrect numeric part."
+msgstr ""
+
+#: validators/identity.py:46
+msgid "Incorrect checksum."
+msgstr ""
+
+#: validators/identity.py:73
+msgid "Phone number must start with a plus sign."
+msgstr ""
+
+#: validators/identity.py:76
+msgid "Phone number contains invalid characters."
+msgstr ""
+
+#: validators/identity.py:79
+msgid "Phone number is too short."
+msgstr ""
+
+#: validators/identity.py:110
+msgid "Invalid eIDAS identifier format."
+msgstr ""
+
+#: validators/membership.py:33
+msgid "Invalid start date format."
+msgstr ""
+
+#: validators/membership.py:35
+msgid "Invalid expiry date format."
+msgstr ""
+
+#: validators/membership.py:37
+msgid "Membership expiry date cannot be earlier than start date."
+msgstr ""
+
+#: validators/membership.py:39
+msgid "Membership expiry date cannot be in the past."
+msgstr ""
+
+#: validators/membership.py:41
+msgid "Membership start date cannot be in the past."
+msgstr ""
+
+#: validators/membership.py:49
+#, python-format
+msgid ""
+"Maximum membership duration for this role is %(max_duration)s days. Last "
+"possible date for this membership is %(last_date)s."
+msgstr ""
+
+#: validators/role.py:32
+msgid "Role hierarchy cannot be more than maximum depth."
+msgstr ""
+
+#: validators/role.py:34
+msgid "Role cannot be in its own hierarchy."
+msgstr ""
+
+#: views/account.py:133
+msgid "Could not load user ID choices, please try again later."
+msgstr ""
+
+#: views/account.py:186
+msgid "Account creation failed, please try again later."
+msgstr ""
+
+#: views/account.py:198
+msgid "Account created."
+msgstr ""
+
+#: views/account.py:346
+msgid "Account enabling failed, please try again later."
+msgstr ""
+
+#: views/account.py:358
+msgid "Account enabled."
+msgstr ""
+
+#: views/account.py:385
+msgid "Account disabling failed, please try again later."
+msgstr ""
+
+#: views/account.py:397
+msgid "Account disabled."
+msgstr ""
+
+#: views/account.py:439
+msgid "Password reset failed, please try again later."
+msgstr ""
+
+#: views/account.py:450
+msgid "Password reset."
+msgstr ""
+
+#: views/auth.py:131 views/auth.py:149 views/auth.py:656 views/auth.py:675
+msgid "Tried to send a new code too soon. Please try again in one minute."
+msgstr ""
+
+#: views/auth.py:135 views/auth.py:155 views/identity.py:335
+#: views/identity.py:371
+msgid "Verification code sent."
+msgstr ""
+
+#: views/auth.py:138
+msgid "Failed to send verification code."
+msgstr ""
+
+#: views/auth.py:153 views/identity.py:369
+#, python-format
+msgid "Kamu verification code: %(token)s"
+msgstr ""
+
+#: views/auth.py:158 views/identity.py:374
+msgid "Could not send an SMS message."
+msgstr ""
+
+#: views/auth.py:389
+msgid "Link identifier not found."
+msgstr ""
+
+#: views/auth.py:394
+msgid "Link identifier time not valid."
+msgstr ""
+
+#: views/auth.py:396
+msgid "Link identifier expired."
+msgstr ""
+
+#: views/auth.py:456
+msgid "Identifier linking failed: "
+msgstr ""
+
+#: views/auth.py:462
+msgid "Invitation claiming failed: "
+msgstr ""
+
+#: views/auth.py:465
+msgid "Login failed: "
+msgstr ""
+
+#: views/auth.py:480
+msgid ""
+"Redirection loop for authenticated user detected. Please contact service "
+"admins."
+msgstr ""
+
+#: views/auth.py:725 views/auth.py:730
+msgid "List here"
+msgstr ""
+
+#: views/auth.py:727
+msgid "You have pending membership approvals."
+msgstr ""
+
+#: views/auth.py:734
+msgid "Memberships are ending soon in roles you have approval rights."
+msgstr ""
+
+#: views/identity.py:140
+msgid "Selected as the target identity for identity combining."
+msgstr ""
+
+#: views/identity.py:146
+msgid "Selected as the source identity for identity combining."
+msgstr ""
+
+#: views/identity.py:329 views/identity.py:365
+msgid "Tried to send a new code too soon."
+msgstr ""
+
+#: views/identity.py:331
+msgid "Kamu: email address verification"
+msgstr ""
+
+#: views/identity.py:332
+#, python-format
+msgid "Your verification code is: %(token)s"
+msgstr ""
+
+#: views/identity.py:692
+msgid "Contract already signed."
+msgstr ""
+
+#: views/identity.py:698
+msgid "Contract version has changed. Please try again."
+msgstr ""
+
+#: views/identity.py:701
+msgid "Contract signed."
+msgstr ""
+
+#: views/identity.py:849
+msgid "Cannot deactivate last active identifier."
+msgstr ""
+
+#: views/identity.py:902
+msgid "New identity created."
+msgstr ""
+
+#: views/identity.py:961
+msgid ""
+"LDAP search returned too many results, please refine your search parameters."
+msgstr ""
+
+#: views/identity.py:1076
+msgid "Too many results, please refine your search parameters."
+msgstr ""
+
+#: views/identity.py:1083
+msgid ""
+"Partial name matches returned too many results. Returning only exact matches."
+msgstr ""
+
+#: views/identity.py:1107
+msgid "LDAP search failed, could not search existing accounts."
+msgstr ""
+
+#: views/identity.py:1115
+msgid "Identifier match found, skipping name search."
+msgstr ""
+
+#: views/identity.py:1224
+msgid "Incorrect primary keys."
+msgstr ""
+
+#: views/identity.py:1230
+msgid "Identities combined."
+msgstr ""
+
+#: views/membership.py:79
+msgid "You need to create an identity first."
+msgstr ""
+
+#: views/membership.py:83
+msgid "You are already a member of this role."
+msgstr ""
+
+#: views/membership.py:215
+msgid "Membership approved."
+msgstr ""
+
+#: views/membership.py:236 views/membership.py:643
+msgid "Invite email sent."
+msgstr ""
+
+#: views/membership.py:238
+msgid "Could not send invite email."
+msgstr ""
+
+#: views/membership.py:243
+msgid "Tried to send a new invite too soon. Please try again in one minute."
+msgstr ""
+
+#: views/membership.py:268
+msgid "Membership set to end today."
+msgstr ""
+
+#: views/membership.py:315
+msgid "Membership updated."
+msgstr ""
+
+#: views/membership.py:720
+#, python-brace-format
+msgid ""
+"Finnish personal identity code {fpic} and email address {email} are "
+"registered to different identities."
+msgstr ""
+
+#: views/membership.py:730
+#, python-brace-format
+msgid ""
+"Finnish personal identity code {fpic} and phone number {phone} are "
+"registered to different identities."
+msgstr ""
+
+#: views/membership.py:739
+#, python-brace-format
+msgid ""
+"Email address {email} and phone number {phone} are registered to different "
+"identities."
+msgstr ""
+
+#: views/membership.py:834
+#, python-brace-format
+msgid "Invite email sent to following addresses: {0}"
+msgstr ""
+
+#: views/membership.py:838
+#, python-brace-format
+msgid "Added following identities: {0}"
+msgstr ""

@@ -42,7 +42,7 @@ class RoleAPITests(BaseAPITestCase):
         sub_role = self.create_role("ext_research", parent=self.role)
         data = {"parent": sub_role.identifier}
         response = self.client.patch(f"{self.url}roles/{self.role.pk}/", data)
-        self.assertIn(response.data["parent"][0], "Role cannot be in its own hierarchy")
+        self.assertIn("Role cannot be in its own hierarchy", response.data["parent"][0])
 
 
 class PermissionAPITests(BaseAPITestCase):
@@ -136,7 +136,7 @@ class MembershipAPITests(BaseAPITestCase):
             },
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn(response.data["expire_date"][0], "Membership expire date cannot be earlier than start date")
+        self.assertIn("Membership expiry date cannot be earlier than start date", response.data["expire_date"][0])
 
     def test_create_membership_invalid_duration(self):
         client = APIClient()

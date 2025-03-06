@@ -297,11 +297,11 @@ class Token(models.Model):
     )
 
     class Type(models.TextChoices):
-        EMAIL_LOGIN = ("emaillogin", _("E-mail login token"))
+        EMAIL_LOGIN = ("emaillogin", _("Email login token"))
         PHONE_LOGIN = ("phonelogin", _("SMS login token"))
-        EMAIL_OBJECT_VERIFICATION = ("emailobjectverif", _("E-mail object verification token"))
+        EMAIL_OBJECT_VERIFICATION = ("emailobjectverif", _("Email object verification token"))
         PHONE_OBJECT_VERIFICATION = ("phoneobjectverif", _("Phone object verification token"))
-        EMAIL_ADDRESS_VERIFICATION = ("emailaddrverif", _("E-mail address verification token"))
+        EMAIL_ADDRESS_VERIFICATION = ("emailaddrverif", _("Email address verification token"))
         PHONE_NUMBER_VERIFICATION = ("phonenumberverif", _("Phone number verification token"))
         INVITE = ("invite", _("Invite token"))
 

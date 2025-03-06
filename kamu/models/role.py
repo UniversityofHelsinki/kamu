@@ -313,7 +313,7 @@ class Requirement(models.Model):
     class Type(models.TextChoices):
         CONTRACT = ("contract", _("Requires a signed contract of type (value)"))
         ATTRIBUTE = ("attribute", _("User attribute (value) is defined"))
-        ASSURANCE = ("assurance", _("Assurance level at least the level"))
+        ASSURANCE = ("assurance", _("Assurance level at least level"))
         EXTERNAL = ("external", _("External requirement"))
 
     type = models.CharField(max_length=20, choices=Type.choices, verbose_name=_("Requirement type"))
@@ -327,15 +327,14 @@ class Requirement(models.Model):
         verbose_name=_("Level or version required"),
         help_text=_(
             "Require a minimum level of assurance or attribute verification level, or a minimum version of "
-            "contract. "
-            "Contract level must be positive integer. Assurance levels are from 1 (low) to 3 (high) and "
-            "attribute verification levels are from 1 (self assured) to 4 (strong electrical verification)"
+            "contract. Contract level must be a positive integer. Assurance levels are from 1 (low) to 3 (high) "
+            "and attribute verification levels are from 1 (self assured) to 4 (strong electrical verification)"
         ),
     )
     grace = models.IntegerField(
         default=0,
-        verbose_name=_("Grace time (days)"),
-        help_text=_("Grace time (days) before membership status is changed."),
+        verbose_name=_("Grace period (days)"),
+        help_text=_("Grace period (days) before membership status is changed."),
     )
 
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
@@ -382,9 +381,9 @@ class Requirement(models.Model):
 
         if self.type == Requirement.Type.CONTRACT:
             if not self.value:
-                raise ValidationError({"value": [_("Contract requirement needs contract type as a value")]})
+                raise ValidationError({"value": [_("Contract requirement needs contract type as a value.")]})
             if self.level and self.level < 0:
-                raise ValidationError({"level": [_("Contract version must be positive integer")]})
+                raise ValidationError({"level": [_("Contract version must be a positive integer.")]})
         if self.type == Requirement.Type.ASSURANCE:
             min_assurance = Identity.AssuranceLevel.LOW
             max_assurance = Identity.AssuranceLevel.HIGH
@@ -392,7 +391,7 @@ class Requirement(models.Model):
                 raise ValidationError(
                     {
                         "level": [
-                            _("Allowed assurance levels are from %(min) (low) to %(max) (high)")
+                            _("Allowed assurance levels are from %(min) (low) to %(max) (high).")
                             % {"min": min_assurance, "max": max_assurance}
                         ]
                     }
@@ -402,19 +401,19 @@ class Requirement(models.Model):
                 try:
                     Identity._meta.get_field(self.value)
                 except FieldDoesNotExist:
-                    raise ValidationError({"value": [_("Invalid attribute name")]})
+                    raise ValidationError({"value": [_("Invalid attribute name.")]})
             if self.level:
                 try:
                     Identity._meta.get_field(self.value + "_verification")
                 except FieldDoesNotExist:
-                    raise ValidationError({"level": [_("Attribute does not have verification level")]})
+                    raise ValidationError({"level": [_("Attribute does not have verification level.")]})
                 min_verification = Identity.VerificationMethod.SELF_ASSURED
                 max_verification = Identity.VerificationMethod.STRONG
                 if min_verification > int(self.level) or int(self.level) > max_verification:
                     raise ValidationError(
                         {
                             "level": [
-                                _("Allowed levels are from %(min) to %(max)")
+                                _("Allowed levels are from %(min) to %(max).")
                                 % {"min": min_verification.value, "max": max_verification.value}
                             ]
                         }

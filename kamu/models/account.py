@@ -55,7 +55,7 @@ class Account(models.Model):
 
 class AccountSynchronization(models.Model):
     """
-    Stores information for account synchronization.
+    Stores information for account synchronisation.
     """
 
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
@@ -63,8 +63,8 @@ class AccountSynchronization(models.Model):
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
 
     class Meta:
-        verbose_name = _("Account synchronization")
-        verbose_name_plural = _("Account synchronizations")
+        verbose_name = _("Account synchronisation")
+        verbose_name_plural = _("Account synchronisations")
 
     def __str__(self) -> str:
         return self.account.uid
