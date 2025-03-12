@@ -1,0 +1,3133 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-14 08:18+0200\n"
+"Language: SV\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: backends.py:98
+msgid "Identifier not found."
+msgstr "Identifieraren hittades inte."
+
+#: backends.py:99
+msgid "Valid identifier not found. This is probably a configuration error."
+msgstr ""
+"Giltig identifierare hittades inte. Detta är troligen ett konfigurationsfel."
+
+#: backends.py:100
+msgid "Identifier is already linked to another user."
+msgstr "Identifieraren är redan länkad till en annan användare."
+
+#: backends.py:101
+msgid "Invalid identifier format."
+msgstr "Ogiltigt identifieringsformat."
+
+#: backends.py:102
+msgid "Could not authenticate. Please try again."
+msgstr "Autentisering misslyckades. Vänligen försök igen."
+
+#: backends.py:103
+msgid "Identity provider is not authorised."
+msgstr "Identitetsleverantören är inte auktoriserad."
+
+#: backends.py:104
+msgid "Unexpected error."
+msgstr "Oväntat fel."
+
+#: backends.py:105
+msgid "Missing required parameters. Please try again with an another browser."
+msgstr "Obligatoriska parametrar saknas. Försök igen med en annan webbläsare."
+
+#: backends.py:106 forms/auth.py:44 forms/auth.py:85
+msgid "Invalid email address or phone number."
+msgstr "Ogiltig e-postadress eller ogiltigt telefonnummer."
+
+#: backends.py:107 views/auth.py:117
+msgid "You are already logged in."
+msgstr "Du är redan inloggad."
+
+#: backends.py:108
+msgid "User must be authenticated to link identifier."
+msgstr "Användaren måste vara autentiserad för att länka identifierare."
+
+#: backends.py:109
+msgid ""
+"Staff and Superuser access is not allowed with this authentication method."
+msgstr ""
+"Åtkomst för personal och superanvändare är inte tillåten med denna "
+"autentiseringsmetod."
+
+#: backends.py:110
+msgid "Role owner access is not allowed with this authentication method."
+msgstr "Åtkomst för rollägare är inte tillåten med denna autentiseringsmetod."
+
+#: backends.py:111
+msgid "Staff and Superuser access is not allowed from this IP address."
+msgstr ""
+"Åtkomst för personal och superanvändare är inte tillåten från denna IP-"
+"adress."
+
+#: backends.py:112
+msgid "You belong to a group that is not allowed from this IP address."
+msgstr "Du tillhör en grupp som inte är tillåten från denna IP-adress."
+
+#: backends.py:113
+msgid "Configuration error, service administrators have been notified."
+msgstr "Konfigurationsfel, tjänstens administratörer har meddelats."
+
+#: backends.py:638
+msgid "Suspected duplicate user. Username already exists in the database: "
+msgstr "Misstänkt dubbel användare. Användarnamnet finns redan i databasen: "
+
+#: backends.py:652
+msgid "Suspected duplicate user. Identity already has a different username: "
+msgstr ""
+"Misstänkt dubbel användare. Identiteten har redan ett annat användarnamn: "
+
+#: backends.py:840
+msgid ""
+"Suspected duplicate user. Finnish personal identity code already exists in "
+"the database: "
+msgstr ""
+"Misstänkt dubbel användare. Personbeteckningen finns redan i databasen: "
+
+#: forms/account.py:19
+msgid "Password"
+msgstr "Lösenord"
+
+#: forms/account.py:20
+msgid "Confirm password"
+msgstr "Bekräfta lösenordet"
+
+#: forms/account.py:37
+msgid "Passwords do not match."
+msgstr "Lösenorden stämmer inte överens."
+
+#: forms/account.py:47 models/account.py:32
+#: templates/account/account_detail.html:10
+#: templates/account/account_detail.html:32
+#: templates/account/account_detail.html:56
+#: templates/account/account_list.html:15
+msgid "User ID"
+msgstr "Användar-ID"
+
+#: forms/account.py:47
+msgid "Select account name to be used."
+msgstr "Välj det kontonamn som ska användas."
+
+#: forms/account.py:60 templates/account/account_create.html:5
+msgid "Create account"
+msgstr "Skapa konto"
+
+#: forms/account.py:74
+msgid "Reset password"
+msgstr "Återställ lösenord"
+
+#: forms/auth.py:36 forms/auth.py:186 forms/identity.py:47
+#: models/identity.py:451 models/identity.py:461 models/token.py:296
+#: templates/account/account_create.html:16
+msgid "Email address"
+msgstr "E-postadress"
+
+#: forms/auth.py:38 forms/auth.py:256 forms/identity.py:49
+#: models/identity.py:487 models/identity.py:497 models/token.py:293
+msgid "Phone number"
+msgstr "Telefonnummer"
+
+#: forms/auth.py:40 forms/auth.py:258
+msgid "Phone number in international format, e.g. +358123456789."
+msgstr "Telefonnummer i internationellt format, t.ex. +358123456789."
+
+#: forms/auth.py:45 views/auth.py:476
+msgid "This account is inactive."
+msgstr "Detta konto är inaktivt."
+
+#: forms/auth.py:54 forms/auth.py:318 templates/auth/invite.html:12
+#: templates/auth/invite.html:14 templates/auth/login.html:7
+#: templates/auth/login_email.html:5 templates/auth/login_local.html:5
+#: templates/base.html:71 templates/front.html:86 templates/front.html:88
+msgid "Login"
+msgstr "Logga in"
+
+#: forms/auth.py:75
+msgid "This contact information cannot be used to login."
+msgstr "Dessa kontaktuppgifter kan inte användas för inloggning."
+
+#: forms/auth.py:83
+msgid ""
+"Tried to send new login tokens too soon. Please try again in one minute."
+msgstr ""
+"Försökte skicka nya inloggningstokens för tidigt. Vänligen försök igen om en "
+"minut."
+
+#: forms/auth.py:93 forms/auth.py:224 forms/identity.py:200
+msgid "Email verification code"
+msgstr "E-postverifieringskod"
+
+#: forms/auth.py:94 forms/auth.py:281 forms/identity.py:236
+msgid "SMS verification code"
+msgstr "SMS-verifieringskod"
+
+#: forms/auth.py:110 forms/auth.py:235 forms/auth.py:292
+#: templates/identity/contact_address.html:24
+#: templates/identity/contact_address.html:70
+msgid "Verify"
+msgstr "Verifiera"
+
+#: forms/auth.py:111
+msgid "Resend email code"
+msgstr "Skicka e-postkod igen"
+
+#: forms/auth.py:112
+msgid "Resend phone code"
+msgstr "Skicka telefonkod igen"
+
+#: forms/auth.py:120 forms/auth.py:128 forms/auth.py:137 forms/auth.py:145
+#: forms/auth.py:244 forms/auth.py:246 forms/auth.py:301 forms/auth.py:303
+#: forms/identity.py:219 forms/identity.py:221 forms/identity.py:255
+#: forms/identity.py:257
+msgid "Invalid verification code."
+msgstr "Ogiltig verifieringskod."
+
+#: forms/auth.py:124 forms/auth.py:126
+msgid "This email address cannot be used to login."
+msgstr "E-postadressen kan inte användas för inloggning."
+
+#: forms/auth.py:141 forms/auth.py:143
+msgid "This phone number cannot be used to login."
+msgstr "Telefonnumret kan inte användas för inloggning."
+
+#: forms/auth.py:155 forms/auth.py:166 forms/auth.py:168
+msgid "Error when logging in, please try again."
+msgstr "Fel vid inloggning, försök igen."
+
+#: forms/auth.py:170
+msgid "This account is disabled."
+msgstr "Detta konto är inaktiverat."
+
+#: forms/auth.py:183 models/identity.py:168
+#: templates/identity/identity_combine.html:12
+#: templates/identity/identity_combine.html:68
+#: templates/identity/identity_detail.html:8
+msgid "Given names"
+msgstr "Förnamn"
+
+#: forms/auth.py:183 models/identity.py:168
+msgid "All official given names."
+msgstr "Alla officiella förnamn."
+
+#: forms/auth.py:185 forms/identity.py:45 models/identity.py:176
+#: templates/account/account_create.html:12
+#: templates/identity/identity_combine.html:13
+#: templates/identity/identity_combine.html:74
+#: templates/identity/identity_detail.html:10
+msgid "Surname"
+msgstr "Efternamn"
+
+#: forms/auth.py:185 models/identity.py:176
+msgid "Official surname(s)."
+msgstr "Officiellt efternamn."
+
+#: forms/auth.py:194 forms/auth.py:267
+msgid "Send verification code"
+msgstr "Skicka verifieringskod"
+
+#: forms/auth.py:202
+msgid "This email address is already linked to an account."
+msgstr "E-postadressen är redan länkad till ett konto."
+
+#: forms/auth.py:211
+msgid "Invalid form data."
+msgstr "Ogiltiga uppgifter i formuläret."
+
+#: forms/auth.py:215
+msgid "Either given names or surname must be filled in."
+msgstr "Antingen förnamn eller efternamn måste anges."
+
+#: forms/auth.py:236 forms/auth.py:293
+msgid "Resend verification code"
+msgstr "Skicka verifieringskod igen"
+
+#: forms/auth.py:338
+msgid "Invitation code"
+msgstr "Inbjudningskod"
+
+#: forms/auth.py:361 forms/auth.py:367 forms/auth.py:371 forms/auth.py:373
+msgid "Invalid invitation code."
+msgstr "Ogiltig inbjudningskod."
+
+#: forms/generic.py:32 forms/identity.py:64 templates/base.html:32
+#: templates/front.html:53
+msgid "Search"
+msgstr "Sök"
+
+#: forms/identity.py:27
+msgid "Target primary key"
+msgstr "Målets primärnyckel"
+
+#: forms/identity.py:28
+msgid "Source primary key"
+msgstr "Källans primärnyckel"
+
+#: forms/identity.py:36
+msgid "Combine"
+msgstr "Kombinera"
+
+#: forms/identity.py:44
+msgid "Given name(s)"
+msgstr "Förnamn"
+
+#: forms/identity.py:46 models/account.py:39 models/role.py:235
+#: templates/identity/identity_search.html:17
+#: templates/identity/identity_search.html:42
+#: templates/membership/membership_invite.html:34
+#: templates/membership/membership_invite_identity.html:23
+#: templates/membership/membership_invite_identity.html:55
+msgid "User account"
+msgstr "Användarnamn"
+
+#: forms/identity.py:52
+msgid ""
+"Use international format, e.g. +358401234567, including only numbers and + "
+"sign."
+msgstr ""
+"Använd internationellt format, t.ex. +358401234567, endast siffror och +-"
+"tecken."
+
+#: forms/identity.py:54 models/identity.py:228 models/identity.py:540
+#: templates/identity/identity_combine.html:15
+#: templates/identity/identity_combine.html:111
+#: templates/identity/identity_detail.html:23
+msgid "Finnish personal identity code"
+msgstr "Personbeteckning"
+
+#: forms/identity.py:67
+msgid ""
+"Name search returns partial matches from Kamu and names starting with the "
+"search parameters in the user directory."
+msgstr ""
+"Namnsökningen ger partiella träffar från Kamu och namn som börjar med "
+"sökparametrarna i användarkatalogen."
+
+#: forms/identity.py:71
+msgid "Name search returns partial matches from Kamu."
+msgstr "Namnsökningen ger partiella träffar från Kamu."
+
+#: forms/identity.py:73
+msgid "Name search"
+msgstr "Namnsökning"
+
+#: forms/identity.py:80 models/identity.py:559
+#: templates/identity/identity_detail.html:72
+msgid "Identifiers"
+msgstr "Identifierare"
+
+#: forms/identity.py:84
+msgid ""
+"Identifier search matches only exact identifiers. Each identifier is "
+"searched separately and the results are added to the final search results."
+msgstr ""
+"Identifierarsökningen ger endast träffar med exakt identifierare. Varje "
+"identifierare söks separat och resultaten läggs till i de slutliga "
+"sökresultaten."
+
+#: forms/identity.py:136
+msgid "Email address or phone number"
+msgstr "E-postadress eller telefonnummer"
+
+#: forms/identity.py:138
+msgid ""
+"Phone number in international format, e.g. +358123456789. Values containing "
+"@ are treated as email addresses."
+msgstr ""
+"Telefonnummer i internationellt format, t.ex. +358123456789. Värden som "
+"innehåller @ behandlas som e-postadresser."
+
+#: forms/identity.py:155
+msgid "Add"
+msgstr "Lägg till"
+
+#: forms/identity.py:160 forms/identity.py:335
+#: templates/account/account_list.html:58
+#: templates/contract/contract_detail.html:26
+#: templates/contract/contract_list.html:60
+#: templates/identity/identifier.html:98
+msgid "Return"
+msgstr "Gå tillbaka"
+
+#: forms/identity.py:175
+msgid "Email address or phone number is required."
+msgstr "E-postadress eller telefonnummer krävs."
+
+#: forms/identity.py:181
+msgid "Email address already exists."
+msgstr "E-postadressen finns redan."
+
+#: forms/identity.py:183
+msgid "Maximum number of email addresses reached."
+msgstr "Maximalt antal e-postadresser har uppnåtts."
+
+#: forms/identity.py:189
+msgid "Phone number already exists."
+msgstr "Telefonnumret finns redan."
+
+#: forms/identity.py:191
+msgid "Maximum number of phone numbers reached."
+msgstr "Maximalt antal telefonnummer har uppnåtts."
+
+#: forms/identity.py:210 forms/identity.py:246
+msgid "Save"
+msgstr "Spara"
+
+#: forms/identity.py:211 forms/identity.py:247
+msgid "Resend a code"
+msgstr "Skicka kod igen"
+
+#: forms/identity.py:277 templates/identity/identity_detail.html:66
+msgid "Basic information"
+msgstr "Allmänna uppgifter"
+
+#: forms/identity.py:305
+msgid "Restricted information"
+msgstr "Förtrolig information"
+
+#: forms/identity.py:330
+msgid "Save changes"
+msgstr "Spara ändringarna"
+
+#: forms/identity.py:389
+msgid "Cannot set strong electrical verification manually."
+msgstr "Kan inte ställa in stark elektronisk verifiering manuellt."
+
+#: forms/membership.py:34
+msgid "Add member"
+msgstr "Lägg till medlem"
+
+#: forms/membership.py:68
+msgid "Update"
+msgstr "Uppdatera"
+
+#: forms/membership.py:91
+msgid ""
+"This replaces beginning of the default invite message. Lines of the invite "
+"text are wrapped to 70 characters. Invite code and link will be added to end "
+"of the message. Use preview to see the final result."
+msgstr ""
+"Detta ersätter början av standardinbjudningsmeddelandet. Textraderna i "
+"inbjudan rymmer högst 70 tecken. Inbjudans kod och länk läggs till i slutet "
+"av meddelandet. Använd förhandsgranskning för att se slutresultatet."
+
+#: forms/membership.py:102 forms/membership.py:166
+msgid "Invite language"
+msgstr "Språk för inbjudan"
+
+#: forms/membership.py:104 forms/membership.py:168
+msgid "Invite text"
+msgstr "Text för inbjudan"
+
+#: forms/membership.py:120 forms/membership.py:181
+#: templates/membership/membership_approval_list.html:19
+#: templates/membership/membership_expiring_list.html:19
+#: templates/role/role_detail.html:61
+msgid "Invite"
+msgstr "Inbjudan"
+
+#: forms/membership.py:121 forms/membership.py:182
+#: templates/membership/membership_invite.html:42
+msgid "Preview message"
+msgstr "Förhandsgranska meddelande"
+
+#: forms/membership.py:149
+msgid ""
+"This email address already has an invite to the role during this time period."
+msgstr ""
+"Den här e-postadressen har redan en inbjudan till rollen under den här "
+"tidsperioden."
+
+#: forms/membership.py:158
+msgid "Invited persons"
+msgstr "Inbjudna personer"
+
+#: forms/membership.py:161
+msgid ""
+"Invited persons, one per line. Each line should contain email address, "
+"followed by optional phone number and/or Finnish personal identity code, "
+"values separated by comma. Phone number must be in international format. "
+"Example: \"person@example.org,+358501234567,010181-900C\""
+msgstr ""
+"Inbjudna personer, en per rad. Varje rad ska innehålla e-postadress, och "
+"valfritt telefonnummer och/eller personbeteckning, separerade med komma. "
+"Telefonnumret ska vara i internationellt format. Till exempel: "
+"\"person@example.org,+358501234567,010181-900C\""
+
+#: forms/membership.py:217
+msgid "No invited persons."
+msgstr "Inga inbjudna personer."
+
+#: forms/membership.py:220
+msgid "Too many invited persons."
+msgstr "För många inbjudna personer."
+
+#: forms/membership.py:231
+#, python-format
+msgid "Invalid value: %(part)s"
+msgstr "Ogiltigt värde: %(part)s"
+
+#: forms/membership.py:234
+#, python-format
+msgid "Invalid line: %(line)s"
+msgstr "Ogiltig rad: %(line)s"
+
+#: models/account.py:22
+msgid "Enabled"
+msgstr "Aktiverad"
+
+#: models/account.py:23
+msgid "Disabled"
+msgstr "Deaktiverad"
+
+#: models/account.py:26 templates/account/account_detail.html:8
+msgid "Account"
+msgstr "Konto"
+
+#: models/account.py:27
+msgid "Light Account"
+msgstr "Lätt konto"
+
+#: models/account.py:29 templates/account/account_detail.html:14
+#: templates/account/account_list.html:16
+#: templates/identity/identity_detail.html:87
+#: templates/membership/membership_approval_list.html:12
+#: templates/membership/membership_detail.html:51
+#: templates/membership/membership_expiring_list.html:12
+#: templates/role/role_detail.html:54
+msgid "Status"
+msgstr "Status"
+
+#: models/account.py:30
+msgid "Account type"
+msgstr "Typ av konto"
+
+#: models/account.py:34 models/identity.py:551
+msgid "Deactivated at"
+msgstr "Deaktiverat den"
+
+#: models/account.py:35 models/account.py:63 models/contract.py:55
+#: models/contract.py:112 models/identity.py:40 models/identity.py:244
+#: models/identity.py:455 models/identity.py:491 models/identity.py:552
+#: models/membership.py:72 models/role.py:78 models/role.py:257
+#: models/role.py:340 models/token.py:313
+msgid "Created at"
+msgstr "Skapat den"
+
+#: models/account.py:36 models/identity.py:41 models/identity.py:245
+#: models/identity.py:456 models/identity.py:492 models/identity.py:553
+#: models/membership.py:73 models/role.py:79 models/role.py:258
+#: models/role.py:341
+msgid "Updated at"
+msgstr "Uppdaterat den"
+
+#: models/account.py:40 templates/identity/identity_detail.html:77
+msgid "User accounts"
+msgstr "Användarnamn"
+
+#: models/account.py:62
+msgid "Number of failures"
+msgstr "Antal fel"
+
+#: models/account.py:66
+msgid "Account synchronisation"
+msgstr "Kontosynkronisering"
+
+#: models/account.py:67
+msgid "Account synchronisations"
+msgstr "Kontosynkroniseringar"
+
+#: models/contract.py:53 templates/contract/contract_list.html:14
+msgid "Checksum"
+msgstr "Kontrollsumma"
+
+#: models/contract.py:54
+msgid "Language"
+msgstr "Språk"
+
+#: models/contract.py:63
+msgid "Contract"
+msgstr "Avtal"
+
+#: models/contract.py:64 templates/contract/contract_list.html:6
+#: templates/identity/identity_combine.html:20
+#: templates/identity/identity_detail.html:75
+msgid "Contracts"
+msgstr "Avtal"
+
+#: models/contract.py:103
+msgid "Contract type"
+msgstr "Avtalstyp"
+
+#: models/contract.py:104 templates/contract/contract_detail.html:21
+msgid "Contract version"
+msgstr "Avtalsversion"
+
+#: models/contract.py:105
+msgid "Contract name (fi)"
+msgstr "Avtalsnamn (fi)"
+
+#: models/contract.py:106
+msgid "Contract name (en)"
+msgstr "Avtalsnamn (en)"
+
+#: models/contract.py:107
+msgid "Contract name (sv)"
+msgstr "Avtalsnamn (sv)"
+
+#: models/contract.py:108
+msgid "Contract text (fi)"
+msgstr "Avtalstext (fi)"
+
+#: models/contract.py:109
+msgid "Contract text (en)"
+msgstr "Avtalstext (en)"
+
+#: models/contract.py:110
+msgid "Contract text (sv)"
+msgstr "Avtalstext (sv)"
+
+#: models/contract.py:111
+msgid "Public"
+msgstr "Offentlig"
+
+#: models/contract.py:118
+msgid "Contract template"
+msgstr "Avtalsmall"
+
+#: models/contract.py:119
+msgid "Contract templates"
+msgstr "Avtalsmallar"
+
+#: models/identity.py:35
+msgid "Country code"
+msgstr "Landskod"
+
+#: models/identity.py:36
+msgid "Country name (fi)"
+msgstr "Landsnamn (fi)"
+
+#: models/identity.py:37
+msgid "Country name (en)"
+msgstr "Landsnamn (en)"
+
+#: models/identity.py:38
+msgid "Country name (sv)"
+msgstr "Landsnamn (sv)"
+
+#: models/identity.py:44 models/identity.py:216
+#: templates/identity/identity_combine.html:117
+#: templates/identity/identity_detail.html:21
+msgid "Nationality"
+msgstr "Nationalitet"
+
+#: models/identity.py:45
+msgid "Nationalities"
+msgstr "Nationaliteter"
+
+#: models/identity.py:117 models/role.py:31
+msgid "English"
+msgstr "Engelsk"
+
+#: models/identity.py:118 models/role.py:32
+msgid "Finnish"
+msgstr "Finländsk"
+
+#: models/identity.py:119 models/role.py:33
+msgid "Swedish"
+msgstr "Svensk"
+
+#: models/identity.py:123
+msgid "Male"
+msgstr "Man"
+
+#: models/identity.py:124
+msgid "Female"
+msgstr "Kvinna"
+
+#: models/identity.py:125
+msgid "Other"
+msgstr "Annat"
+
+#: models/identity.py:126
+msgid "Unknown"
+msgstr "Okänt"
+
+#: models/identity.py:129
+msgid "No assurance level"
+msgstr "Ingen kontrollnivå"
+
+#: models/identity.py:130
+msgid "Low, self-asserted with a verified email-address"
+msgstr "Låg, självangiven med verifierad e-postadress"
+
+#: models/identity.py:131
+msgid "Medium, verified with a government issued photo-ID"
+msgstr "Medelhög, verifierad med statligt utfärdad fotolegitimation"
+
+#: models/identity.py:132
+msgid "High, eIDAS substantial level or similar"
+msgstr "Hög, eIDAS på substantiell nivå eller liknande"
+
+#: models/identity.py:135
+msgid "No verification"
+msgstr "Ingen verifiering"
+
+#: models/identity.py:136
+msgid "Self assurance"
+msgstr "Självangiven verifiering"
+
+#: models/identity.py:137
+msgid "External source"
+msgstr "Extern källa"
+
+#: models/identity.py:138
+msgid "Verified with a government issued photo-ID"
+msgstr "Verifierad med statligt utfärdad fotolegitimation"
+
+#: models/identity.py:139
+msgid "Strong electrical verification"
+msgstr "Stark elektrisk verifiering"
+
+#: models/identity.py:145
+msgid "Kamu ID"
+msgstr "Kamu-ID"
+
+#: models/identity.py:146
+msgid "Unique identifier for this identity."
+msgstr "Unik identifierare för denna identitet."
+
+#: models/identity.py:154
+msgid "User identifier"
+msgstr "Användaridentifierare"
+
+#: models/identity.py:158 templates/identity/identity_combine.html:56
+msgid "External identity"
+msgstr "Extern identitet"
+
+#: models/identity.py:159
+msgid "This identity is managed in another registry."
+msgstr "Denna identitet hanteras i ett annat register."
+
+#: models/identity.py:164 templates/identity/identity_combine.html:62
+msgid "Assurance level"
+msgstr "Kontrollnivå"
+
+#: models/identity.py:165
+msgid "How strongly this user identity is identified."
+msgstr "Hur starkt denna användaridentitet är identifierad."
+
+#: models/identity.py:173
+msgid "Given names verification method"
+msgstr "Metod för verifiering av förnamn"
+
+#: models/identity.py:181
+msgid "Surname verification method"
+msgstr "Metod för verifiering av efternamn"
+
+#: models/identity.py:186 templates/identity/identity_combine.html:81
+msgid "Displayed given name"
+msgstr "Förnamn som visas"
+
+#: models/identity.py:187
+msgid "A given name or nickname part of the user's display name."
+msgstr ""
+"Ett förnamn eller smeknamn som är en del av användarens namn som visas."
+
+#: models/identity.py:192 templates/identity/identity_combine.html:87
+msgid "Displayed surname"
+msgstr "Efternamn som visas"
+
+#: models/identity.py:193
+msgid "A surname part of the user's display name."
+msgstr "Efternamn som del av användarens namn som visas."
+
+#: models/identity.py:198 templates/identity/identity_combine.html:93
+#: templates/identity/identity_detail.html:17
+msgid "Date of birth"
+msgstr "Födelsedatum"
+
+#: models/identity.py:199 models/identity.py:211 models/identity.py:215
+msgid ""
+"Required for the user identification from the official identity documents."
+msgstr "Krävs för användaridentifiering med officiella Identitetsbevis."
+
+#: models/identity.py:204
+msgid "Date of birth verification method"
+msgstr "Metod för verifiering av födelsedatum"
+
+#: models/identity.py:210 templates/identity/identity_combine.html:99
+#: templates/identity/identity_detail.html:19
+msgid "Gender"
+msgstr "Kön"
+
+#: models/identity.py:221
+msgid "Nationality verification method"
+msgstr "Metod för verifiering av nationalitet"
+
+#: models/identity.py:230
+msgid "Used for the strong electrical identification."
+msgstr "Används för stark elektronisk identifiering."
+
+#: models/identity.py:235
+msgid "FPIC verification method"
+msgstr "FPIC-verifieringsmetod"
+
+#: models/identity.py:241 templates/identity/identity_combine.html:105
+#: templates/identity/identity_detail.html:14
+#: templates/membership/membership_detail.html:35
+#: templates/membership/membership_invite.html:26
+msgid "Preferred language"
+msgstr "Föredraget språk"
+
+#: models/identity.py:242
+msgid "Preferred service language."
+msgstr "Föredraget språk för tjänsten."
+
+#: models/identity.py:263 templates/membership/membership_approval_list.html:10
+#: templates/membership/membership_detail.html:26
+#: templates/membership/membership_detail.html:87
+#: templates/membership/membership_expiring_list.html:10
+#: templates/membership/membership_invite.html:22
+#: templates/membership/membership_invite.html:30
+#: templates/role/role_detail.html:53
+msgid "Identity"
+msgstr "Identitet"
+
+#: models/identity.py:264
+msgid "Identities"
+msgstr "Identiteter"
+
+#: models/identity.py:452 models/identity.py:488
+#: templates/identity/contact_address.html:16
+#: templates/identity/contact_address.html:62
+msgid "Priority"
+msgstr "Prioritet"
+
+#: models/identity.py:453 models/identity.py:489 models/identity.py:549
+#: templates/identity/contact_address.html:15
+#: templates/identity/contact_address.html:24
+#: templates/identity/contact_address.html:61
+#: templates/identity/contact_address.html:70
+#: templates/identity/identity_combine.html:124
+#: templates/identity/identity_combine.html:125
+#: templates/identity/identity_combine.html:126
+#: templates/identity/identity_combine.html:127
+#: templates/identity/identity_combine.html:131
+#: templates/identity/identity_combine.html:132
+#: templates/identity/identity_combine.html:133
+#: templates/identity/identity_combine.html:134
+msgid "Verified"
+msgstr "Verifierad"
+
+#: models/identity.py:462 templates/identity/contact_address.html:9
+#: templates/identity/identity_detail.html:31
+msgid "Email addresses"
+msgstr "E-postadresser"
+
+#: models/identity.py:498 templates/identity/contact_address.html:55
+#: templates/identity/identity_detail.html:33
+msgid "Phone numbers"
+msgstr "Telefonnummer"
+
+#: models/identity.py:541
+msgid "eIDAS identifier"
+msgstr "eIDAS-identifierare"
+
+#: models/identity.py:542
+msgid "eduPersonPrincipalName"
+msgstr "eduPersonPrincipalNamn"
+
+#: models/identity.py:543
+msgid "Google account"
+msgstr "Google-konto"
+
+#: models/identity.py:544
+msgid "Microsoft account"
+msgstr "Microsoft-konto"
+
+#: models/identity.py:545 templates/identity/identity_combine.html:44
+msgid "Kamu identifier"
+msgstr "Kamu-identifierare"
+
+#: models/identity.py:547
+msgid "Identifier type"
+msgstr "Typ av identifierare"
+
+#: models/identity.py:548
+msgid "Identifier value"
+msgstr "Identifierarens värde"
+
+#: models/identity.py:558
+msgid "Identifier"
+msgstr "Identifierare"
+
+#: models/identity.py:576
+msgid "Invalid eduPersonPrincipalName format."
+msgstr "Ogiltigt format för eduPersonPrincipalName."
+
+#: models/membership.py:52
+msgid "Invited"
+msgstr "Inbjudna"
+
+#: models/membership.py:53
+msgid "Missing requirements"
+msgstr "Krav saknas"
+
+#: models/membership.py:54
+msgid "Waiting approval"
+msgstr "Väntar på godkännande"
+
+#: models/membership.py:55
+msgid "Pending"
+msgstr "Väntar"
+
+#: models/membership.py:56
+msgid "Active"
+msgstr "Aktiva"
+
+#: models/membership.py:57 templates/identity/identity_detail.html:111
+msgid "Expired"
+msgstr "Utgångna"
+
+#: models/membership.py:59
+msgid "Invite email address"
+msgstr "E-postadress för inbjudan"
+
+#: models/membership.py:60
+msgid "Membership status"
+msgstr "Medlemskapsstatus"
+
+#: models/membership.py:67
+msgid "Membership reason"
+msgstr "Medlemskapsorsak"
+
+#: models/membership.py:68
+msgid "Membership start date"
+msgstr "Medlemskapets startdatum"
+
+#: models/membership.py:69
+msgid "Membership expiry date"
+msgstr "Medlemskapets utgångsdatum"
+
+#: models/membership.py:71
+msgid "Requirements failed time"
+msgstr "Tid då kraven inte kunde uppfyllas"
+
+#: models/membership.py:79
+msgid "Membership"
+msgstr "Medlemskap"
+
+#: models/membership.py:80 templates/base.html:41
+msgid "Memberships"
+msgstr "Medlemskap"
+
+#: models/role.py:36
+msgid "Role identifier"
+msgstr "Rollidentifierare"
+
+#: models/role.py:37
+msgid "Role name (fi)"
+msgstr "Rollnamn (fi)"
+
+#: models/role.py:38
+msgid "Role name (en)"
+msgstr "Rollnamn (en)"
+
+#: models/role.py:39
+msgid "Role name (sv)"
+msgstr "Rollnamn (sv)"
+
+#: models/role.py:40
+msgid "Role description (fi)"
+msgstr "Rollbeskrivning (fi)"
+
+#: models/role.py:41
+msgid "Role description (en)"
+msgstr "Rollbeskrivning (en)"
+
+#: models/role.py:42
+msgid "Role description (sv)"
+msgstr "Rollbeskrivning (sv)"
+
+#: models/role.py:47
+msgid "Organisation unit"
+msgstr "Organisationsenhet"
+
+#: models/role.py:48
+msgid "Notification email address"
+msgstr "E-postadress för aviseringar"
+
+#: models/role.py:53 templates/role/role_detail.html:26
+msgid "Notification language"
+msgstr "Språk för aviseringar"
+
+#: models/role.py:56 templates/role/role_detail.html:30
+msgid "Inviter groups"
+msgstr "Inbjudargrupper"
+
+#: models/role.py:59 templates/role/role_detail.html:33
+msgid "Approver groups"
+msgstr "Godkännargrupper"
+
+#: models/role.py:62 models/role.py:263
+#: templates/membership/membership_detail.html:19
+#: templates/membership/membership_invite.html:13
+#: templates/role/role_detail.html:16
+msgid "Permissions"
+msgstr "Rättigheter"
+
+#: models/role.py:64 models/role.py:254 models/role.py:349
+msgid "Requirements"
+msgstr "Krav"
+
+#: models/role.py:67
+msgid "IAM Group"
+msgstr "IAM-grupp"
+
+#: models/role.py:69
+msgid "Maximum duration (days)"
+msgstr "Maximal varaktighet (dagar)"
+
+#: models/role.py:72
+msgid "Purge delay (days)"
+msgstr "Reningsfördröjning (dagar)"
+
+#: models/role.py:73
+msgid "Grace period from membership expiration to purge (days)"
+msgstr "Anstånd från medlemskapets utgång till rensning (dagar)"
+
+#: models/role.py:85 templates/identity/identity_detail.html:86
+#: templates/identity/identity_detail.html:109
+#: templates/membership/membership_approval_list.html:11
+#: templates/membership/membership_detail.html:15
+#: templates/membership/membership_detail.html:85
+#: templates/membership/membership_expiring_list.html:11
+#: templates/membership/membership_invite.html:9
+#: templates/role/role_list.html:11 templates/role/role_search.html:14
+msgid "Role"
+msgstr "Roll"
+
+#: models/role.py:86 templates/base.html:30
+msgid "Roles"
+msgstr "Roller"
+
+#: models/role.py:232
+msgid "Permission identifier"
+msgstr "Rättighetsidentifierare"
+
+#: models/role.py:236
+msgid "Generic permission"
+msgstr "Allmän rättighet"
+
+#: models/role.py:237
+msgid "Service"
+msgstr "Tjänst"
+
+#: models/role.py:240
+msgid "Permission type"
+msgstr "Typ av rättighet"
+
+#: models/role.py:243
+msgid "Permission name (fi)"
+msgstr "Rättighetens namn (fi)"
+
+#: models/role.py:244
+msgid "Permission name (en)"
+msgstr "Rättighetens namn (en)"
+
+#: models/role.py:245
+msgid "Permission name (sv)"
+msgstr "Rättighetens namn (sv)"
+
+#: models/role.py:246
+msgid "Permission description (fi)"
+msgstr "Rättighetens beskrivning (fi)"
+
+#: models/role.py:247
+msgid "Permission description (en)"
+msgstr "Rättighetens beskrivning (en)"
+
+#: models/role.py:248
+msgid "Permission description (sv)"
+msgstr "Rättighetens beskrivning (sv)"
+
+#: models/role.py:250
+msgid "Permission cost"
+msgstr "Rättighetens kostnad"
+
+#: models/role.py:251
+msgid "Permission value"
+msgstr "Rättighetens värde"
+
+#: models/role.py:262
+msgid "Permission"
+msgstr "Rättighet"
+
+#: models/role.py:309
+msgid "Requirement name (fi)"
+msgstr "Kravnamn (fi)"
+
+#: models/role.py:310
+msgid "Requirement name (en)"
+msgstr "Kravnamn (en)"
+
+#: models/role.py:311
+msgid "Requirement name (sv)"
+msgstr "Kravnamn (sv)"
+
+#: models/role.py:314
+msgid "Requires a signed contract of type (value)"
+msgstr "Kräver ett signerat avtal av typen (value)"
+
+#: models/role.py:315
+msgid "User attribute (value) is defined"
+msgstr "Användarattributet (value) är definierat"
+
+#: models/role.py:316
+msgid "Assurance level at least level"
+msgstr "Kontrollnivå minst på nivå"
+
+#: models/role.py:317
+msgid "External requirement"
+msgstr "Externa krav"
+
+#: models/role.py:319
+msgid "Requirement type"
+msgstr "Typ av krav"
+
+#: models/role.py:323
+msgid "Requirement value"
+msgstr "Kravets värde"
+
+#: models/role.py:327
+msgid "Level or version required"
+msgstr "Nivå eller version som krävs"
+
+#: models/role.py:329
+msgid ""
+"Require a minimum level of assurance or attribute verification level, or a "
+"minimum version of contract. Contract level must be a positive integer. "
+"Assurance levels are from 1 (low) to 3 (high) and attribute verification "
+"levels are from 1 (self assured) to 4 (strong electrical verification)"
+msgstr ""
+"Kräv en minimikontrollnivå eller verifiering av attributets nivå eller en "
+"minimiversion av avtalet. Avtalsnivån måste vara ett positivt heltal. "
+"Kontrollnivåerna är från 1 (låg) till 3 (hög), och attributens "
+"verifieringsnivåer är från 1 (självangiven) till 4 (stark elektronisk "
+"verifiering)"
+
+#: models/role.py:336
+msgid "Grace period (days)"
+msgstr "Anstånd (dagar)"
+
+#: models/role.py:337
+msgid "Grace period (days) before membership status is changed."
+msgstr "Anstånd (dagar) innan medlemsstatus ändras."
+
+#: models/role.py:348
+msgid "Requirement"
+msgstr "Krav"
+
+#: models/role.py:384
+msgid "Contract requirement needs contract type as a value."
+msgstr "Avtalskrav måste ha avtalstyp som värde."
+
+#: models/role.py:386
+msgid "Contract version must be a positive integer."
+msgstr "Avtalsversionen måste vara ett positivt heltal."
+
+#: models/role.py:394
+msgid "Allowed assurance levels are from %(min) (low) to %(max) (high)."
+msgstr "Tillåtna kontrollnivåer är från %(min) (low) till %(max) (high)."
+
+#: models/role.py:404
+msgid "Invalid attribute name."
+msgstr "Ogiltigt attributnamn."
+
+#: models/role.py:409
+msgid "Attribute does not have verification level."
+msgstr "Attributet har ingen verifieringsnivå."
+
+#: models/role.py:416
+msgid "Allowed levels are from %(min) to %(max)."
+msgstr "Tillåtna nivåer är från %(min) till %(max)."
+
+#: models/token.py:300
+msgid "Email login token"
+msgstr "Token för inloggning via e-postadress"
+
+#: models/token.py:301
+msgid "SMS login token"
+msgstr "Token för inloggning via SMS"
+
+#: models/token.py:302
+msgid "Email object verification token"
+msgstr "Verifieringstoken för e-post"
+
+#: models/token.py:303
+msgid "Phone object verification token"
+msgstr "Verifieringstoken för telefon"
+
+#: models/token.py:304
+msgid "Email address verification token"
+msgstr "Token för verifiering med e-postadress"
+
+#: models/token.py:305
+msgid "Phone number verification token"
+msgstr "Token för verifiering med telefonnummer"
+
+#: models/token.py:306
+msgid "Invite token"
+msgstr "Inbjudningstoken"
+
+#: models/token.py:308
+msgid "Token type"
+msgstr "Typ av token"
+
+#: models/token.py:310
+msgid "Salt and a hashed token"
+msgstr "Salt och en hashad token"
+
+#: models/token.py:311
+msgid "Number of tries left"
+msgstr "Antal återstående försök"
+
+#: models/token.py:317
+msgid "Login token"
+msgstr "Inloggningstoken"
+
+#: models/token.py:318
+msgid "Login tokens"
+msgstr "Inloggningstokens"
+
+#: serializers/identity.py:113
+msgid "This identity already has the given email address."
+msgstr "Denna identitet har redan den angivna e-postadressen."
+
+#: serializers/membership.py:51
+#, python-format
+msgid "Field %(attribute)s is required."
+msgstr "Fältet %(attribute)s är obligatoriskt."
+
+#: serializers/role.py:130
+msgid "Cannot validate sequence data."
+msgstr "Kan inte validera sekvensdata."
+
+#: templates/account/account_create.html:6
+msgid "Account will be created with the following information"
+msgstr "Ett konto skapas med följande uppgifter"
+
+#: templates/account/account_create.html:10
+msgid "Given name"
+msgstr "Förnamn"
+
+#: templates/account/account_create.html:14
+#: templates/identity/identity_detail.html:12
+msgid "Display name"
+msgstr "Namn som visas"
+
+#: templates/account/account_create.html:22
+msgid "Allowed services"
+msgstr "Tillåtna tjänster"
+
+#: templates/account/account_create.html:27
+msgid "Give password to create an account"
+msgstr "Ange lösenord för att skapa ett konto"
+
+#: templates/account/account_create.html:29
+#: templates/account/account_detail.html:71
+msgid "Password requirements:"
+msgstr "Lösenordskrav:"
+
+#: templates/account/account_create.html:31
+#: templates/account/account_detail.html:73
+#, python-format
+msgid "Minimum %(min_length)s characters."
+msgstr "Minst %(min_length)s tecken."
+
+#: templates/account/account_create.html:32
+#: templates/account/account_detail.html:74
+msgid "Not similar to other user attributes."
+msgstr "Liknar inte andra användarattribut."
+
+#: templates/account/account_create.html:36
+msgid "Regenerate user IDs"
+msgstr "Återskapa användar-ID"
+
+#: templates/account/account_detail.html:5
+msgid "Account details"
+msgstr "Kontouppgifter"
+
+#: templates/account/account_detail.html:12
+#: templates/account/account_list.html:14
+#: templates/account/account_list.html:41 templates/identity/identifier.html:15
+#: templates/identity/identifier.html:59
+msgid "Type"
+msgstr "Typ"
+
+#: templates/account/account_detail.html:21
+msgid "Disable user account"
+msgstr "Deaktivera användarnamn"
+
+#: templates/account/account_detail.html:26
+msgid "Confirm disabling user account"
+msgstr "Bekräfta deaktivering av användarnamn"
+
+#: templates/account/account_detail.html:27
+#: templates/account/account_detail.html:51 templates/front.html:22
+#: templates/front.html:34 templates/identity/identifier.html:34
+#: templates/identity/identity_detail.html:50
+#: templates/identity/identity_detail.html:60
+#: templates/membership/membership_detail.html:80
+msgid "Close"
+msgstr "Stäng"
+
+#: templates/account/account_detail.html:30
+msgid "This account will be disabled immediately."
+msgstr "Detta konto kommer att deaktiveras omedelbart."
+
+#: templates/account/account_detail.html:36
+#: templates/account/account_detail.html:60
+#: templates/contract/contract_sign.html:19
+#: templates/identity/contact_address.html:40
+#: templates/identity/contact_address.html:86
+#: templates/identity/identifier.html:40
+#: templates/membership/membership_detail.html:93
+#: templates/membership/membership_edit_form.html:10
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: templates/account/account_detail.html:37
+#: templates/account/account_detail.html:61
+msgid "Confirm"
+msgstr "Bekräfta"
+
+#: templates/account/account_detail.html:45
+msgid "Enable user account"
+msgstr "Aktivera användarnamn"
+
+#: templates/account/account_detail.html:50
+msgid "Confirm enabling user account"
+msgstr "Bekräfta aktivering av användarnamn"
+
+#: templates/account/account_detail.html:54
+msgid "This account will be enabled immediately."
+msgstr "Detta konto kommer att aktiveras omedelbart."
+
+#: templates/account/account_detail.html:69
+msgid "Reset account password"
+msgstr "Återställ kontots lösenord"
+
+#: templates/account/account_list.html:8
+msgid "Account information"
+msgstr "Kontoinformation"
+
+#: templates/account/account_list.html:9
+msgid "Accounts"
+msgstr "Konton"
+
+#: templates/account/account_list.html:17
+msgid "Manage"
+msgstr "Hantera"
+
+#: templates/account/account_list.html:27
+msgid "Manage account"
+msgstr "Hantera konto"
+
+#: templates/account/account_list.html:34
+msgid "You do not have any accounts."
+msgstr "Du har inga konton."
+
+#: templates/account/account_list.html:37
+msgid "Allowed accounts"
+msgstr "Tillåtna konton"
+
+#: templates/account/account_list.html:42
+msgid "Action"
+msgstr "Handling"
+
+#: templates/account/account_list.html:49
+msgid "Create"
+msgstr "Skapa"
+
+#: templates/account/account_list.html:50
+msgid "Manage in external service"
+msgstr "Hantera i extern tjänst"
+
+#: templates/auth/invite.html:6
+msgid "Claim invite"
+msgstr "Acceptera inbjudan"
+
+#: templates/auth/invite.html:7
+msgid ""
+"You have received an invite to a new role at the University of Helsinki."
+msgstr "Du har fått en inbjudan till en ny roll vid Helsingfors universitet."
+
+#: templates/auth/invite.html:13
+msgid ""
+"If you already have a University of Helsinki account or a Kamu registered "
+"identity, please log in."
+msgstr ""
+"Om du redan har ett konto hos Helsingfors universitet eller en registrerad "
+"Kamu-identitet, logga in."
+
+#: templates/auth/invite.html:17 templates/auth/invite.html:20
+msgid "Register identity"
+msgstr "Registrera identitet"
+
+#: templates/auth/invite.html:18
+msgid ""
+"If you don't have a user account or a Kamu identity yet, please register "
+"here. You will\n"
+"          need to register in order to gain University of Helsinki user "
+"account and other permissions."
+msgstr ""
+"Om du ännu inte har ett användarnamn eller en Kamu-identitet, registrera dig "
+"här. Du måste\n"
+"          registrera dig för att få ett användarnamn och andra rättigheter "
+"hos Helsingfors universitet."
+
+#: templates/auth/login.html:9 templates/identity/identifier.html:79
+msgid "University of Helsinki account"
+msgstr "Helsingfors universitet-konto"
+
+#: templates/auth/login.html:12
+msgid "University of Helsinki sign-in"
+msgstr "Helsingfors universitets inloggning"
+
+#: templates/auth/login.html:15
+msgid "Login with the University of Helsinki single sign-on."
+msgstr "Logga in med Helsingfors universitets enkelinloggning."
+
+#: templates/auth/login.html:16
+msgid "Use this method, if you have a University of Helsinki user account."
+msgstr ""
+"Använd den här metoden om du har ett användarnamn hos Helsingfors "
+"universitet."
+
+#: templates/auth/login.html:20
+msgid "Other methods"
+msgstr "Andra metoder"
+
+#: templates/auth/login.html:24 templates/auth/registration.html:14
+msgid "Suomi.fi sign-in"
+msgstr "Suomi.fi-inloggning"
+
+#: templates/auth/login.html:25
+msgid "Login with a Suomi.fi e-Identification or eIDAS."
+msgstr "Inloggning med Suomi.fi elektronisk Identifiering eller eIDAS."
+
+#: templates/auth/login.html:30 templates/auth/registration.html:20
+msgid "Haka sign-in"
+msgstr "Haka-inloggning"
+
+#: templates/auth/login.html:31
+msgid ""
+"Haka federation login. Finnish universities, polytechnics and research "
+"institutions accounts."
+msgstr ""
+"Haka federation-inloggning. Konton hos finländska universitet, "
+"yrkeshögskolor och forskningsinstitutioner."
+
+#: templates/auth/login.html:36 templates/auth/registration.html:26
+msgid "eduGAIN sign-in"
+msgstr "eduGAIN-inloggning"
+
+#: templates/auth/login.html:37
+msgid ""
+"eduGAIN federation login. Global research and education institution accounts."
+msgstr ""
+"eduGAIN federation-inloggning. Konton hos globala forsknings- och "
+"utbildningsinstitutioner."
+
+#: templates/auth/login.html:42 templates/auth/registration.html:32
+msgid "Microsoft sign-in"
+msgstr "Microsoft-inloggning"
+
+#: templates/auth/login.html:43
+msgid "Login with a Microsoft account."
+msgstr "Inloggning med Microsoft-konto."
+
+#: templates/auth/login.html:48 templates/auth/registration.html:38
+msgid "Google sign-in"
+msgstr "Google-inloggning"
+
+#: templates/auth/login.html:49
+msgid "Login with a Google account."
+msgstr "Inloggning med Google-konto."
+
+#: templates/auth/login.html:54
+msgid "Email+SMS login"
+msgstr "Inloggning med e-postadress+SMS"
+
+#: templates/auth/login.html:55
+msgid "Login with an email and SMS verification."
+msgstr "Inloggning med e-post- och SMS-verifiering."
+
+#: templates/auth/login.html:60
+msgid "Local login"
+msgstr "Lokal inloggning"
+
+#: templates/auth/login.html:61
+msgid ""
+"Login with a username and password. Only for testing, this will be removed "
+"before production version."
+msgstr ""
+"Inloggning med användarnamn och lösenord. Endast för teständamål, kommer att "
+"tas bort före produktionsversion."
+
+#: templates/auth/login_email_verify.html:5
+msgid "Login verification"
+msgstr "Verifiering av inloggning"
+
+#: templates/auth/logout.html:6
+msgid "Logout warning"
+msgstr "Utloggningsvarning"
+
+#: templates/auth/logout.html:8
+msgid ""
+"You have logged in with multiple sign-in methods. This might happen if you "
+"have been linking external identifiers to your identity."
+msgstr ""
+"Du har loggat in med flera inloggningsmetoder. Detta kan hända om du har "
+"länkat externa identifierare till din identitet."
+
+#: templates/auth/logout.html:9
+msgid ""
+"Logging out all external methods is not possible. Clear your browser cache "
+"after logging out, if you are using a shared device."
+msgstr ""
+"Det går inte att logga ut alla externa metoder. Rensa webbläsarens "
+"cacheminne efter utloggning om du använder en delad enhet."
+
+#: templates/auth/logout.html:11
+msgid "Continue to logout"
+msgstr "Fortsätt till utloggning"
+
+#: templates/auth/logout.html:13 templates/base.html:69
+msgid "Logout"
+msgstr "Logga ut"
+
+#: templates/auth/logout.html:14
+msgid "You have been logged out."
+msgstr "Du är nu utloggad."
+
+#: templates/auth/logout.html:15
+msgid "Return to front page"
+msgstr "Tillbaka till förstasidan"
+
+#: templates/auth/registration.html:8 templates/auth/registration_form.html:6
+msgid "Registration"
+msgstr "Registrering"
+
+#: templates/auth/registration.html:9
+msgid ""
+"Welcome to Kamu registration. We recommend using an external identity but "
+"you can also register with an email address or an SMS-capable phone number."
+msgstr ""
+"Välkommen till Kamu-registrering. Vi rekommenderar att du använder en extern "
+"identitet, men du kan också registrera dig med en e-postadress eller ett "
+"telefonnummer som kan skicka SMS."
+
+#: templates/auth/registration.html:10
+msgid "Register with an external identity"
+msgstr "Registrera dig med extern identitet"
+
+#: templates/auth/registration.html:15
+msgid "Register with a Suomi.fi e-Identification or eIDAS."
+msgstr "Registrera dig med Suomi.fi elektronisk identifiering eller eIDAS."
+
+#: templates/auth/registration.html:21
+msgid ""
+"Register with a Haka federation account. Finnish universities, polytechnics "
+"and research institutions accounts."
+msgstr ""
+"Registrera dig med ett Haka federation-konto. Konton hos finländska "
+"universitet, yrkeshögskolor och forskningsinstitutioner."
+
+#: templates/auth/registration.html:27
+msgid ""
+"Register with an eduGAIN federation account. Global research and education "
+"institution accounts."
+msgstr ""
+"Registrera dig med ett eduGAIN federation-konto. Konton hos globala "
+"forsknings- och utbildningsinstitutioner."
+
+#: templates/auth/registration.html:33
+msgid "Register with a Microsoft account."
+msgstr "Registrera dig med ett Microsoft-konto."
+
+#: templates/auth/registration.html:39
+msgid "Register with a Google account."
+msgstr "Registrera dig med ett Google-konto."
+
+#: templates/auth/registration.html:44 templates/auth/registration_form.html:7
+msgid "Register with email and SMS verification"
+msgstr "Registrera dig med e-postadress och SMS-verifiering"
+
+#: templates/auth/registration.html:46
+msgid ""
+"Registration with an email account and an SMS-capable phone number is "
+"possible but we recommend using external identities."
+msgstr ""
+"Det går att registrera sig med ett e-postkonto och ett SMS-kompatibelt "
+"telefonnummer, men vi rekommenderar att du använder externa identiteter."
+
+#: templates/base.html:12 templates/base.html:18 templates/front.html:5
+msgid "Kamu"
+msgstr "Kamu"
+
+#: templates/base.html:17
+msgid "Go to Kamu front page"
+msgstr "Gå till Kamus startsida"
+
+#: templates/base.html:18
+msgid "University of Helsinki Kamu front page"
+msgstr "Helsingfors universitets Kamu-förstasida"
+
+#: templates/base.html:18
+msgid "University of Helsinki"
+msgstr "Helsingfors universitet"
+
+#: templates/base.html:19
+msgid "Toggle navigation"
+msgstr "Växla navigation"
+
+#: templates/base.html:26 templates/front.html:10 templates/front.html:12
+msgid "My information"
+msgstr "Mina uppgifter"
+
+#: templates/base.html:33 templates/front.html:56 templates/front.html:58
+#: templates/membership/membership_detail.html:59
+msgid "Inviter"
+msgstr "Inbjudare"
+
+#: templates/base.html:34 templates/front.html:61 templates/front.html:63
+#: templates/membership/membership_detail.html:57
+msgid "Approver"
+msgstr "Godkännare"
+
+#: templates/base.html:35 templates/front.html:66 templates/front.html:68
+#: templates/role/role_detail.html:10 templates/role/role_list.html:13
+#: templates/role/role_search.html:16
+msgid "Owner"
+msgstr "Ägare"
+
+#: templates/base.html:43 templates/front.html:41 templates/front.html:43
+msgid "Requiring approval"
+msgstr "Godkännande krävs"
+
+#: templates/base.html:44 templates/front.html:46 templates/front.html:48
+msgid "Expiring"
+msgstr "Utgår"
+
+#: templates/base.html:45
+msgid "Search identities"
+msgstr "Sök identiteter"
+
+#: templates/contract/contract_detail.html:8
+msgid "Contract information"
+msgstr "Avtalsuppgifter"
+
+#: templates/contract/contract_detail.html:11
+#: templates/contract/contract_sign.html:11
+msgid "Details"
+msgstr "Detaljer"
+
+#: templates/contract/contract_detail.html:13
+msgid "Signatory"
+msgstr "Undertecknare"
+
+#: templates/contract/contract_detail.html:15
+msgid "Signing time"
+msgstr "Tidpunkt för signering"
+
+#: templates/contract/contract_detail.html:17
+msgid "Signing language"
+msgstr "Signeringsspråk"
+
+#: templates/contract/contract_detail.html:19
+msgid "Signing checksum"
+msgstr "Signeringens kontrollsumma"
+
+#: templates/contract/contract_detail.html:23
+msgid "Validation"
+msgstr "Verifiering"
+
+#: templates/contract/contract_detail.html:24
+msgid "Validation was successful"
+msgstr "Verifieringen lyckades"
+
+#: templates/contract/contract_detail.html:24
+msgid "Validation failed"
+msgstr "Verifieringen misslyckades"
+
+#: templates/contract/contract_list.html:11
+#: templates/contract/contract_list.html:41
+#: templates/contract/contract_sign.html:13
+#: templates/identity/identity_search.html:16
+#: templates/identity/identity_search.html:41
+#: templates/membership/membership_detail.html:17
+#: templates/membership/membership_detail.html:29
+#: templates/membership/membership_invite.html:11
+#: templates/membership/membership_invite.html:24
+#: templates/membership/membership_invite.html:32
+#: templates/membership/membership_invite_identity.html:22
+#: templates/membership/membership_invite_identity.html:54
+#: templates/role/role_detail.html:7
+msgid "Name"
+msgstr "Namn"
+
+#: templates/contract/contract_list.html:12
+#: templates/contract/contract_list.html:42
+msgid "Version"
+msgstr "Version"
+
+#: templates/contract/contract_list.html:13
+msgid "Sign date"
+msgstr "Datum för signering"
+
+#: templates/contract/contract_list.html:29
+msgid "You do not have any signed contracts."
+msgstr "Du har inga signerade avtal."
+
+#: templates/contract/contract_list.html:32
+msgid "Hiding old contract versions by default."
+msgstr "Döljer gamla avtalsversioner som standard."
+
+#: templates/contract/contract_list.html:33
+msgid "List all versions."
+msgstr "Lista alla versioner."
+
+#: templates/contract/contract_list.html:36
+msgid "Signable contracts"
+msgstr "Avtal som kan signeras"
+
+#: templates/contract/contract_list.html:43
+msgid "Sign"
+msgstr "Signera"
+
+#: templates/contract/contract_list.html:51 utils/membership.py:107
+msgid "Open contract"
+msgstr "Öppna avtal"
+
+#: templates/contract/contract_list.html:57
+msgid "You do not have any signable contracts."
+msgstr "Du har inga avtal att signera."
+
+#: templates/contract/contract_sign.html:8
+#: templates/contract/contract_sign.html:18
+msgid "Sign contract"
+msgstr "Signera avtal"
+
+#: templates/contract/contract_sign.html:15
+msgid "Date"
+msgstr "Datum"
+
+#: templates/email/expire_notification_member_message.txt:1
+#, python-format
+msgid ""
+"Hi\n"
+"\n"
+"Your role membership at the University of Helsinki is ending soon.\n"
+"\n"
+"Role:\n"
+"%(role)s\n"
+"\n"
+"Expiring date:\n"
+"%(expire_date)s\n"
+"\n"
+"Please get in touch with your university contact if the membership should\n"
+"continue."
+msgstr ""
+"Hej\n"
+"\n"
+"Ditt rollmedlemskap vid Helsingfors universitet upphör snart.\n"
+"\n"
+"Roll:\n"
+"%(role)s\n"
+"\n"
+"Utgångsdatum:\n"
+"%(expire_date)s\n"
+"\n"
+"Kontakta din universitetskontakt om medlemskapet ska\n"
+"fortsätta."
+
+#: templates/email/expire_notification_member_message.txt:13
+#, python-format
+msgid "You were invited by %(inviter)s."
+msgstr "Du fick en inbjudan av %(inviter)s."
+
+#: templates/email/expire_notification_member_message.txt:14
+#, python-format
+msgid "Your membership was approved by %(approver)s."
+msgstr "Ditt medlemskap har godkänts av %(approver)s."
+
+#: templates/email/expire_notification_member_subject.txt:1
+msgid "Your membership is ending soon"
+msgstr "Ditt medlemskap upphör snart"
+
+#: templates/email/expire_notification_role_message.txt:1
+#, python-format
+msgid ""
+"Hi\n"
+"\n"
+"Role: %(role)s\n"
+"\n"
+"Number of memberships expiring soon: %(number_of_memberships)s"
+msgstr ""
+"Hej\n"
+"\n"
+"Roll: %(role)s\n"
+"\n"
+"Antal medlemskap som snart går ut: %(number_of_memberships)s"
+
+#: templates/email/expire_notification_role_subject.txt:1
+#, python-format
+msgid "Expiring memberships for %(role)s"
+msgstr "Utgående medlemskap för %(role)s"
+
+#: templates/email/invite_email_message.txt:2
+#: templates/email/membership_add_message.txt:1
+msgid "Hi"
+msgstr "Hej"
+
+#: templates/email/invite_email_message.txt:4
+#, python-format
+msgid "%(inviter)s has invited you to join the role:"
+msgstr "%(inviter)s har bjudit in dig till rollen:"
+
+#: templates/email/invite_email_message.txt:4
+msgid "You have been invited to join the role:"
+msgstr "Du har fått en inbjudan till rollen:"
+
+#: templates/email/invite_email_message.txt:7
+msgid "Your invite code is:"
+msgstr "Din inbjudningskod är:"
+
+#: templates/email/invite_email_message.txt:10
+msgid "Click the following link to accept the invitation:"
+msgstr "Klicka på följande länk för att acceptera inbjudan:"
+
+#: templates/email/invite_email_subject.txt:1
+msgid "Kamu role invite"
+msgstr "Kamu rollinbjudan"
+
+#: templates/email/login_verification_email_message.txt:1
+#, python-format
+msgid ""
+"Hi\n"
+"\n"
+"Your verification code is:\n"
+"%(token)s\n"
+"\n"
+"If you haven't tried to sign in to a Kamu account, you can safely ignore "
+"this\n"
+"email."
+msgstr ""
+"Hej\n"
+"\n"
+"Din verifieringskod är:\n"
+"%(token)s\n"
+"\n"
+"Om du inte har försökt logga in på ett Kamu-konto kan du ignorera detta\n"
+"e-postmeddelande."
+
+#: templates/email/login_verification_email_subject.txt:1
+msgid "Kamu login verification"
+msgstr "Kamu-inloggningsverifiering"
+
+#: templates/email/membership_add_message.txt:3
+#, python-format
+msgid "%(inviter)s has added you a new role membership in Kamu:"
+msgstr "%(inviter)s har gett dig ett nytt rollmedlemskap i Kamu:"
+
+#: templates/email/membership_add_message.txt:3
+msgid "You have a new role membership in Kamu:"
+msgstr "Du har ett nytt rollmedlemskap i Kamu:"
+
+#: templates/email/membership_add_subject.txt:1
+msgid "New role membership in Kamu"
+msgstr "Nytt rollmedlemskap i Kamu"
+
+#: templates/email/verification_email_message.txt:1
+#, python-format
+msgid ""
+"Hi\n"
+"\n"
+"Please verify your email address. If you haven't tried to sign up for a Kamu "
+"account, you can safely ignore this email.\n"
+"\n"
+"Your verification code is:\n"
+"%(token)s"
+msgstr ""
+"Hej\n"
+"\n"
+"Bekräfta din e-postadress. Om du inte har försökt registrera ett Kamu-konto "
+"kan du ignorera detta e-postmeddelande.\n"
+"\n"
+"Din verifieringskod är:\n"
+"%(token)s"
+
+#: templates/email/verification_email_subject.txt:1
+msgid "Kamu email verification"
+msgstr "Kamu e-postverifiering"
+
+#: templates/error.html:5 templates/error.html:7
+msgid "Error"
+msgstr "Fel"
+
+#: templates/error.html:9 templates/info.html:9
+msgid "Return to front page."
+msgstr "Tillbaka till förstasidan."
+
+#: templates/errors/400.html:5
+msgid "Bad request"
+msgstr "Felaktig begäran"
+
+#: templates/errors/400.html:6
+msgid ""
+"There is something wrong in the request. Please check the address and "
+"restart your browser if it's correct."
+msgstr ""
+"Något är fel med begäran. Kontrollera adressen och starta om webbläsaren om "
+"den är korrekt."
+
+#: templates/errors/400.html:7 templates/errors/403.html:7
+#: templates/errors/404.html:7 templates/errors/500.html:7
+msgid "Front page"
+msgstr "Förstasidan"
+
+#: templates/errors/403.html:5
+msgid "Permission denied"
+msgstr "Åtkomst nekad"
+
+#: templates/errors/403.html:6
+msgid "You have insufficient permissions to access this page."
+msgstr "Du har otillräckliga rättigheter för att komma åt denna sida."
+
+#: templates/errors/404.html:5
+msgid "Page not found"
+msgstr "Sidan kunde inte hittas"
+
+#: templates/errors/404.html:6
+msgid ""
+"The page you are looking for does not exist or you have insufficient "
+"permissions for it."
+msgstr "Sidan du söker finns inte eller så har du otillräckliga rättigheter."
+
+#: templates/errors/500.html:5
+msgid "Internal error"
+msgstr "Internt fel"
+
+#: templates/errors/500.html:6
+msgid "Something went wrong and the service administrators have been notified."
+msgstr "Något gick fel och tjänstens administratörer har informerats."
+
+#: templates/front.html:6
+msgid "University of Helsinki registry for external identities."
+msgstr "Helsingfors universitets register för externa identiteter."
+
+#: templates/front.html:11
+msgid ""
+"Show and manage your own information. This includes your role memberships "
+"and basic information such as names, contacts and contracts."
+msgstr ""
+"Visa och hantera dina egna uppgifter. Detta inkluderar dina rollmedlemskap "
+"och grundläggande uppgifter som namn, kontakter och avtal."
+
+#: templates/front.html:16
+msgid "Role and membership management"
+msgstr "Roll- och medlemskapshantering"
+
+#: templates/front.html:16 templates/identity/identity_detail.html:44
+msgid "info"
+msgstr "info"
+
+#: templates/front.html:21
+msgid "Manage role memberships"
+msgstr "Hantera rollmedlemskap"
+
+#: templates/front.html:25
+msgid ""
+"All permissions provided to users are based on the active role memberships. "
+"Role membership becomes active when all requirements of the membership are "
+"fulfilled:"
+msgstr ""
+"Alla rättigheter som tilldelas användare baseras på aktiva rollmedlemskap. "
+"Rollmedlemskapet blir aktivt när alla krav för medlemskapet är uppfyllda:"
+
+#: templates/front.html:27
+msgid "Membership has been approved"
+msgstr "Medlemskapet har godkänts"
+
+#: templates/front.html:28
+msgid ""
+"Membership is in active period, i.e. after start date and before expiration "
+"date."
+msgstr ""
+"Medlemskapet är i den aktiva perioden, dvs. efter startdagen och före "
+"avslutningsdagen."
+
+#: templates/front.html:29
+msgid ""
+"Role requirements are fulfilled. This may include signing agreements, giving "
+"certain user information and confirming user identity."
+msgstr ""
+"Rollkraven är uppfyllda. Detta kan inkludera signering av avtal, utlämnande "
+"av vissa användaruppgifter och bekräftande av användarens identitet."
+
+#: templates/front.html:31 templates/identity/identity_detail.html:57
+#: templates/membership/membership_invite_identity.html:12
+#, python-format
+msgid ""
+"Read more about role management from the <a href=\"%(link)s\">IT Helpdesk</"
+"a>."
+msgstr "Läs mer om rollhantering på <a href=\"%(link)s\">IT-Helpdesk</a>."
+
+#: templates/front.html:42 templates/membership/membership_approval_list.html:6
+msgid "List memberships requiring approval."
+msgstr "Lista medlemskap som kräver godkännande."
+
+#: templates/front.html:47
+msgid "List memberships expiring soon."
+msgstr "Lista medlemskap som snart går ut."
+
+#: templates/front.html:51 templates/role/role_search.html:6
+msgid "Role search"
+msgstr "Rollsökning"
+
+#: templates/front.html:52
+msgid "Search all possible roles here and see their details."
+msgstr "Sök efter alla möjliga roller här och se deras detaljer."
+
+#: templates/front.html:57
+msgid "Show roles which you have the right to invite others to."
+msgstr "Visa roller som du har rätt att skicka inbjudningar till."
+
+#: templates/front.html:62
+msgid "Show roles that you have the approval rights to."
+msgstr "Visa roller som du har godkännanderättigheter till."
+
+#: templates/front.html:67
+msgid "Show roles that you have the owner rights to."
+msgstr "Visa roller som du har ägarrättigheter till."
+
+#: templates/front.html:73
+msgid "Admin utilities"
+msgstr "Administrativa verktyg"
+
+#: templates/front.html:76 templates/front.html:79
+msgid "Admin site"
+msgstr "Administrationssida"
+
+#: templates/front.html:77
+msgid ""
+"Admin site allows you to manage role and permission information, according "
+"to your\n"
+"            access rights."
+msgstr ""
+"På administrationssidan kan du hantera roll- och rättighetsuppgifter enligt "
+"dina\n"
+"            användarrättigheter."
+
+#: templates/front.html:87
+msgid "Manage your information or roles."
+msgstr "Hantera dina uppgifter eller dina roller."
+
+#: templates/front.html:91 templates/front.html:93
+msgid "Register"
+msgstr "Registrera"
+
+#: templates/front.html:92
+msgid "If you have an invite code, register here."
+msgstr "Registrera dig här om du har en inbjudan."
+
+#: templates/identity/contact_address.html:8
+#: templates/identity/identity_detail.html:69
+msgid "Contact information"
+msgstr "Kontaktuppgifter"
+
+#: templates/identity/contact_address.html:14
+msgid "Address"
+msgstr "Adress"
+
+#: templates/identity/contact_address.html:17
+#: templates/identity/contact_address.html:28
+#: templates/identity/contact_address.html:63
+#: templates/identity/contact_address.html:74
+msgid "Remove"
+msgstr "Ta bort"
+
+#: templates/identity/contact_address.html:25
+#: templates/identity/contact_address.html:71
+msgid "Up"
+msgstr "Upp"
+
+#: templates/identity/contact_address.html:26
+#: templates/identity/contact_address.html:72
+msgid "Down"
+msgstr "Ner"
+
+#: templates/identity/contact_address.html:33
+#: templates/identity/contact_address.html:41
+#: templates/identity/contact_address.html:79
+#: templates/identity/contact_address.html:87
+msgid "Confirm removal"
+msgstr "Bekräfta borttagning"
+
+#: templates/identity/contact_address.html:37
+msgid "You are removing the email address"
+msgstr "Du tar bort e-postadressen"
+
+#: templates/identity/contact_address.html:51
+msgid ""
+"First verified address in the list is used as the default contact address. "
+"Any verified address can be used to log in to Kamu."
+msgstr ""
+"Den första verifierade adressen i listan används som standardkontaktadress. "
+"Alla verifierade adresser kan användas för att logga in på Kamu."
+
+#: templates/identity/contact_address.html:53
+msgid "You have not specified any email addresses."
+msgstr "Du har inte angett några e-postadresser."
+
+#: templates/identity/contact_address.html:60
+msgid "Number"
+msgstr "Nummer"
+
+#: templates/identity/contact_address.html:83
+msgid "You are removing the phone number"
+msgstr "Du tar bort telefonnumret"
+
+#: templates/identity/contact_address.html:97
+msgid ""
+"First verified phone number in the list is used as the default contact "
+"number. Any verified number can be used to log in to Kamu."
+msgstr ""
+"Det första verifierade telefonnumret i listan används som "
+"standardkontaktnummer. Vilket som helst verifierat nummer kan användas för "
+"att logga in på Kamu."
+
+#: templates/identity/contact_address.html:99
+msgid "You have not specified any phone numbers."
+msgstr "Du har inte angett några telefonnummer."
+
+#: templates/identity/contact_address.html:102
+msgid "Add a new contact"
+msgstr "Lägg till ny kontakt"
+
+#: templates/identity/email_address_verification.html:6
+msgid "Email address verification"
+msgstr "Verifiering av e-postadress"
+
+#: templates/identity/identifier.html:9
+msgid "Identifier information"
+msgstr "Identifieraruppgifter"
+
+#: templates/identity/identifier.html:10
+msgid "Active identifiers"
+msgstr "Aktiva identifierare"
+
+#: templates/identity/identifier.html:16 templates/identity/identifier.html:60
+msgid "Creation time"
+msgstr "Upprättad den"
+
+#: templates/identity/identifier.html:17
+msgid "Value"
+msgstr "Värde"
+
+#: templates/identity/identifier.html:18 templates/identity/identifier.html:28
+msgid "Deactivate"
+msgstr "Deaktivera"
+
+#: templates/identity/identifier.html:33 templates/identity/identifier.html:41
+msgid "Confirm deactivation"
+msgstr "Bekräfta deaktivering"
+
+#: templates/identity/identifier.html:37
+#, python-format
+msgid "You are deactivating %(type)s with value %(value)s."
+msgstr "Du deaktiverar %(type)s med värdet %(value)s."
+
+#: templates/identity/identifier.html:52
+msgid "You do not have any linked identifiers."
+msgstr "Du har inga länkade identifierare."
+
+#: templates/identity/identifier.html:55
+msgid "Deactivated identifiers"
+msgstr "Deaktiverade identifierare"
+
+#: templates/identity/identifier.html:61
+msgid "Deactivation time"
+msgstr "Deaktiverat den"
+
+#: templates/identity/identifier.html:76
+msgid "Link a new identifier"
+msgstr "Länka en ny identifierare"
+
+#: templates/identity/identifier.html:77
+msgid ""
+"Link a new identifier to your identity. After linking a new identifier, you "
+"can use it to manage your information in Kamu, or when using light accounts."
+msgstr ""
+"Länka en ny identifierare till din identitet. När du har länkat en ny "
+"identifierare kan du använda den för att hantera din information i Kamu "
+"eller när du använder lätta konton."
+
+#: templates/identity/identifier.html:82
+msgid "Haka"
+msgstr "Haka"
+
+#: templates/identity/identifier.html:85
+msgid "eduGAIN"
+msgstr "eduGAIN"
+
+#: templates/identity/identifier.html:88
+msgid "Google"
+msgstr "Google"
+
+#: templates/identity/identifier.html:91
+msgid "Microsoft"
+msgstr "Microsoft"
+
+#: templates/identity/identifier.html:94
+msgid "Suomi.fi and eIDAS"
+msgstr "Suomi.fi och eIDAS"
+
+#: templates/identity/identity_combine.html:7
+#: templates/identity/identity_detail.html:126
+msgid "Combine identities"
+msgstr "Kombinera identiteter"
+
+#: templates/identity/identity_combine.html:9
+msgid ""
+"Transfer information from the source identity to the target identity, and "
+"delete the source identity and the corresponding user."
+msgstr ""
+"Överför information från källidentiteten till målidentiteten och radera "
+"källidentiteten och motsvarande användare."
+
+#: templates/identity/identity_combine.html:10
+msgid ""
+"The following information is transferred if source identity has it defined "
+"and target doesn't."
+msgstr ""
+"Följande uppgifter överförs om källidentiteten har dem definierade och målet "
+"inte har."
+
+#: templates/identity/identity_combine.html:14
+#: templates/identity/identity_combine.html:50
+#: templates/membership/membership_detail.html:31
+msgid "Account name"
+msgstr "Kontots namn"
+
+#: templates/identity/identity_combine.html:17
+msgid ""
+"The following information is transferred from the source identity to the "
+"target identity."
+msgstr "Följande uppgifter överförs från källidentiteten till målidentiteten."
+
+#: templates/identity/identity_combine.html:19
+msgid "Contact information: email addresses and phone numbers."
+msgstr "Kontaktuppgifter: e-postadresser och telefonnummer."
+
+#: templates/identity/identity_combine.html:21
+msgid "Linked identifiers."
+msgstr "Länkade identifierare."
+
+#: templates/identity/identity_combine.html:22
+msgid "Role memberships."
+msgstr "Rollmedlemskap."
+
+#: templates/identity/identity_combine.html:23
+msgid "Kamu identifier is added to target's extra identifiers."
+msgstr "Kamu-identifieraren läggs till målets extra identifierare."
+
+#: templates/identity/identity_combine.html:25
+msgid "For other information, target's values are used."
+msgstr "För övriga uppgifter används målets värden."
+
+#: templates/identity/identity_combine.html:30
+msgid "Attribute"
+msgstr "Attribut"
+
+#: templates/identity/identity_combine.html:31
+msgid "Target"
+msgstr "Mål"
+
+#: templates/identity/identity_combine.html:32
+msgid "Source"
+msgstr "Källa"
+
+#: templates/identity/identity_combine.html:33
+msgid "Result"
+msgstr "Resultat"
+
+#: templates/identity/identity_combine.html:38
+msgid "Internal primary key"
+msgstr "Intern primärnyckel"
+
+#: templates/identity/identity_combine.html:123
+msgid "Phone numbers, verified"
+msgstr "Telefonnummer, verifierade"
+
+#: templates/identity/identity_combine.html:124
+#: templates/identity/identity_combine.html:125
+#: templates/identity/identity_combine.html:126
+#: templates/identity/identity_combine.html:127
+#: templates/identity/identity_combine.html:131
+#: templates/identity/identity_combine.html:132
+#: templates/identity/identity_combine.html:133
+#: templates/identity/identity_combine.html:134
+msgid "Unverified"
+msgstr "Ej verifierade"
+
+#: templates/identity/identity_combine.html:130
+msgid "Email addresses, verified"
+msgstr "E-postadresser, verifierade"
+
+#: templates/identity/identity_combine.html:137
+msgid "Identifiers, deactivated"
+msgstr "Identifierare, deaktiverade"
+
+#: templates/identity/identity_combine.html:145
+msgid "Memberships, status"
+msgstr "Medlemskap, status"
+
+#: templates/identity/identity_combine.html:153
+msgid ""
+"To prevent accidents, you are required to enter primary keys of the "
+"identities you want to combine."
+msgstr ""
+"För att förhindra misstag måste du ange primärnycklar för de identiteter du "
+"vill kombinera."
+
+#: templates/identity/identity_detail.html:4
+msgid "Identity information"
+msgstr "Identitetsuppgifter"
+
+#: templates/identity/identity_detail.html:37
+msgid "External identifiers"
+msgstr "Externa identifierare"
+
+#: templates/identity/identity_detail.html:43
+msgid "verified"
+msgstr "verifierade"
+
+#: templates/identity/identity_detail.html:44
+msgid "View details and update"
+msgstr "Visa detaljer och uppdatera"
+
+#: templates/identity/identity_detail.html:49
+msgid "View and manage your information"
+msgstr "Visa och hantera dina uppgifter"
+
+#: templates/identity/identity_detail.html:53
+msgid ""
+"Basic information includes personal details such as names, preferred "
+"language, date of birth, and nationality."
+msgstr ""
+"Grundläggande uppgifter inkluderar personuppgifter som namn, föredraget "
+"språk, födelsedatum och nationalitet."
+
+#: templates/identity/identity_detail.html:54
+msgid ""
+"Contact information includes external email addresses and phone numbers."
+msgstr ""
+"Kontaktuppgifterna inkluderar externa e-postadresser och telefonnummer."
+
+#: templates/identity/identity_detail.html:55
+msgid ""
+"Identifiers include external login methods such as Google and Microsoft "
+"accounts or accounts from other universities."
+msgstr ""
+"Identifierarna inkluderar externa inloggningsmetoder som Google- och "
+"Microsoft-konton eller konton från andra universitet."
+
+#: templates/identity/identity_detail.html:56
+msgid ""
+"The Contracts section allows you to sign agreements required for certain "
+"roles, such as the Acceptable Use Policy and NDA."
+msgstr ""
+"I avsnittet Avtal kan du signera avtal som krävs för vissa roller, till "
+"exempel riktlinjerna för användning och sekretessavtal."
+
+#: templates/identity/identity_detail.html:79
+msgid "Manage user accounts"
+msgstr "Hantera användarnamn"
+
+#: templates/identity/identity_detail.html:81
+msgid "Role memberships"
+msgstr "Rollmedlemskap"
+
+#: templates/identity/identity_detail.html:88
+#: templates/membership/membership_expiring_list.html:13
+#: templates/role/role_detail.html:55
+msgid "Expires"
+msgstr "Går ut"
+
+#: templates/identity/identity_detail.html:102
+msgid "You do not have any current or upcoming memberships."
+msgstr "Du har inga aktuella eller kommande medlemskap."
+
+#: templates/identity/identity_detail.html:105
+msgid "Expired memberships"
+msgstr "Utgångna medlemskap"
+
+#: templates/identity/identity_detail.html:110
+msgid "Started"
+msgstr "Startad"
+
+#: templates/identity/identity_detail.html:128
+msgid "Set as target"
+msgstr "Ange som mål"
+
+#: templates/identity/identity_detail.html:129
+msgid "Set as source"
+msgstr "Ange som källa"
+
+#: templates/identity/identity_form.html:5
+msgid "Change identity information"
+msgstr "Ändra identitetsuppgifter"
+
+#: templates/identity/identity_search.html:7
+msgid "Identity search"
+msgstr "Identitetssökning"
+
+#: templates/identity/identity_search.html:10
+#: templates/membership/membership_invite_identity.html:16
+msgid "Kamu results"
+msgstr "Kamu-resultat"
+
+#: templates/identity/identity_search.html:12
+#: templates/membership/membership_invite_identity.html:18
+msgid ""
+"To protect user privacy, email addresses and phone numbers are only listed "
+"when exactly matching the search parameter."
+msgstr ""
+"För att skydda användarnas integritet visas e-postadresser och telefonnummer "
+"endast om de exakt matchar sökparametern."
+
+#: templates/identity/identity_search.html:18
+#: templates/identity/identity_search.html:43
+#: templates/membership/membership_invite_identity.html:24
+#: templates/membership/membership_invite_identity.html:56
+msgid "Attributes"
+msgstr "Attribut"
+
+#: templates/identity/identity_search.html:32
+#: templates/membership/membership_invite_identity.html:40
+#: templates/role/role_search.html:31
+msgid "No results with the provided search parameters."
+msgstr "Inga resultat med de angivna sökparametrarna."
+
+#: templates/identity/identity_search.html:37
+#: templates/membership/membership_invite_identity.html:50
+msgid "User directory results"
+msgstr "Användarkatalogresultat"
+
+#: templates/identity/phone_number_verification.html:6
+msgid "Phone number verification"
+msgstr "Verifiering av telefonnummer"
+
+#: templates/info.html:5
+msgid "For your information"
+msgstr "För din kännedom"
+
+#: templates/membership/membership_approval_list.html:5
+msgid "Memberships requiring approval"
+msgstr "Medlemskap som kräver godkännande"
+
+#: templates/membership/membership_approval_list.html:6
+#: templates/membership/membership_expiring_list.html:6
+msgid "Includes memberships in roles that you have approve or invite rights."
+msgstr ""
+"Inkluderar medlemskap i roller som du har behörighet att godkänna eller "
+"skicka inbjudan till."
+
+#: templates/membership/membership_approval_list.html:13
+msgid "Starts"
+msgstr "Startar"
+
+#: templates/membership/membership_detail.html:4
+msgid "Role membership"
+msgstr "Rollmedlemskap"
+
+#: templates/membership/membership_detail.html:7
+msgid "Approval required"
+msgstr "Godkännande krävs"
+
+#: templates/membership/membership_detail.html:9
+msgid "Approve"
+msgstr "Godkänn"
+
+#: templates/membership/membership_detail.html:21
+#: templates/membership/membership_invite.html:15
+#: templates/role/role_detail.html:19
+msgid "Total cost"
+msgstr "Totalkostnad"
+
+#: templates/membership/membership_detail.html:33
+#: templates/membership/membership_invite.html:36
+msgid "Email"
+msgstr "E-post"
+
+#: templates/membership/membership_detail.html:39
+msgid "Identity has not yet been linked to this membership."
+msgstr "Ingen identitet har länkats till detta medlemskap."
+
+#: templates/membership/membership_detail.html:40
+#, python-format
+msgid "Invite has been sent to %(address)s."
+msgstr "Inbjudan har skickats till %(address)s."
+
+#: templates/membership/membership_detail.html:43
+msgid "Resend invite email"
+msgstr "Skicka e-post med inbjudan igen"
+
+#: templates/membership/membership_detail.html:49
+msgid "Membership details"
+msgstr "Medlemskapsuppgifter"
+
+#: templates/membership/membership_detail.html:53
+msgid "Start date"
+msgstr "Inledningsdatum"
+
+#: templates/membership/membership_detail.html:55
+msgid "Expiry date"
+msgstr "Utgångsdatum"
+
+#: templates/membership/membership_detail.html:61
+msgid "Reason"
+msgstr "Orsak"
+
+#: templates/membership/membership_detail.html:70
+msgid "Update membership"
+msgstr "Uppdatera medlemskap"
+
+#: templates/membership/membership_detail.html:74
+msgid "End membership"
+msgstr "Avsluta medlemskap"
+
+#: templates/membership/membership_detail.html:79
+#: templates/membership/membership_detail.html:94
+msgid "Confirm ending membership"
+msgstr "Bekräfta avslutande av medlemskap"
+
+#: templates/membership/membership_detail.html:83
+msgid "This membership will be set to end after today."
+msgstr "Medlemskapet upphör efter idag."
+
+#: templates/membership/membership_detail.html:89
+msgid "End date"
+msgstr "Slutdatum"
+
+#: templates/membership/membership_edit_form.html:6
+msgid "Edit membership"
+msgstr "Redigera medlemskap"
+
+#: templates/membership/membership_expiring_list.html:5
+msgid "Expiring memberships"
+msgstr "Utgående medlemskap"
+
+#: templates/membership/membership_expiring_list.html:6
+#, python-format
+msgid "List memberships expiring in %(day_limit)s days."
+msgstr "Lista medlemskap som går ut om %(day_limit)s dagar."
+
+#: templates/membership/membership_form.html:6
+msgid "Join role"
+msgstr "Gå med i roll"
+
+#: templates/membership/membership_invite.html:6
+#: templates/role/role_detail.html:40
+msgid "Invite a new member"
+msgstr "Bjud in nya medlemmar"
+
+#: templates/membership/membership_invite.html:17
+#: templates/role/role_detail.html:36
+msgid "Maximum duration"
+msgstr "Maximal varaktighet"
+
+#: templates/membership/membership_invite.html:18
+#: templates/role/role_detail.html:37
+msgid "days"
+msgstr "dagar"
+
+#: templates/membership/membership_invite.html:43
+msgid "Subject"
+msgstr "Ämne"
+
+#: templates/membership/membership_invite.html:45
+msgid "Message"
+msgstr "Meddelande"
+
+#: templates/membership/membership_invite.html:49
+msgid "Multiple invites"
+msgstr "Flera inbjudningar"
+
+#: templates/membership/membership_invite.html:51
+msgid "Following identities in Kamu will be added to the role:"
+msgstr "Följande identiteter i Kamu kommer att få rollen:"
+
+#: templates/membership/membership_invite.html:59
+msgid "Following email addresses will receive an invitation:"
+msgstr "Följande e-postadresser kommer att få en inbjudan:"
+
+#: templates/membership/membership_invite.html:67
+msgid "Member information"
+msgstr "Medlemsuppgifter"
+
+#: templates/membership/membership_invite_identity.html:7
+msgid "Invite to role"
+msgstr "Bjud in till roll"
+
+#: templates/membership/membership_invite_identity.html:9
+msgid ""
+"To invite a new member, first search for the identity with known user "
+"information such as email and phone number."
+msgstr ""
+"För att bjuda in en ny medlem ska du först söka efter identiteten med kända "
+"användaruppgifter som e-postadress och telefonnummer."
+
+#: templates/membership/membership_invite_identity.html:10
+msgid ""
+"If person is already found from the Kamu or the user directory, you can add "
+"role directly to the person."
+msgstr ""
+"Om personen redan finns i Kamu eller användarkatalogen, kan du ge rollen "
+"direkt till personen."
+
+#: templates/membership/membership_invite_identity.html:11
+msgid ""
+"Otherwise you you can invite them by email, by searching with the email "
+"address."
+msgstr ""
+"I annat fall kan du skicka en inbjudan via e-post genom att söka med e-"
+"postadress."
+
+#: templates/membership/membership_invite_identity.html:25
+#: templates/membership/membership_invite_identity.html:57
+msgid "Select"
+msgstr "Välj"
+
+#: templates/membership/membership_invite_identity.html:34
+#: templates/membership/membership_invite_identity.html:66
+msgid "Add role"
+msgstr "Lägg till roll"
+
+#: templates/membership/membership_invite_identity.html:41
+msgid ""
+"Please search with email address if you wish to send an email invite to the "
+"role."
+msgstr "Sök med e-postadress om du vill skicka en e-postinbjudan till rollen."
+
+#: templates/membership/membership_invite_identity.html:45
+msgid "Email invitation"
+msgstr "E-postinbjudan"
+
+#: templates/membership/membership_invite_identity.html:46
+#, python-format
+msgid "Email address not found in the registry: %(email)s"
+msgstr "E-postadressen finns inte i registret: %(email)s"
+
+#: templates/membership/membership_invite_identity.html:47
+msgid "Send invitation"
+msgstr "Skicka inbjudan"
+
+#: templates/role/role_detail.html:5
+msgid "Role details"
+msgstr "Uppgifter om rollen"
+
+#: templates/role/role_detail.html:13 templates/role/role_list.html:12
+#: templates/role/role_search.html:15
+msgid "Parent"
+msgstr "Överordnad"
+
+#: templates/role/role_detail.html:22
+msgid "Notification address"
+msgstr "Aviseringsadress"
+
+#: templates/role/role_detail.html:43
+msgid "Join"
+msgstr "Gå med"
+
+#: templates/role/role_detail.html:46
+#, python-format
+msgid "Invite multiple members (max %(limit)s)"
+msgstr "Bjud in flera medlemmar (max %(limit)s)"
+
+#: templates/role/role_detail.html:49
+msgid "Members"
+msgstr "Medlemmar"
+
+#: templates/role/role_list.html:5
+msgid "Role list"
+msgstr "Rollista"
+
+#: templates/role/role_list.html:27
+msgid "No roles."
+msgstr "Inga roller."
+
+#: templates/role/role_list_approver.html:4
+msgid "Roles you have approver permission for"
+msgstr "Roller som du har godkännarrätt för"
+
+#: templates/role/role_list_inviter.html:4
+msgid "Roles you have inviter permission for"
+msgstr "Roller som du har inbjudningsrätt för"
+
+#: templates/role/role_list_owner.html:4
+msgid "Roles you own"
+msgstr "Roller som du äger"
+
+#: templates/role/role_search.html:7
+msgid "Search roles with role name or description."
+msgstr "Sök roller med rollens namn eller beskrivning."
+
+#: templates/role/role_search.html:9
+msgid "Results"
+msgstr "Resultat"
+
+#: templates/role/role_search.html:33
+msgid "Submit a search to get results."
+msgstr "Gör en sökning för att få resultat."
+
+#: utils/identity.py:38
+msgid "Cannot combine identity with itself."
+msgstr "Kan inte kombinera en identitet med sig själv."
+
+#: utils/identity.py:45
+msgid "Source identity cannot have higher assurance level than target."
+msgstr "Källidentiteten kan inte ha en högre kontrollnivå än målidentiteten."
+
+#: utils/identity.py:52
+msgid ""
+"Cannot combine two identities with uid. Please remove uid from the source "
+"first."
+msgstr ""
+"Kan inte kombinera två identiteter med uid. Ta först bort uid från källan."
+
+#: utils/identity.py:60
+msgid ""
+"Cannot combine two identities with Finnish personal identity code. Please "
+"remove FPIC from the source first."
+msgstr ""
+"Kan inte kombinera två identiteter med finländsk personbeteckning. Ta först "
+"bort personbeteckningen från källan."
+
+#: utils/identity.py:69
+msgid "Source identity is linked to user and target identity is not."
+msgstr ""
+"Källidentiteten är länkad till användaren, medan målidentiteten inte är det."
+
+#: utils/identity.py:80
+msgid "Current user's identity cannot be the source identity."
+msgstr "Den aktuella användarens identitet kan inte vara källidentiteten."
+
+#: utils/membership.py:95
+msgid "Role requires a contract you cannot currently sign."
+msgstr "Rollen kräver ett avtal som du för närvarande inte kan signera."
+
+#: utils/membership.py:98
+#, python-format
+msgid "Role requires a contract \"%(name)s\"."
+msgstr "Rollen kräver avtalet ”%(name)s”."
+
+#: utils/membership.py:100
+#, python-format
+msgid "Role requires a contract \"%(name)s\", version %(version)d or higher."
+msgstr "Rollen kräver avtalet ”%(name)s”, version %(version)d eller högre."
+
+#: utils/membership.py:120
+msgid "Role requires a verified email address."
+msgstr "Rollen kräver en verifierad e-postadress."
+
+#: utils/membership.py:122 utils/membership.py:128 utils/membership.py:148
+msgid "Add here"
+msgstr "Lägg till här"
+
+#: utils/membership.py:126
+msgid "Role requires a verified phone number."
+msgstr "Rollen kräver ett verifierat telefonnummer."
+
+#: utils/membership.py:139
+#, python-format
+msgid ""
+"Role requires an attribute \"%(name)s\" of at least verification level: "
+"%(level)d (%(level_text)s)."
+msgstr ""
+"Rollen kräver attributet ”%(name)s” med minst verifieringsnivå: %(level)d "
+"(%(level_text)s)."
+
+#: utils/membership.py:146
+#, python-format
+msgid "Role requires an attribute \"%(name)s\"."
+msgstr "Rollen kräver attributet ”%(name)s”."
+
+#: utils/membership.py:157
+msgid "Role requires higher assurance level: "
+msgstr "Rollen kräver högre kontrollnivå: "
+
+#: utils/membership.py:167
+#, python-format
+msgid "Role requires a requirement you cannot currently fulfill: %(name)s."
+msgstr ""
+"Rollen kräver ett krav som du för närvarande inte kan uppfylla: %(name)s."
+
+#: utils/membership.py:223
+msgid "Invitation process has taken too long."
+msgstr "Inbjudningsprocessen har tagit för lång tid."
+
+#: utils/membership.py:229
+msgid "This invitation has already been used."
+msgstr "Denna inbjudan har redan använts."
+
+#: utils/membership.py:233
+msgid "This invitation has expired."
+msgstr "Denna inbjudan har gått ut."
+
+#: utils/membership.py:237
+msgid "Invalid invitation token."
+msgstr "Ogiltig inbjudningstoken."
+
+#: utils/membership.py:240
+msgid "Membership created."
+msgstr "Medlemskap skapat."
+
+#: validators/identity.py:30
+msgid "Personal identity code length should be 11 characters."
+msgstr "Personbeteckningens längd ska vara 11 tecken."
+
+#: validators/identity.py:35
+msgid "Incorrect date part."
+msgstr "Felaktig datumdel."
+
+#: validators/identity.py:38
+msgid "Incorrect intermediate character."
+msgstr "Felaktigt mellanliggande tecken."
+
+#: validators/identity.py:42
+msgid "Incorrect numeric part."
+msgstr "Felaktig numerisk del."
+
+#: validators/identity.py:46
+msgid "Incorrect checksum."
+msgstr "Felaktig kontrollsumma."
+
+#: validators/identity.py:73
+msgid "Phone number must start with a plus sign."
+msgstr "Telefonnumret måste börja med ett plustecken."
+
+#: validators/identity.py:76
+msgid "Phone number contains invalid characters."
+msgstr "Telefonnumret innehåller ogiltiga tecken."
+
+#: validators/identity.py:79
+msgid "Phone number is too short."
+msgstr "Telefonnumret är för kort."
+
+#: validators/identity.py:110
+msgid "Invalid eIDAS identifier format."
+msgstr "Ogiltigt format för eIDAS-identifierare."
+
+#: validators/membership.py:33
+msgid "Invalid start date format."
+msgstr "Ogiltigt format för startdatum."
+
+#: validators/membership.py:35
+msgid "Invalid expiry date format."
+msgstr "Ogiltigt format för utgångsdatum."
+
+#: validators/membership.py:37
+msgid "Membership expiry date cannot be earlier than start date."
+msgstr "Medlemskapets utgångsdatum kan inte vara tidigare än startdatumet."
+
+#: validators/membership.py:39
+msgid "Membership expiry date cannot be in the past."
+msgstr "Medlemskapets utgångsdatum kan inte vara i det förflutna."
+
+#: validators/membership.py:41
+msgid "Membership start date cannot be in the past."
+msgstr "Medlemskapets startdatum kan inte vara i det förflutna."
+
+#: validators/membership.py:49
+#, python-format
+msgid ""
+"Maximum membership duration for this role is %(max_duration)s days. Last "
+"possible date for this membership is %(last_date)s."
+msgstr ""
+"Den maximala medlemskapstiden för denna roll är %(max_duration)s dagar. "
+"Sista möjliga datum för detta medlemskap är %(last_date)s."
+
+#: validators/role.py:32
+msgid "Role hierarchy cannot be more than maximum depth."
+msgstr "Rollhierarkin kan inte vara större än det maximala djupet."
+
+#: validators/role.py:34
+msgid "Role cannot be in its own hierarchy."
+msgstr "Rollen kan inte vara i sin egen hierarki."
+
+#: views/account.py:133
+msgid "Could not load user ID choices, please try again later."
+msgstr "Kunde inte ladda användar-ID-val, försök igen senare."
+
+#: views/account.py:186
+msgid "Account creation failed, please try again later."
+msgstr "Kontot kunde inte skapas, försök igen senare."
+
+#: views/account.py:198
+msgid "Account created."
+msgstr "Konto skapat."
+
+#: views/account.py:346
+msgid "Account enabling failed, please try again later."
+msgstr "Kontoaktiveringen misslyckades, försök igen senare."
+
+#: views/account.py:358
+msgid "Account enabled."
+msgstr "Konto aktiverat."
+
+#: views/account.py:385
+msgid "Account disabling failed, please try again later."
+msgstr "Deaktiveringen av kontot misslyckades, försök igen senare."
+
+#: views/account.py:397
+msgid "Account disabled."
+msgstr "Konto deaktiverat."
+
+#: views/account.py:439
+msgid "Password reset failed, please try again later."
+msgstr "Återställningen av lösenord misslyckades, försök igen senare."
+
+#: views/account.py:450
+msgid "Password reset."
+msgstr "Lösenordet återställdes."
+
+#: views/auth.py:131 views/auth.py:149 views/auth.py:656 views/auth.py:675
+msgid "Tried to send a new code too soon. Please try again in one minute."
+msgstr ""
+"Försökte skicka en ny kod för tidigt. Vänligen försök igen om en minut."
+
+#: views/auth.py:135 views/auth.py:155 views/identity.py:335
+#: views/identity.py:371
+msgid "Verification code sent."
+msgstr "Verifieringskoden har skickats."
+
+#: views/auth.py:138
+msgid "Failed to send verification code."
+msgstr "Det gick inte att skicka verifieringskoden."
+
+#: views/auth.py:153 views/identity.py:369
+#, python-format
+msgid "Kamu verification code: %(token)s"
+msgstr "Kamu-verifieringskod: %(token)s"
+
+#: views/auth.py:158 views/identity.py:374
+msgid "Could not send an SMS message."
+msgstr "Det gick inte att skicka SMS."
+
+#: views/auth.py:389
+msgid "Link identifier not found."
+msgstr "Länkidentifierare hittades inte."
+
+#: views/auth.py:394
+msgid "Link identifier time not valid."
+msgstr "Länkidentifierarens tid är ogiltig."
+
+#: views/auth.py:396
+msgid "Link identifier expired."
+msgstr "Länkidentifieraren har gått ut."
+
+#: views/auth.py:456
+msgid "Identifier linking failed: "
+msgstr "Länkningen av identifierare misslyckades: "
+
+#: views/auth.py:462
+msgid "Invitation claiming failed: "
+msgstr "Inbjudan kunde inte accepteras: "
+
+#: views/auth.py:465
+msgid "Login failed: "
+msgstr "Inloggningen misslyckades: "
+
+#: views/auth.py:480
+msgid ""
+"Redirection loop for authenticated user detected. Please contact service "
+"admins."
+msgstr ""
+"Omdirigeringsslinga för autentiserad användare upptäckt. Kontakta tjänstens "
+"administratörer."
+
+#: views/auth.py:725 views/auth.py:730
+msgid "List here"
+msgstr "Lista här"
+
+#: views/auth.py:727
+msgid "You have pending membership approvals."
+msgstr "Du har väntande medlemskapsgodkännanden."
+
+#: views/auth.py:734
+msgid "Memberships are ending soon in roles you have approval rights."
+msgstr ""
+"Medlemskap upphör snart för roller som du har godkännanderättigheter för."
+
+#: views/identity.py:140
+msgid "Selected as the target identity for identity combining."
+msgstr "Vald som målidentitet för identitetskombination."
+
+#: views/identity.py:146
+msgid "Selected as the source identity for identity combining."
+msgstr "Vald som källidentitet för identitetskombination."
+
+#: views/identity.py:329 views/identity.py:365
+msgid "Tried to send a new code too soon."
+msgstr "Försökte skicka en ny kod för tidigt."
+
+#: views/identity.py:331
+msgid "Kamu: email address verification"
+msgstr "Kamu: verifiering av e-postadress"
+
+#: views/identity.py:332
+#, python-format
+msgid "Your verification code is: %(token)s"
+msgstr "Din verifieringskod är: %(token)s"
+
+#: views/identity.py:692
+msgid "Contract already signed."
+msgstr "Avtalet har redan signerats."
+
+#: views/identity.py:698
+msgid "Contract version has changed. Please try again."
+msgstr "Avtalsversionen har ändrats. Vänligen försök igen."
+
+#: views/identity.py:701
+msgid "Contract signed."
+msgstr "Avtal signerat."
+
+#: views/identity.py:849
+msgid "Cannot deactivate last active identifier."
+msgstr "Kan inte inaktivera senaste aktiva identifierare."
+
+#: views/identity.py:902
+msgid "New identity created."
+msgstr "Ny identitet skapad."
+
+#: views/identity.py:961
+msgid ""
+"LDAP search returned too many results, please refine your search parameters."
+msgstr "LDAP-sökningen gav för många resultat, förfina sökparametrarna."
+
+#: views/identity.py:1076
+msgid "Too many results, please refine your search parameters."
+msgstr "För många resultat, förfina sökparametrarna."
+
+#: views/identity.py:1083
+msgid ""
+"Partial name matches returned too many results. Returning only exact matches."
+msgstr ""
+"Partiella namnträffar gav för många resultat. Återger endast exakta träffar."
+
+#: views/identity.py:1107
+msgid "LDAP search failed, could not search existing accounts."
+msgstr ""
+"LDAP-sökningen misslyckades, det gick inte att söka efter befintliga konton."
+
+#: views/identity.py:1115
+msgid "Identifier match found, skipping name search."
+msgstr "Identifierarträff hittades, skippar namnsökning."
+
+#: views/identity.py:1224
+msgid "Incorrect primary keys."
+msgstr "Felaktiga primärnycklar."
+
+#: views/identity.py:1230
+msgid "Identities combined."
+msgstr "Identiteter kombinerade."
+
+#: views/membership.py:79
+msgid "You need to create an identity first."
+msgstr "Du måste först skapa en identitet."
+
+#: views/membership.py:83
+msgid "You are already a member of this role."
+msgstr "Du är redan medlem i den här rollen."
+
+#: views/membership.py:215
+msgid "Membership approved."
+msgstr "Medlemskap godkänt."
+
+#: views/membership.py:236 views/membership.py:643
+msgid "Invite email sent."
+msgstr "E-postmeddelande med inbjudan skickad."
+
+#: views/membership.py:238
+msgid "Could not send invite email."
+msgstr "Kunde inte skicka e-postmeddelande med inbjudan."
+
+#: views/membership.py:243
+msgid "Tried to send a new invite too soon. Please try again in one minute."
+msgstr ""
+"Försökte skicka en ny inbjudan för tidigt. Vänligen försök igen om en minut."
+
+#: views/membership.py:268
+msgid "Membership set to end today."
+msgstr "Medlemskapet upphör idag."
+
+#: views/membership.py:315
+msgid "Membership updated."
+msgstr "Medlemskap uppdaterat."
+
+#: views/membership.py:720
+#, python-brace-format
+msgid ""
+"Finnish personal identity code {fpic} and email address {email} are "
+"registered to different identities."
+msgstr ""
+"Personbeteckningen {fpic} och e-postadressen {email} är registrerade för "
+"olika identiteter."
+
+#: views/membership.py:730
+#, python-brace-format
+msgid ""
+"Finnish personal identity code {fpic} and phone number {phone} are "
+"registered to different identities."
+msgstr ""
+"Personbeteckningen {fpic} och telefonnumret {phone} är registrerade för "
+"olika identiteter."
+
+#: views/membership.py:739
+#, python-brace-format
+msgid ""
+"Email address {email} and phone number {phone} are registered to different "
+"identities."
+msgstr ""
+"E-postadressen {email} och telefonnumret {phone} är registrerade för olika "
+"identiteter."
+
+#: views/membership.py:834
+#, python-brace-format
+msgid "Invite email sent to following addresses: {0}"
+msgstr "Inbjudan skickades till följande e-postadresser: {0}"
+
+#: views/membership.py:838
+#, python-brace-format
+msgid "Added following identities: {0}"
+msgstr "Följande identiteter har lagts till: {0}"
