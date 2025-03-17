@@ -293,3 +293,9 @@ ACCOUNT_ATTRIBUTES: dict[str, str] = {
     "schacExpiryDate": "schacExpiryDate",
     "sn": "sn",
 }
+
+# Set encoding for incoming META
+# Django expects WSGI environ values to be latin-1 and decodes them to Unicode.
+# This is a problem if the value is not actually latin-1 encoded. You can change
+# this setting to encoding Django is receiving from the web server.
+META_ENCODING: str = "iso-8859-1"

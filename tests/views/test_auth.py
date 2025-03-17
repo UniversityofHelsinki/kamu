@@ -551,6 +551,40 @@ class RegistrationViewTests(BaseTestCase):
         self.assertEqual(identity.given_names, "eIDAS")
         self.assertEqual(identity.surname, "User")
 
+    @override_settings(SAML_EIDAS_IDENTIFIER="HTTP_IDENTIFIER")
+    @override_settings(SAML_EIDAS_SURNAME="HTTP_SURNAME")
+    @override_settings(META_ENCODING="utf-8")
+    def test_registration_encoding_invalid(self):
+        url = reverse("login-suomifi") + "?next=" + reverse("membership-claim")
+        response = self.client.get(
+            url,
+            follow=True,
+            headers={
+                "IDENTIFIER": "ES/FI/abcdefg",
+                "SURNAME": "Ääkköset".encode("utf-8").decode("latin"),
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        identity = Identity.objects.get(identifiers__value="ES/FI/abcdefg")
+        self.assertEqual(identity.surname, "Ã\x84Ã¤kkÃ¶set")
+
+    @override_settings(SAML_EIDAS_IDENTIFIER="HTTP_IDENTIFIER")
+    @override_settings(SAML_EIDAS_SURNAME="HTTP_SURNAME")
+    @override_settings(META_ENCODING="latin1")
+    def test_registration_encoding_fixed(self):
+        url = reverse("login-suomifi") + "?next=" + reverse("membership-claim")
+        response = self.client.get(
+            url,
+            follow=True,
+            headers={
+                "IDENTIFIER": "ES/FI/abcdefg",
+                "SURNAME": "Ääkköset".encode("utf-8").decode("latin"),
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        identity = Identity.objects.get(identifiers__value="ES/FI/abcdefg")
+        self.assertEqual(identity.surname, "Ääkköset")
+
 
 class LinkIdentifierTests(BaseTestCase):
     def setUp(self):

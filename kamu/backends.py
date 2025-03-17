@@ -89,6 +89,16 @@ def get_login_backends(request: HttpRequest, external_only: bool = False) -> lis
     return login_backends
 
 
+def fix_meta_encoding(value: str, errors: str = "ignore") -> str:
+    """
+    Fix meta encoding from settings value to UTF-8. Ignore errors by default.
+    """
+    encoding = getattr(settings, "META_ENCODING", "")
+    if encoding and value:
+        return value.encode(encoding).decode("utf-8", errors)
+    return value
+
+
 class LocalBaseBackend(ModelBackend):
     """
     Local authentication backend base with some custom functions.
@@ -152,17 +162,17 @@ class LocalBaseBackend(ModelBackend):
         """
         Get unique identifier from request.META.
         """
-        unique_identifier = request.META.get("sub", "")
+        unique_identifier = fix_meta_encoding(request.META.get("sub", ""))
         return unique_identifier
 
-    def _get_meta_user_info(self, request: HttpRequest) -> tuple[str, str, str | None, str | None]:
+    def _get_meta_user_info(self, request: HttpRequest) -> tuple[str, str, str, str]:
         """
         Get external login parameters from request.META.
         """
-        given_names = request.META.get("given_name", "")
-        surname = request.META.get("family_name", "")
-        email = request.META.get("email", None)
-        preferred_username = request.META.get("preferred_username", None)
+        given_names = fix_meta_encoding(request.META.get("given_name", ""))
+        surname = fix_meta_encoding(request.META.get("family_name", ""))
+        email = fix_meta_encoding(request.META.get("email", ""))
+        preferred_username = fix_meta_encoding(request.META.get("preferred_username", ""))
         return given_names, surname, email, preferred_username
 
     def _create_identity(self, request: HttpRequest, user: UserType) -> Identity:
@@ -274,7 +284,7 @@ class LocalBaseBackend(ModelBackend):
         """
         return []
 
-    def _get_username(self, preferred_username: str | None, unique_identifier: str) -> str:
+    def _get_username(self, preferred_username: str, unique_identifier: str) -> str:
         """
         Get username from preferred_username if it is available and not already in use.
 
@@ -576,7 +586,7 @@ class ShibbolethBaseBackend(LocalBaseBackend):
         """
         Get assurance level for the login method, using Identity model choices.
         """
-        assurance_level = request.META.get(settings.SAML_ATTR_ASSURANCE, "").split(";")
+        assurance_level = fix_meta_encoding(request.META.get(settings.SAML_ATTR_ASSURANCE, "")).split(";")
         if "https://refeds.org/assurance/IAP/high" in assurance_level:
             return Identity.AssuranceLevel.HIGH
         elif "https://refeds.org/assurance/IAP/medium" in assurance_level:
@@ -588,17 +598,17 @@ class ShibbolethBaseBackend(LocalBaseBackend):
         """
         Get unique identifier from request.META.
         """
-        unique_identifier = request.META.get(settings.SAML_ATTR_EPPN, "")
+        unique_identifier = fix_meta_encoding(request.META.get(settings.SAML_ATTR_EPPN, ""))
         return unique_identifier
 
-    def _get_meta_user_info(self, request: HttpRequest) -> tuple[str, str, str | None, str | None]:
+    def _get_meta_user_info(self, request: HttpRequest) -> tuple[str, str, str, str]:
         """
         Get external login parameters from request.META.
         """
-        given_names = request.META.get(settings.SAML_ATTR_GIVEN_NAMES, "")
-        surname = request.META.get(settings.SAML_ATTR_SURNAME, "")
-        email = request.META.get(settings.SAML_ATTR_EMAIL, None)
-        preferred_username = request.META.get(settings.SAML_ATTR_EPPN, None)
+        given_names = fix_meta_encoding(request.META.get(settings.SAML_ATTR_GIVEN_NAMES, ""))
+        surname = fix_meta_encoding(request.META.get(settings.SAML_ATTR_SURNAME, ""))
+        email = fix_meta_encoding(request.META.get(settings.SAML_ATTR_EMAIL, ""))
+        preferred_username = fix_meta_encoding(request.META.get(settings.SAML_ATTR_EPPN, ""))
         return given_names, surname, email, preferred_username
 
     def _identifier_validation(self, request: HttpRequest, identifier: str) -> None:
@@ -669,7 +679,7 @@ class ShibbolethLocalBackend(ShibbolethBaseBackend):
         """
         Get groups from request.META.
         """
-        return request.META.get(settings.SAML_ATTR_GROUPS, "").split(";")
+        return fix_meta_encoding(request.META.get(settings.SAML_ATTR_GROUPS, "")).split(";")
 
     def post_authentication_tasks(self, request: HttpRequest, user: UserType) -> None:
         """
@@ -704,8 +714,8 @@ class SuomiFiBackend(LocalBaseBackend):
         """
         Get login type. Suomi.fi and eIDAS have different attributes.
         """
-        suomi_fi_identifier = request.META.get(settings.SAML_SUOMIFI_SSN, "")
-        eidas_identifier = request.META.get(settings.SAML_EIDAS_IDENTIFIER, "")
+        suomi_fi_identifier = fix_meta_encoding(request.META.get(settings.SAML_SUOMIFI_SSN, ""))
+        eidas_identifier = fix_meta_encoding(request.META.get(settings.SAML_EIDAS_IDENTIFIER, ""))
         if suomi_fi_identifier:
             return "suomifi"
         elif eidas_identifier:
@@ -727,7 +737,7 @@ class SuomiFiBackend(LocalBaseBackend):
         """
         Get assurance level for  the login method. Values from the Identity model choices.
         """
-        assurance_level = set(request.META.get(settings.SAML_SUOMIFI_ASSURANCE, "").split(";"))
+        assurance_level = set(fix_meta_encoding(request.META.get(settings.SAML_SUOMIFI_ASSURANCE, "")).split(";"))
         if set(settings.SUOMIFI_ASSURANCE_HIGH).intersection(assurance_level):
             return Identity.AssuranceLevel.HIGH
         elif set(settings.SUOMIFI_ASSURANCE_MEDIUM).intersection(assurance_level):
@@ -748,26 +758,26 @@ class SuomiFiBackend(LocalBaseBackend):
         """
         identifier_type = self._get_type(request)
         if identifier_type == "suomifi":
-            unique_identifier = request.META.get(settings.SAML_SUOMIFI_SSN, "")
+            unique_identifier = fix_meta_encoding(request.META.get(settings.SAML_SUOMIFI_SSN, ""))
         elif identifier_type == "eidas":
-            unique_identifier = request.META.get(settings.SAML_EIDAS_IDENTIFIER, "")
+            unique_identifier = fix_meta_encoding(request.META.get(settings.SAML_EIDAS_IDENTIFIER, ""))
         else:
             raise AuthenticationError(self.error_messages["identifier_missing"])
         return unique_identifier
 
-    def _get_meta_user_info(self, request: HttpRequest) -> tuple[str, str, str | None, str | None]:
+    def _get_meta_user_info(self, request: HttpRequest) -> tuple[str, str, str, str]:
         """
         Get user attributes from META. Suomi.fi and eIDAS have different attribute sets.
         """
         identifier_type = self._get_type(request)
-        email = None
+        email = ""
         username_identifier = uuid4()
         if identifier_type == "suomifi":
-            given_names = request.META.get(settings.SAML_SUOMIFI_GIVEN_NAMES, "")
-            surname = request.META.get(settings.SAML_SUOMIFI_SURNAME, "")
+            given_names = fix_meta_encoding(request.META.get(settings.SAML_SUOMIFI_GIVEN_NAMES, ""))
+            surname = fix_meta_encoding(request.META.get(settings.SAML_SUOMIFI_SURNAME, ""))
         elif identifier_type == "eidas":
-            given_names = request.META.get(settings.SAML_EIDAS_GIVEN_NAMES, "")
-            surname = request.META.get(settings.SAML_EIDAS_SURNAME, "")
+            given_names = fix_meta_encoding(request.META.get(settings.SAML_EIDAS_GIVEN_NAMES, ""))
+            surname = fix_meta_encoding(request.META.get(settings.SAML_EIDAS_SURNAME, ""))
         else:
             raise AuthenticationError(self.error_messages["identifier_missing"])
         preferred_username = f"{ username_identifier }@{ identifier_type }"
@@ -814,7 +824,7 @@ class SuomiFiBackend(LocalBaseBackend):
         verification_level = self._get_verification_level(request)
         identifier_type = self._get_type(request)
         if identifier_type == "suomifi":
-            fpic = request.META.get(settings.SAML_SUOMIFI_SSN, "")
+            fpic = fix_meta_encoding(request.META.get(settings.SAML_SUOMIFI_SSN, ""))
             try:
                 validate_fpic(fpic)
             except ValidationError:
@@ -841,7 +851,7 @@ class SuomiFiBackend(LocalBaseBackend):
                     + fpic,
                 )
         elif identifier_type == "eidas":
-            date_string = request.META.get(settings.SAML_EIDAS_DATEOFBIRTH, None)
+            date_string = fix_meta_encoding(request.META.get(settings.SAML_EIDAS_DATEOFBIRTH, ""))
             if date_string:
                 try:
                     identity.date_of_birth = datetime.strptime(date_string, "%Y-%m-%d")
@@ -879,17 +889,17 @@ class GoogleBackend(LocalBaseBackend):
         """
         Get unique identifier from request.META.
         """
-        unique_identifier = request.META.get(settings.OIDC_CLAIM_SUB, "")
+        unique_identifier = fix_meta_encoding(request.META.get(settings.OIDC_CLAIM_SUB, ""))
         return unique_identifier
 
-    def _get_meta_user_info(self, request: HttpRequest) -> tuple[str, str, str | None, str | None]:
+    def _get_meta_user_info(self, request: HttpRequest) -> tuple[str, str, str, str]:
         """
         Get external login parameters from request.META.
         """
-        given_names = request.META.get(settings.OIDC_CLAIM_GIVEN_NAME, "")
-        surname = request.META.get(settings.OIDC_CLAIM_FAMILY_NAME, "")
-        email = request.META.get(settings.OIDC_CLAIM_EMAIL, None)
-        preferred_username = request.META.get(settings.OIDC_CLAIM_EMAIL, None)
+        given_names = fix_meta_encoding(request.META.get(settings.OIDC_CLAIM_GIVEN_NAME, ""))
+        surname = fix_meta_encoding(request.META.get(settings.OIDC_CLAIM_FAMILY_NAME, ""))
+        email = fix_meta_encoding(request.META.get(settings.OIDC_CLAIM_EMAIL, ""))
+        preferred_username = fix_meta_encoding(request.META.get(settings.OIDC_CLAIM_EMAIL, ""))
         return given_names, surname, email, preferred_username
 
 
@@ -915,7 +925,7 @@ class MicrosoftBackend(LocalBaseBackend):
         """
         Validates authentication data issuer.
         """
-        issuer = request.META.get(settings.OIDC_MICROSOFT_ISSUER, "")
+        issuer = fix_meta_encoding(request.META.get(settings.OIDC_MICROSOFT_ISSUER, ""))
         if not issuer.startswith("https://login.microsoftonline.com/"):
             return False
         return True
@@ -924,17 +934,17 @@ class MicrosoftBackend(LocalBaseBackend):
         """
         Get unique identifier from request.META.
         """
-        unique_identifier = request.META.get(settings.OIDC_MICROSOFT_IDENTIFIER, "")
+        unique_identifier = fix_meta_encoding(request.META.get(settings.OIDC_MICROSOFT_IDENTIFIER, ""))
         return unique_identifier
 
-    def _get_meta_user_info(self, request: HttpRequest) -> tuple[str, str, str | None, str | None]:
+    def _get_meta_user_info(self, request: HttpRequest) -> tuple[str, str, str, str]:
         """
         Get external login parameters from request.META.
         """
-        given_names = request.META.get(settings.OIDC_MICROSOFT_GIVEN_NAME, "")
-        surname = request.META.get(settings.OIDC_MICROSOFT_FAMILY_NAME, "")
-        email = request.META.get(settings.OIDC_MICROSOFT_EMAIL, None)
-        preferred_username = request.META.get(settings.OIDC_MICROSOFT_PREFERRED_USERNAME, None)
+        given_names = fix_meta_encoding(request.META.get(settings.OIDC_MICROSOFT_GIVEN_NAME, ""))
+        surname = fix_meta_encoding(request.META.get(settings.OIDC_MICROSOFT_FAMILY_NAME, ""))
+        email = fix_meta_encoding(request.META.get(settings.OIDC_MICROSOFT_EMAIL, ""))
+        preferred_username = fix_meta_encoding(request.META.get(settings.OIDC_MICROSOFT_PREFERRED_USERNAME, ""))
         return given_names, surname, email, preferred_username
 
 
