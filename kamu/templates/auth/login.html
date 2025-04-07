@@ -51,13 +51,13 @@
     {% endif %}
     {% if "emailsms"|enabled_backend %}
       <div class="col-md-6 col-12 mb-3">
-        <a href="{% url 'login-email' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" class="btn btn-outline-dark mb-3" role="button">{% trans "Email+SMS login" %}</a>
+        <a href="{% url 'login-email' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" class="btn btn-outline-dark mb-3">{% trans "Email+SMS login" %}</a>
         <p>{% trans "Login with an email and SMS verification." %}</p>
       </div>
     {% endif %}
     {% if "password"|enabled_backend %}
       <div class="col-md-6 col-12 mb-3">
-        <a href="{% url 'login-local' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" class="btn btn-outline-dark mb-3" role="button">{% trans "Local login" %}</a>
+        <a href="{% url 'login-local' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" class="btn btn-outline-dark mb-3">{% trans "Local login" %}</a>
         <p>{% trans "Login with a username and password. Only for testing, this will be removed before production version." %}</p>
       </div>
     {% endif %}
