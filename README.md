@@ -18,13 +18,11 @@ for development and production environments.
 
 ## Contributing
 Kamu is currently developed in the local GitLab of the University of
-Helsinki, but we are planning to move to GitHub before 1.0.0 release.
+Helsinki. Latest main branch is updated to GitHub.
 
 You are welcome to contribute to the project by creating issues or pull
 requests. Check [style and commit guidelines](https://kamu.pages.helsinki.fi/kamu/content/contributing.html)
 before creating any pull requests.
 
 ## Versioning
-We use [Semantic Versioning](https://semver.org/). We are currently in the
-development phase, but plan to publish 1.0.0 release in the second half
-of 2024.
+We use [Semantic Versioning](https://semver.org/).
