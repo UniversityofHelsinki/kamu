@@ -33,7 +33,7 @@ class MembershipViewTests(BaseTestCase):
             inviter=self.superuser,
             invite_email_address="invited_user@example.org",
         )
-        self.url = f"/membership/{ self.membership.pk }/"
+        self.url = f"/membership/{self.membership.pk}/"
         self.group = Group.objects.create(name="group")
         self.role.inviters.add(self.group)
         self.user.groups.add(self.group)
@@ -497,7 +497,7 @@ class MembershipMassInviteViewTests(BaseTestCase):
         self.create_identity(user=True, email=True)
         self.create_superidentity(user=True, phone=True)
         self.role = self.create_role()
-        self.url = f"/role/{ self.role.pk }/invite/multiple/"
+        self.url = f"/role/{self.role.pk}/invite/multiple/"
         self.group = Group.objects.create(name="group")
         self.role.inviters.add(self.group)
         self.user.groups.add(self.group)

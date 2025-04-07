@@ -314,7 +314,7 @@ class RegistrationPhoneNumberVerificationView(BaseRegistrationView, FormView):
             last_name=surname,
         )
         audit_log.info(
-            f"Created user { user }",
+            f"Created user {user}",
             category="user",
             action="create",
             outcome="success",
@@ -324,7 +324,7 @@ class RegistrationPhoneNumberVerificationView(BaseRegistrationView, FormView):
         identity.user = user
         identity.save()
         audit_log.info(
-            f"Identity linked to user { user }",
+            f"Identity linked to user {user}",
             category="identity",
             action="link",
             outcome="success",
@@ -334,7 +334,7 @@ class RegistrationPhoneNumberVerificationView(BaseRegistrationView, FormView):
         )
         email_object = EmailAddress.objects.create(address=email_address, identity=identity, verified=True)
         audit_log.info(
-            f"Email address added to identity { identity }",
+            f"Email address added to identity {identity}",
             category="email_address",
             action="create",
             outcome="success",
@@ -344,7 +344,7 @@ class RegistrationPhoneNumberVerificationView(BaseRegistrationView, FormView):
         )
         phone_object = PhoneNumber.objects.create(number=phone_number, identity=identity, verified=True)
         audit_log.info(
-            f"Phone number added to identity { identity }",
+            f"Phone number added to identity {identity}",
             category="phone_number",
             action="create",
             outcome="success",

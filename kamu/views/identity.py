@@ -680,7 +680,7 @@ class ContractSignView(LoginRequiredMixin, TemplateView):
             try:
                 contract = Contract.objects.sign_contract(template=template, identity=identity)
                 audit_log.info(
-                    f"Contract { contract.template.type }-{ contract.template.version } signed",
+                    f"Contract {contract.template.type}-{contract.template.version} signed",
                     category="contract",
                     action="create",
                     outcome="success",
@@ -824,9 +824,9 @@ class IdentifierView(LoginRequiredMixin, TemplateView):
         service_link_url = getattr(settings, "SERVICE_LINK_URL", None)
         if linking_view in oidc_views and oidc_logout_path:
             if service_link_url:
-                logout_url = f"{ oidc_logout_path }{ quote_plus(service_link_url)}{ quote_plus(linking_url) }"
+                logout_url = f"{oidc_logout_path}{quote_plus(service_link_url)}{quote_plus(linking_url)}"
             else:
-                logout_url = f"{ oidc_logout_path }{ quote_plus(linking_url) }"
+                logout_url = f"{oidc_logout_path}{quote_plus(linking_url)}"
             return logout_url
         return linking_url
 

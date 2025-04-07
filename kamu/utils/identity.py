@@ -107,7 +107,7 @@ def _combine_identity_attributes(
                 secondary_identity.save()
             primary_identity.save()
             audit_log.info(
-                f"Identity transfer: { attribute } from identity: { secondary_identity.pk }",
+                f"Identity transfer: {attribute} from identity: {secondary_identity.pk}",
                 category="identity",
                 action="update",
                 outcome="success",
@@ -138,7 +138,7 @@ def _move_objects_to_primary_identity(
             obj.identity = primary_identity  # type: ignore[assignment]
             obj.save()
             audit_log.info(
-                f"Identity transfer: { log_category } from identity: { secondary_identity.pk }",
+                f"Identity transfer: {log_category} from identity: {secondary_identity.pk}",
                 category=log_category,
                 action="update",
                 outcome="success",
@@ -339,7 +339,7 @@ def create_identity_from_ldap(uid: str, request: HttpRequest | None = None) -> I
     if "mail" in user:
         email_object = EmailAddress.objects.create(address=user["mail"], identity=identity)
         audit_log.info(
-            f"Email address added to identity { identity }",
+            f"Email address added to identity {identity}",
             category="email_address",
             action="create",
             outcome="success",
@@ -365,7 +365,7 @@ def create_identity_from_ldap(uid: str, request: HttpRequest | None = None) -> I
     )
     if created:
         audit_log.info(
-            f"Linked { identifier.type } identifier to identity { identity }",
+            f"Linked {identifier.type} identifier to identity {identity}",
             category="identifier",
             action="create",
             outcome="success",

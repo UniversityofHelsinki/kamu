@@ -58,7 +58,7 @@ def matching_attributes_ldap(result: dict[str, str], email: str = "", fpic: str 
             if fpic_value and fpic_value == f"{value_prefix}{fpic}":
                 matching.append(f"<b>{escape(fpic_value.removeprefix(value_prefix))}</b>")
     except KeyError as e:
-        log_msg = f"Incorrect LDAP_SEARCH_ATTRIBUTES, KeyError: { e }."
+        log_msg = f"Incorrect LDAP_SEARCH_ATTRIBUTES, KeyError: {e}."
         logger.error(log_msg)
         return ""
     return ", ".join(matching)

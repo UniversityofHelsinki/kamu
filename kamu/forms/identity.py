@@ -380,13 +380,13 @@ class IdentityForm(forms.ModelForm):
         for field in verifiable_fields:
             value = cleaned_data.get(field)
             initial_value = initial_data.get(field)
-            verification = cleaned_data.get(f"{ field }_verification")
-            initial_verification = initial_data.get(f"{ field }_verification")
+            verification = cleaned_data.get(f"{field}_verification")
+            initial_verification = initial_data.get(f"{field}_verification")
             if (
                 value != initial_value
                 or (initial_verification is not None and initial_verification < Identity.VerificationMethod.STRONG)
             ) and verification == Identity.VerificationMethod.STRONG:
-                self.add_error(f"{ field }_verification", _("Cannot set strong electrical verification manually."))
+                self.add_error(f"{field}_verification", _("Cannot set strong electrical verification manually."))
 
     class Meta:
         model = Identity

@@ -118,8 +118,8 @@ def send_verification_email(
     cur_language = translation.get_language()
     try:
         translation.activate(lang)
-        subject = render_to_string(f"email/{ template }_subject.txt")
-        message = render_to_string(f"email/{ template }_message.txt", {"token": token})
+        subject = render_to_string(f"email/{template}_subject.txt")
+        message = render_to_string(f"email/{template}_message.txt", {"token": token})
     except TemplateDoesNotExist:
         return False
     finally:

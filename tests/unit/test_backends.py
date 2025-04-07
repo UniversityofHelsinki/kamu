@@ -183,7 +183,7 @@ class GoogleBackendTests(TestCase):
         request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
         user = backend.authenticate(request=request, create_user=True)
-        self.assertEqual(user.username, f"0123456789{ settings.ACCOUNT_SUFFIX_GOOGLE }")
+        self.assertEqual(user.username, f"0123456789{settings.ACCOUNT_SUFFIX_GOOGLE}")
         self.assertEqual(Identifier.objects.get(value="0123456789").identity.user, user)
 
     def test_login_google_create_user_existing_identifier(self):

@@ -65,7 +65,7 @@ def auth_login(request: HttpRequest, user: UserType | None, backend: type[ModelB
     """
     login(request, user, backend)
     audit_log.info(
-        f"User { request.user } logged in with { backend }",
+        f"User {request.user} logged in with {backend}",
         category="authentication",
         action="login",
         outcome="success",
@@ -190,7 +190,7 @@ class LocalBaseBackend(ModelBackend):
             surname_verification=verification_level,
         )
         audit_log.info(
-            f"Identity created for { user }",
+            f"Identity created for {user}",
             category="identity",
             action="create",
             outcome="success",
@@ -201,7 +201,7 @@ class LocalBaseBackend(ModelBackend):
         if user.email:
             email_address = EmailAddress.objects.create(address=user.email, identity=identity)
             audit_log.info(
-                f"Email address added to identity { identity }",
+                f"Email address added to identity {identity}",
                 category="email_address",
                 action="create",
                 outcome="success",
@@ -226,7 +226,7 @@ class LocalBaseBackend(ModelBackend):
         user.set_unusable_password()
         user.save()
         audit_log.info(
-            f"Created user { user }",
+            f"Created user {user}",
             category="user",
             action="create",
             outcome="success",
@@ -257,7 +257,7 @@ class LocalBaseBackend(ModelBackend):
                 created = True
         if created:
             audit_log.info(
-                f"Linked { identifier.type } identifier to identity { identity }",
+                f"Linked {identifier.type} identifier to identity {identity}",
                 category="identifier",
                 action="create",
                 outcome="success",
@@ -317,7 +317,7 @@ class LocalBaseBackend(ModelBackend):
             if prefixes is None or group.name.startswith(tuple(prefixes)):
                 user.groups.remove(group)
                 audit_log.info(
-                    f"Group { group } removed from user { user }",
+                    f"Group {group} removed from user {user}",
                     category="group",
                     action="unlink",
                     outcome="success",
@@ -327,7 +327,7 @@ class LocalBaseBackend(ModelBackend):
             if prefixes is None or group.name.startswith(tuple(prefixes)):
                 user.groups.add(group)
                 audit_log.info(
-                    f"Group { group } added to user { user }",
+                    f"Group {group} added to user {user}",
                     category="group",
                     action="link",
                     outcome="success",
@@ -463,7 +463,7 @@ class LocalBaseBackend(ModelBackend):
         try:
             return ipaddress.ip_address(ip) in ipaddress.ip_network(ip_network)
         except ValueError as e:
-            log_msg = f"Error in IP range: { e }"
+            log_msg = f"Error in IP range: {e}"
             logger.error(log_msg)
             raise AuthenticationError(self.error_messages["configuration_error"]) from e
 
@@ -780,7 +780,7 @@ class SuomiFiBackend(LocalBaseBackend):
             surname = fix_meta_encoding(request.META.get(settings.SAML_EIDAS_SURNAME, ""))
         else:
             raise AuthenticationError(self.error_messages["identifier_missing"])
-        preferred_username = f"{ username_identifier }@{ identifier_type }"
+        preferred_username = f"{username_identifier}@{identifier_type}"
         return given_names, surname, email, preferred_username
 
     def _identifier_validation(self, request: HttpRequest, identifier: str) -> None:
@@ -803,11 +803,11 @@ class SuomiFiBackend(LocalBaseBackend):
 
     def _parse_date_from_fpic(self, fpic: str) -> datetime | None:
         if fpic[6] == "+":
-            date_string = f"{ fpic[:4] }18{ fpic[4:6] }"
+            date_string = f"{fpic[:4]}18{fpic[4:6]}"
         elif fpic[6] in "-YXWVU":
-            date_string = f"{ fpic[:4] }19{ fpic[4:6] }"
+            date_string = f"{fpic[:4]}19{fpic[4:6]}"
         else:
-            date_string = f"{ fpic[:4] }20{ fpic[4:6] }"
+            date_string = f"{fpic[:4]}20{fpic[4:6]}"
         try:
             return datetime.strptime(date_string, "%d%m%Y")
         except ValueError:

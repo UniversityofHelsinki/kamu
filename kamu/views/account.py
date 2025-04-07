@@ -187,7 +187,7 @@ class AccountCreateView(FormView):
                 )
                 return self.form_invalid(form)
             audit_log.info(
-                f"Account created: { account.uid }",
+                f"Account created: {account.uid}",
                 category="account",
                 action="create",
                 outcome="success",
@@ -347,7 +347,7 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
                 )
                 return
             audit_log.info(
-                f"Account enabled: { self.object.uid }",
+                f"Account enabled: {self.object.uid}",
                 category="account",
                 action="update",
                 outcome="success",
@@ -386,7 +386,7 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
                 )
                 return
             audit_log.info(
-                f"Account disabled: { self.object.uid }",
+                f"Account disabled: {self.object.uid}",
                 category="account",
                 action="update",
                 outcome="success",
@@ -439,7 +439,7 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
             messages.add_message(self.request, messages.ERROR, _("Password reset failed, please try again later."))
             return self.form_invalid(form)
         audit_log.info(
-            f"Password reset: { self.object.uid }",
+            f"Password reset: {self.object.uid}",
             category="account",
             action="update",
             outcome="success",

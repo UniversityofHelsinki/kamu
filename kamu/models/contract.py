@@ -64,7 +64,7 @@ class Contract(models.Model):
         verbose_name_plural = _("Contracts")
 
     def __str__(self) -> str:
-        return f"{ self.template.name() }.{ self.template.version }: { self.identity.display_name() }"
+        return f"{self.template.name()}.{self.template.version}: {self.identity.display_name()}"
 
     def validate(self) -> bool:
         """
