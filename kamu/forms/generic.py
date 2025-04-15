@@ -18,7 +18,7 @@ class TextSearchForm(forms.Form):
     Only use with insensitive fields as search values are set to URL parameters.
     """
 
-    search = forms.CharField(label="search", max_length=255)
+    search = forms.CharField(label=_("Search text"), max_length=255)
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -26,7 +26,5 @@ class TextSearchForm(forms.Form):
         """
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_class = "row row-cols-lg-auto g-3 align-items-center"
-        self.helper.form_show_labels = False
         self.helper.form_method = "GET"
         self.helper.add_input(Submit("submit", _("Search")))
