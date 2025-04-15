@@ -4,24 +4,26 @@
 {% block content %}
   <h1 id="members-list" class="mb-4">{% trans "Expiring memberships" %}</h1>
   <p class="text-break">{% blocktrans with day_limit=expiring_date_limit %}List memberships expiring in {{ day_limit }} days.{% endblocktrans %} {% trans "Includes memberships in roles that you have approve or invite rights." %}</p>
-  <table class="table" aria-describedby="members-list">
-    <thead>
-    <tr>
-      <th scope="col">{% trans "Identity" %}</th>
-      <th scope="col">{% trans "Role" %}</th>
-      <th scope="col">{% trans "Status" %}</th>
-      <th scope="col">{% trans "Expires" %}</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for membership in object_list %}
+  <div class="table-responsive">
+    <table class="table" aria-describedby="members-list">
+      <thead>
       <tr>
-        <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{% if membership.identity %}{{ membership.identity }}{% else %}{% trans "Invite" %}: {{ membership.invite_email_address }}{% endif %}</a></th>
-        <td>{{ membership.role }}</td>
-        <td>{{ membership.get_status_display }}</td>
-        <td>{{ membership.expire_date }}</td>
+        <th scope="col">{% trans "Identity" %}</th>
+        <th scope="col">{% trans "Role" %}</th>
+        <th scope="col">{% trans "Status" %}</th>
+        <th scope="col">{% trans "Expires" %}</th>
       </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+      {% for membership in object_list %}
+        <tr>
+          <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{% if membership.identity %}{{ membership.identity }}{% else %}{% trans "Invite" %}: {{ membership.invite_email_address }}{% endif %}</a></th>
+          <td>{{ membership.role }}</td>
+          <td>{{ membership.get_status_display }}</td>
+          <td>{{ membership.expire_date }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
 {% endblock %}

@@ -47,23 +47,25 @@
   {% endif %}
   {% if memberships %}
     <h2 id="members-list">{% trans "Members" %}</h2>
-    <table class="table" aria-describedby="members-list">
-      <thead>
-      <tr>
-        <th scope="col">{% trans "Identity" %}</th>
-        <th scope="col">{% trans "Status" %}</th>
-        <th scope="col">{% trans "Expires" %}</th>
-      </tr>
-      </thead>
-      <tbody>
-      {% for membership in memberships %}
+    <div class="table-responsive">
+      <table class="table" aria-describedby="members-list">
+        <thead>
         <tr>
-          <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{% if membership.identity %}{{ membership.identity }}{% else %}{% trans "Invite" %}: {{ membership.invite_email_address }}{% endif %}</a></th>
-          <td>{{ membership.get_status_display }}</td>
-          <td>{{ membership.expire_date }}</td>
+          <th scope="col">{% trans "Identity" %}</th>
+          <th scope="col">{% trans "Status" %}</th>
+          <th scope="col">{% trans "Expires" %}</th>
         </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+        {% for membership in memberships %}
+          <tr>
+            <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{% if membership.identity %}{{ membership.identity }}{% else %}{% trans "Invite" %}: {{ membership.invite_email_address }}{% endif %}</a></th>
+            <td>{{ membership.get_status_display }}</td>
+            <td>{{ membership.expire_date }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
   {% endif %}
 {% endblock %}

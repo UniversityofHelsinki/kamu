@@ -5,25 +5,26 @@
 {% block content %}
   {% get_gender_value "UNKNOWN" as unknown_gender %}
   <h1 class="mb-4" id="combine-list">{% trans "Combine identities" %}</h1>
-    <div class="alert alert-success" role="alert">
-      <p>{% trans "Transfer information from the source identity to the target identity, and delete the source identity and the corresponding user." %}</p>
-      <p>{% trans "The following information is transferred if source identity has it defined and target doesn't." %}</p>
-      <ul>
-        <li>{% trans "Given names" %}</li>
-        <li>{% trans "Surname" %}</li>
-        <li>{% trans "Account name" %}</li>
-        <li>{% trans "Finnish personal identity code" %}</li>
-      </ul>
-      <p>{% trans "The following information is transferred from the source identity to the target identity." %}</p>
-      <ul>
-        <li>{% trans "Contact information: email addresses and phone numbers." %}</li>
-        <li>{% trans "Contracts" %}</li>
-        <li>{% trans "Linked identifiers." %}</li>
-        <li>{% trans "Role memberships." %}</li>
-        <li>{% trans "Kamu identifier is added to target's extra identifiers." %}</li>
-      </ul>
-      <p>{% trans "For other information, target's values are used." %}</p>
-    </div>
+  <div class="alert alert-success" role="alert">
+    <p>{% trans "Transfer information from the source identity to the target identity, and delete the source identity and the corresponding user." %}</p>
+    <p>{% trans "The following information is transferred if source identity has it defined and target doesn't." %}</p>
+    <ul>
+      <li>{% trans "Given names" %}</li>
+      <li>{% trans "Surname" %}</li>
+      <li>{% trans "Account name" %}</li>
+      <li>{% trans "Finnish personal identity code" %}</li>
+    </ul>
+    <p>{% trans "The following information is transferred from the source identity to the target identity." %}</p>
+    <ul>
+      <li>{% trans "Contact information: email addresses and phone numbers." %}</li>
+      <li>{% trans "Contracts" %}</li>
+      <li>{% trans "Linked identifiers." %}</li>
+      <li>{% trans "Role memberships." %}</li>
+      <li>{% trans "Kamu identifier is added to target's extra identifiers." %}</li>
+    </ul>
+    <p>{% trans "For other information, target's values are used." %}</p>
+  </div>
+  <div class="table-responsive">
     <table class="table" aria-describedby="combine-list">
       <thead>
       <tr>
@@ -34,122 +35,123 @@
       </tr>
       </thead>
       <tbody>
-        <tr>
-          <th scope="row">{% trans "Internal primary key" %}</th>
-          <th scope="row"><a href="{% url 'identity-detail' primary_identity.pk %}">{{ primary_identity.pk }}</a></th>
-          <th scope="row"><a href="{% url 'identity-detail' secondary_identity.pk %}">{{ secondary_identity.pk }}</a></th>
-          <th scope="row">{{ primary_identity.pk }}</th>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "Kamu identifier" %}</th>
-          <td>{{ primary_identity.kamu_id }}</td>
-          <td>{{ secondary_identity.kamu_id }}</td>
-          <td>{{ primary_identity.kamu_id }}</td>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "Account name" %}</th>
-          <td>{{ primary_identity.uid }}</td>
-          <td>{{ secondary_identity.uid }}</td>
-          <td>{{ primary_identity.uid|default:secondary_identity.uid }}</td>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "External identity" %}</th>
-          <td>{{ primary_identity.external }}</td>
-          <td>{{ secondary_identity.external }}</td>
-          <td>{{ primary_identity.external }}</td>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "Assurance level" %}</th>
-          <td>{{ primary_identity.get_assurance_level_display }}</td>
-          <td>{{ secondary_identity.get_assurance_level_display }}</td>
-          <td>{{ primary_identity.get_assurance_level_display }}</td>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "Given names" %}</th>
-          <td>{{ primary_identity.given_names }}</td>
-          <td>{{ secondary_identity.given_names }}</td>
-          <td>{{ primary_identity.given_names|default:secondary_identity.given_names }}</td>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "Surname" %}</th>
-          <td>{{ primary_identity.surname }}</td>
-          <td>{{ secondary_identity.surname }}</td>
-          <td>{{ primary_identity.surname|default:secondary_identity.surname }}</td>
-        </tr>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "Displayed given name" %}</th>
-          <td>{{ primary_identity.given_name_display }}</td>
-          <td>{{ secondary_identity.given_name_display }}</td>
-          <td>{{ primary_identity.given_name_display }}</td>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "Displayed surname" %}</th>
-          <td>{{ primary_identity.surname_display }}</td>
-          <td>{{ secondary_identity.surname_display }}</td>
-          <td>{{ primary_identity.surname_display }}</td>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "Date of birth" %}</th>
-          <td>{{ primary_identity.date_of_birth }}</td>
-          <td>{{ secondary_identity.date_of_birth }}</td>
-          <td>{{ primary_identity.date_of_birth|default:secondary_identity.date_of_birth }}</td>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "Gender" %}</th>
-          <td>{{ primary_identity.get_gender_display }}</td>
-          <td>{{ secondary_identity.get_gender_display }}</td>
-          <td>{% if primary_identity.gender != unknown_gender %}{{ primary_identity.get_gender_display }}{% else %}{{ secondary_identity.get_gender_display }}{% endif %}</td>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "Preferred language" %}</th>
-          <td>{{ primary_identity.preferred_language }}</td>
-          <td>{{ secondary_identity.preferred_language }}</td>
-          <td>{{ primary_identity.preferred_language }}</td>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "Finnish personal identity code" %}</th>
-          <td>{{ primary_identity.fpic }}</td>
-          <td>{{ secondary_identity.fpic }}</td>
-          <td>{{ primary_identity.fpic|default:secondary_identity.fpic }}</td>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "Nationality" %}</th>
-          <td>{% for nationality in primary_identity.nationality.all %}{{ nationality }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-          <td>{% for nationality in secondary_identity.nationality.all %}{{ nationality }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-          <td>{% for nationality in primary_identity.nationality.all %}{{ nationality }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "Phone numbers, verified" %}</th>
-          <td>{% for number in primary_identity.phone_numbers.all %}{{ number }}, {% if number.verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
-          <td>{% for number in secondary_identity.phone_numbers.all %}{{ number }}, {% if number.verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
-          <td>{% for number in primary_identity.phone_numbers.all %}{{ number }}, {% if number.verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}<br>{% endfor %}
-            {% for number in secondary_identity.phone_numbers.all %}{{ number }}, {% if number.verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "Email addresses, verified" %}</th>
-          <td>{% for address in primary_identity.email_addresses.all %}{{ address }}, {% if address.verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
-          <td>{% for address in secondary_identity.email_addresses.all %}{{ address }}, {% if address.verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
-          <td>{% for address in primary_identity.email_addresses.all %}{{ address }}, {% if address.verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}<br>{% endfor %}
-            {% for address in secondary_identity.email_addresses.all %}{{ address }}, {% if address.verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "Identifiers, deactivated" %}</th>
-          <td>{% for identifier in primary_identity.identifiers.all %}{{ identifier.type }}:{{ identifier.value }}, {{ identifier.deactivated_at }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
-          <td>{% for identifier in secondary_identity.identifiers.all %}{{ identifier.type }}:{{ identifier.value }}, {{ identifier.deactivated_at }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
-          <td>{% for identifier in primary_identity.identifiers.all %}{{ identifier.type }}:{{ identifier.value }}, {{ identifier.deactivated_at }}<br>{% endfor %}
-            {% for identifier in secondary_identity.identifiers.all %}{{ identifier.type }}:{{ identifier.value }}, {{ identifier.deactivated_at }}<br>{% endfor %}
-            kamu:{{ secondary_identity.kamu_id }}, {% now "DATETIME_FORMAT" %}</td>
-        </tr>
-        <tr>
-          <th scope="row">{% trans "Memberships, status" %}</th>
-          <td>{% for membership in primary_identity.membership_set.all %}{{ membership }}, {{ membership.status }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
-          <td>{% for membership in secondary_identity.membership_set.all %}{{ membership }}, {{ membership.status }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
-          <td>{% for membership in primary_identity.membership_set.all %}{{ membership }}, {{ membership.status }}<br>{% endfor %}
-            {% for membership in secondary_identity.membership_set.all %}{{ membership }}, {{ membership.status }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
-        </tr>
+      <tr>
+        <th scope="row">{% trans "Internal primary key" %}</th>
+        <th scope="row"><a href="{% url 'identity-detail' primary_identity.pk %}">{{ primary_identity.pk }}</a></th>
+        <th scope="row"><a href="{% url 'identity-detail' secondary_identity.pk %}">{{ secondary_identity.pk }}</a></th>
+        <th scope="row">{{ primary_identity.pk }}</th>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Kamu identifier" %}</th>
+        <td>{{ primary_identity.kamu_id }}</td>
+        <td>{{ secondary_identity.kamu_id }}</td>
+        <td>{{ primary_identity.kamu_id }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Account name" %}</th>
+        <td>{{ primary_identity.uid }}</td>
+        <td>{{ secondary_identity.uid }}</td>
+        <td>{{ primary_identity.uid|default:secondary_identity.uid }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "External identity" %}</th>
+        <td>{{ primary_identity.external }}</td>
+        <td>{{ secondary_identity.external }}</td>
+        <td>{{ primary_identity.external }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Assurance level" %}</th>
+        <td>{{ primary_identity.get_assurance_level_display }}</td>
+        <td>{{ secondary_identity.get_assurance_level_display }}</td>
+        <td>{{ primary_identity.get_assurance_level_display }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Given names" %}</th>
+        <td>{{ primary_identity.given_names }}</td>
+        <td>{{ secondary_identity.given_names }}</td>
+        <td>{{ primary_identity.given_names|default:secondary_identity.given_names }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Surname" %}</th>
+        <td>{{ primary_identity.surname }}</td>
+        <td>{{ secondary_identity.surname }}</td>
+        <td>{{ primary_identity.surname|default:secondary_identity.surname }}</td>
+      </tr>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Displayed given name" %}</th>
+        <td>{{ primary_identity.given_name_display }}</td>
+        <td>{{ secondary_identity.given_name_display }}</td>
+        <td>{{ primary_identity.given_name_display }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Displayed surname" %}</th>
+        <td>{{ primary_identity.surname_display }}</td>
+        <td>{{ secondary_identity.surname_display }}</td>
+        <td>{{ primary_identity.surname_display }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Date of birth" %}</th>
+        <td>{{ primary_identity.date_of_birth }}</td>
+        <td>{{ secondary_identity.date_of_birth }}</td>
+        <td>{{ primary_identity.date_of_birth|default:secondary_identity.date_of_birth }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Gender" %}</th>
+        <td>{{ primary_identity.get_gender_display }}</td>
+        <td>{{ secondary_identity.get_gender_display }}</td>
+        <td>{% if primary_identity.gender != unknown_gender %}{{ primary_identity.get_gender_display }}{% else %}{{ secondary_identity.get_gender_display }}{% endif %}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Preferred language" %}</th>
+        <td>{{ primary_identity.preferred_language }}</td>
+        <td>{{ secondary_identity.preferred_language }}</td>
+        <td>{{ primary_identity.preferred_language }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Finnish personal identity code" %}</th>
+        <td>{{ primary_identity.fpic }}</td>
+        <td>{{ secondary_identity.fpic }}</td>
+        <td>{{ primary_identity.fpic|default:secondary_identity.fpic }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Nationality" %}</th>
+        <td>{% for nationality in primary_identity.nationality.all %}{{ nationality }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+        <td>{% for nationality in secondary_identity.nationality.all %}{{ nationality }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+        <td>{% for nationality in primary_identity.nationality.all %}{{ nationality }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Phone numbers, verified" %}</th>
+        <td>{% for number in primary_identity.phone_numbers.all %}{{ number }}, {% if number.verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
+        <td>{% for number in secondary_identity.phone_numbers.all %}{{ number }}, {% if number.verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
+        <td>{% for number in primary_identity.phone_numbers.all %}{{ number }}, {% if number.verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}<br>{% endfor %}
+          {% for number in secondary_identity.phone_numbers.all %}{{ number }}, {% if number.verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Email addresses, verified" %}</th>
+        <td>{% for address in primary_identity.email_addresses.all %}{{ address }}, {% if address.verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
+        <td>{% for address in secondary_identity.email_addresses.all %}{{ address }}, {% if address.verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
+        <td>{% for address in primary_identity.email_addresses.all %}{{ address }}, {% if address.verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}<br>{% endfor %}
+          {% for address in secondary_identity.email_addresses.all %}{{ address }}, {% if address.verified %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Identifiers, deactivated" %}</th>
+        <td>{% for identifier in primary_identity.identifiers.all %}{{ identifier.type }}:{{ identifier.value }}, {{ identifier.deactivated_at }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
+        <td>{% for identifier in secondary_identity.identifiers.all %}{{ identifier.type }}:{{ identifier.value }}, {{ identifier.deactivated_at }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
+        <td>{% for identifier in primary_identity.identifiers.all %}{{ identifier.type }}:{{ identifier.value }}, {{ identifier.deactivated_at }}<br>{% endfor %}
+          {% for identifier in secondary_identity.identifiers.all %}{{ identifier.type }}:{{ identifier.value }}, {{ identifier.deactivated_at }}<br>{% endfor %}
+          kamu:{{ secondary_identity.kamu_id }}, {% now "DATETIME_FORMAT" %}</td>
+      </tr>
+      <tr>
+        <th scope="row">{% trans "Memberships, status" %}</th>
+        <td>{% for membership in primary_identity.membership_set.all %}{{ membership }}, {{ membership.status }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
+        <td>{% for membership in secondary_identity.membership_set.all %}{{ membership }}, {{ membership.status }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
+        <td>{% for membership in primary_identity.membership_set.all %}{{ membership }}, {{ membership.status }}<br>{% endfor %}
+          {% for membership in secondary_identity.membership_set.all %}{{ membership }}, {{ membership.status }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
+      </tr>
       </tbody>
     </table>
-    <p>{% trans "To prevent accidents, you are required to enter primary keys of the identities you want to combine." %}</p>
-    {% crispy form form.helper %}
+  </div>
+  <p>{% trans "To prevent accidents, you are required to enter primary keys of the identities you want to combine." %}</p>
+  {% crispy form form.helper %}
 {% endblock %}

@@ -80,47 +80,51 @@
   {% endif %}
   <h2 id="roles-list" class="mt-4">{% trans "Role memberships" %}</h2>
   {% if memberships %}
-    <table class="table" aria-describedby="roles-list">
-      <thead>
-      <tr>
-        <th scope="col">{% trans "Role" %}</th>
-        <th scope="col">{% trans "Status" %}</th>
-        <th scope="col">{% trans "Expires" %}</th>
-      </tr>
-      </thead>
-      <tbody>
-      {% for membership in memberships %}
+    <div class="table-responsive">
+      <table class="table" aria-describedby="roles-list">
+        <thead>
         <tr>
-          <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{{ membership.role.name }}</a></th>
-          <td>{{ membership.get_status_display }}</td>
-          <td>{{ membership.expire_date }}</td>
+          <th scope="col">{% trans "Role" %}</th>
+          <th scope="col">{% trans "Status" %}</th>
+          <th scope="col">{% trans "Expires" %}</th>
         </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+        {% for membership in memberships %}
+          <tr>
+            <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{{ membership.role.name }}</a></th>
+            <td>{{ membership.get_status_display }}</td>
+            <td>{{ membership.expire_date }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
   {% else %}
     <p>{% trans "You do not have any current or upcoming memberships." %}</p>
   {% endif %}
   {% if expired_memberships %}
     <h3 id="expired-roles-list" class="mt-4">{% trans "Expired memberships" %}</h3>
-    <table class="table" aria-describedby="expired-roles-list">
-      <thead>
-      <tr>
-        <th scope="col">{% trans "Role" %}</th>
-        <th scope="col">{% trans "Started" %}</th>
-        <th scope="col">{% trans "Expired" %}</th>
-      </tr>
-      </thead>
-      <tbody>
-      {% for membership in expired_memberships %}
+    <div class="table-responsive">
+      <table class="table" aria-describedby="expired-roles-list">
+        <thead>
         <tr>
-          <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{{ membership.role.name }}</a></th>
-          <td>{{ membership.start_date }}</td>
-          <td>{{ membership.expire_date }}</td>
+          <th scope="col">{% trans "Role" %}</th>
+          <th scope="col">{% trans "Started" %}</th>
+          <th scope="col">{% trans "Expired" %}</th>
         </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+        {% for membership in expired_memberships %}
+          <tr>
+            <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{{ membership.role.name }}</a></th>
+            <td>{{ membership.start_date }}</td>
+            <td>{{ membership.expire_date }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
   {% endif %}
   {% if perms.kamu.combine_identities %}
     <h2>{% trans "Combine identities" %}</h2>

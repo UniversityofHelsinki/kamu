@@ -6,36 +6,38 @@
 {% block content %}
   <h1>{% trans "Invite to role" %} {{ role.name }}</h1>
   <div class="alert alert-success" role="alert">
-  <p>{% trans "To invite a new member, first search for the identity with known user information such as email and phone number." %}</p>
-  <p>{% trans "If person is already found from the Kamu or the user directory, you can add role directly to the person." %}</p>
-  <p>{% trans "Otherwise you you can invite them by email, by searching with the email address." %}</p>
-  {% if HELP_LINK_MANAGERS %}<p class="text-break">{% blocktrans with link=HELP_LINK_MANAGERS %}Read more about role management from the <a href="{{ link }}">IT Helpdesk</a>.{% endblocktrans %}</p>{% endif %}
+    <p>{% trans "To invite a new member, first search for the identity with known user information such as email and phone number." %}</p>
+    <p>{% trans "If person is already found from the Kamu or the user directory, you can add role directly to the person." %}</p>
+    <p>{% trans "Otherwise you you can invite them by email, by searching with the email address." %}</p>
+    {% if HELP_LINK_MANAGERS %}<p class="text-break">{% blocktrans with link=HELP_LINK_MANAGERS %}Read more about role management from the <a href="{{ link }}">IT Helpdesk</a>.{% endblocktrans %}</p>{% endif %}
   </div>
   {% crispy form form.helper %}
   {% if object_list or request.POST.submit %}
     <h2 id="results-list">{% trans "Kamu results" %}</h2>
     {% if object_list %}
       <p>{% trans "To protect user privacy, email addresses and phone numbers are only listed when exactly matching the search parameter." %}</p>
-      <table class="table" aria-describedby="results-list">
-        <thead>
-        <tr>
-          <th scope="col">{% trans "Name" %}</th>
-          <th scope="col">{% trans "User account" %}</th>
-          <th scope="col">{% trans "Attributes" %}</th>
-          <th scope="col">{% trans "Select" %}</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for identity in object_list %}
+      <div class="table-responsive">
+        <table class="table" aria-describedby="results-list">
+          <thead>
           <tr>
-            <th scope="row"><a href="{% url 'identity-detail' identity.pk %}">{{ identity.display_name }}</a></th>
-            <td>{% if uid and uid == identity.uid %}<b>{{ identity.uid }}</b>{% elif identity.uid %}{{ identity.uid }}{% endif %}</td>
-            <td>{% matching_attributes identity=identity email=email phone=phone fpic=fpic as attributes %}{{ attributes|safe }}</td>
-            <td><a href="{% url 'role-invite-details' role.pk identity.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Add role" %}</a></td>
+            <th scope="col">{% trans "Name" %}</th>
+            <th scope="col">{% trans "User account" %}</th>
+            <th scope="col">{% trans "Attributes" %}</th>
+            <th scope="col">{% trans "Select" %}</th>
           </tr>
-        {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+          {% for identity in object_list %}
+            <tr>
+              <th scope="row"><a href="{% url 'identity-detail' identity.pk %}">{{ identity.display_name }}</a></th>
+              <td>{% if uid and uid == identity.uid %}<b>{{ identity.uid }}</b>{% elif identity.uid %}{{ identity.uid }}{% endif %}</td>
+              <td>{% matching_attributes identity=identity email=email phone=phone fpic=fpic as attributes %}{{ attributes|safe }}</td>
+              <td><a href="{% url 'role-invite-details' role.pk identity.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Add role" %}</a></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
     {% else %}
       <p>{% trans "No results with the provided search parameters." %}</p>
       {% if not email %}<p>{% trans "Please search with email address if you wish to send an email invite to the role." %}</p>{% endif %}
@@ -47,26 +49,28 @@
     <a href="{% url 'role-invite-details-email' role.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Send invitation" %}</a>
   {% endif %}
   {% if ldap_results %}
-  <h2 id="ldap-results-list" class="mt-4">{% trans "User directory results" %}</h2>
-  <table class="table" aria-describedby="ldap-results-list">
-    <thead>
-    <tr>
-      <th scope="col">{% trans "Name" %}</th>
-      <th scope="col">{% trans "User account" %}</th>
-      <th scope="col">{% trans "Attributes" %}</th>
-      <th scope="col">{% trans "Select" %}</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for result in ldap_results %}
-      <tr>
-        <th scope="row">{{ result.cn }}</th>
-        <td>{% if uid and uid == result.uid %}<b>{{ result.uid }}</b>{% else %}{{ result.uid }}{% endif %}</td>
-        <td>{% matching_attributes_ldap result=result email=email fpic=fpic as attributes %}{{ attributes|safe }}</td>
-        <td><a href="{% url 'role-invite-ldap' role.pk result.uid %}" class="btn btn-primary mb-3 me-3">{% trans "Add role" %}</a></td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+    <h2 id="ldap-results-list" class="mt-4">{% trans "User directory results" %}</h2>
+    <div class="table-responsive">
+      <table class="table" aria-describedby="ldap-results-list">
+        <thead>
+        <tr>
+          <th scope="col">{% trans "Name" %}</th>
+          <th scope="col">{% trans "User account" %}</th>
+          <th scope="col">{% trans "Attributes" %}</th>
+          <th scope="col">{% trans "Select" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for result in ldap_results %}
+          <tr>
+            <th scope="row">{{ result.cn }}</th>
+            <td>{% if uid and uid == result.uid %}<b>{{ result.uid }}</b>{% else %}{{ result.uid }}{% endif %}</td>
+            <td>{% matching_attributes_ldap result=result email=email fpic=fpic as attributes %}{{ attributes|safe }}</td>
+            <td><a href="{% url 'role-invite-ldap' role.pk result.uid %}" class="btn btn-primary mb-3 me-3">{% trans "Add role" %}</a></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
   {% endif %}
 {% endblock %}

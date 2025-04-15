@@ -9,68 +9,72 @@
     <h1 class="mb-4">{{ identity.display_name }} | {% trans "Identifier information" %}</h1>
     <h2 id="identifier-active-list" class="mt-5">{% trans "Active identifiers" %}</h2>
     {% if identifier_active_list %}
-      <table class="table" aria-describedby="identifier-active-list">
-        <thead>
-        <tr>
-          <th scope="col">{% trans "Type" %}</th>
-          <th scope="col">{% trans "Creation time" %}</th>
-          <th scope="col" class="d-none d-md-table-cell">{% trans "Value" %}</th>
-          {% if user == identity.user or perms.kamu.change_identifiers %}<th scope="col">{% trans "Deactivate" %}</th>{% endif %}
-        </tr>
-        </thead>
-        <tbody>
-        {% for identifier in identifier_active_list %}
+      <div class="table-responsive">
+        <table class="table" aria-describedby="identifier-active-list">
+          <thead>
           <tr>
-            <th scope="row">{{ identifier.get_type_display }}</th>
-            <td>{{ identifier.created_at }}</td>
-            <td class="d-none d-md-table-cell">{{ identifier.value }}</td>
-            {% if perms.kamu.change_identifiers or user == identity.user %}<td>
-              <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#identifierAddressModal{{ identifier.pk }}">{% trans "Deactivate" %}</button>
-              <div class="modal fade" id="identifierAddressModal{{ identifier.pk }}" tabindex="-1" aria-labelledby="identifierAddressModalLabel{{ identifier.pk }}" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h1 class="modal-title fs-5" id="identifierAddressModalLabel{{ identifier.pk }}">{% trans "Confirm deactivation" %}</h1>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans "Close" %}"></button>
-                    </div>
-                    <div class="modal-body">
-                      <p class="text-break">{% blocktrans with type=identifier.get_type_display value=identifier.value %}You are deactivating {{ type }} with value {{ value }}.{% endblocktrans %}</p>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
-                      <button type="submit" name="identifier_deactivate" value="{{ identifier.pk }}" class="btn btn-danger">{% trans "Confirm deactivation" %}</button>
+            <th scope="col">{% trans "Type" %}</th>
+            <th scope="col">{% trans "Creation time" %}</th>
+            <th scope="col" class="d-none d-md-table-cell">{% trans "Value" %}</th>
+            {% if user == identity.user or perms.kamu.change_identifiers %}<th scope="col">{% trans "Deactivate" %}</th>{% endif %}
+          </tr>
+          </thead>
+          <tbody>
+          {% for identifier in identifier_active_list %}
+            <tr>
+              <th scope="row">{{ identifier.get_type_display }}</th>
+              <td>{{ identifier.created_at }}</td>
+              <td class="d-none d-md-table-cell">{{ identifier.value }}</td>
+              {% if perms.kamu.change_identifiers or user == identity.user %}<td>
+                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#identifierAddressModal{{ identifier.pk }}">{% trans "Deactivate" %}</button>
+                <div class="modal fade" id="identifierAddressModal{{ identifier.pk }}" tabindex="-1" aria-labelledby="identifierAddressModalLabel{{ identifier.pk }}" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="identifierAddressModalLabel{{ identifier.pk }}">{% trans "Confirm deactivation" %}</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans "Close" %}"></button>
+                      </div>
+                      <div class="modal-body">
+                        <p class="text-break">{% blocktrans with type=identifier.get_type_display value=identifier.value %}You are deactivating {{ type }} with value {{ value }}.{% endblocktrans %}</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                        <button type="submit" name="identifier_deactivate" value="{{ identifier.pk }}" class="btn btn-danger">{% trans "Confirm deactivation" %}</button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </td>{% endif %}
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
+              </td>{% endif %}
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
     {% else %}
       <p>{% trans "You do not have any linked identifiers." %}</p>
     {% endif %}
     {% if identifier_deactivated_list %}
       <h2 id="identifier-deactivated-list" class="mt-5">{% trans "Deactivated identifiers" %}</h2>
-      <table class="table" aria-describedby="identifier-deactivated-list">
-        <thead>
-        <tr>
-          <th scope="col">{% trans "Type" %}</th>
-          <th scope="col">{% trans "Creation time" %}</th>
-          <th scope="col">{% trans "Deactivation time" %}</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for identifier in identifier_deactivated_list %}
+      <div class="table-responsive">
+        <table class="table" aria-describedby="identifier-deactivated-list">
+          <thead>
           <tr>
-            <th scope="row">{{ identifier.get_type_display }}</th>
-            <td>{{ identifier.created_at }}</td>
-            <td>{{ identifier.deactivated_at }}</td>
+            <th scope="col">{% trans "Type" %}</th>
+            <th scope="col">{% trans "Creation time" %}</th>
+            <th scope="col">{% trans "Deactivation time" %}</th>
           </tr>
-        {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+          {% for identifier in identifier_deactivated_list %}
+            <tr>
+              <th scope="row">{{ identifier.get_type_display }}</th>
+              <td>{{ identifier.created_at }}</td>
+              <td>{{ identifier.deactivated_at }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
     {% endif %}
     {% if user == identity.user %}
       <h2>{% trans "Link a new identifier" %}</h2>
