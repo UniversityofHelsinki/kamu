@@ -162,7 +162,7 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
         return redirect("identity-detail", pk=self.object.pk)
 
 
-class IdentityUpdateView(UpdateView):
+class IdentityUpdateView(LoginRequiredMixin, UpdateView):
     model = Identity
     form_class = IdentityForm
     template_name = "identity/identity_form.html"

@@ -35,7 +35,7 @@ from kamu.utils.audit import AuditLog
 audit_log = AuditLog()
 
 
-class AccountCreateView(FormView):
+class AccountCreateView(LoginRequiredMixin, FormView):
     """
     View to create a user account.
     """
