@@ -16,6 +16,11 @@ ALLOWED_HOSTS: list[str] = [".local", ".localhost", "127.0.0.1", "[::1]"]
 # Service base URL for links in emails, scheme://url:port
 SERVICE_LINK_URL: str = "https://localhost:8000"
 
+# Set locale path for translations, otherwise app translations may get overridden.
+LOCALE_PATHS = [
+    "/path/to/kamu/kamu/locale",
+]
+
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES: dict[str, dict[str, Any]] = {
