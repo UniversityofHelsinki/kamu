@@ -16,6 +16,7 @@ from django.utils import timezone
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
+from kamu.models.organisation import Organisation
 from kamu.validators.role import validate_role_hierarchy
 
 if TYPE_CHECKING:
@@ -24,7 +25,8 @@ if TYPE_CHECKING:
 
 class Role(models.Model):
     """
-    Stores a role, related to self, :class:`django.contrib.auth.models.Group` and :class:`kamu.models.role.Permission`.
+    Stores a role, related to self, :class:`django.contrib.auth.models.Group`, :class:`kamu.models.role.Permission`.,
+    :class:`kamu.models.role.Requirement` and :class:`kamu.models.organisation.Organisation`.
     """
 
     LANG_CHOICES = (
@@ -44,7 +46,9 @@ class Role(models.Model):
     parent = models.ForeignKey("self", null=True, blank=True, default=None, on_delete=models.SET_NULL)
 
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
-    organisation_unit = models.CharField(max_length=20, verbose_name=_("Organisation unit"))
+    organisation = models.ForeignKey(
+        Organisation, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Organisation unit")
+    )
     notification_email_address = models.EmailField(blank=True, null=True, verbose_name=_("Notification email address"))
     notification_language = models.CharField(
         max_length=2,

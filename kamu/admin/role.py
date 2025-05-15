@@ -18,4 +18,4 @@ class RequirementAdmin(AuditModelAdmin):
 class RoleAdmin(AuditModelAdmin):
     list_display = ["name", "parent", "owner"]
     search_fields = ["identifier", "name_en", "name_fi", "name_sv"]
-    autocomplete_fields = ["parent", "owner"]
+    autocomplete_fields = ["parent", "owner", "organisation"]

@@ -13,11 +13,13 @@ from kamu.admin.identity import (
     PhoneNumberAdmin,
 )
 from kamu.admin.membership import MembershipAdmin
+from kamu.admin.organisation import OrganisationAdmin
 from kamu.admin.role import PermissionAdmin, RequirementAdmin, RoleAdmin
 from kamu.models.account import Account
 from kamu.models.contract import Contract, ContractTemplate
 from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
 from kamu.models.membership import Membership
+from kamu.models.organisation import Organisation
 from kamu.models.role import Permission, Requirement, Role
 
 admin.site.unregister(User)
@@ -35,6 +37,7 @@ admin.site.register(Identifier, IdentifierAdmin)
 admin.site.register(Identity, IdentityAdmin)
 admin.site.register(PhoneNumber, PhoneNumberAdmin)
 admin.site.register(Membership, MembershipAdmin)
+admin.site.register(Organisation, OrganisationAdmin)
 admin.site.register(Permission, PermissionAdmin)
 admin.site.register(Requirement, RequirementAdmin)
 admin.site.register(Role, RoleAdmin)

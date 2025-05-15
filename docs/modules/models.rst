@@ -21,6 +21,11 @@ Membership
 .. automodule:: kamu.models.membership
     :members:
 
+Organisation
+------------
+.. automodule:: kamu.models.organisation
+    :members:
+
 Role
 ----
 .. automodule:: kamu.models.role

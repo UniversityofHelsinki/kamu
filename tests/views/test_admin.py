@@ -10,8 +10,9 @@ from django.utils import timezone
 
 from kamu.models.identity import Identifier, PhoneNumber
 from kamu.models.membership import Membership
+from kamu.models.organisation import Organisation
 from kamu.models.role import Role
-from tests.data import ROLES
+from tests.data import ORGANISATIONS, ROLES
 from tests.setup import BaseTestCase
 
 
@@ -128,6 +129,7 @@ class AdminSiteTests(BaseTestCase):
     def test_add_role(self, mock_audit_logger):
         url = f"{self.url}role/add/"
         role_data = ROLES["guest_student"]
+        role_data.pop("organisation")
         role_data.update(self.created_at)
         response = self.client.post(url, role_data, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -220,6 +222,7 @@ class AdminSiteTests(BaseTestCase):
         role = self.create_role()
         sub_role = self.create_role("consultant", parent=role)
         role_data = ROLES["guest_student"]
+        role_data.pop("organisation", None)
         role_data.update(
             {"created_at_0": timezone.now().date(), "created_at_1": timezone.now().time(), "parent": sub_role.pk}
         )
@@ -240,3 +243,28 @@ class AdminSiteTests(BaseTestCase):
         response = self.client.post(url, role_data)
         self.assertIn("Role hierarchy cannot be more than maximum depth", response.content.decode("utf-8"))
         self.assertFalse(Role.objects.filter(identifier=ROLES["guest_student"]["identifier"]).exists())
+
+    def _create_organisation_hierarchy(self):
+        organisation = self.create_organisation()
+        organisation_data = ORGANISATIONS["research"]
+        organisation_data.pop("parent", None)
+        organisation_data.update(
+            {"created_at_0": timezone.now().date(), "created_at_1": timezone.now().time(), "parent": organisation.pk}
+        )
+        return organisation_data
+
+    @override_settings(ORGANISATION_HIERARCHY_MAXIMUM_DEPTH=2)
+    def test_add_organisation_hierarchy_allowed_depth(self):
+        url = f"{self.url}organisation/add/"
+        organisation_data = self._create_organisation_hierarchy()
+        response = self.client.post(url, organisation_data)
+        self.assertNotIn("Organisation hierarchy cannot be more than maximum depth.", response.content.decode("utf-8"))
+        self.assertTrue(Organisation.objects.filter(identifier=ORGANISATIONS["research"]["identifier"]).exists())
+
+    @override_settings(ORGANISATION_HIERARCHY_MAXIMUM_DEPTH=1)
+    def test_add_organisation_hierarchy_too_deep(self):
+        url = f"{self.url}organisation/add/"
+        organisation_data = self._create_organisation_hierarchy()
+        response = self.client.post(url, organisation_data)
+        self.assertIn("Organisation hierarchy cannot be deeper than maximum depth", response.content.decode("utf-8"))
+        self.assertFalse(Organisation.objects.filter(identifier=ORGANISATIONS["research"]["identifier"]).exists())

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-20 11:01+0300\n"
+"POT-Creation-Date: 2025-05-20 15:17+0300\n"
 "Language: EN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -280,7 +280,7 @@ msgstr ""
 msgid "Given name(s)"
 msgstr ""
 
-#: forms/identity.py:46 models/account.py:39 models/role.py:235
+#: forms/identity.py:46 models/account.py:39 models/role.py:239
 #: templates/identity/identity_search.html:18
 #: templates/identity/identity_search.html:45
 #: templates/membership/membership_invite.html:34
@@ -500,15 +500,15 @@ msgstr ""
 #: models/account.py:35 models/account.py:63 models/contract.py:55
 #: models/contract.py:112 models/identity.py:40 models/identity.py:244
 #: models/identity.py:455 models/identity.py:491 models/identity.py:552
-#: models/membership.py:72 models/role.py:78 models/role.py:257
-#: models/role.py:340 models/token.py:313
+#: models/membership.py:72 models/organisation.py:31 models/role.py:82
+#: models/role.py:261 models/role.py:344 models/token.py:313
 msgid "Created at"
 msgstr ""
 
 #: models/account.py:36 models/identity.py:41 models/identity.py:245
 #: models/identity.py:456 models/identity.py:492 models/identity.py:553
-#: models/membership.py:73 models/role.py:79 models/role.py:258
-#: models/role.py:341
+#: models/membership.py:73 models/organisation.py:32 models/role.py:83
+#: models/role.py:262 models/role.py:345
 msgid "Updated at"
 msgstr ""
 
@@ -616,15 +616,15 @@ msgstr ""
 msgid "Nationalities"
 msgstr ""
 
-#: models/identity.py:117 models/role.py:31
+#: models/identity.py:117 models/role.py:33
 msgid "English"
 msgstr ""
 
-#: models/identity.py:118 models/role.py:32
+#: models/identity.py:118 models/role.py:34
 msgid "Finnish"
 msgstr ""
 
-#: models/identity.py:119 models/role.py:33
+#: models/identity.py:119 models/role.py:35
 msgid "Swedish"
 msgstr ""
 
@@ -912,82 +912,114 @@ msgstr ""
 msgid "Memberships"
 msgstr ""
 
-#: models/role.py:36
-msgid "Role identifier"
+#: models/organisation.py:21
+msgid "Organisation identifier"
 msgstr ""
 
-#: models/role.py:37
-msgid "Role name (fi)"
+#: models/organisation.py:22
+msgid "Organisation abbreviation"
+msgstr ""
+
+#: models/organisation.py:23
+msgid "Organisation name (fi)"
+msgstr ""
+
+#: models/organisation.py:24
+msgid "Organisation name (en)"
+msgstr ""
+
+#: models/organisation.py:25
+msgid "Organisation name (sv)"
+msgstr ""
+
+#: models/organisation.py:29
+msgid "Organisation code"
+msgstr ""
+
+#: models/organisation.py:35
+msgid "Organisation"
+msgstr ""
+
+#: models/organisation.py:36
+msgid "Organisations"
 msgstr ""
 
 #: models/role.py:38
-msgid "Role name (en)"
+msgid "Role identifier"
 msgstr ""
 
 #: models/role.py:39
-msgid "Role name (sv)"
+msgid "Role name (fi)"
 msgstr ""
 
 #: models/role.py:40
-msgid "Role description (fi)"
+msgid "Role name (en)"
 msgstr ""
 
 #: models/role.py:41
-msgid "Role description (en)"
+msgid "Role name (sv)"
 msgstr ""
 
 #: models/role.py:42
+msgid "Role description (fi)"
+msgstr ""
+
+#: models/role.py:43
+msgid "Role description (en)"
+msgstr ""
+
+#: models/role.py:44
 msgid "Role description (sv)"
 msgstr ""
 
-#: models/role.py:47
+#: models/role.py:50
 msgid "Organisation unit"
 msgstr ""
 
-#: models/role.py:48
+#: models/role.py:52
 msgid "Notification email address"
 msgstr ""
 
-#: models/role.py:53 templates/role/role_detail.html:26
+#: models/role.py:57 templates/role/role_detail.html:26
 msgid "Notification language"
 msgstr ""
 
-#: models/role.py:56 templates/role/role_detail.html:30
+#: models/role.py:60 templates/role/role_detail.html:30
 msgid "Inviter groups"
 msgstr ""
 
-#: models/role.py:59 templates/role/role_detail.html:33
+#: models/role.py:63 templates/role/role_detail.html:33
 msgid "Approver groups"
 msgstr ""
 
-#: models/role.py:62 models/role.py:263
+#: models/role.py:66 models/role.py:267
 #: templates/membership/membership_detail.html:19
 #: templates/membership/membership_invite.html:13
 #: templates/role/role_detail.html:16
 msgid "Permissions"
 msgstr ""
 
-#: models/role.py:64 models/role.py:254 models/role.py:349
+#: models/role.py:68 models/role.py:258 models/role.py:353
 msgid "Requirements"
 msgstr ""
 
-#: models/role.py:67
+#: models/role.py:71
 msgid "IAM Group"
 msgstr ""
 
-#: models/role.py:69
+#: models/role.py:73
 msgid "Maximum duration (days)"
 msgstr ""
 
-#: models/role.py:72
+#: models/role.py:76
 msgid "Purge delay (days)"
 msgstr ""
 
-#: models/role.py:73
+#: models/role.py:77
 msgid "Grace period from membership expiration to purge (days)"
 msgstr ""
 
-#: models/role.py:85 templates/identity/identity_detail.html:87
+#: models/role.py:89 templates/identity/identity_detail.html:87
 #: templates/identity/identity_detail.html:112
 #: templates/membership/membership_approval_list.html:12
 #: templates/membership/membership_detail.html:15
@@ -998,103 +1030,103 @@ msgstr ""
 msgid "Role"
 msgstr ""
 
-#: models/role.py:86 templates/base.html:32
+#: models/role.py:90 templates/base.html:32
 msgid "Roles"
 msgstr ""
 
-#: models/role.py:232
+#: models/role.py:236
 msgid "Permission identifier"
 msgstr ""
 
-#: models/role.py:236
+#: models/role.py:240
 msgid "Generic permission"
 msgstr ""
 
-#: models/role.py:237
+#: models/role.py:241
 msgid "Service"
 msgstr ""
 
-#: models/role.py:240
+#: models/role.py:244
 msgid "Permission type"
 msgstr ""
 
-#: models/role.py:243
+#: models/role.py:247
 msgid "Permission name (fi)"
 msgstr ""
 
-#: models/role.py:244
+#: models/role.py:248
 msgid "Permission name (en)"
 msgstr ""
 
-#: models/role.py:245
+#: models/role.py:249
 msgid "Permission name (sv)"
 msgstr ""
 
-#: models/role.py:246
+#: models/role.py:250
 msgid "Permission description (fi)"
 msgstr ""
 
-#: models/role.py:247
+#: models/role.py:251
 msgid "Permission description (en)"
 msgstr ""
 
-#: models/role.py:248
+#: models/role.py:252
 msgid "Permission description (sv)"
 msgstr ""
 
-#: models/role.py:250
+#: models/role.py:254
 msgid "Permission cost"
 msgstr ""
 
-#: models/role.py:251
+#: models/role.py:255
 msgid "Permission value"
 msgstr ""
 
-#: models/role.py:262
+#: models/role.py:266
 msgid "Permission"
 msgstr ""
 
-#: models/role.py:309
+#: models/role.py:313
 msgid "Requirement name (fi)"
 msgstr ""
 
-#: models/role.py:310
+#: models/role.py:314
 msgid "Requirement name (en)"
 msgstr ""
 
-#: models/role.py:311
+#: models/role.py:315
 msgid "Requirement name (sv)"
 msgstr ""
 
-#: models/role.py:314
+#: models/role.py:318
 msgid "Requires a signed contract of type (value)"
 msgstr ""
 
-#: models/role.py:315
+#: models/role.py:319
 msgid "User attribute (value) is defined"
 msgstr ""
 
-#: models/role.py:316
+#: models/role.py:320
 msgid "Assurance level at least level"
 msgstr ""
 
-#: models/role.py:317
+#: models/role.py:321
 msgid "External requirement"
 msgstr ""
 
-#: models/role.py:319
+#: models/role.py:323
 msgid "Requirement type"
 msgstr ""
 
-#: models/role.py:323
+#: models/role.py:327
 msgid "Requirement value"
 msgstr ""
 
-#: models/role.py:327
+#: models/role.py:331
 msgid "Level or version required"
 msgstr ""
 
-#: models/role.py:329
+#: models/role.py:333
 msgid ""
 "Require a minimum level of assurance or attribute verification level, or a "
 "minimum version of contract. Contract level must be a positive integer. "
@@ -1102,39 +1134,39 @@ msgid ""
 "levels are from 1 (self assured) to 4 (strong electrical verification)"
 msgstr ""
 
-#: models/role.py:336
+#: models/role.py:340
 msgid "Grace period (days)"
 msgstr ""
 
-#: models/role.py:337
+#: models/role.py:341
 msgid "Grace period (days) before membership status is changed."
 msgstr ""
 
-#: models/role.py:348
+#: models/role.py:352
 msgid "Requirement"
 msgstr ""
 
-#: models/role.py:384
+#: models/role.py:388
 msgid "Contract requirement needs contract type as a value."
 msgstr ""
 
-#: models/role.py:386
+#: models/role.py:390
 msgid "Contract version must be a positive integer."
 msgstr ""
 
-#: models/role.py:394
+#: models/role.py:398
 msgid "Allowed assurance levels are from %(min) (low) to %(max) (high)."
 msgstr ""
 
-#: models/role.py:404
+#: models/role.py:408
 msgid "Invalid attribute name."
 msgstr ""
 
-#: models/role.py:409
+#: models/role.py:413
 msgid "Attribute does not have verification level."
 msgstr ""
 
-#: models/role.py:416
+#: models/role.py:420
 msgid "Allowed levels are from %(min) to %(max)."
 msgstr ""
 
@@ -1195,7 +1227,7 @@ msgstr ""
 msgid "Field %(attribute)s is required."
 msgstr ""
 
-#: serializers/role.py:130
+#: serializers/role.py:132
 msgid "Cannot validate sequence data."
 msgstr ""
 
@@ -2832,6 +2864,14 @@ msgstr ""
 msgid ""
 "Maximum membership duration for this role is %(max_duration)s days. Last "
 "possible date for this membership is %(last_date)s."
+msgstr ""
+
+#: validators/organisation.py:32
+msgid "Organisation hierarchy cannot be deeper than maximum depth."
+msgstr ""
+
+#: validators/organisation.py:34
+msgid "Organisation cannot be in its own hierarchy."
 msgstr ""
 
 #: validators/role.py:32

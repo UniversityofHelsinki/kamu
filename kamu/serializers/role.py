@@ -10,6 +10,7 @@ from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
+from kamu.models.organisation import Organisation
 from kamu.models.role import Permission, Requirement, Role
 from kamu.serializers.mixins import EagerLoadingMixin
 from kamu.validators.role import validate_role_hierarchy
@@ -85,8 +86,9 @@ class RoleSerializer(serializers.ModelSerializer[Role], EagerLoadingMixin):
     permissions = serializers.SlugRelatedField(
         slug_field="identifier", required=False, many=True, queryset=Permission.objects.all()
     )
+    organisation = serializers.SlugRelatedField(slug_field="code", required=False, queryset=Organisation.objects.all())
 
-    _PREFETCH_RELATED_FIELDS = ["inviters", "approvers", "permissions", "requirements"]
+    _PREFETCH_RELATED_FIELDS = ["inviters", "approvers", "permissions", "requirements", "organisation"]
     _SELECT_RELATED_FIELDS = ["owner", "parent"]
 
     class Meta:
@@ -102,7 +104,7 @@ class RoleSerializer(serializers.ModelSerializer[Role], EagerLoadingMixin):
             "description_sv",
             "parent",
             "owner",
-            "organisation_unit",
+            "organisation",
             "notification_email_address",
             "notification_language",
             "inviters",

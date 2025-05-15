@@ -50,6 +50,45 @@ NATIONALITIES: dict = {
     },
 }
 
+ORGANISATIONS: dict = {
+    "testorg": {
+        "identifier": "testorg",
+        "abbreviation": "TO",
+        "name_en": "Test organisation",
+        "name_fi": "Testiorganisaatio",
+        "name_sv": "Testorganisation",
+        "code": "orgmain",
+        "parent": None,
+    },
+    "research": {
+        "identifier": "research",
+        "abbreviation": "R",
+        "name_en": "Research",
+        "name_fi": "Tutkimus",
+        "name_sv": "Forskning",
+        "code": "orgresearch",
+        "parent": "testorg",
+    },
+    "studies": {
+        "identifier": "studies",
+        "abbreviation": "S",
+        "name_en": "Studies",
+        "name_fi": "Opetus",
+        "name_sv": "Studier",
+        "code": "orgstudies",
+        "parent": "testorg",
+    },
+    "external": {
+        "identifier": "external",
+        "abbreviation": "E",
+        "name_en": "External organisation",
+        "name_fi": "Ulkoinen organisaatio",
+        "name_sv": "Extern organisation",
+        "code": "orgexternal",
+        "parent": "research",
+    },
+}
+
 PERMISSIONS: dict = {
     "account": {
         "type": Permission.Type.ACCOUNT,
@@ -124,9 +163,9 @@ ROLES: dict = {
         "description_fi": "Muun yrityksen työntekijä.",
         "description_sv": "Extern styrelseledamot.",
         "maximum_duration": 365,
-        "organisation_unit": "external",
         "notification_email_address": "hr@example.org",
         "notification_language": "en",
+        "organisation": "external",
     },
     "consultant": {
         "identifier": "consultant",
@@ -137,9 +176,9 @@ ROLES: dict = {
         "description_fi": "Ulkopuolinen konsultti.",
         "description_sv": "Extern konsult.",
         "maximum_duration": 180,
-        "organisation_unit": "consulting",
         "notification_email_address": "hr@example.org",
         "notification_language": "sv",
+        "organisation": "research",
     },
     "ext_research": {
         "identifier": "ext_research",
@@ -150,9 +189,9 @@ ROLES: dict = {
         "description_fi": "Tutkimusryhmän ulkoinen jäsen.",
         "description_sv": "Forskningsgrupp extern medlem.",
         "maximum_duration": 90,
-        "organisation_unit": "research",
         "notification_email_address": "research@example.org",
         "notification_language": "en",
+        "organisation": "research",
     },
     "guest_student": {
         "identifier": "guest_student",
@@ -163,9 +202,9 @@ ROLES: dict = {
         "description_fi": "Vieraileva opiskelija.",
         "description_sv": "Gäststudent.",
         "maximum_duration": 30,
-        "organisation_unit": "studies",
         "notification_email_address": "teaching@example.org",
         "notification_language": "en",
+        "organisation": "studies",
     },
     "ext_board": {
         "identifier": "ext_board",
@@ -176,9 +215,9 @@ ROLES: dict = {
         "description_fi": "Hallituksen ulkoinen jäsen",
         "description_sv": "Extern styrelseledamot",
         "maximum_duration": 365,
-        "organisation_unit": "board",
         "notification_email_address": "hr@example.org",
         "notification_language": "fi",
+        "organisation": "testorg",
     },
 }
 

@@ -86,7 +86,9 @@ def get_account_data(identity: Identity, account_type: Account.Type) -> dict[str
         settings.ACCOUNT_ATTRIBUTES["givenName"]: identity.given_name_display,
         settings.ACCOUNT_ATTRIBUTES["kamuIdentifier"]: str(identity.kamu_id),
         settings.ACCOUNT_ATTRIBUTES["mail"]: identity.email_address(),
-        settings.ACCOUNT_ATTRIBUTES["organizationUnit"]: membership.role.organisation_unit,
+        settings.ACCOUNT_ATTRIBUTES["organizationUnit"]: (
+            membership.role.organisation.code if membership.role.organisation else None
+        ),
         settings.ACCOUNT_ATTRIBUTES["schacExpiryDate"]: membership.expire_date.isoformat(),
         settings.ACCOUNT_ATTRIBUTES["sn"]: identity.surname_display,
     }

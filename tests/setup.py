@@ -13,10 +13,12 @@ from kamu.models.account import Account
 from kamu.models.contract import ContractTemplate
 from kamu.models.identity import EmailAddress, Identity, Nationality, PhoneNumber
 from kamu.models.membership import Membership
+from kamu.models.organisation import Organisation
 from kamu.models.role import Permission, Requirement, Role
 from tests.data import (
     CONTRACT_TEMPLATES,
     NATIONALITIES,
+    ORGANISATIONS,
     PERMISSIONS,
     REQUIREMENTS,
     ROLES,
@@ -70,10 +72,23 @@ class TestData(TestCase):
             )
         return self.superidentity
 
-    def create_role(self, name="ext_employee", parent=None):
+    def create_organisation(self, name="testorg", parent=None):
+        organisation = ORGANISATIONS[name].copy()
+        organisation.pop("parent")
         if parent:
-            return Role.objects.create(parent=parent, **ROLES[name])
-        return Role.objects.create(**ROLES[name])
+            return Organisation.objects.create(parent=parent, **organisation)
+        return Organisation.objects.create(**organisation)
+
+    def create_role(self, name="ext_employee", parent=None):
+        role = ROLES[name].copy()
+        organisation = role.pop("organisation")
+        if organisation:
+            role["organisation"], _ = Organisation.objects.get_or_create(identifier=organisation)
+        else:
+            role["organisation"] = None
+        if parent:
+            return Role.objects.create(parent=parent, **role)
+        return Role.objects.create(**role)
 
     def create_membership(
         self,

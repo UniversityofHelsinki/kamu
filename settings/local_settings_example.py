@@ -208,6 +208,26 @@ ACCOUNT_API_KEY: str = "change-api-key"
 # ACCOUNT_API_UPDATE_PATH: str = "update"
 # ACCOUNT_API_UID_CHOICES_PATH: str = "generateUids"
 
+ORGANISATION_API_URL: str = "https://localhost/organisation/info/v2"
+ORGANISATION_API_KEY: str = "change-api-key"
+# ORGANISATION_AUTH_HEADER: str = "X-Api-Key"
+# ORGANISATION_API_TIMEOUT: int = 3
+# ORGANISATION_API_VERIFY_SSL: bool = True
+# ORGANISATION_API_CERT_FILE_PATH: str | None = "/path/to/cert.pem"
+# ORGANISATION_API_KEY_FILE_PATH: str | None = "/path/to/key.pem"
+
+# Change API default paths. These are appended to ACCOUNT_API_URL with urllib.parse.urljoin.
+# ORGANISATION_API_STRUCTURE_PATH: str = "financeUnits"
+# ORGANISATION_API_ABBREVIATION_PATH: str = "officialUnits"
+
+# Change API object default keys.
+# ORGANISATION_API_IDENTIFIER_KEY: str = uniqueId"
+# ORGANISATION_API_NAME_EN_KEY: str = nameEn"
+# ORGANISATION_API_NAME_FI_KEY: str = nameFi"
+# ORGANISATION_API_NAME_SV_KEY: str = nameSv"
+# ORGANISATION_API_CODE_KEY: str = code"
+# ORGANISATION_API_ABBREVIATION_KEY: str = abbreviation"
+
 # How many uid choices are given when creating a new account.
 # ACCOUNT_UID_CHOICES_NUMBER: int = 5
 

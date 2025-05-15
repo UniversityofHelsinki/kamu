@@ -161,6 +161,7 @@ DEFAULT_AUTO_FIELD: str = "django.db.models.BigAutoField"
 
 LOGOUT_REDIRECT_URL: str = "/"
 
+ORGANISATION_HIERARCHY_MAXIMUM_DEPTH: int = 4
 ROLE_HIERARCHY_MAXIMUM_DEPTH: int = 4
 
 # Allow use of 900-series Finnish personal identity codes

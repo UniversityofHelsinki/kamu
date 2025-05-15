@@ -21,8 +21,16 @@ from faker import Faker
 from kamu.models.contract import Contract, ContractTemplate
 from kamu.models.identity import EmailAddress, Identity, Nationality, PhoneNumber
 from kamu.models.membership import Membership
+from kamu.models.organisation import Organisation
 from kamu.models.role import Permission, Requirement, Role
-from tests.data import CONTRACT_TEMPLATES, PERMISSIONS, REQUIREMENTS, ROLES, USERS
+from tests.data import (
+    CONTRACT_TEMPLATES,
+    ORGANISATIONS,
+    PERMISSIONS,
+    REQUIREMENTS,
+    ROLES,
+    USERS,
+)
 
 fake = Faker()
 
@@ -117,6 +125,24 @@ class Command(BaseCommand):
             except django.db.utils.IntegrityError:
                 pass
 
+    def create_organisations(self) -> None:
+        """
+        Create organisations if they do not exist
+        """
+        if not self.silent:
+            print("Creating organisations...")
+        for org in ORGANISATIONS:
+            try:
+                organisation = ORGANISATIONS[org].copy()
+                parent = organisation.pop("parent")
+                if parent:
+                    organisation["parent"] = Organisation.objects.get(identifier=parent)
+                else:
+                    organisation["parent"] = None
+                Organisation.objects.create(**organisation)
+            except django.db.utils.IntegrityError:
+                pass
+
     def create_permissions(self) -> None:
         """
         Create permissions
@@ -148,6 +174,11 @@ class Command(BaseCommand):
                 r.update(ROLE_ADDONS[r["identifier"]])
             local_roles.append(r)
         for role in local_roles:
+            org = role.pop("organisation")
+            if org:
+                organisation = Organisation.objects.get(identifier=org)
+            else:
+                organisation = None
             try:
                 base_role = Role.objects.get(identifier=role["identifier"])
             except Role.DoesNotExist:
@@ -159,7 +190,7 @@ class Command(BaseCommand):
                     description_en=role["description_en"],
                     description_fi=role["description_fi"],
                     description_sv=role["description_sv"],
-                    organisation_unit=role["organisation_unit"],
+                    organisation=organisation,
                     maximum_duration=role["maximum_duration"],
                 )
             for permission in role["permissions"]:
@@ -182,7 +213,7 @@ class Command(BaseCommand):
                         description_fi=f"{sub_role} - {base_role.description_fi}",
                         description_sv=f"{sub_role} - {base_role.description_sv}",
                         parent=base_role,
-                        organisation_unit=sub_role,
+                        organisation=organisation,
                         maximum_duration=role["maximum_duration"],
                     )
                     for requirement in role["requirements"]:
@@ -378,6 +409,7 @@ class Command(BaseCommand):
         self.create_users()
         self.create_requirements()
         self.create_permissions()
+        self.create_organisations()
         self.create_roles()
         self.create_contracts()
         self.create_identities(number_of_identities)
