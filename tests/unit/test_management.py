@@ -3,6 +3,7 @@ Tests for management commands.
 """
 
 import datetime
+import json
 from io import StringIO
 from unittest import mock
 
@@ -16,6 +17,7 @@ from kamu.management.commands.purge_data import UsageError
 from kamu.models.account import AccountSynchronization
 from kamu.models.identity import Identifier, Identity
 from kamu.models.membership import Membership
+from kamu.models.organisation import Organisation
 from kamu.models.role import Role
 from tests.setup import TestData
 from tests.views.test_account import AccountApiResponseMock
@@ -397,3 +399,41 @@ class AccountSynchronizationTests(TestData, ManagementCommandTestCase):
         self.assertIn(f"Syncing account {self.account.uid}", out)
         self.assertEqual("", err)
         self.assertEqual(AccountSynchronization.objects.all().count(), 0)
+
+
+class OrganisationApiResponseMock:
+    def __init__(self, status: int = 200):
+        self.status_code = status
+        self.content = json.dumps(
+            [
+                {
+                    "uniqueId": "1-1",
+                    "code": "SUB0001",
+                    "nameFi": "Ala-organisaatio",
+                    "nameEn": "Sub-organisation",
+                    "nameSv": "Sub-organisation",
+                    "parent": "1",
+                },
+                {
+                    "uniqueId": "1",
+                    "code": "ORG01",
+                    "abbreviation": "ORG",
+                    "nameFi": "Organisaatio",
+                    "nameEn": "Organisation",
+                    "nameSv": "Organisation",
+                    "parent": None,
+                },
+            ]
+        )
+
+
+class OrganisationSynchronizationTests(TestData, ManagementCommandTestCase):
+    command = "update_organisation_structure"
+
+    @mock.patch("kamu.connectors.organisation.OrganisationApiConnector.api_call_get")
+    def test_synchronization(self, mock_connector):
+        mock_connector.return_value = OrganisationApiResponseMock()
+        out, err = self.call_command("-v 2")
+        self.assertEqual(Organisation.objects.all().count(), 2)
+        self.assertIn("Organisation 1-1 updated with parent 1", out)
+        self.assertIn("Organisation 1 updated with abbreviation ORG", out)

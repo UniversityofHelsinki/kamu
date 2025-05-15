@@ -16,6 +16,11 @@ LDAP
 .. automodule:: kamu.connectors.ldap
     :members:
 
+Organisation
+----
+.. automodule:: kamu.connectors.organisation
+    :members:
+
 SMS
 ---
 .. automodule:: kamu.connectors.sms
