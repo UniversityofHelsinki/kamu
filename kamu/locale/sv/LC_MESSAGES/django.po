@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-20 15:17+0300\n"
+"POT-Creation-Date: 2025-05-20 15:28+0300\n"
 "Language: SV\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -293,7 +293,7 @@ msgstr "Förnamn"
 #: forms/identity.py:46 models/account.py:39 models/role.py:239
 #: templates/identity/identity_search.html:18
 #: templates/identity/identity_search.html:45
-#: templates/membership/membership_invite.html:34
+#: templates/membership/membership_invite.html:36
 #: templates/membership/membership_invite_identity.html:24
 #: templates/membership/membership_invite_identity.html:58
 msgid "User account"
@@ -441,12 +441,12 @@ msgstr "Text för inbjudan"
 #: forms/membership.py:120 forms/membership.py:181
 #: templates/membership/membership_approval_list.html:20
 #: templates/membership/membership_expiring_list.html:20
-#: templates/role/role_detail.html:62
+#: templates/role/role_detail.html:65
 msgid "Invite"
 msgstr "Inbjudan"
 
 #: forms/membership.py:121 forms/membership.py:182
-#: templates/membership/membership_invite.html:42
+#: templates/membership/membership_invite.html:44
 msgid "Preview message"
 msgstr "Förhandsgranska meddelande"
 
@@ -511,9 +511,9 @@ msgstr "Lätt konto"
 #: templates/account/account_list.html:17
 #: templates/identity/identity_detail.html:88
 #: templates/membership/membership_approval_list.html:13
-#: templates/membership/membership_detail.html:51
+#: templates/membership/membership_detail.html:53
 #: templates/membership/membership_expiring_list.html:13
-#: templates/role/role_detail.html:55
+#: templates/role/role_detail.html:58
 msgid "Status"
 msgstr "Status"
 
@@ -794,8 +794,8 @@ msgstr "FPIC-verifieringsmetod"
 
 #: models/identity.py:241 templates/identity/identity_combine.html:106
 #: templates/identity/identity_detail.html:14
-#: templates/membership/membership_detail.html:35
-#: templates/membership/membership_invite.html:26
+#: templates/membership/membership_detail.html:37
+#: templates/membership/membership_invite.html:28
 msgid "Preferred language"
 msgstr "Föredraget språk"
 
@@ -804,12 +804,12 @@ msgid "Preferred service language."
 msgstr "Föredraget språk för tjänsten."
 
 #: models/identity.py:263 templates/membership/membership_approval_list.html:11
-#: templates/membership/membership_detail.html:26
-#: templates/membership/membership_detail.html:87
+#: templates/membership/membership_detail.html:28
+#: templates/membership/membership_detail.html:89
 #: templates/membership/membership_expiring_list.html:11
-#: templates/membership/membership_invite.html:22
-#: templates/membership/membership_invite.html:30
-#: templates/role/role_detail.html:54
+#: templates/membership/membership_invite.html:24
+#: templates/membership/membership_invite.html:32
+#: templates/role/role_detail.html:57
 msgid "Identity"
 msgstr "Identitet"
 
@@ -1001,7 +1001,9 @@ msgstr "Rollbeskrivning (en)"
 msgid "Role description (sv)"
 msgstr "Rollbeskrivning (sv)"
 
-#: models/role.py:50
+#: models/role.py:50 templates/membership/membership_detail.html:19
+#: templates/membership/membership_invite.html:13
+#: templates/role/role_detail.html:10
 msgid "Organisation unit"
 msgstr "Organisationsenhet"
 
@@ -1009,22 +1011,22 @@ msgstr "Organisationsenhet"
 msgid "Notification email address"
 msgstr "E-postadress för aviseringar"
 
-#: models/role.py:57 templates/role/role_detail.html:26
+#: models/role.py:57 templates/role/role_detail.html:29
 msgid "Notification language"
 msgstr "Språk för aviseringar"
 
-#: models/role.py:60 templates/role/role_detail.html:30
+#: models/role.py:60 templates/role/role_detail.html:33
 msgid "Inviter groups"
 msgstr "Inbjudargrupper"
 
-#: models/role.py:63 templates/role/role_detail.html:33
+#: models/role.py:63 templates/role/role_detail.html:36
 msgid "Approver groups"
 msgstr "Godkännargrupper"
 
 #: models/role.py:66 models/role.py:267
-#: templates/membership/membership_detail.html:19
-#: templates/membership/membership_invite.html:13
-#: templates/role/role_detail.html:16
+#: templates/membership/membership_detail.html:21
+#: templates/membership/membership_invite.html:15
+#: templates/role/role_detail.html:19
 msgid "Permissions"
 msgstr "Rättigheter"
 
@@ -1052,7 +1054,7 @@ msgstr "Anstånd från medlemskapets utgång till rensning (dagar)"
 #: templates/identity/identity_detail.html:112
 #: templates/membership/membership_approval_list.html:12
 #: templates/membership/membership_detail.html:15
-#: templates/membership/membership_detail.html:85
+#: templates/membership/membership_detail.html:87
 #: templates/membership/membership_expiring_list.html:12
 #: templates/membership/membership_invite.html:9
 #: templates/role/role_list.html:12 templates/role/role_search.html:14
@@ -1435,7 +1437,7 @@ msgstr "Bekräfta deaktivering av användarnamn"
 #: templates/front.html:34 templates/identity/identifier.html:35
 #: templates/identity/identity_detail.html:50
 #: templates/identity/identity_detail.html:60
-#: templates/membership/membership_detail.html:80
+#: templates/membership/membership_detail.html:82
 msgid "Close"
 msgstr "Stäng"
 
@@ -1449,7 +1451,7 @@ msgstr "Detta konto kommer att deaktiveras omedelbart."
 #: templates/identity/contact_address.html:41
 #: templates/identity/contact_address.html:89
 #: templates/identity/identifier.html:41
-#: templates/membership/membership_detail.html:93
+#: templates/membership/membership_detail.html:95
 #: templates/membership/membership_edit_form.html:10
 msgid "Cancel"
 msgstr "Avbryt"
@@ -1751,17 +1753,17 @@ msgid "My information"
 msgstr "Mina uppgifter"
 
 #: templates/base.html:35 templates/front.html:56 templates/front.html:58
-#: templates/membership/membership_detail.html:59
+#: templates/membership/membership_detail.html:61
 msgid "Inviter"
 msgstr "Inbjudare"
 
 #: templates/base.html:36 templates/front.html:61 templates/front.html:63
-#: templates/membership/membership_detail.html:57
+#: templates/membership/membership_detail.html:59
 msgid "Approver"
 msgstr "Godkännare"
 
 #: templates/base.html:37 templates/front.html:66 templates/front.html:68
-#: templates/role/role_detail.html:10 templates/role/role_list.html:14
+#: templates/role/role_detail.html:13 templates/role/role_list.html:14
 #: templates/role/role_search.html:16
 msgid "Owner"
 msgstr "Ägare"
@@ -1833,10 +1835,10 @@ msgstr "Verifieringen misslyckades"
 #: templates/identity/identity_search.html:17
 #: templates/identity/identity_search.html:44
 #: templates/membership/membership_detail.html:17
-#: templates/membership/membership_detail.html:29
+#: templates/membership/membership_detail.html:31
 #: templates/membership/membership_invite.html:11
-#: templates/membership/membership_invite.html:24
-#: templates/membership/membership_invite.html:32
+#: templates/membership/membership_invite.html:26
+#: templates/membership/membership_invite.html:34
 #: templates/membership/membership_invite_identity.html:23
 #: templates/membership/membership_invite_identity.html:57
 #: templates/role/role_detail.html:7
@@ -2383,7 +2385,7 @@ msgstr ""
 
 #: templates/identity/identity_combine.html:14
 #: templates/identity/identity_combine.html:51
-#: templates/membership/membership_detail.html:31
+#: templates/membership/membership_detail.html:33
 msgid "Account name"
 msgstr "Kontots namn"
 
@@ -2528,7 +2530,7 @@ msgstr "Rollmedlemskap"
 
 #: templates/identity/identity_detail.html:89
 #: templates/membership/membership_expiring_list.html:14
-#: templates/role/role_detail.html:56
+#: templates/role/role_detail.html:59
 msgid "Expires"
 msgstr "Går ut"
 
@@ -2627,64 +2629,64 @@ msgstr "Godkännande krävs"
 msgid "Approve"
 msgstr "Godkänn"
 
-#: templates/membership/membership_detail.html:21
-#: templates/membership/membership_invite.html:15
-#: templates/role/role_detail.html:19
+#: templates/membership/membership_detail.html:23
+#: templates/membership/membership_invite.html:17
+#: templates/role/role_detail.html:22
 msgid "Total cost"
 msgstr "Totalkostnad"
 
-#: templates/membership/membership_detail.html:33
-#: templates/membership/membership_invite.html:36
+#: templates/membership/membership_detail.html:35
+#: templates/membership/membership_invite.html:38
 msgid "Email"
 msgstr "E-post"
 
-#: templates/membership/membership_detail.html:39
+#: templates/membership/membership_detail.html:41
 msgid "Identity has not yet been linked to this membership."
 msgstr "Ingen identitet har länkats till detta medlemskap."
 
-#: templates/membership/membership_detail.html:40
+#: templates/membership/membership_detail.html:42
 #, python-format
 msgid "Invite has been sent to %(address)s."
 msgstr "Inbjudan har skickats till %(address)s."
 
-#: templates/membership/membership_detail.html:43
+#: templates/membership/membership_detail.html:45
 msgid "Resend invite email"
 msgstr "Skicka e-post med inbjudan igen"
 
-#: templates/membership/membership_detail.html:49
+#: templates/membership/membership_detail.html:51
 msgid "Membership details"
 msgstr "Medlemskapsuppgifter"
 
-#: templates/membership/membership_detail.html:53
+#: templates/membership/membership_detail.html:55
 msgid "Start date"
 msgstr "Inledningsdatum"
 
-#: templates/membership/membership_detail.html:55
+#: templates/membership/membership_detail.html:57
 msgid "Expiry date"
 msgstr "Utgångsdatum"
 
-#: templates/membership/membership_detail.html:61
+#: templates/membership/membership_detail.html:63
 msgid "Reason"
 msgstr "Orsak"
 
-#: templates/membership/membership_detail.html:70
+#: templates/membership/membership_detail.html:72
 msgid "Update membership"
 msgstr "Uppdatera medlemskap"
 
-#: templates/membership/membership_detail.html:74
+#: templates/membership/membership_detail.html:76
 msgid "End membership"
 msgstr "Avsluta medlemskap"
 
-#: templates/membership/membership_detail.html:79
-#: templates/membership/membership_detail.html:94
+#: templates/membership/membership_detail.html:81
+#: templates/membership/membership_detail.html:96
 msgid "Confirm ending membership"
 msgstr "Bekräfta avslutande av medlemskap"
 
-#: templates/membership/membership_detail.html:83
+#: templates/membership/membership_detail.html:85
 msgid "This membership will be set to end after today."
 msgstr "Medlemskapet upphör efter idag."
 
-#: templates/membership/membership_detail.html:89
+#: templates/membership/membership_detail.html:91
 msgid "End date"
 msgstr "Slutdatum"
 
@@ -2706,41 +2708,41 @@ msgid "Join role"
 msgstr "Gå med i roll"
 
 #: templates/membership/membership_invite.html:6
-#: templates/role/role_detail.html:40
+#: templates/role/role_detail.html:43
 msgid "Invite a new member"
 msgstr "Bjud in nya medlemmar"
 
-#: templates/membership/membership_invite.html:17
-#: templates/role/role_detail.html:36
+#: templates/membership/membership_invite.html:19
+#: templates/role/role_detail.html:39
 msgid "Maximum duration"
 msgstr "Maximal varaktighet"
 
-#: templates/membership/membership_invite.html:18
-#: templates/role/role_detail.html:37
+#: templates/membership/membership_invite.html:20
+#: templates/role/role_detail.html:40
 msgid "days"
 msgstr "dagar"
 
-#: templates/membership/membership_invite.html:43
+#: templates/membership/membership_invite.html:45
 msgid "Subject"
 msgstr "Ämne"
 
-#: templates/membership/membership_invite.html:45
+#: templates/membership/membership_invite.html:47
 msgid "Message"
 msgstr "Meddelande"
 
-#: templates/membership/membership_invite.html:49
+#: templates/membership/membership_invite.html:51
 msgid "Multiple invites"
 msgstr "Flera inbjudningar"
 
-#: templates/membership/membership_invite.html:51
+#: templates/membership/membership_invite.html:53
 msgid "Following identities in Kamu will be added to the role:"
 msgstr "Följande identiteter i Kamu kommer att få rollen:"
 
-#: templates/membership/membership_invite.html:59
+#: templates/membership/membership_invite.html:61
 msgid "Following email addresses will receive an invitation:"
 msgstr "Följande e-postadresser kommer att få en inbjudan:"
 
-#: templates/membership/membership_invite.html:67
+#: templates/membership/membership_invite.html:69
 msgid "Member information"
 msgstr "Medlemsuppgifter"
 
@@ -2805,25 +2807,25 @@ msgstr "Skicka inbjudan"
 msgid "Role details"
 msgstr "Uppgifter om rollen"
 
-#: templates/role/role_detail.html:13 templates/role/role_list.html:13
+#: templates/role/role_detail.html:16 templates/role/role_list.html:13
 #: templates/role/role_search.html:15
 msgid "Parent"
 msgstr "Överordnad"
 
-#: templates/role/role_detail.html:22
+#: templates/role/role_detail.html:25
 msgid "Notification address"
 msgstr "Aviseringsadress"
 
-#: templates/role/role_detail.html:43
+#: templates/role/role_detail.html:46
 msgid "Join"
 msgstr "Gå med"
 
-#: templates/role/role_detail.html:46
+#: templates/role/role_detail.html:49
 #, python-format
 msgid "Invite multiple members (max %(limit)s)"
 msgstr "Bjud in flera medlemmar (max %(limit)s)"
 
-#: templates/role/role_detail.html:49
+#: templates/role/role_detail.html:52
 msgid "Members"
 msgstr "Medlemmar"
 

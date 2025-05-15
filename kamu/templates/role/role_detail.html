@@ -7,6 +7,9 @@
     <dt class="col-sm-3">{% trans "Name" %}</dt>
     <dd class="col-sm-9">{{ object.name }}</dd>
 
+    <dt class="col-sm-3">{% trans "Organisation unit" %}</dt>
+    <dd class="col-sm-9">{{ object.organisation|default:"&nbsp;" }}{% if object.organisation.code %} ({{ object.organisation.code }}){% endif %}</dd>
+
     <dt class="col-sm-3">{% trans "Owner" %}</dt>
     <dd class="col-sm-9">{{ object.owner.get_full_name|default:"&nbsp;" }}</dd>
 

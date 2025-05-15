@@ -16,6 +16,8 @@
       <dl class="row">
         <dt class="col-sm-3">{% trans "Name" %}</dt>
         <dd class="col-sm-9"><a href="{% url 'role-detail' object.role.pk %}">{{ object.role }}</a></dd>
+        <dt class="col-sm-3">{% trans "Organisation unit" %}</dt>
+        <dd class="col-sm-9">{{ object.role.organisation|default:"&nbsp;" }}{% if object.role.organisation.code %} ({{ object.role.organisation.code }}){% endif %}</dd>
         <dt class="col-sm-3">{% trans "Permissions" %}</dt>
         <dd class="col-sm-9">{% for permission in object.role.get_permissions %}{{ permission }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
         <dt class="col-sm-3">{% trans "Total cost" %}</dt>

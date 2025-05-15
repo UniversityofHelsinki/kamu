@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-20 15:17+0300\n"
+"POT-Creation-Date: 2025-05-20 15:28+0300\n"
 "Language: FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -299,7 +299,7 @@ msgstr "Etunimet"
 #: forms/identity.py:46 models/account.py:39 models/role.py:239
 #: templates/identity/identity_search.html:18
 #: templates/identity/identity_search.html:45
-#: templates/membership/membership_invite.html:34
+#: templates/membership/membership_invite.html:36
 #: templates/membership/membership_invite_identity.html:24
 #: templates/membership/membership_invite_identity.html:58
 msgid "User account"
@@ -446,12 +446,12 @@ msgstr "Kutsun teksti"
 #: forms/membership.py:120 forms/membership.py:181
 #: templates/membership/membership_approval_list.html:20
 #: templates/membership/membership_expiring_list.html:20
-#: templates/role/role_detail.html:62
+#: templates/role/role_detail.html:65
 msgid "Invite"
 msgstr "Lähetä kutsu"
 
 #: forms/membership.py:121 forms/membership.py:182
-#: templates/membership/membership_invite.html:42
+#: templates/membership/membership_invite.html:44
 msgid "Preview message"
 msgstr "Esikatsele viesti"
 
@@ -516,9 +516,9 @@ msgstr "Kevyttunnus"
 #: templates/account/account_list.html:17
 #: templates/identity/identity_detail.html:88
 #: templates/membership/membership_approval_list.html:13
-#: templates/membership/membership_detail.html:51
+#: templates/membership/membership_detail.html:53
 #: templates/membership/membership_expiring_list.html:13
-#: templates/role/role_detail.html:55
+#: templates/role/role_detail.html:58
 msgid "Status"
 msgstr "Tila"
 
@@ -800,8 +800,8 @@ msgstr "Suomalaisen henkilötunnuksen vahvistusmenetelmä"
 
 #: models/identity.py:241 templates/identity/identity_combine.html:106
 #: templates/identity/identity_detail.html:14
-#: templates/membership/membership_detail.html:35
-#: templates/membership/membership_invite.html:26
+#: templates/membership/membership_detail.html:37
+#: templates/membership/membership_invite.html:28
 msgid "Preferred language"
 msgstr "Asiointikieli"
 
@@ -810,12 +810,12 @@ msgid "Preferred service language."
 msgstr "Toivottu asiointikieli."
 
 #: models/identity.py:263 templates/membership/membership_approval_list.html:11
-#: templates/membership/membership_detail.html:26
-#: templates/membership/membership_detail.html:87
+#: templates/membership/membership_detail.html:28
+#: templates/membership/membership_detail.html:89
 #: templates/membership/membership_expiring_list.html:11
-#: templates/membership/membership_invite.html:22
-#: templates/membership/membership_invite.html:30
-#: templates/role/role_detail.html:54
+#: templates/membership/membership_invite.html:24
+#: templates/membership/membership_invite.html:32
+#: templates/role/role_detail.html:57
 msgid "Identity"
 msgstr "Henkilöllisyys"
 
@@ -1007,7 +1007,9 @@ msgstr "Roolin kuvaus (en)"
 msgid "Role description (sv)"
 msgstr "Roolin kuvaus (se)"
 
-#: models/role.py:50
+#: models/role.py:50 templates/membership/membership_detail.html:19
+#: templates/membership/membership_invite.html:13
+#: templates/role/role_detail.html:10
 msgid "Organisation unit"
 msgstr "Organisaatioyksikkö"
 
@@ -1015,22 +1017,22 @@ msgstr "Organisaatioyksikkö"
 msgid "Notification email address"
 msgstr "Ilmoitusten sähköpostiosoite"
 
-#: models/role.py:57 templates/role/role_detail.html:26
+#: models/role.py:57 templates/role/role_detail.html:29
 msgid "Notification language"
 msgstr "Ilmoitusten kieli"
 
-#: models/role.py:60 templates/role/role_detail.html:30
+#: models/role.py:60 templates/role/role_detail.html:33
 msgid "Inviter groups"
 msgstr "Kutsujaryhmät"
 
-#: models/role.py:63 templates/role/role_detail.html:33
+#: models/role.py:63 templates/role/role_detail.html:36
 msgid "Approver groups"
 msgstr "Hyväksyjäryhmät"
 
 #: models/role.py:66 models/role.py:267
-#: templates/membership/membership_detail.html:19
-#: templates/membership/membership_invite.html:13
-#: templates/role/role_detail.html:16
+#: templates/membership/membership_detail.html:21
+#: templates/membership/membership_invite.html:15
+#: templates/role/role_detail.html:19
 msgid "Permissions"
 msgstr "Oikeudet"
 
@@ -1058,7 +1060,7 @@ msgstr "Aika jäsenyyden päättymisestä jäsenyystietojen poistoon (päivissä
 #: templates/identity/identity_detail.html:112
 #: templates/membership/membership_approval_list.html:12
 #: templates/membership/membership_detail.html:15
-#: templates/membership/membership_detail.html:85
+#: templates/membership/membership_detail.html:87
 #: templates/membership/membership_expiring_list.html:12
 #: templates/membership/membership_invite.html:9
 #: templates/role/role_list.html:12 templates/role/role_search.html:14
@@ -1440,7 +1442,7 @@ msgstr "Vahvista käyttäjätunnuksen sulkeminen"
 #: templates/front.html:34 templates/identity/identifier.html:35
 #: templates/identity/identity_detail.html:50
 #: templates/identity/identity_detail.html:60
-#: templates/membership/membership_detail.html:80
+#: templates/membership/membership_detail.html:82
 msgid "Close"
 msgstr "Sulje"
 
@@ -1454,7 +1456,7 @@ msgstr "Tunnus suljetaan välittömästi."
 #: templates/identity/contact_address.html:41
 #: templates/identity/contact_address.html:89
 #: templates/identity/identifier.html:41
-#: templates/membership/membership_detail.html:93
+#: templates/membership/membership_detail.html:95
 #: templates/membership/membership_edit_form.html:10
 msgid "Cancel"
 msgstr "Peruuta"
@@ -1756,17 +1758,17 @@ msgid "My information"
 msgstr "Omat tietoni"
 
 #: templates/base.html:35 templates/front.html:56 templates/front.html:58
-#: templates/membership/membership_detail.html:59
+#: templates/membership/membership_detail.html:61
 msgid "Inviter"
 msgstr "Kutsuja"
 
 #: templates/base.html:36 templates/front.html:61 templates/front.html:63
-#: templates/membership/membership_detail.html:57
+#: templates/membership/membership_detail.html:59
 msgid "Approver"
 msgstr "Hyväksyjä"
 
 #: templates/base.html:37 templates/front.html:66 templates/front.html:68
-#: templates/role/role_detail.html:10 templates/role/role_list.html:14
+#: templates/role/role_detail.html:13 templates/role/role_list.html:14
 #: templates/role/role_search.html:16
 msgid "Owner"
 msgstr "Omistaja"
@@ -1838,10 +1840,10 @@ msgstr "Tarkastus epäonnistui"
 #: templates/identity/identity_search.html:17
 #: templates/identity/identity_search.html:44
 #: templates/membership/membership_detail.html:17
-#: templates/membership/membership_detail.html:29
+#: templates/membership/membership_detail.html:31
 #: templates/membership/membership_invite.html:11
-#: templates/membership/membership_invite.html:24
-#: templates/membership/membership_invite.html:32
+#: templates/membership/membership_invite.html:26
+#: templates/membership/membership_invite.html:34
 #: templates/membership/membership_invite_identity.html:23
 #: templates/membership/membership_invite_identity.html:57
 #: templates/role/role_detail.html:7
@@ -2389,7 +2391,7 @@ msgstr ""
 
 #: templates/identity/identity_combine.html:14
 #: templates/identity/identity_combine.html:51
-#: templates/membership/membership_detail.html:31
+#: templates/membership/membership_detail.html:33
 msgid "Account name"
 msgstr "Käyttäjätunnus"
 
@@ -2535,7 +2537,7 @@ msgstr "Roolien jäsenyydet"
 
 #: templates/identity/identity_detail.html:89
 #: templates/membership/membership_expiring_list.html:14
-#: templates/role/role_detail.html:56
+#: templates/role/role_detail.html:59
 msgid "Expires"
 msgstr "Päättyy"
 
@@ -2634,65 +2636,65 @@ msgstr "Vaatii hyväksynnän"
 msgid "Approve"
 msgstr "Hyväksy"
 
-#: templates/membership/membership_detail.html:21
-#: templates/membership/membership_invite.html:15
-#: templates/role/role_detail.html:19
+#: templates/membership/membership_detail.html:23
+#: templates/membership/membership_invite.html:17
+#: templates/role/role_detail.html:22
 msgid "Total cost"
 msgstr "Kokonaiskustannus"
 
-#: templates/membership/membership_detail.html:33
-#: templates/membership/membership_invite.html:36
+#: templates/membership/membership_detail.html:35
+#: templates/membership/membership_invite.html:38
 msgid "Email"
 msgstr "Sähköposti"
 
-#: templates/membership/membership_detail.html:39
+#: templates/membership/membership_detail.html:41
 msgid "Identity has not yet been linked to this membership."
 msgstr "Tähän jäsenyyteen ei ole vielä liitetty henkilöllisyyttä."
 
 # python-format
-#: templates/membership/membership_detail.html:40
+#: templates/membership/membership_detail.html:42
 #, python-format
 msgid "Invite has been sent to %(address)s."
 msgstr "Kutsu on lähetetty osoitteeseen %(address)s."
 
-#: templates/membership/membership_detail.html:43
+#: templates/membership/membership_detail.html:45
 msgid "Resend invite email"
 msgstr "Lähetä kutsusähköposti uudelleen"
 
-#: templates/membership/membership_detail.html:49
+#: templates/membership/membership_detail.html:51
 msgid "Membership details"
 msgstr "Jäsenyyden tiedot"
 
-#: templates/membership/membership_detail.html:53
+#: templates/membership/membership_detail.html:55
 msgid "Start date"
 msgstr "Aloituspäivä"
 
-#: templates/membership/membership_detail.html:55
+#: templates/membership/membership_detail.html:57
 msgid "Expiry date"
 msgstr "Päättymispäivä"
 
-#: templates/membership/membership_detail.html:61
+#: templates/membership/membership_detail.html:63
 msgid "Reason"
 msgstr "Peruste"
 
-#: templates/membership/membership_detail.html:70
+#: templates/membership/membership_detail.html:72
 msgid "Update membership"
 msgstr "Päivitä jäsenyys"
 
-#: templates/membership/membership_detail.html:74
+#: templates/membership/membership_detail.html:76
 msgid "End membership"
 msgstr "Päätä jäsenyys"
 
-#: templates/membership/membership_detail.html:79
-#: templates/membership/membership_detail.html:94
+#: templates/membership/membership_detail.html:81
+#: templates/membership/membership_detail.html:96
 msgid "Confirm ending membership"
 msgstr "Vahvista jäsenyyden päättäminen"
 
-#: templates/membership/membership_detail.html:83
+#: templates/membership/membership_detail.html:85
 msgid "This membership will be set to end after today."
 msgstr "Tämä jäsenyys päättyy tämän päivän jälkeen."
 
-#: templates/membership/membership_detail.html:89
+#: templates/membership/membership_detail.html:91
 msgid "End date"
 msgstr "Päättymispäivä"
 
@@ -2714,41 +2716,41 @@ msgid "Join role"
 msgstr "Liity rooliin"
 
 #: templates/membership/membership_invite.html:6
-#: templates/role/role_detail.html:40
+#: templates/role/role_detail.html:43
 msgid "Invite a new member"
 msgstr "Kutsu uusi jäsen"
 
-#: templates/membership/membership_invite.html:17
-#: templates/role/role_detail.html:36
+#: templates/membership/membership_invite.html:19
+#: templates/role/role_detail.html:39
 msgid "Maximum duration"
 msgstr "Pisin kesto"
 
-#: templates/membership/membership_invite.html:18
-#: templates/role/role_detail.html:37
+#: templates/membership/membership_invite.html:20
+#: templates/role/role_detail.html:40
 msgid "days"
 msgstr "päivää"
 
-#: templates/membership/membership_invite.html:43
+#: templates/membership/membership_invite.html:45
 msgid "Subject"
 msgstr "Otsikko"
 
-#: templates/membership/membership_invite.html:45
+#: templates/membership/membership_invite.html:47
 msgid "Message"
 msgstr "Viesti"
 
-#: templates/membership/membership_invite.html:49
+#: templates/membership/membership_invite.html:51
 msgid "Multiple invites"
 msgstr "Useita kutsuja"
 
-#: templates/membership/membership_invite.html:51
+#: templates/membership/membership_invite.html:53
 msgid "Following identities in Kamu will be added to the role:"
 msgstr "Seuraavat henkilöllisyydet Kamussa lisätään rooliin:"
 
-#: templates/membership/membership_invite.html:59
+#: templates/membership/membership_invite.html:61
 msgid "Following email addresses will receive an invitation:"
 msgstr "Kutsu lähetetään seuraaviin sähköpostiosoitteisiin:"
 
-#: templates/membership/membership_invite.html:67
+#: templates/membership/membership_invite.html:69
 msgid "Member information"
 msgstr "Jäsentiedot"
 
@@ -2815,25 +2817,25 @@ msgstr "Lähetä kutsu"
 msgid "Role details"
 msgstr "Roolin tiedot"
 
-#: templates/role/role_detail.html:13 templates/role/role_list.html:13
+#: templates/role/role_detail.html:16 templates/role/role_list.html:13
 #: templates/role/role_search.html:15
 msgid "Parent"
 msgstr "Päärooli"
 
-#: templates/role/role_detail.html:22
+#: templates/role/role_detail.html:25
 msgid "Notification address"
 msgstr "Ilmoitusosoite"
 
-#: templates/role/role_detail.html:43
+#: templates/role/role_detail.html:46
 msgid "Join"
 msgstr "Liity"
 
-#: templates/role/role_detail.html:46
+#: templates/role/role_detail.html:49
 #, python-format
 msgid "Invite multiple members (max %(limit)s)"
 msgstr "Kutsu useita jäseniä (enintään %(limit)s)"
 
-#: templates/role/role_detail.html:49
+#: templates/role/role_detail.html:52
 msgid "Members"
 msgstr "Jäsenet"
 
