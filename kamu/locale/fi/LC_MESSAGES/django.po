@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-15 15:31+0300\n"
+"POT-Creation-Date: 2025-05-16 13:13+0300\n"
 "Language: FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -160,7 +160,7 @@ msgstr "Tämä tunnus ei ole käytössä."
 #: forms/auth.py:54 forms/auth.py:318 templates/auth/invite.html:12
 #: templates/auth/invite.html:14 templates/auth/login.html:7
 #: templates/auth/login_email.html:5 templates/auth/login_local.html:5
-#: templates/base.html:72 templates/front.html:86 templates/front.html:88
+#: templates/base.html:73 templates/front.html:86 templates/front.html:88
 msgid "Login"
 msgstr "Kirjaudu sisään"
 
@@ -275,7 +275,7 @@ msgstr "Virheellinen kutsukoodi."
 msgid "Search text"
 msgstr "Hakuteksti"
 
-#: forms/generic.py:30 forms/identity.py:64 templates/base.html:33
+#: forms/generic.py:30 forms/identity.py:64 templates/base.html:34
 #: templates/front.html:53
 msgid "Search"
 msgstr "Etsi"
@@ -943,7 +943,7 @@ msgstr "Vaatimusten epäonnistumisaika"
 msgid "Membership"
 msgstr "Jäsenyys"
 
-#: models/membership.py:80 templates/base.html:42
+#: models/membership.py:80 templates/base.html:43
 msgid "Memberships"
 msgstr "Jäsenyydet"
 
@@ -1033,7 +1033,7 @@ msgstr "Aika jäsenyyden päättymisestä jäsenyystietojen poistoon (päivissä
 msgid "Role"
 msgstr "Rooli"
 
-#: models/role.py:86 templates/base.html:31
+#: models/role.py:86 templates/base.html:32
 msgid "Roles"
 msgstr "Roolit"
 
@@ -1530,7 +1530,7 @@ msgstr ""
 msgid "Continue to logout"
 msgstr "Jatka uloskirjautumiseen"
 
-#: templates/auth/logout.html:13 templates/base.html:70
+#: templates/auth/logout.html:13 templates/base.html:71
 msgid "Logout"
 msgstr "Kirjaudu ulos"
 
@@ -1599,53 +1599,61 @@ msgstr ""
 "puhelinnumerolla on mahdollista, mutta suosittelemme ulkoisten tunnisteiden "
 "käyttöä."
 
-#: templates/base.html:13 templates/base.html:19 templates/front.html:5
+#: templates/base.html:13 templates/base.html:20 templates/front.html:5
 msgid "Kamu"
 msgstr "Kamu"
 
-#: templates/base.html:18 templates/base.html:19
+#: templates/base.html:19 templates/base.html:20
 msgid "Go to Kamu front page"
 msgstr "Mene Kamun etusivulle"
 
-#: templates/base.html:19
+#: templates/base.html:20
 msgid "University of Helsinki"
 msgstr "Helsingin yliopisto"
 
-#: templates/base.html:20
+#: templates/base.html:21
 msgid "Toggle navigation"
 msgstr "Valikko"
 
-#: templates/base.html:27 templates/front.html:10 templates/front.html:12
+#: templates/base.html:28 templates/front.html:10 templates/front.html:12
 msgid "My information"
 msgstr "Omat tietoni"
 
-#: templates/base.html:34 templates/front.html:56 templates/front.html:58
+#: templates/base.html:35 templates/front.html:56 templates/front.html:58
 #: templates/membership/membership_detail.html:59
 msgid "Inviter"
 msgstr "Kutsuja"
 
-#: templates/base.html:35 templates/front.html:61 templates/front.html:63
+#: templates/base.html:36 templates/front.html:61 templates/front.html:63
 #: templates/membership/membership_detail.html:57
 msgid "Approver"
 msgstr "Hyväksyjä"
 
-#: templates/base.html:36 templates/front.html:66 templates/front.html:68
+#: templates/base.html:37 templates/front.html:66 templates/front.html:68
 #: templates/role/role_detail.html:10 templates/role/role_list.html:14
 #: templates/role/role_search.html:16
 msgid "Owner"
 msgstr "Omistaja"
 
-#: templates/base.html:44 templates/front.html:41 templates/front.html:43
+#: templates/base.html:45 templates/front.html:41 templates/front.html:43
 msgid "Requiring approval"
 msgstr "Vaatii hyväksynnän"
 
-#: templates/base.html:45 templates/front.html:46 templates/front.html:48
+#: templates/base.html:46 templates/front.html:46 templates/front.html:48
 msgid "Expiring"
 msgstr "Vanhentumassa"
 
-#: templates/base.html:46
+#: templates/base.html:47
 msgid "Search identities"
 msgstr "Etsi identiteettejä"
+
+#: templates/base.html:106
+msgid "https://helpdesk.it.helsinki.fi/en"
+msgstr "https://helpdesk.it.helsinki.fi"
+
+#: templates/base.html:106
+msgid "Helpdesk"
+msgstr "Helpdesk"
 
 #: templates/contract/contract_detail.html:8
 msgid "Contract information"
