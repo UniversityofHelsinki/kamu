@@ -59,6 +59,9 @@ SERVER_EMAIL: str = "noreply@example.org"
 # Token verification posts will be sent from this address. Using DEFAULT_FROM_EMAIL if this is not set.
 TOKEN_FROM_EMAIL: str = "noreply@example.org"
 
+# Email address for accessibility contact
+ACCESSIBILITY_CONTACT_EMAIL: str = "accessibility@example.org"
+
 # Maximum number of contacts allowed for user, per type (email address, phone number)
 CONTACT_LIMIT: int = 3
 

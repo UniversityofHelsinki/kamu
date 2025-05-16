@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-16 13:13+0300\n"
+"POT-Creation-Date: 2025-05-20 11:01+0300\n"
 "Language: FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1239,6 +1239,110 @@ msgstr "Kenttä %(attribute)s on pakollinen."
 msgid "Cannot validate sequence data."
 msgstr "Rooliketjua ei voida vahvistaa."
 
+#: templates/accessibility_statement.html:5
+msgid "Accessibility Statement"
+msgstr "Saavutettavuusseloste"
+
+#: templates/accessibility_statement.html:6
+msgid ""
+"This accessibility statement concerns the service Kamu and it has been "
+"drafted / updated on 16.05.2025.\n"
+"The service is governed by the Act on the Provision of Digital Services, "
+"which requires public online services to be accessible."
+msgstr ""
+"Tämä saavutettavuusseloste koskee palvelua Kamu ja on laadittu / päivitetty "
+"16.05.2025. Palvelua koskee laki digitaalisten palvelujen tarjoamisesta, "
+"jossa edellytetään, että julkisten verkkopalvelujen on oltava saavutettavia."
+
+#: templates/accessibility_statement.html:8
+msgid "This statement is based on a self-assessment."
+msgstr "Olemme arvioineet palvelun saavutettavuuden itse."
+
+#: templates/accessibility_statement.html:9
+msgid "Accessibility status of the digital service"
+msgstr "Digipalvelun saavutettavuuden tila"
+
+#: templates/accessibility_statement.html:10
+msgid "Fully compliant with accessibility requirements."
+msgstr "Täyttää kaikki saavutettavuusvaatimukset."
+
+#: templates/accessibility_statement.html:11
+msgid "Did you notice an accessibility issue in our digital service?"
+msgstr "Huomasitko saavutettavuuspuutteen digipalvelussamme?"
+
+#: templates/accessibility_statement.html:12
+msgid "Tell us and we will do our best to remedy the issue."
+msgstr "Kerro se meille ja teemme parhaamme puutteen korjaamiseksi."
+
+#: templates/accessibility_statement.html:13
+#, python-format
+msgid "By email: %(email)s"
+msgstr "Sähköpostilla: %(email)s"
+
+#: templates/accessibility_statement.html:14
+msgid "Supervisory authority"
+msgstr "Valvontaviranomainen"
+
+#: templates/accessibility_statement.html:15
+msgid ""
+"If you notice any accessibility issues on the site, please provide feedback "
+"to us first, that is, to the site\n"
+"administrator. We will reply within 14 days. If you are not satisfied with "
+"our response or do not receive any\n"
+"response within two weeks\n"
+"<a target=\"_blank\" href=\"https://www.saavutettavuusvaatimukset.fi/en/user-"
+"rights/submit-complaint-web-accessibility-or-request-clarification\">\n"
+"you can file a report with Traficom\n"
+"</a> (the page opens in a new window).\n"
+"The Traficom website explains in detail how to file a report and how the "
+"matter will be handled."
+msgstr ""
+"Jos huomaat sivustolla saavutettavuusongelmia, anna ensin palautetta meille "
+"eli sivuston ylläpitäjälle.  Vastauksessa voi mennä 14 päivää. Jos et ole "
+"tyytyväinen saamaasi vastaukseen tai et saa vastausta lainkaan kahden viikon "
+"aikana, <a target=\"_blank\" href=\"https://www.saavutettavuusvaatimukset.fi/"
+"fi/kayttajan-oikeudet/tee-saavutettavuuskantelu-tai-pyyda-selvitysta\">\n"
+"voit tehdä ilmoituksen Traficomille\n"
+"</a> (avautuu uuteen ikkunaan).\n"
+"Traficomin sivulla kerrotaan tarkasti, miten ilmoituksen voi tehdä ja miten "
+"asia käsitellään."
+
+#: templates/accessibility_statement.html:22
+msgid "Supervisory authority contact information"
+msgstr "Valvontaviranomaisen yhteystiedot"
+
+#: templates/accessibility_statement.html:23
+msgid "Finnish Transport and Communications Agency Traficom"
+msgstr "Liikenne- ja viestintävirasto Traficom"
+
+#: templates/accessibility_statement.html:24
+msgid "Digital Accessibility Supervision Unit"
+msgstr "Digitaalisen esteettömyyden ja saavutettavuuden valvontayksikkö"
+
+#: templates/accessibility_statement.html:25
+msgid "P.BOX 320"
+msgstr "PL 320"
+
+#: templates/accessibility_statement.html:26
+msgid "FI-00059 TRAFICOM"
+msgstr "00059 TRAFICOM"
+
+#: templates/accessibility_statement.html:27
+msgid ""
+"<a target=\"_blank\" href=\"https://www.saavutettavuusvaatimukset.fi/"
+"en\">www.saavutettavuusvaatimukset.fi/en</a>"
+msgstr ""
+"<a target=\"_blank\" href=\"https://www.saavutettavuusvaatimukset.fi/\">www."
+"saavutettavuusvaatimukset.fi</a>"
+
+#: templates/accessibility_statement.html:28
+msgid "saavutettavuus(at)traficom.fi"
+msgstr "saavutettavuus(at)traficom.fi"
+
+#: templates/accessibility_statement.html:29
+msgid "Tel. +358 29 534 5000"
+msgstr "Puhelinnumero vaihde: 029 534 5000"
+
 #: templates/account/account_create.html:6
 msgid "Account will be created with the following information"
 msgstr "Tunnus luodaan seuraavilla tiedoilla"
@@ -1648,10 +1752,14 @@ msgid "Search identities"
 msgstr "Etsi identiteettejä"
 
 #: templates/base.html:106
+msgid "Accessibility"
+msgstr "Saavutettavuus"
+
+#: templates/base.html:107
 msgid "https://helpdesk.it.helsinki.fi/en"
 msgstr "https://helpdesk.it.helsinki.fi"
 
-#: templates/base.html:106
+#: templates/base.html:107
 msgid "Helpdesk"
 msgstr "Helpdesk"
 

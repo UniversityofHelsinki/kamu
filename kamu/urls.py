@@ -35,6 +35,7 @@ from kamu.views.auth import (
     RegistrationPhoneNumberView,
     RegistrationView,
 )
+from kamu.views.generic import AccessibilityStatementView
 from kamu.views.identity import (
     ContactView,
     ContractDetailView,
@@ -87,6 +88,7 @@ urlpatterns = [
     path("admin/logout/", LocalLogoutView.as_view(), name="logout"),
     path("admin/", admin.site.urls),
     path("", FrontPageView.as_view(), name="front-page"),
+    path("accessibility/", AccessibilityStatementView.as_view(), name="accessibility"),
     path("identity/me/", IdentityMeView.as_view(), name="identity-me"),
     path("identity/<int:pk>/", IdentityDetailView.as_view(), name="identity-detail"),
     path(

@@ -89,3 +89,16 @@ class ErrorViewTests(TestCase):
     def test_page_not_found_view(self):
         response = self.client.get("/page_not_found")
         self.assertContains(response, "Page not found", status_code=404)
+
+
+class AccessibilityViewTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.url = reverse("accessibility")
+
+    @override_settings(ACCESSIBILITY_CONTACT_EMAIL="accessibility@example.org")
+    def test_accessibility_view(self):
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Accessibility Statement", response.content.decode("utf-8"))
+        self.assertIn("By email: accessibility@example.org", response.content.decode("utf-8"))

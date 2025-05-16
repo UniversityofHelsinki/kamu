@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+  <h1 class="mb-4">{% trans "Accessibility Statement" %}</h1>
+  <p>{% blocktrans %}This accessibility statement concerns the service Kamu and it has been drafted / updated on 16.05.2025.
+The service is governed by the Act on the Provision of Digital Services, which requires public online services to be accessible.{% endblocktrans %}</p>
+  <p>{% trans "This statement is based on a self-assessment." %}</p>
+  <h2 class="mb-4">{% trans "Accessibility status of the digital service" %}</h2>
+  <p>{% trans "Fully compliant with accessibility requirements." %}</p>
+  <h2 class="mb-4">{% trans "Did you notice an accessibility issue in our digital service?" %}</h2>
+  <p>{% trans "Tell us and we will do our best to remedy the issue." %}</p>
+  <p>{% blocktrans with email=contact_email %}By email: {{ email }}{% endblocktrans %}</p>
+  <h2 class="mb-4">{% trans "Supervisory authority" %}</h2>
+  <p>{% blocktrans %}If you notice any accessibility issues on the site, please provide feedback to us first, that is, to the site
+administrator. We will reply within 14 days. If you are not satisfied with our response or do not receive any
+response within two weeks
+<a target="_blank" href="https://www.saavutettavuusvaatimukset.fi/en/user-rights/submit-complaint-web-accessibility-or-request-clarification">
+you can file a report with Traficom
+</a> (the page opens in a new window).
+The Traficom website explains in detail how to file a report and how the matter will be handled.{% endblocktrans %}</p>
+  <h3 class="mb-4">{% trans "Supervisory authority contact information" %}</h3>
+  <p>{% trans "Finnish Transport and Communications Agency Traficom" %}<br>
+  {% trans "Digital Accessibility Supervision Unit" %}<br>
+  {% trans "P.BOX 320" %}<br>
+  {% trans "FI-00059 TRAFICOM" %}<br>
+  {% trans '<a target="_blank" href="https://www.saavutettavuusvaatimukset.fi/en">www.saavutettavuusvaatimukset.fi/en</a>' %}<br>
+  {% trans "saavutettavuus(at)traficom.fi" %}<br>
+  {% trans "Tel. +358 29 534 5000" %}<br>
+  </p>
+{% endblock %}
