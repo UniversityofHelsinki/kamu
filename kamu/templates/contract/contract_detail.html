@@ -10,18 +10,18 @@
     {{ object.template.text|safe }}
     <h3 class="mt-5">{% trans "Details" %}</h3>
     <dl class="row">
-      <dt class="col-sm-3">{% trans "Signatory" %}</dt>
-      <dd class="col-sm-9">{{ object.identity.display_name }}</dd>
-      <dt class="col-sm-3">{% trans "Signing time" %}</dt>
-      <dd class="col-sm-9">{{ object.created_at }}</dd>
-      <dt class="col-sm-3">{% trans "Signing language" %}</dt>
-      <dd class="col-sm-9">{{ object.lang }}</dd>
-      <dt class="col-sm-3">{% trans "Signing checksum" %}</dt>
-      <dd class="col-sm-9">{{ object.checksum }}</dd>
-      <dt class="col-sm-3">{% trans "Contract version" %}</dt>
-      <dd class="col-sm-9">{{ object.template.version }}</dd>
-      <dt class="col-sm-3">{% trans "Validation" %}</dt>
-      <dd class="col-sm-9">{% if object.validate %}{% trans "Validation was successful" %}{% else %}{% trans "Validation failed" %}{% endif %}</dd>
+      <dt class="col-sm-4">{% trans "Signatory" %}</dt>
+      <dd class="col-sm-8">{{ object.identity.display_name }}</dd>
+      <dt class="col-sm-4">{% trans "Signing time" %}</dt>
+      <dd class="col-sm-8">{{ object.created_at }}</dd>
+      <dt class="col-sm-4">{% trans "Signing language" %}</dt>
+      <dd class="col-sm-8">{{ object.lang }}</dd>
+      <dt class="col-sm-4">{% trans "Signing checksum" %}</dt>
+      <dd class="col-sm-8">{{ object.checksum }}</dd>
+      <dt class="col-sm-4">{% trans "Contract version" %}</dt>
+      <dd class="col-sm-8">{{ object.template.version }}</dd>
+      <dt class="col-sm-4">{% trans "Validation" %}</dt>
+      <dd class="col-sm-8">{% if object.validate %}{% trans "Validation was successful" %}{% else %}{% trans "Validation failed" %}{% endif %}</dd>
     </dl>
     <a href="{% url 'contract-list' pk=object.identity.pk %}" class="btn btn-danger me-2 mb-2">{% trans "Return" %}</a>
   </form>

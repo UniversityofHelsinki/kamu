@@ -5,38 +5,38 @@
 {% block content %}
   <h1 class="mb-5">{% trans "Invite a new member" %}</h1>
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-xl-6">
       <h2>{% trans "Role" %}</h2>
       <dl class="row">
-        <dt class="col-sm-3">{% trans "Name" %}</dt>
-        <dd class="col-sm-9"><a href="{% url 'role-detail' role.pk %}">{{ role.name }}</a></dd>
-        <dt class="col-sm-3">{% trans "Organisation unit" %}</dt>
-        <dd class="col-sm-9">{{ role.organisation|default:"&nbsp;" }}{% if role.organisation.code %} ({{ role.organisation.code }}){% endif %}</dd>
-        <dt class="col-sm-3">{% trans "Permissions" %}</dt>
-        <dd class="col-sm-9">{% for permission in role.get_permissions %}{{ permission }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
-        <dt class="col-sm-3">{% trans "Total cost" %}</dt>
-        <dd class="col-sm-9 mb-5">{{ role.get_cost }} €</dd>
-        <dt class="col-sm-3">{% trans "Maximum duration" %}</dt>
-        <dd class="col-sm-9">{{ role.maximum_duration }} {% trans "days" %}</dd>
+        <dt class="col-sm-4">{% trans "Name" %}</dt>
+        <dd class="col-sm-8"><a href="{% url 'role-detail' role.pk %}">{{ role.name }}</a></dd>
+        <dt class="col-sm-4">{% trans "Organisation unit" %}</dt>
+        <dd class="col-sm-8">{{ role.organisation|default:"&nbsp;" }}{% if role.organisation.code %} ({{ role.organisation.code }}){% endif %}</dd>
+        <dt class="col-sm-4">{% trans "Permissions" %}</dt>
+        <dd class="col-sm-8">{% for permission in role.get_permissions %}{{ permission }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+        <dt class="col-sm-4">{% trans "Total cost" %}</dt>
+        <dd class="col-sm-8 mb-5">{{ role.get_cost }} €</dd>
+        <dt class="col-sm-4">{% trans "Maximum duration" %}</dt>
+        <dd class="col-sm-8">{{ role.maximum_duration }} {% trans "days" %}</dd>
       </dl>
     </div>
-    {% if identity %}<div class="col-md-6">
+    {% if identity %}<div class="col-xl-6">
       <h2>{% trans "Identity" %}</h2>
       <dl class="row">
-        <dt class="col-sm-3">{% trans "Name" %}</dt>
-        <dd class="col-sm-9"><a href="{% url 'identity-detail' identity.pk %}">{{ identity }}</a></dd>
-        <dt class="col-sm-3">{% trans "Preferred language" %}</dt>
-        <dd class="col-sm-9 mb-5">{{ identity.get_preferred_language_display }}</dd>
+        <dt class="col-sm-4">{% trans "Name" %}</dt>
+        <dd class="col-sm-8"><a href="{% url 'identity-detail' identity.pk %}">{{ identity }}</a></dd>
+        <dt class="col-sm-4">{% trans "Preferred language" %}</dt>
+        <dd class="col-sm-8 mb-5">{{ identity.get_preferred_language_display }}</dd>
       </dl>
-    </div>{% elif ldapuser %}<div class="col-md-6">
+    </div>{% elif ldapuser %}<div class="col-xl-6">
       <h2>{% trans "Identity" %}</h2>
       <dl class="row">
-        <dt class="col-sm-3">{% trans "Name" %}</dt>
-        <dd class="col-sm-9">{{ ldapuser.cn }}</dd>
-        <dt class="col-sm-3">{% trans "User account" %}</dt>
-        <dd class="col-sm-9">{{ ldapuser.uid }}</dd>
-        <dt class="col-sm-3">{% trans "Email" %}</dt>
-        <dd class="col-sm-9">{{ ldapuser.mail }}</dd>
+        <dt class="col-sm-4">{% trans "Name" %}</dt>
+        <dd class="col-sm-8">{{ ldapuser.cn }}</dd>
+        <dt class="col-sm-4">{% trans "User account" %}</dt>
+        <dd class="col-sm-8">{{ ldapuser.uid }}</dd>
+        <dt class="col-sm-4">{% trans "Email" %}</dt>
+        <dd class="col-sm-8">{{ ldapuser.mail }}</dd>
       </dl>
     </div>{% endif %}
   </div>

@@ -4,15 +4,15 @@
 {% block content %}
   <h1 class="mb-5">{% trans "Account details" %}</h1>
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-xl-6">
       <h2>{% trans "Account" %}</h2>
       <dl class="row">
-        <dt class="col-sm-3">{% trans "User ID" %}</dt>
-        <dd class="col-sm-9">{{ object.uid }}</dd>
-        <dt class="col-sm-3">{% trans "Type" %}</dt>
-        <dd class="col-sm-9">{{ object.get_type_display }}</dd>
-        <dt class="col-sm-3">{% trans "Status" %}</dt>
-        <dd class="col-sm-9 mb-5">{{ object.get_status_display }}{% if object.status == "disabled" %} ({{ object.deactivated_at }}){% endif %}</dd>
+        <dt class="col-sm-4">{% trans "User ID" %}</dt>
+        <dd class="col-sm-8">{{ object.uid }}</dd>
+        <dt class="col-sm-4">{% trans "Type" %}</dt>
+        <dd class="col-sm-8">{{ object.get_type_display }}</dd>
+        <dt class="col-sm-4">{% trans "Status" %}</dt>
+        <dd class="col-sm-8 mb-5">{{ object.get_status_display }}{% if object.status == "disabled" %} ({{ object.deactivated_at }}){% endif %}</dd>
       </dl>
     </div>
     {% if user.identity == object.identity or perms.kamu.change_accounts %}
@@ -29,8 +29,8 @@
                 <div class="modal-body">
                   <p class="text-break">{% trans "This account will be disabled immediately." %}</p>
                   <dl class="row">
-                    <dt class="col-sm-3">{% trans "User ID" %}</dt>
-                    <dd class="col-sm-9">{{ object.uid }}</dd>
+                    <dt class="col-sm-4">{% trans "User ID" %}</dt>
+                    <dd class="col-sm-8">{{ object.uid }}</dd>
                   </dl>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
@@ -53,8 +53,8 @@
                 <div class="modal-body">
                   <p class="text-break">{% trans "This account will be enabled immediately." %}</p>
                   <dl class="row">
-                    <dt class="col-sm-3">{% trans "User ID" %}</dt>
-                    <dd class="col-sm-9">{{ object.uid }}</dd>
+                    <dt class="col-sm-4">{% trans "User ID" %}</dt>
+                    <dd class="col-sm-8">{{ object.uid }}</dd>
                   </dl>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>

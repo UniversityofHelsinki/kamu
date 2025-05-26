@@ -11,31 +11,31 @@
     </div>
   {% endif %}
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-xl-6">
       <h2>{% trans "Role" %}</h2>
       <dl class="row">
-        <dt class="col-sm-3">{% trans "Name" %}</dt>
-        <dd class="col-sm-9"><a href="{% url 'role-detail' object.role.pk %}">{{ object.role }}</a></dd>
-        <dt class="col-sm-3">{% trans "Organisation unit" %}</dt>
-        <dd class="col-sm-9">{{ object.role.organisation|default:"&nbsp;" }}{% if object.role.organisation.code %} ({{ object.role.organisation.code }}){% endif %}</dd>
-        <dt class="col-sm-3">{% trans "Permissions" %}</dt>
-        <dd class="col-sm-9">{% for permission in object.role.get_permissions %}{{ permission }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
-        <dt class="col-sm-3">{% trans "Total cost" %}</dt>
-        <dd class="col-sm-9 mb-5">{{ object.role.get_cost }} €</dd>
+        <dt class="col-sm-4">{% trans "Name" %}</dt>
+        <dd class="col-sm-8"><a href="{% url 'role-detail' object.role.pk %}">{{ object.role }}</a></dd>
+        <dt class="col-sm-4">{% trans "Organisation unit" %}</dt>
+        <dd class="col-sm-8">{{ object.role.organisation|default:"&nbsp;" }}{% if object.role.organisation.code %} ({{ object.role.organisation.code }}){% endif %}</dd>
+        <dt class="col-sm-4">{% trans "Permissions" %}</dt>
+        <dd class="col-sm-8">{% for permission in object.role.get_permissions %}{{ permission }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+        <dt class="col-sm-4">{% trans "Total cost" %}</dt>
+        <dd class="col-sm-8 mb-5">{{ object.role.get_cost }} €</dd>
       </dl>
     </div>
-    <div class="col-md-6">
+    <div class="col-xl-6">
       <h2>{% trans "Identity" %}</h2>
       {% if object.identity %}
         <dl class="row">
-          <dt class="col-sm-3">{% trans "Name" %}</dt>
-          <dd class="col-sm-9"><a href="{% url 'identity-detail' object.identity.pk %}">{{ object.identity }}</a></dd>
-          <dt class="col-sm-3">{% trans "Account name" %}</dt>
-          <dd class="col-sm-9">{{ object.identity.uid|default:"&nbsp;" }}</dd>
-          <dt class="col-sm-3">{% trans "Email" %}</dt>
-          <dd class="col-sm-9">{{ object.identity.email_addresses.first|default:"&nbsp;" }}</dd>
-          <dt class="col-sm-3">{% trans "Preferred language" %}</dt>
-          <dd class="col-sm-9 mb-5">{{ object.identity.get_preferred_language_display }}</dd>
+          <dt class="col-sm-4">{% trans "Name" %}</dt>
+          <dd class="col-sm-8"><a href="{% url 'identity-detail' object.identity.pk %}">{{ object.identity }}</a></dd>
+          <dt class="col-sm-4">{% trans "Account name" %}</dt>
+          <dd class="col-sm-8">{{ object.identity.uid|default:"&nbsp;" }}</dd>
+          <dt class="col-sm-4">{% trans "Email" %}</dt>
+          <dd class="col-sm-8">{{ object.identity.email_addresses.first|default:"&nbsp;" }}</dd>
+          <dt class="col-sm-4">{% trans "Preferred language" %}</dt>
+          <dd class="col-sm-8 mb-5">{{ object.identity.get_preferred_language_display }}</dd>
         </dl>
       {% else %}
         <p>{% trans "Identity has not yet been linked to this membership." %}</p>
@@ -47,21 +47,21 @@
         {% endif %}
       {% endif %}
     </div>
-    <div class="col">
+    <div class="col-xl-6">
       <h2>{% trans "Membership details" %}</h2>
       <dl class="row">
-        <dt class="col-sm-3">{% trans "Status" %}</dt>
-        <dd class="col-sm-9">{{ object.get_status_display }}</dd>
-        <dt class="col-sm-3">{% trans "Start date" %}</dt>
-        <dd class="col-sm-9">{{ object.start_date }}</dd>
-        <dt class="col-sm-3">{% trans "Expiry date" %}</dt>
-        <dd class="col-sm-9">{{ object.expire_date }}</dd>
-        <dt class="col-sm-3">{% trans "Approver" %}</dt>
-        <dd class="col-sm-9">{{ object.approver.get_full_name|default:"&nbsp;" }}</dd>
-        <dt class="col-sm-3">{% trans "Inviter" %}</dt>
-        <dd class="col-sm-9">{{ object.inviter.get_full_name|default:"&nbsp;" }}</dd>
-        <dt class="col-sm-3">{% trans "Reason" %}</dt>
-        <dd class="col-sm-9">{{ object.reason }}</dd>
+        <dt class="col-sm-4">{% trans "Status" %}</dt>
+        <dd class="col-sm-8">{{ object.get_status_display }}</dd>
+        <dt class="col-sm-4">{% trans "Start date" %}</dt>
+        <dd class="col-sm-8">{{ object.start_date }}</dd>
+        <dt class="col-sm-4">{% trans "Expiry date" %}</dt>
+        <dd class="col-sm-8">{{ object.expire_date }}</dd>
+        <dt class="col-sm-4">{% trans "Approver" %}</dt>
+        <dd class="col-sm-8">{{ object.approver.get_full_name|default:"&nbsp;" }}</dd>
+        <dt class="col-sm-4">{% trans "Inviter" %}</dt>
+        <dd class="col-sm-8">{{ object.inviter.get_full_name|default:"&nbsp;" }}</dd>
+        <dt class="col-sm-4">{% trans "Reason" %}</dt>
+        <dd class="col-sm-8">{{ object.reason }}</dd>
       </dl>
       {% if object.ending_in_future %}
         {% if is_approver or user.identity == object.identity %}
@@ -84,12 +84,12 @@
                 <div class="modal-body">
                   <p class="text-break">{% trans "This membership will be set to end after today." %}</p>
                   <dl class="row">
-                    <dt class="col-sm-3">{% trans "Role" %}</dt>
-                    <dd class="col-sm-9">{{ object.role }}</dd>
-                    <dt class="col-sm-3">{% trans "Identity" %}</dt>
-                    <dd class="col-sm-9">{{ object.identity }}</dd>
-                    <dt class="col-sm-3">{% trans "End date" %}</dt>
-                    <dd class="col-sm-9">{% now "DATE_FORMAT" %}</dd>
+                    <dt class="col-sm-4">{% trans "Role" %}</dt>
+                    <dd class="col-sm-8">{{ object.role }}</dd>
+                    <dt class="col-sm-4">{% trans "Identity" %}</dt>
+                    <dd class="col-sm-8">{{ object.identity }}</dd>
+                    <dt class="col-sm-4">{% trans "End date" %}</dt>
+                    <dd class="col-sm-8">{% now "DATE_FORMAT" %}</dd>
                   </dl>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
