@@ -14,5 +14,4 @@ class AccessibilityStatementView(TemplateView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["contact_email"] = getattr(settings, "ACCESSIBILITY_CONTACT_EMAIL", "")
-        print("Accessibility contact email:", context["contact_email"])
         return context
