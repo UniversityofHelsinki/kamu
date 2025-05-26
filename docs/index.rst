@@ -52,6 +52,7 @@ Documentation
    content/identities
    content/roles
    content/memberships
+   content/accounts
    content/authentication
    content/logging
    content/api
