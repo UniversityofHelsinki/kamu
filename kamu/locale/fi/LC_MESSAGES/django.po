@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-20 15:28+0300\n"
+"POT-Creation-Date: 2025-05-27 11:52+0300\n"
 "Language: FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -89,16 +89,16 @@ msgstr ""
 msgid "Configuration error, service administrators have been notified."
 msgstr "Määritysvirhe palvelussa, asiasta ilmoitettu palvelun ylläpitäjille."
 
-#: backends.py:648
+#: backends.py:659
 msgid "Suspected duplicate user. Username already exists in the database: "
 msgstr ""
 "Mahdollinen duplikaattikäyttäjä. Käyttäjänimi on jo olemassa tietokannassa: "
 
-#: backends.py:662
+#: backends.py:673
 msgid "Suspected duplicate user. Identity already has a different username: "
 msgstr "Mahdollinen duplikaattikäyttäjä. Tunnisteella on jo eri käyttäjänimi: "
 
-#: backends.py:850
+#: backends.py:861
 msgid ""
 "Suspected duplicate user. Finnish personal identity code already exists in "
 "the database: "
@@ -336,7 +336,7 @@ msgstr "Nimihaku palauttaa osittaisia osumia Kamusta."
 msgid "Name search"
 msgstr "Nimihaku"
 
-#: forms/identity.py:80 models/identity.py:559
+#: forms/identity.py:80 models/identity.py:561
 #: templates/identity/identity_detail.html:72
 msgid "Identifiers"
 msgstr "Tunnisteet"
@@ -526,20 +526,20 @@ msgstr "Tila"
 msgid "Account type"
 msgstr "Tunnuksen tyyppi"
 
-#: models/account.py:34 models/identity.py:551
+#: models/account.py:34 models/identity.py:553
 msgid "Deactivated at"
 msgstr "Suljettu"
 
 #: models/account.py:35 models/account.py:63 models/contract.py:55
 #: models/contract.py:112 models/identity.py:40 models/identity.py:244
-#: models/identity.py:455 models/identity.py:491 models/identity.py:552
+#: models/identity.py:455 models/identity.py:491 models/identity.py:554
 #: models/membership.py:72 models/organisation.py:31 models/role.py:82
 #: models/role.py:261 models/role.py:344 models/token.py:313
 msgid "Created at"
 msgstr "Luotu"
 
 #: models/account.py:36 models/identity.py:41 models/identity.py:245
-#: models/identity.py:456 models/identity.py:492 models/identity.py:553
+#: models/identity.py:456 models/identity.py:492 models/identity.py:555
 #: models/membership.py:73 models/organisation.py:32 models/role.py:83
 #: models/role.py:262 models/role.py:345
 msgid "Updated at"
@@ -829,7 +829,7 @@ msgstr "Henkilöllisyydet"
 msgid "Priority"
 msgstr "Prioriteetti"
 
-#: models/identity.py:453 models/identity.py:489 models/identity.py:549
+#: models/identity.py:453 models/identity.py:489 models/identity.py:551
 #: templates/identity/contact_address.html:16
 #: templates/identity/contact_address.html:25
 #: templates/identity/contact_address.html:64
@@ -883,11 +883,15 @@ msgstr "Tunnisteen tyyppi"
 msgid "Identifier value"
 msgstr "Tunnisteen arvo"
 
-#: models/identity.py:558
+#: models/identity.py:549
+msgid "Identifier name"
+msgstr "Tunnisteen nimi"
+
+#: models/identity.py:560
 msgid "Identifier"
 msgstr "Tunniste"
 
-#: models/identity.py:576
+#: models/identity.py:578
 msgid "Invalid eduPersonPrincipalName format."
 msgstr "Virheellinen eduPersonPrincipalNamen muoto."
 

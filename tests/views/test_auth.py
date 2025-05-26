@@ -501,11 +501,13 @@ class RegistrationViewTests(BaseTestCase):
         self.assertTrue(Token.objects.filter(phone_number=phone_number).exists())
 
     @override_settings(OIDC_CLAIM_SUB="HTTP_SUB")
+    @override_settings(OIDC_CLAIM_EMAIL="HTTP_EMAIL")
     def test_register_with_external_account(self):
         url = reverse("login-google")
-        response = self.client.get(url, follow=True, headers={"SUB": "1234567890"})
+        response = self.client.get(url, follow=True, headers={"SUB": "1234567890", "EMAIL": "test@example.com"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Membership created", response.content.decode("utf-8"))
+        self.assertTrue(Identifier.objects.filter(value="1234567890", name="test@example.com").exists())
 
     @override_settings(OIDC_MICROSOFT_ISSUER="HTTP_ISSUER")
     def test_register_fail_with_invalid_issuer(self):

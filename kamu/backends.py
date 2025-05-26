@@ -138,6 +138,13 @@ class LocalBaseBackend(ModelBackend):
         raise ImproperlyConfigured("LocalBaseBackend should not be used directly")
 
     @staticmethod
+    def _get_identifier_name(request: HttpRequest) -> str:
+        """
+        Get identifier name for the login method.
+        """
+        return ""
+
+    @staticmethod
     def _get_username_suffix() -> str:
         """
         Get username suffix.
@@ -252,7 +259,11 @@ class LocalBaseBackend(ModelBackend):
             ).first()
             if not identifier:
                 identifier = Identifier.objects.create(
-                    type=identifier_type, value=identifier_value, identity=identity, deactivated_at=None
+                    type=identifier_type,
+                    value=identifier_value,
+                    name=self._get_identifier_name(request),
+                    identity=identity,
+                    deactivated_at=None,
                 )
                 created = True
         if created:
@@ -879,6 +890,13 @@ class GoogleBackend(LocalBaseBackend):
         return Identifier.Type.GOOGLE
 
     @staticmethod
+    def _get_identifier_name(request: HttpRequest) -> str:
+        """
+        Get identifier name for the login method.
+        """
+        return fix_meta_encoding(request.META.get(settings.OIDC_CLAIM_EMAIL, ""))
+
+    @staticmethod
     def _get_username_suffix() -> str:
         """
         Custom username suffix.
@@ -913,6 +931,13 @@ class MicrosoftBackend(LocalBaseBackend):
         Get identifier type. Values from the Identifier model choices.
         """
         return Identifier.Type.MICROSOFT
+
+    @staticmethod
+    def _get_identifier_name(request: HttpRequest) -> str:
+        """
+        Get identifier name for the login method.
+        """
+        return fix_meta_encoding(request.META.get(settings.OIDC_CLAIM_EMAIL, ""))
 
     @staticmethod
     def _get_username_suffix() -> str:

@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-20 15:28+0300\n"
+"POT-Creation-Date: 2025-05-27 11:52+0300\n"
 "Language: SV\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -84,16 +84,16 @@ msgstr "Du tillhör en grupp som inte är tillåten från denna IP-adress."
 msgid "Configuration error, service administrators have been notified."
 msgstr "Konfigurationsfel, tjänstens administratörer har meddelats."
 
-#: backends.py:648
+#: backends.py:659
 msgid "Suspected duplicate user. Username already exists in the database: "
 msgstr "Misstänkt dubbel användare. Användarnamnet finns redan i databasen: "
 
-#: backends.py:662
+#: backends.py:673
 msgid "Suspected duplicate user. Identity already has a different username: "
 msgstr ""
 "Misstänkt dubbel användare. Identiteten har redan ett annat användarnamn: "
 
-#: backends.py:850
+#: backends.py:861
 msgid ""
 "Suspected duplicate user. Finnish personal identity code already exists in "
 "the database: "
@@ -330,7 +330,7 @@ msgstr "Namnsökningen ger partiella träffar från Kamu."
 msgid "Name search"
 msgstr "Namnsökning"
 
-#: forms/identity.py:80 models/identity.py:559
+#: forms/identity.py:80 models/identity.py:561
 #: templates/identity/identity_detail.html:72
 msgid "Identifiers"
 msgstr "Identifierare"
@@ -521,20 +521,20 @@ msgstr "Status"
 msgid "Account type"
 msgstr "Typ av konto"
 
-#: models/account.py:34 models/identity.py:551
+#: models/account.py:34 models/identity.py:553
 msgid "Deactivated at"
 msgstr "Deaktiverat den"
 
 #: models/account.py:35 models/account.py:63 models/contract.py:55
 #: models/contract.py:112 models/identity.py:40 models/identity.py:244
-#: models/identity.py:455 models/identity.py:491 models/identity.py:552
+#: models/identity.py:455 models/identity.py:491 models/identity.py:554
 #: models/membership.py:72 models/organisation.py:31 models/role.py:82
 #: models/role.py:261 models/role.py:344 models/token.py:313
 msgid "Created at"
 msgstr "Skapat den"
 
 #: models/account.py:36 models/identity.py:41 models/identity.py:245
-#: models/identity.py:456 models/identity.py:492 models/identity.py:553
+#: models/identity.py:456 models/identity.py:492 models/identity.py:555
 #: models/membership.py:73 models/organisation.py:32 models/role.py:83
 #: models/role.py:262 models/role.py:345
 msgid "Updated at"
@@ -823,7 +823,7 @@ msgstr "Identiteter"
 msgid "Priority"
 msgstr "Prioritet"
 
-#: models/identity.py:453 models/identity.py:489 models/identity.py:549
+#: models/identity.py:453 models/identity.py:489 models/identity.py:551
 #: templates/identity/contact_address.html:16
 #: templates/identity/contact_address.html:25
 #: templates/identity/contact_address.html:64
@@ -877,11 +877,15 @@ msgstr "Typ av identifierare"
 msgid "Identifier value"
 msgstr "Identifierarens värde"
 
-#: models/identity.py:558
+#: models/identity.py:549
+msgid "Identifier name"
+msgstr "Identifierarens namn"
+
+#: models/identity.py:560
 msgid "Identifier"
 msgstr "Identifierare"
 
-#: models/identity.py:576
+#: models/identity.py:578
 msgid "Invalid eduPersonPrincipalName format."
 msgstr "Ogiltigt format för eduPersonPrincipalName."
 

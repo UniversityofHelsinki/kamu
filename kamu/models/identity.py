@@ -546,6 +546,8 @@ class Identifier(models.Model):
 
     type = models.CharField(max_length=10, choices=Type.choices, verbose_name=_("Identifier type"))
     value = models.CharField(max_length=4000, verbose_name=_("Identifier value"))
+    name = models.CharField(max_length=256, blank=True, verbose_name=_("Identifier name"))
+
     verified = models.BooleanField(default=False, verbose_name=_("Verified"))
 
     deactivated_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Deactivated at"))
