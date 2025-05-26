@@ -634,6 +634,7 @@ class LinkIdentifierTests(BaseTestCase):
                 call(20, f"Linked eppn identifier to identity {self.identity.display_name()}", extra=ANY),
             ]
         )
+        self.assertEqual(mock_logger.log.call_args_list[0][1]["extra"]["backend"], "ShibbolethHakaBackend")
         self.assertEqual(
             LogEntry.objects.filter(
                 change_message=f"Linked eppn identifier to identity {self.identity.display_name()}"

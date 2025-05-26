@@ -59,7 +59,7 @@ def post_login_tasks(request: HttpRequest) -> None:
             set_default_permissions(request.user, remove=True)
 
 
-def auth_login(request: HttpRequest, user: UserType | None, backend: type[ModelBackend] | str | None) -> None:
+def auth_login(request: HttpRequest, user: UserType | None, backend: str | None) -> None:
     """
     Custom login function with post login tasks
     """

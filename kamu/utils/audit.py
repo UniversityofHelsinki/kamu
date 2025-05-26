@@ -17,7 +17,6 @@ from rest_framework.authtoken.models import TokenProxy
 from kamu.models.identity import Identity
 
 if TYPE_CHECKING:
-    from django.contrib.auth.backends import ModelBackend
     from django.contrib.auth.base_user import AbstractBaseUser
     from django.http import HttpRequest
 
@@ -221,7 +220,7 @@ class AuditLog:
         action: ActionTypes,
         outcome: OutcomeTypes = "none",
         request: HttpRequest | None = None,
-        backend: type[ModelBackend] | LocalBaseBackend | str | None = None,
+        backend: LocalBaseBackend | str | None = None,
         objects: Sequence[object] = (),
         extra: dict[str, str | int | None] | None = None,
         log_to_db: bool = False,
@@ -239,8 +238,9 @@ class AuditLog:
         }
         params.update(self._parse_request(request))
 
+        # Backend can be a can be a class instance or string including a module path. Log only class name.
         if backend:
-            params["backend"] = str(backend)
+            params["backend"] = backend.rsplit(".", 1)[-1] if type(backend) is str else type(backend).__name__
 
         user, identity = None, None
         for obj in objects:
@@ -272,7 +272,7 @@ class AuditLog:
         action: ActionTypes,
         outcome: OutcomeTypes = "none",
         request: HttpRequest | None = None,
-        backend: type[ModelBackend] | LocalBaseBackend | str | None = None,
+        backend: LocalBaseBackend | str | None = None,
         objects: Sequence[object] = (),
         extra: dict[str, str | int | None] | None = None,
         log_to_db: bool = False,
@@ -313,7 +313,7 @@ class AuditLog:
         action: ActionTypes,
         outcome: OutcomeTypes = "none",
         request: HttpRequest | None = None,
-        backend: type[ModelBackend] | LocalBaseBackend | str | None = None,
+        backend: LocalBaseBackend | str | None = None,
         objects: Sequence[object] = (),
         extra: dict[str, str | int | None] | None = None,
         log_to_db: bool = False,
@@ -345,7 +345,7 @@ class AuditLog:
         action: ActionTypes,
         outcome: OutcomeTypes = "none",
         request: HttpRequest | None = None,
-        backend: type[ModelBackend] | LocalBaseBackend | str | None = None,
+        backend: LocalBaseBackend | str | None = None,
         objects: Sequence[object] = (),
         extra: dict[str, str | int | None] | None = None,
         log_to_db: bool = False,
