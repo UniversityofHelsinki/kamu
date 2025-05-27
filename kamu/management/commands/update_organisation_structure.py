@@ -114,8 +114,8 @@ class Command(BaseCommand):
                 organisation_obj = Organisation.objects.get(identifier=organisation[IDENTIFIER_KEY])
             except Organisation.DoesNotExist:
                 continue
-            if organisation_obj.abbreviation != organisation.get(ABBREVIATION_KEY, ""):
-                abbreviation = organisation.get(ABBREVIATION_KEY, "")
+            abbreviation = organisation.get(ABBREVIATION_KEY) or ""
+            if organisation_obj.abbreviation != abbreviation:
                 organisation_obj.abbreviation = abbreviation
                 organisation_obj.save()
                 if self.verbosity > 0:
