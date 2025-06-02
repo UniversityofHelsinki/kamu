@@ -484,6 +484,8 @@ class RegistrationViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(hasattr(identity, "user"))
         self.assertEqual(response.url, reverse("identity-detail", kwargs={"pk": identity.pk}))
+        self.membership.refresh_from_db()
+        self.assertEqual(self.membership.identity, identity)
 
     @mock.patch("kamu.views.auth.SmsConnector")
     def test_verify_phone_number_resend_code(self, mock_connector):
@@ -522,6 +524,9 @@ class RegistrationViewTests(BaseTestCase):
         response = self.client.get(url, follow=True, headers={"SUB": "1234567890"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Membership created", response.content.decode("utf-8"))
+        self.assertTrue(Identifier.objects.filter(value="1234567890").exists())
+        self.membership.refresh_from_db()
+        self.assertEqual(self.membership.identity, Identity.objects.get(identifiers__value="1234567890"))
 
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
     def test_register_with_haka_account(self):
@@ -529,14 +534,17 @@ class RegistrationViewTests(BaseTestCase):
         response = self.client.get(url, follow=True, headers={"EPPN": "haka@example.com"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("Membership created", response.content.decode("utf-8"))
-        self.assertEqual(Identity.objects.get(identifiers__value="haka@example.com").user.username, "haka@example.com")
+        identity = Identity.objects.get(identifiers__value="haka@example.com")
+        self.assertEqual(identity.user.username, "haka@example.com")
+        self.membership.refresh_from_db()
+        self.assertEqual(self.membership.identity, identity)
 
     @override_settings(SAML_EIDAS_IDENTIFIER="HTTP_IDENTIFIER")
     @override_settings(SAML_EIDAS_GIVEN_NAMES="HTTP_GIVEN_NAMES")
     @override_settings(SAML_EIDAS_SURNAME="HTTP_SURNAME")
     @override_settings(SAML_SUOMIFI_ASSURANCE="HTTP_ASSURANCE")
     def test_eidas_registration_login(self):
-        url = reverse("login-suomifi") + "?next=" + reverse("membership-claim")
+        url = reverse("login-suomifi")
         response = self.client.get(
             url,
             follow=True,
@@ -552,12 +560,14 @@ class RegistrationViewTests(BaseTestCase):
         self.assertEqual(identity.assurance_level, 2)
         self.assertEqual(identity.given_names, "eIDAS")
         self.assertEqual(identity.surname, "User")
+        self.membership.refresh_from_db()
+        self.assertEqual(self.membership.identity, identity)
 
     @override_settings(SAML_EIDAS_IDENTIFIER="HTTP_IDENTIFIER")
     @override_settings(SAML_EIDAS_SURNAME="HTTP_SURNAME")
     @override_settings(META_ENCODING="utf-8")
     def test_registration_encoding_invalid(self):
-        url = reverse("login-suomifi") + "?next=" + reverse("membership-claim")
+        url = reverse("login-suomifi")
         response = self.client.get(
             url,
             follow=True,
@@ -574,7 +584,7 @@ class RegistrationViewTests(BaseTestCase):
     @override_settings(SAML_EIDAS_SURNAME="HTTP_SURNAME")
     @override_settings(META_ENCODING="latin1")
     def test_registration_encoding_fixed(self):
-        url = reverse("login-suomifi") + "?next=" + reverse("membership-claim")
+        url = reverse("login-suomifi")
         response = self.client.get(
             url,
             follow=True,

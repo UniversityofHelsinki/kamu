@@ -36,6 +36,7 @@ class ShibbolethBackendTests(TransactionTestCase):
         self.factory = RequestFactory()
         self.request = self.factory.get(reverse("login-shibboleth"))
         self.request.user = AnonymousUser()
+        setattr(self.request, "session", {})
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     def test_local_login_with_existing_user(self):
@@ -317,6 +318,7 @@ class GroupUpdateTests(TestCase):
         self.user.groups.add(self.saml_group)
         self.factory = RequestFactory()
         self.request = self.factory.get(reverse("login-shibboleth"))
+        setattr(self.request, "session", {})
         self.request.user = AnonymousUser()
         self.backend = ShibbolethLocalBackend()
         self.request.META = {
@@ -352,7 +354,6 @@ class GroupUpdateTests(TestCase):
     )
     @patch("kamu.utils.audit.logger_audit")
     def test_login_remove_other_backend_prefixes(self, mock_logger):
-        setattr(self.request, "session", {})
         user = self.backend.authenticate(request=self.request)
         self.assertEqual(user.groups.count(), 1)
         self.assertIn(self.saml_group, user.groups.all())
@@ -382,7 +383,6 @@ class GroupUpdateTests(TestCase):
     @override_settings(REMOVE_GROUPS_WITH_OTHER_BACKENDS=False)
     @patch("kamu.utils.audit.logger_audit")
     def test_login_do_remove_other_backend_prefixes_option(self, mock_logger):
-        setattr(self.request, "session", {})
         user = self.backend.authenticate(request=self.request)
         self.assertEqual(user.groups.count(), 2)
 
@@ -396,6 +396,7 @@ class ValidateAccessTests(BaseTestCase):
         )
         self.request = self.factory.get(reverse("login-shibboleth"))
         self.request.user = AnonymousUser()
+        setattr(self.request, "session", {})
         self.request.META = {settings.SAML_ATTR_EPPN: "testuser@example.org"}
         self.backend = ShibbolethLocalBackend()
 

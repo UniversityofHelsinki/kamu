@@ -173,7 +173,8 @@ def get_invitation_session_parameters(request: HttpRequest) -> tuple[str, dateti
     """
     Get invitation session parameters from request.
 
-    Raises PermissionDenied if anything went wrong.
+    Raises PermissionDenied if session parameters are missing or have an invalid format. This is used for
+    access control.
     """
     if "invitation_code" not in request.session or not request.session["invitation_code"]:
         raise PermissionDenied
