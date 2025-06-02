@@ -206,8 +206,14 @@ def _get_membership(membership_pk: int | str) -> Membership:
 
 
 def _remove_session_parameters(request: HttpRequest) -> None:
-    del request.session["invitation_code"]
-    del request.session["invitation_code_time"]
+    """
+    Remove invitation code and time from session.
+    """
+    for parameter in ["invitation_code", "invitation_code_time"]:
+        try:
+            del request.session[parameter]
+        except KeyError:
+            pass
 
 
 def claim_membership(request: HttpRequest, identity: Identity) -> int:
