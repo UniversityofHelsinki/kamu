@@ -95,6 +95,8 @@ class InviteView(FormView):
         code = form.cleaned_data["code"]
         self.request.session["invitation_code"] = code
         self.request.session["invitation_code_time"] = timezone.now().isoformat()
+        if "claim" in form.data and self.request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("membership-claim"))
         if "register" in form.data:
             return HttpResponseRedirect(reverse("login-register"))
         if "login" in form.data:

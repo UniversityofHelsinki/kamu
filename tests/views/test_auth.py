@@ -417,12 +417,35 @@ class RegistrationViewTests(BaseTestCase):
         self.assertIsNone(self.membership.identity)
         self.assertEqual(response.url, reverse("front-page"))
 
-    def test_invite_view(self):
+    def test_invite_view_without_login(self):
+        url = reverse("login-invite")
+        response = self.client.get(url)
+        self.assertIn("Register identity", response.content.decode("utf-8"))
+
+    def test_invite_view_with_login(self):
+        url = reverse("login-invite")
         self.client.force_login(self.user)
+        response = self.client.get(url)
+        self.assertIn("Claim invite", response.content.decode("utf-8"))
+
+    def test_invite_view_login(self):
+        url = reverse("login-invite")
+        response = self.client.post(url, data={"code": self.secret, "login": True})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("login"))
+
+    def test_invite_view_register(self):
         url = reverse("login-invite")
         response = self.client.post(url, data={"code": self.secret, "register": True})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("login-register"))
+
+    def test_invite_view_claim_invite(self):
+        self.client.force_login(self.user)
+        url = reverse("login-invite")
+        response = self.client.post(url, data={"code": self.secret, "claim": True})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("membership-claim"))
 
     def test_fill_registration_form(self):
         url = reverse("login-register")
