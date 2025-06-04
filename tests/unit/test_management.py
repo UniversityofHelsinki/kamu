@@ -437,3 +437,136 @@ class OrganisationSynchronizationTests(TestData, ManagementCommandTestCase):
         self.assertEqual(Organisation.objects.all().count(), 2)
         self.assertIn("Organisation 1-1 updated with parent 1", out)
         self.assertIn("Organisation 1 updated with abbreviation ORG", out)
+
+
+class MembershipStatusUpdateTests(TestData, ManagementCommandTestCase):
+    command = "update_membership_statuses"
+
+    def setUp(self):
+        super().setUp()
+        self.role = self.create_role(name="ext_employee")
+        self.role_guest = self.create_role(name="ext_research")
+        self.create_identity(user=True, email=True)
+        self.create_membership(self.role, identity=self.identity, start_delta_days=0, expire_delta_days=5)
+        self.create_membership(self.role_guest, identity=self.identity, start_delta_days=0, expire_delta_days=8)
+        self.create_membership(self.role, identity=self.identity, start_delta_days=-1, expire_delta_days=-1)
+
+    def _setup_status_expiring(self):
+        expired = self.create_membership(
+            self.role,
+            identity=self.identity,
+            start_delta_days=-5,
+            expire_delta_days=-2,
+            approver=self.identity.user,
+            status=Membership.Status.ACTIVE,
+        )
+        expiring = self.create_membership(
+            self.role,
+            identity=self.identity,
+            start_delta_days=-5,
+            expire_delta_days=-1,
+            approver=self.identity.user,
+            status=Membership.Status.ACTIVE,
+        )
+        staying = self.create_membership(
+            self.role,
+            identity=self.identity,
+            start_delta_days=-5,
+            expire_delta_days=0,
+            approver=self.identity.user,
+            status=Membership.Status.ACTIVE,
+        )
+        return expired, expiring, staying
+
+    def test_status_expiring_today(self):
+        expired, expiring, staying = self._setup_status_expiring()
+        out, _ = self.call_command("-v 2")
+        expired.refresh_from_db()
+        expiring.refresh_from_db()
+        staying.refresh_from_db()
+        self.assertEqual(expired.status, Membership.Status.ACTIVE)
+        self.assertEqual(expiring.status, Membership.Status.EXPIRED)
+        self.assertEqual(staying.status, Membership.Status.ACTIVE)
+        self.assertIn(f"Updating membership {expiring} status from active to expired", out)
+
+    def test_status_expiring_days(self):
+        expired, expiring, staying = self._setup_status_expiring()
+        out, _ = self.call_command("-v 2", "--days=1")
+        expired.refresh_from_db()
+        expiring.refresh_from_db()
+        staying.refresh_from_db()
+        self.assertEqual(expired.status, Membership.Status.EXPIRED)
+        self.assertEqual(expiring.status, Membership.Status.EXPIRED)
+        self.assertEqual(staying.status, Membership.Status.ACTIVE)
+        self.assertIn(f"Updating membership {expiring} status from active to expired", out)
+        self.assertIn(f"Updating membership {expired} status from active to expired", out)
+
+    def test_status_expiring_all(self):
+        expired, expiring, staying = self._setup_status_expiring()
+        self.call_command("--all")
+        expired.refresh_from_db()
+        expiring.refresh_from_db()
+        staying.refresh_from_db()
+        self.assertEqual(expired.status, Membership.Status.EXPIRED)
+        self.assertEqual(expiring.status, Membership.Status.EXPIRED)
+        self.assertEqual(staying.status, Membership.Status.ACTIVE)
+
+    def _setup_status_activation(self):
+        activated = self.create_membership(
+            self.role,
+            identity=self.identity,
+            start_delta_days=-1,
+            expire_delta_days=2,
+            approver=self.identity.user,
+            status=Membership.Status.PENDING,
+        )
+        activating = self.create_membership(
+            self.role,
+            identity=self.identity,
+            start_delta_days=0,
+            expire_delta_days=2,
+            approver=self.identity.user,
+            status=Membership.Status.PENDING,
+        )
+        pending = self.create_membership(
+            self.role,
+            identity=self.identity,
+            start_delta_days=1,
+            expire_delta_days=2,
+            approver=self.identity.user,
+            status=Membership.Status.PENDING,
+        )
+        return activated, activating, pending
+
+    def test_status_activation_today(self):
+        activated, activating, pending = self._setup_status_activation()
+        out, _ = self.call_command("-v 2")
+        activated.refresh_from_db()
+        activating.refresh_from_db()
+        pending.refresh_from_db()
+        self.assertEqual(activated.status, Membership.Status.PENDING)
+        self.assertEqual(activating.status, Membership.Status.ACTIVE)
+        self.assertEqual(pending.status, Membership.Status.PENDING)
+        self.assertIn(f"Updating membership {activating} status from pending to active", out)
+
+    def test_status_activation_days(self):
+        activated, activating, pending = self._setup_status_activation()
+        out, _ = self.call_command("-v 2", "--days=1")
+        activated.refresh_from_db()
+        activating.refresh_from_db()
+        pending.refresh_from_db()
+        self.assertEqual(activated.status, Membership.Status.ACTIVE)
+        self.assertEqual(activating.status, Membership.Status.ACTIVE)
+        self.assertEqual(pending.status, Membership.Status.PENDING)
+        self.assertIn(f"Updating membership {activating} status from pending to active", out)
+        self.assertIn(f"Updating membership {activated} status from pending to active", out)
+
+    def test_status_activation_all(self):
+        activated, activating, pending = self._setup_status_activation()
+        self.call_command("--all")
+        activated.refresh_from_db()
+        activating.refresh_from_db()
+        pending.refresh_from_db()
+        self.assertEqual(activated.status, Membership.Status.ACTIVE)
+        self.assertEqual(activating.status, Membership.Status.ACTIVE)
+        self.assertEqual(pending.status, Membership.Status.PENDING)

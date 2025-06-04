@@ -3,7 +3,9 @@ Test setup for all tests.
 """
 
 import datetime
+from typing import Any
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 from django.utils import timezone
@@ -24,6 +26,12 @@ from tests.data import (
     ROLES,
     USERS,
 )
+
+
+def membership_new_save(self, *args: Any, **kwargs: Any) -> None:
+    if not getattr(settings, "SKIP_MEMBERSHIP_SAVE", False):
+        self.set_status()
+    super(Membership, self).save(*args, **kwargs)
 
 
 class TestData(TestCase):
@@ -100,9 +108,24 @@ class TestData(TestCase):
         approver=None,
         inviter=None,
         invite_email_address="",
+        status=None,
     ):
+        Membership.save = membership_new_save
         start_date = timezone.now().date() + datetime.timedelta(days=start_delta_days)
         expire_date = timezone.now().date() + datetime.timedelta(days=expire_delta_days)
+        if status:
+            with self.settings(SKIP_MEMBERSHIP_SAVE=True):
+                return Membership.objects.create(
+                    role=role,
+                    identity=identity,
+                    reason=reason,
+                    start_date=start_date,
+                    expire_date=expire_date,
+                    approver=approver,
+                    inviter=inviter,
+                    invite_email_address=invite_email_address,
+                    status=status,
+                )
         return Membership.objects.create(
             role=role,
             identity=identity,
