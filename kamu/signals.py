@@ -36,16 +36,30 @@ def post_group_create(sender: Type[Group], instance: Group, created: bool, **kwa
     transaction.on_commit(add_groups)
 
 
+@receiver(post_save, sender=Membership)
+def identity_update_on_membership_save(instance: object, **kwargs: Any) -> None:
+    """
+    Update identity's modified timestamp after related membership is saved.
+    """
+    if instance and hasattr(instance, "identity") and isinstance(instance.identity, Identity):
+        instance.identity.save()
+
+
 @receiver(post_save, sender=Contract)
 @receiver(post_save, sender=EmailAddress)
-@receiver(post_save, sender=Membership)
 @receiver(post_save, sender=Identifier)
 @receiver(post_save, sender=PhoneNumber)
 def identity_update_on_save(instance: object, **kwargs: Any) -> None:
     """
     Update identity's modified timestamp after related objects are saved.
+    Update membership status and timestamp for related memberships if status changed.
     """
     if instance and hasattr(instance, "identity") and isinstance(instance.identity, Identity):
+        for membership in Membership.objects.filter(identity=instance.identity).exclude(
+            status=Membership.Status.EXPIRED
+        ):
+            if membership.status != membership.get_status():
+                membership.save()
         instance.identity.save()
 
 

@@ -160,7 +160,20 @@ class SignalUpdateTestCase(BaseTestCase):
 
     def test_membership_with_added_unfulfilled_requirement_with_grace(self):
         self.requirement = self.create_requirement("attribute_phone_number")
+        updated_at = self.membership.updated_at
         self.assertEqual(self.membership.status, Membership.Status.ACTIVE)
         self.permission.requirements.add(self.requirement)
+        self.membership.refresh_from_db()
+        self.assertEqual(self.membership.status, Membership.Status.ACTIVE)
+        self.assertGreater(self.membership.updated_at, updated_at)
+
+    def test_membership_status_updated_with_fulfilled_requirement(self):
+        self.requirement = self.create_requirement("attribute_phone_number")
+        self.requirement.grace = 0
+        self.requirement.save()
+        self.permission.requirements.add(self.requirement)
+        self.membership.refresh_from_db()
+        self.assertEqual(self.membership.status, Membership.Status.REQUIRE)
+        self.phone_number = PhoneNumber.objects.create(identity=self.identity, number="+1234567890", verified=True)
         self.membership.refresh_from_db()
         self.assertEqual(self.membership.status, Membership.Status.ACTIVE)

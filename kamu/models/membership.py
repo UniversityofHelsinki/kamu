@@ -153,22 +153,28 @@ class Membership(models.Model):
             self.requirements_failed_at = None
         return True
 
+    def get_status(self) -> Membership.Status:
+        """
+        Returns the current membership status.
+        """
+        if timezone.now().date() > self.expire_date:
+            return Membership.Status.EXPIRED
+        elif not self.identity:
+            return Membership.Status.INVITED
+        elif not self.test_requirements(allow_grace=self.status == Membership.Status.ACTIVE):
+            return Membership.Status.REQUIRE
+        elif not self.approver:
+            return Membership.Status.APPROVAL
+        elif timezone.now().date() < self.start_date:
+            return Membership.Status.PENDING
+        else:
+            return Membership.Status.ACTIVE
+
     def set_status(self) -> None:
         """
         Sets membership status.
         """
-        if timezone.now().date() > self.expire_date:
-            self.status = Membership.Status.EXPIRED
-        elif not self.identity:
-            self.status = Membership.Status.INVITED
-        elif not self.test_requirements(allow_grace=self.status == Membership.Status.ACTIVE):
-            self.status = Membership.Status.REQUIRE
-        elif not self.approver:
-            self.status = Membership.Status.APPROVAL
-        elif timezone.now().date() < self.start_date:
-            self.status = Membership.Status.PENDING
-        else:
-            self.status = Membership.Status.ACTIVE
+        self.status = self.get_status()
 
     def save(self, *args: Any, **kwargs: Any) -> None:
         """
