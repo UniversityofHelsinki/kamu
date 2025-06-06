@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-02 15:44+0300\n"
+"POT-Creation-Date: 2025-06-06 09:17+0300\n"
 "Language: SV\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -84,16 +84,16 @@ msgstr "Du tillhör en grupp som inte är tillåten från denna IP-adress."
 msgid "Configuration error, service administrators have been notified."
 msgstr "Konfigurationsfel, tjänstens administratörer har meddelats."
 
-#: backends.py:675
+#: backends.py:676
 msgid "Suspected duplicate user. Username already exists in the database: "
 msgstr "Misstänkt dubbel användare. Användarnamnet finns redan i databasen: "
 
-#: backends.py:689
+#: backends.py:690
 msgid "Suspected duplicate user. Identity already has a different username: "
 msgstr ""
 "Misstänkt dubbel användare. Identiteten har redan ett annat användarnamn: "
 
-#: backends.py:881
+#: backends.py:878
 msgid ""
 "Suspected duplicate user. Finnish personal identity code already exists in "
 "the database: "
@@ -1531,8 +1531,8 @@ msgid ""
 "You are already logged in. Claim invite here or log out to claim invite with "
 "another user."
 msgstr ""
-"Du är redan inloggad. Acceptera inbjudan här eller logga ut för att acceptera "
-"inbjudan med en annan användare."
+"Du är redan inloggad. Acceptera inbjudan här eller logga ut för att "
+"acceptera inbjudan med en annan användare."
 
 #: templates/auth/invite.html:19
 msgid ""
@@ -2955,23 +2955,23 @@ msgid "Role requires a requirement you cannot currently fulfill: %(name)s."
 msgstr ""
 "Rollen kräver ett krav som du för närvarande inte kan uppfylla: %(name)s."
 
-#: utils/membership.py:229
+#: utils/membership.py:230
 msgid "Invitation process has taken too long."
 msgstr "Inbjudningsprocessen har tagit för lång tid."
 
-#: utils/membership.py:235
+#: utils/membership.py:236
 msgid "This invitation has already been used."
 msgstr "Denna inbjudan har redan använts."
 
-#: utils/membership.py:239
+#: utils/membership.py:240
 msgid "This invitation has expired."
 msgstr "Denna inbjudan har gått ut."
 
-#: utils/membership.py:243
+#: utils/membership.py:244
 msgid "Invalid invitation token."
 msgstr "Ogiltig inbjudningstoken."
 
-#: utils/membership.py:246
+#: utils/membership.py:247
 msgid "Membership created."
 msgstr "Medlemskap skapat."
 
@@ -3068,27 +3068,31 @@ msgstr "Kontot kunde inte skapas, försök igen senare."
 msgid "Account created."
 msgstr "Konto skapat."
 
-#: views/account.py:346
+#: views/account.py:334
+msgid "Your permission to this account has expired."
+msgstr "Din behörighet till detta konto har löpt ut."
+
+#: views/account.py:351
 msgid "Account enabling failed, please try again later."
 msgstr "Kontoaktiveringen misslyckades, försök igen senare."
 
-#: views/account.py:358
+#: views/account.py:363
 msgid "Account enabled."
 msgstr "Konto aktiverat."
 
-#: views/account.py:385
+#: views/account.py:390
 msgid "Account disabling failed, please try again later."
 msgstr "Deaktiveringen av kontot misslyckades, försök igen senare."
 
-#: views/account.py:397
+#: views/account.py:402
 msgid "Account disabled."
 msgstr "Konto deaktiverat."
 
-#: views/account.py:439
+#: views/account.py:444
 msgid "Password reset failed, please try again later."
 msgstr "Återställningen av lösenord misslyckades, försök igen senare."
 
-#: views/account.py:450
+#: views/account.py:455
 msgid "Password reset."
 msgstr "Lösenordet återställdes."
 

@@ -328,6 +328,11 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
             self.request.user.has_perms(["kamu.change_accounts"]) or self.object.identity.user == self.request.user
         ):
             raise PermissionDenied
+        if self.object.type not in self.object.identity.get_permissions(
+            permission_type=Permission.Type.ACCOUNT
+        ).values_list("identifier", flat=True):
+            messages.add_message(self.request, messages.WARNING, _("Your permission to this account has expired."))
+            return
         if self.object.status == Account.Status.DISABLED:
             connector = AccountApiConnector()
             try:

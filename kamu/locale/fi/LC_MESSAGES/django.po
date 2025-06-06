@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-02 15:44+0300\n"
+"POT-Creation-Date: 2025-06-06 09:17+0300\n"
 "Language: FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -89,16 +89,16 @@ msgstr ""
 msgid "Configuration error, service administrators have been notified."
 msgstr "Määritysvirhe palvelussa, asiasta ilmoitettu palvelun ylläpitäjille."
 
-#: backends.py:675
+#: backends.py:676
 msgid "Suspected duplicate user. Username already exists in the database: "
 msgstr ""
 "Mahdollinen duplikaattikäyttäjä. Käyttäjänimi on jo olemassa tietokannassa: "
 
-#: backends.py:689
+#: backends.py:690
 msgid "Suspected duplicate user. Identity already has a different username: "
 msgstr "Mahdollinen duplikaattikäyttäjä. Tunnisteella on jo eri käyttäjänimi: "
 
-#: backends.py:881
+#: backends.py:878
 msgid ""
 "Suspected duplicate user. Finnish personal identity code already exists in "
 "the database: "
@@ -2966,23 +2966,23 @@ msgstr "Rooli vaatii korkeamman varmuustason: "
 msgid "Role requires a requirement you cannot currently fulfill: %(name)s."
 msgstr "Roolilla on vaatimus, jota et voi tällä hetkellä täyttää: %(name)s."
 
-#: utils/membership.py:229
+#: utils/membership.py:230
 msgid "Invitation process has taken too long."
 msgstr "Kutsuprosessi on kestänyt liian kauan."
 
-#: utils/membership.py:235
+#: utils/membership.py:236
 msgid "This invitation has already been used."
 msgstr "Kutsu on jo käytetty."
 
-#: utils/membership.py:239
+#: utils/membership.py:240
 msgid "This invitation has expired."
 msgstr "Kutsu on vanhentunut."
 
-#: utils/membership.py:243
+#: utils/membership.py:244
 msgid "Invalid invitation token."
 msgstr "Virheellinen kutsukoodi."
 
-#: utils/membership.py:246
+#: utils/membership.py:247
 msgid "Membership created."
 msgstr "Jäsenyys luotu."
 
@@ -3082,32 +3082,36 @@ msgstr ""
 msgid "Account created."
 msgstr "Käyttäjätunnus luotu."
 
-#: views/account.py:346
+#: views/account.py:334
+msgid "Your permission to this account has expired."
+msgstr "Oikeutesi tähän käyttäjätunnukseen on päättynyt."
+
+#: views/account.py:351
 msgid "Account enabling failed, please try again later."
 msgstr ""
 "Käyttäjätunnuksen aktivointi epäonnistui, ole hyvä ja yritä myöhemmin "
 "uudelleen."
 
-#: views/account.py:358
+#: views/account.py:363
 msgid "Account enabled."
 msgstr "Käyttäjätunnus aktivoitu."
 
-#: views/account.py:385
+#: views/account.py:390
 msgid "Account disabling failed, please try again later."
 msgstr ""
 "Käyttäjätunnuksen sulkeminen epäonnistui, ole hyvä ja yritä myöhemmin "
 "uudelleen."
 
-#: views/account.py:397
+#: views/account.py:402
 msgid "Account disabled."
 msgstr "Käyttäjätunnus suljettu."
 
-#: views/account.py:439
+#: views/account.py:444
 msgid "Password reset failed, please try again later."
 msgstr ""
 "Salasanan asettaminen epäonnistui, ole hyvä ja yritä myöhemmin uudelleen."
 
-#: views/account.py:450
+#: views/account.py:455
 msgid "Password reset."
 msgstr "Salasana asetettu."
 

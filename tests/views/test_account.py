@@ -161,6 +161,18 @@ class AccountTests(BaseTestCase):
         )
 
     @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_post")
+    def test_view_account_enable_status_without_permission(self, mock_connector):
+        mock_connector.return_value = AccountApiResponseMock()
+        account = self.create_account(status=Account.Status.DISABLED)
+        data = {"enable_account": True}
+        self.permission.delete()
+        response = self.client.post(f"/account/{account.pk}/", data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Your permission to this account has expired", response.content.decode("utf-8"))
+        account.refresh_from_db()
+        self.assertEqual(account.status, Account.Status.DISABLED)
+
+    @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_post")
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_view_account_reset_password(self, mock_logger, mock_connector):
         mock_connector.return_value = AccountApiResponseMock()
