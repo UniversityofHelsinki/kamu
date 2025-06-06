@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import datetime
 from typing import Any
+from uuid import uuid4
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -56,6 +57,12 @@ class Membership(models.Model):
         ACTIVE = ("active", _("Active"))
         EXPIRED = ("expired", _("Expired"))
 
+    identifier = models.UUIDField(
+        unique=True,
+        default=uuid4,
+        verbose_name=_("Membership ID"),
+        help_text=_("Unique identifier for this membership."),
+    )
     invite_email_address = models.EmailField(blank=True, null=True, verbose_name=_("Invite email address"))
     status = models.CharField(max_length=10, choices=Status.choices, verbose_name=_("Membership status"))
     approver = models.ForeignKey(

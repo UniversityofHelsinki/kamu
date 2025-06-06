@@ -4,6 +4,7 @@ Membership views for the UI.
 
 import datetime
 from typing import Any, TypeVar
+from uuid import uuid4
 
 from django.conf import settings
 from django.contrib import messages
@@ -791,6 +792,7 @@ class MembershipMassInviteView(BaseMembershipInviteView):
             form.instance.pk = None
             form.instance.identity = identity
             form.instance.invite_email_address = None
+            form.instance.identifier = uuid4()
             membership = form.save()
             audit_log.info(
                 f"Membership to {membership.role} added to identity: {membership.identity}",
@@ -807,6 +809,7 @@ class MembershipMassInviteView(BaseMembershipInviteView):
             form.instance.pk = None
             form.instance.identity = None
             form.instance.invite_email_address = email
+            form.instance.identifier = uuid4()
             membership = form.save()
             audit_log.info(
                 f"Invited {membership.invite_email_address} to role {membership.role}",

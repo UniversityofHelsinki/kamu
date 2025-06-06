@@ -120,6 +120,7 @@ class MembershipAPITests(BaseAPITestCase):
                 "expire_date": timezone.now().date() + datetime.timedelta(days=10),
             },
         )
+        self.assertEqual(len(response.data["identifier"]), 36)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_membership_invalid_date(self):

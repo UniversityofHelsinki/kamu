@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-06 09:17+0300\n"
+"POT-Creation-Date: 2025-06-06 10:00+0300\n"
 "Language: SV\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -528,14 +528,14 @@ msgstr "Deaktiverat den"
 #: models/account.py:35 models/account.py:63 models/contract.py:55
 #: models/contract.py:112 models/identity.py:40 models/identity.py:244
 #: models/identity.py:455 models/identity.py:491 models/identity.py:554
-#: models/membership.py:72 models/organisation.py:31 models/role.py:82
+#: models/membership.py:79 models/organisation.py:31 models/role.py:82
 #: models/role.py:261 models/role.py:344 models/token.py:313
 msgid "Created at"
 msgstr "Skapat den"
 
 #: models/account.py:36 models/identity.py:41 models/identity.py:245
 #: models/identity.py:456 models/identity.py:492 models/identity.py:555
-#: models/membership.py:73 models/organisation.py:32 models/role.py:83
+#: models/membership.py:80 models/organisation.py:32 models/role.py:83
 #: models/role.py:262 models/role.py:345
 msgid "Updated at"
 msgstr "Uppdaterat den"
@@ -889,59 +889,67 @@ msgstr "Identifierare"
 msgid "Invalid eduPersonPrincipalName format."
 msgstr "Ogiltigt format för eduPersonPrincipalName."
 
-#: models/membership.py:52
+#: models/membership.py:53
 msgid "Invited"
 msgstr "Inbjudna"
 
-#: models/membership.py:53
+#: models/membership.py:54
 msgid "Missing requirements"
 msgstr "Krav saknas"
 
-#: models/membership.py:54
+#: models/membership.py:55
 msgid "Waiting approval"
 msgstr "Väntar på godkännande"
 
-#: models/membership.py:55
+#: models/membership.py:56
 msgid "Pending"
 msgstr "Väntar"
 
-#: models/membership.py:56
+#: models/membership.py:57
 msgid "Active"
 msgstr "Aktiva"
 
-#: models/membership.py:57 templates/identity/identity_detail.html:114
+#: models/membership.py:58 templates/identity/identity_detail.html:114
 msgid "Expired"
 msgstr "Utgångna"
 
-#: models/membership.py:59
+#: models/membership.py:63
+msgid "Membership ID"
+msgstr "Medlems-ID"
+
+#: models/membership.py:64
+msgid "Unique identifier for this membership."
+msgstr "Unik identifierare för detta medlemskap."
+
+#: models/membership.py:66
 msgid "Invite email address"
 msgstr "E-postadress för inbjudan"
 
-#: models/membership.py:60
+#: models/membership.py:67
 msgid "Membership status"
 msgstr "Medlemskapsstatus"
 
-#: models/membership.py:67
+#: models/membership.py:74
 msgid "Membership reason"
 msgstr "Medlemskapsorsak"
 
-#: models/membership.py:68
+#: models/membership.py:75
 msgid "Membership start date"
 msgstr "Medlemskapets startdatum"
 
-#: models/membership.py:69
+#: models/membership.py:76
 msgid "Membership expiry date"
 msgstr "Medlemskapets utgångsdatum"
 
-#: models/membership.py:71
+#: models/membership.py:78
 msgid "Requirements failed time"
 msgstr "Tid då kraven inte kunde uppfyllas"
 
-#: models/membership.py:79
+#: models/membership.py:86
 msgid "Membership"
 msgstr "Medlemskap"
 
-#: models/membership.py:80 templates/base.html:43
+#: models/membership.py:87 templates/base.html:43
 msgid "Memberships"
 msgstr "Medlemskap"
 
@@ -3237,40 +3245,40 @@ msgstr "Felaktiga primärnycklar."
 msgid "Identities combined."
 msgstr "Identiteter kombinerade."
 
-#: views/membership.py:79
+#: views/membership.py:80
 msgid "You need to create an identity first."
 msgstr "Du måste först skapa en identitet."
 
-#: views/membership.py:83
+#: views/membership.py:84
 msgid "You are already a member of this role."
 msgstr "Du är redan medlem i den här rollen."
 
-#: views/membership.py:215
+#: views/membership.py:216
 msgid "Membership approved."
 msgstr "Medlemskap godkänt."
 
-#: views/membership.py:236 views/membership.py:643
+#: views/membership.py:237 views/membership.py:644
 msgid "Invite email sent."
 msgstr "E-postmeddelande med inbjudan skickad."
 
-#: views/membership.py:238
+#: views/membership.py:239
 msgid "Could not send invite email."
 msgstr "Kunde inte skicka e-postmeddelande med inbjudan."
 
-#: views/membership.py:243
+#: views/membership.py:244
 msgid "Tried to send a new invite too soon. Please try again in one minute."
 msgstr ""
 "Försökte skicka en ny inbjudan för tidigt. Vänligen försök igen om en minut."
 
-#: views/membership.py:268
+#: views/membership.py:269
 msgid "Membership set to end today."
 msgstr "Medlemskapet upphör idag."
 
-#: views/membership.py:315
+#: views/membership.py:316
 msgid "Membership updated."
 msgstr "Medlemskap uppdaterat."
 
-#: views/membership.py:720
+#: views/membership.py:721
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and email address {email} are "
@@ -3279,7 +3287,7 @@ msgstr ""
 "Personbeteckningen {fpic} och e-postadressen {email} är registrerade för "
 "olika identiteter."
 
-#: views/membership.py:730
+#: views/membership.py:731
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and phone number {phone} are "
@@ -3288,7 +3296,7 @@ msgstr ""
 "Personbeteckningen {fpic} och telefonnumret {phone} är registrerade för "
 "olika identiteter."
 
-#: views/membership.py:739
+#: views/membership.py:740
 #, python-brace-format
 msgid ""
 "Email address {email} and phone number {phone} are registered to different "
@@ -3297,12 +3305,12 @@ msgstr ""
 "E-postadressen {email} och telefonnumret {phone} är registrerade för olika "
 "identiteter."
 
-#: views/membership.py:834
+#: views/membership.py:837
 #, python-brace-format
 msgid "Invite email sent to following addresses: {0}"
 msgstr "Inbjudan skickades till följande e-postadresser: {0}"
 
-#: views/membership.py:838
+#: views/membership.py:841
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Följande identiteter har lagts till: {0}"

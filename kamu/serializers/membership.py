@@ -62,6 +62,7 @@ class MembershipSerializer(serializers.ModelSerializer[Membership], EagerLoading
             "id",
             "identity",
             "role",
+            "identifier",
             "approver",
             "inviter",
             "reason",
@@ -91,6 +92,7 @@ class MembershipLimitedIdentitySerializer(serializers.ModelSerializer[Membership
         fields = [
             "id",
             "role",
+            "identifier",
             "start_date",
             "expire_date",
             "status",
@@ -123,6 +125,7 @@ class MembershipLimitedIdentitySerializer(serializers.ModelSerializer[Membership
         get_role(value.role)
         membership = {
             "id": value.id,
+            "identifier": value.identifier,
             "start_date": value.start_date,
             "expire_date": value.expire_date,
             "status": value.status,
