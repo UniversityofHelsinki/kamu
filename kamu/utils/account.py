@@ -34,7 +34,7 @@ def get_light_account_services(identity: Identity) -> list[str]:
     services = set()
     service_providers = identity.get_permissions().filter(type=Permission.Type.SERVICE)
     for service_provider in service_providers:
-        services.add(service_provider.identifier)
+        services.add(service_provider.value)
     for service in default_services:
         services.add(service)
     return list(services)

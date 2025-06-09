@@ -39,7 +39,7 @@ class AccountUnitTests(BaseTestCase):
         self.assertEqual(data.get("schacExpiryDate"), self.membership2.expire_date.isoformat())
         self.assertEqual(data.get("accountType"), 9)
         self.assertIn("affiliate", data.get("eduPersonAffiliation"))
-        self.assertIn("service", data.get("lightAccountService"))
+        self.assertIn("service-identifier-1", data.get("lightAccountService"))
         self.assertIn(settings.LIGHT_ACCOUNT_DEFAULT_SERVICES[0], data.get("lightAccountService"))
         self.assertIn("EPPN:testuser@example.org", data.get("lightAccountExternalIdentifier"))
         self.assertIn("MICROSOFT:123456789", data.get("lightAccountExternalIdentifier"))
