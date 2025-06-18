@@ -231,7 +231,8 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
                 membership=self.object,
                 token=token,
                 address=self.object.invite_email_address,
-                invite_text="",
+                invite_text=self.object.invite_text,
+                lang=self.object.invite_language,
                 request=self.request,
             ):
                 messages.add_message(request, messages.INFO, _("Invite email sent."))
@@ -604,11 +605,11 @@ class MembershipInviteEmailView(BaseMembershipInviteView):
         if not user or not form.instance.invite_email_address:
             raise PermissionDenied
         invite_email_address = form.instance.invite_email_address
-        invite_text = form.cleaned_data["invite_text"]
+        invite_text = form.instance.invite_text
+        invite_language = form.instance.invite_language
         form.instance.inviter = user
         if form.instance.role.is_approver(user=user):
             form.instance.approver = user
-        invite_language = form.cleaned_data.get("invite_language", "en")
         if "preview_message" in self.request.POST:
             subject, message = create_invite_message(
                 role=form.instance.role,
@@ -754,11 +755,11 @@ class MembershipMassInviteView(BaseMembershipInviteView):
         user = self.request.user if self.request.user.is_authenticated else None
         if not user:
             raise PermissionDenied
-        invite_text = form.cleaned_data["invite_text"]
+        invite_text = form.instance.invite_text
+        invite_language = form.instance.invite_language
         form.instance.inviter = user
         if form.instance.role.is_approver(user=user):
             form.instance.approver = user
-        invite_language = form.cleaned_data.get("invite_language", "en")
         invitees = form.cleaned_data["invited"]
         to_be_invited = []
         to_be_added = []

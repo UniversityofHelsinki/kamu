@@ -77,6 +77,16 @@ class MembershipViewTests(BaseTestCase):
         response = self.client.post(self.url, {"resend_invite": "resend"}, follow=True)
         self.assertIn("Tried to send a new invite too soon", response.content.decode("utf-8"))
 
+    def test_resend_membership_invite_custom(self):
+        self.membership.identity = None
+        self.membership.invite_text = "Custom invite text"
+        self.membership.invite_language = "en"
+        self.membership.save()
+        response = self.client.post(self.url, {"resend_invite": "resend"}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Your invite code is", mail.outbox[0].body)
+        self.assertIn("Custom invite text", mail.outbox[0].body)
+
     def test_show_membership_approval_info(self):
         self.role.approvers.add(self.group)
         response = self.client.get(self.url)

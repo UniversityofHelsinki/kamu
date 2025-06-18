@@ -7,12 +7,10 @@ from typing import Any
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.forms.widgets import DateInput
 from django.utils.translation import gettext_lazy as _
-from django_stubs_ext import StrPromise
 
 from kamu.models.membership import Membership
 from kamu.validators.identity import validate_fpic, validate_phone_number
@@ -87,22 +85,10 @@ class MembershipEditForm(forms.ModelForm[Membership]):
         validate_membership(ValidationError, self.instance.role, start_date, expire_date, edit=True)
 
 
-help_text_invite_text: StrPromise = _(
-    "This replaces beginning of the default invite message. Lines of the invite text are wrapped to 70 "
-    "characters. Invite code and link will be added to end of the message. Use preview to see the final "
-    "result."
-)
-
-
 class MembershipEmailCreateForm(forms.ModelForm[Membership]):
     """
     Form for creating a new membership with email invite.
     """
-
-    invite_language = forms.ChoiceField(label=_("Invite language"), choices=settings.LANGUAGES)
-    invite_text = forms.CharField(
-        label=_("Invite text"), widget=forms.Textarea, required=False, help_text=help_text_invite_text
-    )
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -122,7 +108,7 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
 
     class Meta:
         model = Membership
-        fields = ["invite_email_address", "start_date", "expire_date", "reason"]
+        fields = ["invite_email_address", "start_date", "expire_date", "reason", "invite_language", "invite_text"]
         widgets = {
             "start_date": DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
             "expire_date": DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
@@ -163,10 +149,6 @@ class MembershipMassCreateForm(forms.ModelForm[Membership]):
             'international format. Example: "person@example.org,+358501234567,010181-900C"'
         ),
     )
-    invite_language = forms.ChoiceField(label=_("Invite language"), choices=settings.LANGUAGES)
-    invite_text = forms.CharField(
-        label=_("Invite text"), widget=forms.Textarea, required=False, help_text=help_text_invite_text
-    )
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -183,7 +165,7 @@ class MembershipMassCreateForm(forms.ModelForm[Membership]):
 
     class Meta:
         model = Membership
-        fields = ["start_date", "expire_date", "reason"]
+        fields = ["start_date", "expire_date", "reason", "invite_language", "invite_text"]
         widgets = {
             "start_date": DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
             "expire_date": DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),

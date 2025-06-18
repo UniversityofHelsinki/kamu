@@ -64,6 +64,24 @@ class Membership(models.Model):
         help_text=_("Unique identifier for this membership."),
     )
     invite_email_address = models.EmailField(blank=True, null=True, verbose_name=_("Invite email address"))
+
+    invite_language = models.CharField(
+        max_length=2,
+        default="en",
+        choices=settings.LANGUAGES,
+        verbose_name=_("Invite language"),
+    )
+
+    invite_text = models.TextField(
+        blank=True,
+        verbose_name=_("Invite text"),
+        help_text=_(
+            "This replaces beginning of the default invite message. Lines of the invite text are wrapped to 70 "
+            "characters. Invite code and link will be added to end of the message. Use preview to see the final "
+            "result."
+        ),
+    )
+
     status = models.CharField(max_length=10, choices=Status.choices, verbose_name=_("Membership status"))
     approver = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="membership_approver", on_delete=models.SET_NULL, null=True, blank=True
