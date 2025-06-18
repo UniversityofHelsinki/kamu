@@ -48,7 +48,7 @@ class Contract(models.Model):
     )
     template = models.ForeignKey(
         "kamu.ContractTemplate",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
     )
     checksum = models.CharField(max_length=64, verbose_name=_("Checksum"))
     lang = models.CharField(max_length=2, verbose_name=_("Language"))
