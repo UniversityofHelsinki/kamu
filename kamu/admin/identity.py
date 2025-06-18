@@ -65,6 +65,7 @@ class IdentityAdmin(AuditModelAdmin):
         "roles__identifier",
     ]
     autocomplete_fields = ["user"]
+    filter_horizontal = ("nationality",)
 
 
 class PhoneNumberAdmin(AuditModelAdmin):
