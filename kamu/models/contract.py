@@ -156,6 +156,7 @@ class ContractTemplate(models.Model):
         self.version = last.version + 1 if last else 1
         if self.pk:
             self.pk = None
+            self.created_at = timezone.now()
         super().save(*args, **kwargs)
 
     def log_values(self) -> dict[str, str | int]:

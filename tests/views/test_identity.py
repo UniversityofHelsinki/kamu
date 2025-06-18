@@ -605,9 +605,12 @@ class ContractTests(BaseTestCase):
         self.client.force_login(self.user)
 
     def test_modify_contract_creates_new_version(self):
+        created_at = self.contract_template.created_at
         self.contract_template.name_en = "New name"
         self.contract_template.save()
-        self.assertTrue(ContractTemplate.objects.filter(type=self.contract_template.type, version=2).exists())
+        self.assertGreater(
+            ContractTemplate.objects.get(type=self.contract_template.type, version=2).created_at, created_at
+        )
 
     def test_contract_sign_page(self):
         response = self.client.get(f"/identity/{self.identity.pk}/contracts/{self.contract_template.pk}/sign/")
