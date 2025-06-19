@@ -125,13 +125,17 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
         expire_date = cleaned_data.get("expire_date")
         invite_email_address = cleaned_data.get("invite_email_address")
         validate_membership(ValidationError, self.role, start_date, expire_date)
-        if Membership.objects.filter(
-            role=self.role,
-            identity=None,
-            start_date__lte=expire_date,
-            expire_date__gte=start_date,
-            invite_email_address=invite_email_address,
-        ).exists():
+        if (
+            Membership.objects.filter(
+                role=self.role,
+                identity=None,
+                start_date__lte=expire_date,
+                expire_date__gte=start_date,
+                invite_email_address=invite_email_address,
+            )
+            .exclude(status=Membership.Status.CANCELLED)
+            .exists()
+        ):
             raise ValidationError(_("This email address already has an invite to the role during this time period."))
 
 

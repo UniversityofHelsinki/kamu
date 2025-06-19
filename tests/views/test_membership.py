@@ -87,12 +87,14 @@ class MembershipViewTests(BaseTestCase):
         self.assertIn("Your invite code is", mail.outbox[0].body)
         self.assertIn("Custom invite text", mail.outbox[0].body)
 
-    def test_show_membership_approval_info(self):
+    def test_show_membership_approver_actions(self):
         self.role.approvers.add(self.group)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Approval required", response.content.decode("utf-8"))
+        self.assertIn("Approve", response.content.decode("utf-8"))
         self.assertIn("Update membership", response.content.decode("utf-8"))
+        self.assertIn("Cancel membership", response.content.decode("utf-8"))
+        self.assertIn("End membership", response.content.decode("utf-8"))
 
     def test_approve_membership(self):
         self.role.approvers.add(self.group)
@@ -106,6 +108,11 @@ class MembershipViewTests(BaseTestCase):
         response = self.client.get("/membership/approval/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data["object_list"].count(), 1)
+        self.membership.cancelled_at = timezone.now()
+        self.membership.save()
+        response = self.client.get("/membership/expiring/")
+        self.assertEqual(response.context_data["object_list"].count(), 0)
+        self.membership.cancelled_at = None
         self.membership.approver = self.user
         self.membership.save()
         response = self.client.get("/membership/approval/")
@@ -115,6 +122,11 @@ class MembershipViewTests(BaseTestCase):
         response = self.client.get("/membership/expiring/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data["object_list"].count(), 1)
+        self.membership.cancelled_at = timezone.now()
+        self.membership.save()
+        response = self.client.get("/membership/expiring/")
+        self.assertEqual(response.context_data["object_list"].count(), 0)
+        self.membership.cancelled_at = None
         self.membership.expire_date = timezone.now().date() + datetime.timedelta(days=31)
         self.membership.save()
         response = self.client.get("/membership/expiring/")
@@ -191,6 +203,29 @@ class MembershipViewTests(BaseTestCase):
                 call(
                     20,
                     f"Membership to {self.role.name()} ended for identity: {self.identity.display_name()}",
+                    extra=ANY,
+                ),
+            ]
+        )
+
+    def test_cancel_membership_without_approver_access(self):
+        response = self.client.post(self.url, {"cancel_membership": "cancel"}, follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    @patch("kamu.utils.audit.logger_audit")
+    def test_cancel_membership(self, mock_logger):
+        self.role.approvers.add(self.group)
+        response = self.client.post(self.url, {"cancel_membership": "cancel"}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Membership cancelled", response.content.decode("utf-8"))
+        self.assertNotIn("Cancel membership", response.content.decode("utf-8"))
+        self.membership.refresh_from_db()
+        self.assertIsNotNone(self.membership.cancelled_at)
+        mock_logger.log.assert_has_calls(
+            [
+                call(
+                    20,
+                    f"Membership to {self.role.name()} cancelled for identity: {self.identity.display_name()}",
                     extra=ANY,
                 ),
             ]

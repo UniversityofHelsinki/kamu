@@ -2,11 +2,12 @@
 {% load i18n %}
 {% block content %}
   <h1 class="mb-5">{% trans "Role membership" %}</h1>
-  {% if is_approver and not object.approver %}
+  {% if is_approver and not object.approver and not object.cancelled_at %}
     <div class="alert alert-info">
       <h4>{% trans "Approval required" %}</h4>
       <form method="post">{% csrf_token %}
-        <input type="submit" name="approve_membership" value="{% trans 'Approve' %}" class="btn btn-primary"/>
+        <input type="submit" name="approve_membership" value="{% trans 'Approve' %}" class="btn btn-primary me-2"/>
+        <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#cancelMembershipModal">{% trans "Cancel" %}</button>
       </form>
     </div>
   {% endif %}
@@ -54,8 +55,8 @@
         <dd class="col-sm-8">{{ object.get_status_display }}</dd>
         <dt class="col-sm-4">{% trans "Start date" %}</dt>
         <dd class="col-sm-8">{{ object.start_date }}</dd>
-        <dt class="col-sm-4">{% trans "Expiry date" %}</dt>
-        <dd class="col-sm-8">{{ object.expire_date }}</dd>
+        <dt class="col-sm-4">{% if object.cancelled_at %}{% trans "Cancelled at" %}{% else %}{% trans "Expiry date" %}{% endif %}</dt>
+        <dd class="col-sm-8">{% if object.cancelled_at %}{{ object.cancelled_at }}{% else %}{{ object.expire_date }}{% endif %}</dd>
         <dt class="col-sm-4">{% trans "Approver" %}</dt>
         <dd class="col-sm-8">{{ object.approver.get_full_name|default:"&nbsp;" }}</dd>
         <dt class="col-sm-4">{% trans "Inviter" %}</dt>
@@ -63,17 +64,15 @@
         <dt class="col-sm-4">{% trans "Reason" %}</dt>
         <dd class="col-sm-8">{{ object.reason }}</dd>
       </dl>
-      {% if object.ending_in_future %}
-        {% if is_approver or user.identity == object.identity %}
-          <form method="post">{% csrf_token %}
-        {% endif %}
+      {% if is_approver or user.identity == object.identity %}
+        <form method="post">{% csrf_token %}
       {% endif %}
       {% if is_approver %}
         <a href="{% url 'membership-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Update membership" %}</a>
       {% endif %}
-      {% if object.ending_in_future %}
+      {% if object.ending_in_future and not object.cancelled_at %}
         {% if is_approver or user.identity == object.identity %}
-          <button type="button" class="btn btn-danger me-2 mb-2" data-bs-toggle="modal" data-bs-target="#endMembershipModal">{% trans "End membership" %}</button>
+          <button type="button" class="btn btn-warning me-2 mb-2" data-bs-toggle="modal" data-bs-target="#endMembershipModal">{% trans "End membership" %}</button>
           <div class="modal fade" id="endMembershipModal" tabindex="-1" aria-labelledby="endMembershipModalLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
@@ -99,8 +98,38 @@
               </div>
             </div>
           </div>
-          </form>
         {% endif %}
+      {% endif %}
+      {% if is_approver and object.cancelled_at is null %}
+        <button type="button" class="btn btn-danger me-2 mb-2" data-bs-toggle="modal" data-bs-target="#cancelMembershipModal">{% trans "Cancel membership" %}</button>
+        <div class="modal fade" id="cancelMembershipModal" tabindex="-1" aria-labelledby="cancelMembershipModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="cancelMembershipModalLabel">{% trans "Confirm cancelling membership" %}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans "Close" %}"></button>
+              </div>
+              <div class="modal-body">
+                <p class="text-break">{% trans "This membership will be cancelled immediately." %}</p>
+                <dl class="row">
+                  <dt class="col-sm-4">{% trans "Role" %}</dt>
+                  <dd class="col-sm-8">{{ object.role }}</dd>
+                  <dt class="col-sm-4">{% trans "Identity" %}</dt>
+                  <dd class="col-sm-8">{{ object.identity }}</dd>
+                  <dt class="col-sm-4">{% trans "End date" %}</dt>
+                  <dd class="col-sm-8">{% now "DATE_FORMAT" %}</dd>
+                </dl>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Return" %}</button>
+                  <button type="submit" name="cancel_membership" class="btn btn-danger">{% trans 'Confirm cancelling membership' %}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+      {% if is_approver or user.identity == object.identity %}
+        </form>
       {% endif %}
     </div>
   </div>

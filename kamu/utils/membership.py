@@ -46,6 +46,7 @@ def get_memberships_requiring_approval(user: AbstractUser, include_inviters: boo
     queryset = queryset.filter(
         expire_date__gte=timezone.now().date(),
         approver=None,
+        cancelled_at=None,
     )
     return queryset.order_by("start_date").prefetch_related("identity", "role")
 
@@ -60,7 +61,9 @@ def get_expiring_memberships(
     if not days:
         days = getattr(settings, "EXPIRING_LIMIT_DAYS", 30)
     queryset = queryset.filter(
-        expire_date__gte=timezone.now().date(), expire_date__lte=timezone.now().date() + timedelta(days=days)
+        cancelled_at=None,
+        expire_date__gte=timezone.now().date(),
+        expire_date__lte=timezone.now().date() + timedelta(days=days),
     )
     return queryset.order_by("expire_date").prefetch_related("identity", "role")
 

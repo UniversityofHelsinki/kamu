@@ -269,6 +269,28 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
             )
             messages.add_message(request, messages.INFO, _("Membership set to end today."))
 
+    def _cancel_membership(self, request: HttpRequest) -> None:
+        """
+        Set membership cancelled.
+        """
+        if not self.request.user.is_authenticated:
+            raise PermissionDenied
+        if not self.object.role.is_approver(self.request.user):
+            raise PermissionDenied
+        if not self.object.cancelled_at:
+            self.object.cancelled_at = timezone.now()
+            self.object.save()
+            audit_log.info(
+                f"Membership to {self.object.role} cancelled for identity: {self.object.identity}",
+                category="membership",
+                action="update",
+                outcome="success",
+                request=self.request,
+                objects=[self.object, self.object.identity, self.object.role],
+                log_to_db=True,
+            )
+            messages.add_message(request, messages.INFO, _("Membership cancelled."))
+
     @method_decorator(csrf_protect)
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """
@@ -283,6 +305,8 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
             self._resend_invite(request)
         if "end_membership" in self.request.POST:
             self._end_membership(request)
+        if "cancel_membership" in self.request.POST:
+            self._cancel_membership(request)
         return redirect("membership-detail", pk=self.object.pk)
 
 
@@ -303,6 +327,7 @@ class MembershipUpdateView(LoginRequiredMixin, UpdateView[Membership, Membership
         if not user or not form.instance.role.is_approver(user):
             raise PermissionDenied
         form.instance.approver = user
+        form.instance.cancelled_at = None
         valid = super().form_valid(form)
         if self.object:
             audit_log.info(

@@ -6,7 +6,7 @@ Membership is a relation between a identity and a role.
 Membership defines the following information:
  - Identity.
  - Role.
- - Start and end time of the membership.
+ - Start and end date of the membership, possible time of the cancellation.
  - Reason for the membership.
  - Inviter and approver for the membership. These are Django user instances.
  - Possible invite email address, if the invite was sent by email and was not a direct addition from the Kamu or user
@@ -30,6 +30,8 @@ Membership has a status, which can be one of the following:
     - Membership is active.
  - Expired
     - Membership has expired.
+ - Cancelled
+    - Membership has been cancelled.
 
 Membership status is checked each time the membership is saved. Status is usually also checked periodically by the
 background process, using management scripts.
@@ -89,5 +91,8 @@ Membership view:
  - Ending membership:
     - Requires approval permissions.
     - User can also end their own membership.
+ - Cancelling membership:
+    - Requires approval permissions to the role.
  - Changing membership details, like end date or reason:
     - Requires approval permissions.
+    - Updating membership clears cancellation.

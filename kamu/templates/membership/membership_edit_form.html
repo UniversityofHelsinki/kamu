@@ -4,6 +4,13 @@
 
 {% block content %}
   <h1 class="mb-4">{% trans "Edit membership" %}</h1>
+  {% if object.cancelled_at %}
+    <div class="alert alert-warning" role="alert">
+      <h2>{% trans "Membership has been cancelled" %}</h2>
+      <p>{% blocktrans with cancellation_time=object.cancelled_at %}This membership has been cancelled at {{ cancellation_time }}.{% endblocktrans %}</p>
+      <p>{% trans "Updating membership clears cancellation." %}</p>
+    </div>
+  {% endif %}
   <form method="post">
     {% csrf_token %}
     {% crispy form form.helper %}

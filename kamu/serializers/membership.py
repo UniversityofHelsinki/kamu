@@ -70,6 +70,7 @@ class MembershipSerializer(serializers.ModelSerializer[Membership], EagerLoading
             "status",
             "start_date",
             "expire_date",
+            "cancelled_at",
             "created_at",
             "updated_at",
         ]

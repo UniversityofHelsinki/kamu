@@ -55,8 +55,10 @@ def identity_update_on_save(instance: object, **kwargs: Any) -> None:
     Update membership status and timestamp for related memberships if status changed.
     """
     if instance and hasattr(instance, "identity") and isinstance(instance.identity, Identity):
-        for membership in Membership.objects.filter(identity=instance.identity).exclude(
-            status=Membership.Status.EXPIRED
+        for membership in (
+            Membership.objects.filter(identity=instance.identity)
+            .exclude(status=Membership.Status.EXPIRED)
+            .exclude(status=Membership.Status.CANCELLED)
         ):
             if membership.status != membership.get_status():
                 membership.save()

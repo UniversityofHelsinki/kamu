@@ -56,6 +56,7 @@ class Membership(models.Model):
         PENDING = ("pending", _("Pending"))
         ACTIVE = ("active", _("Active"))
         EXPIRED = ("expired", _("Expired"))
+        CANCELLED = ("cancelled", _("Cancelled"))
 
     identifier = models.UUIDField(
         unique=True,
@@ -92,6 +93,7 @@ class Membership(models.Model):
     reason = models.TextField(verbose_name=_("Membership reason"))
     start_date = models.DateField(verbose_name=_("Membership start date"))
     expire_date = models.DateField(verbose_name=_("Membership expiry date"))
+    cancelled_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Cancelled at"))
 
     requirements_failed_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Requirements failed time"))
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
@@ -182,7 +184,9 @@ class Membership(models.Model):
         """
         Returns the current membership status.
         """
-        if timezone.now().date() > self.expire_date:
+        if self.cancelled_at:
+            return Membership.Status.CANCELLED
+        elif timezone.now().date() > self.expire_date:
             return Membership.Status.EXPIRED
         elif not self.identity:
             return Membership.Status.INVITED
