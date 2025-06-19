@@ -233,6 +233,16 @@ class IdentitySearchTests(BaseTestCase):
             response.content.decode("utf-8"),
         )
 
+    def test_search_form_reset(self):
+        self.create_identity(phone=True)
+        data = {"phone": "+1234567890"}
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("+1234567890", response.content.decode("utf-8"))
+        response = self.client.post(self.url, {"reset_form": "Reset"})
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("+1234567890", response.content.decode("utf-8"))
+
 
 class IdentityEditTests(BaseTestCase):
     def setUp(self):

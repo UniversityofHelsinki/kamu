@@ -1124,6 +1124,9 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         Add form and searched phone and email to context data.
         """
         context = super().get_context_data(**kwargs)
+        if "reset_form" in self.request.POST:
+            context["form"] = IdentitySearchForm(use_ldap=self.search_ldap())
+            return context
         context["phone"] = self.request.POST.get("phone", "").replace(" ", "")
         context["email"] = self.request.POST.get("email")
         context["fpic"] = self.request.POST.get("fpic")

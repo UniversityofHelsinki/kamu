@@ -61,7 +61,9 @@ class IdentitySearchForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "POST"
-        self.helper.add_input(Submit("submit", _("Search")))
+        self.helper.add_input(Submit("submit", _("Search"), css_class="me-2"))
+        self.helper.add_input(Submit("reset_form", _("Reset"), css_class="btn-warning"))
+
         if use_ldap:
             name_search_text = _(
                 "Name search returns partial matches from Kamu and names starting with the search parameters "
