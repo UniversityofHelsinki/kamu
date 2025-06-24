@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-12 17:01+0300\n"
+"POT-Creation-Date: 2025-08-12 17:04+0300\n"
 "Language: SV\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1975,11 +1975,13 @@ msgstr ""
 "fortsätta."
 
 #: templates/email/expire_notification_member_message.txt:13
+#: templates/email/membership_approved_member_message.txt:8
 #, python-format
 msgid "You were invited by %(inviter)s."
 msgstr "Du fick en inbjudan av %(inviter)s."
 
 #: templates/email/expire_notification_member_message.txt:14
+#: templates/email/membership_approved_member_message.txt:9
 #, python-format
 msgid "Your membership was approved by %(approver)s."
 msgstr "Ditt medlemskap har godkänts av %(approver)s."
@@ -2070,6 +2072,27 @@ msgstr "Du har ett nytt rollmedlemskap i Kamu:"
 #: templates/email/membership_add_subject.txt:1
 msgid "New role membership in Kamu"
 msgstr "Nytt rollmedlemskap i Kamu"
+
+#: templates/email/membership_approved_member_message.txt:1
+#, python-format
+msgid ""
+"Hi\n"
+"\n"
+"Your role membership at the University of Helsinki has been approved.\n"
+"\n"
+"Role:\n"
+"%(role)s\n"
+msgstr ""
+"Hej\n"
+"\n"
+"Ditt rollmedlemskap vid Helsingfors universitet har blivit godkänt.\n"
+"\n"
+"Roll:\n"
+"%(role)s\n"
+
+#: templates/email/membership_approved_member_subject.txt:1
+msgid "Your membership has been approved"
+msgstr "Ditt medlemskap har blivit godkänt"
 
 #: templates/email/membership_require_approval_role_message.txt:1
 #, python-format
@@ -3330,44 +3353,44 @@ msgstr "Felaktiga primärnycklar."
 msgid "Identities combined."
 msgstr "Identiteter kombinerade."
 
-#: views/membership.py:81
+#: views/membership.py:82
 msgid "You need to create an identity first."
 msgstr "Du måste först skapa en identitet."
 
-#: views/membership.py:85
+#: views/membership.py:86
 msgid "You are already a member of this role."
 msgstr "Du är redan medlem i den här rollen."
 
-#: views/membership.py:218
+#: views/membership.py:220
 msgid "Membership approved."
 msgstr "Medlemskap godkänt."
 
-#: views/membership.py:240 views/membership.py:679
+#: views/membership.py:252 views/membership.py:691
 msgid "Invite email sent."
 msgstr "E-postmeddelande med inbjudan skickad."
 
-#: views/membership.py:242
+#: views/membership.py:254
 msgid "Could not send invite email."
 msgstr "Kunde inte skicka e-postmeddelande med inbjudan."
 
-#: views/membership.py:247
+#: views/membership.py:259
 msgid "Tried to send a new invite too soon. Please try again in one minute."
 msgstr ""
 "Försökte skicka en ny inbjudan för tidigt. Vänligen försök igen om en minut."
 
-#: views/membership.py:272
+#: views/membership.py:284
 msgid "Membership set to end today."
 msgstr "Medlemskapet upphör idag."
 
-#: views/membership.py:294
+#: views/membership.py:306
 msgid "Membership cancelled."
 msgstr "Medlemskap avslutat."
 
-#: views/membership.py:344
+#: views/membership.py:356
 msgid "Membership updated."
 msgstr "Medlemskap uppdaterat."
 
-#: views/membership.py:759
+#: views/membership.py:771
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and email address {email} are "
@@ -3376,7 +3399,7 @@ msgstr ""
 "Personbeteckningen {fpic} och e-postadressen {email} är registrerade för "
 "olika identiteter."
 
-#: views/membership.py:769
+#: views/membership.py:781
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and phone number {phone} are "
@@ -3385,7 +3408,7 @@ msgstr ""
 "Personbeteckningen {fpic} och telefonnumret {phone} är registrerade för "
 "olika identiteter."
 
-#: views/membership.py:778
+#: views/membership.py:790
 #, python-brace-format
 msgid ""
 "Email address {email} and phone number {phone} are registered to different "
@@ -3394,12 +3417,12 @@ msgstr ""
 "E-postadressen {email} och telefonnumret {phone} är registrerade för olika "
 "identiteter."
 
-#: views/membership.py:875
+#: views/membership.py:887
 #, python-brace-format
 msgid "Invite email sent to following addresses: {0}"
 msgstr "Inbjudan skickades till följande e-postadresser: {0}"
 
-#: views/membership.py:879
+#: views/membership.py:891
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Följande identiteter har lagts till: {0}"

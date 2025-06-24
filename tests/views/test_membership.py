@@ -113,6 +113,8 @@ class MembershipViewTests(BaseTestCase):
                 ),
             ]
         )
+        self.assertIn("invited_user@example.org", mail.outbox[0].to)
+        self.assertIn("Your membership was approved by Tester Mc.", mail.outbox[0].body)
 
     @patch("kamu.utils.audit.logger_audit")
     def test_approve_membership_without_identity(self, mock_logger):
@@ -130,6 +132,7 @@ class MembershipViewTests(BaseTestCase):
                 ),
             ]
         )
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_view_membership_approval_list(self):
         response = self.client.get("/membership/approval/")

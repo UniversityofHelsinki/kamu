@@ -23,6 +23,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from kamu.connectors.email import (
     create_invite_message,
     send_add_email,
+    send_approval_notification_to_member,
     send_invite_email,
     send_notify_approvers_email,
 )
@@ -217,6 +218,16 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
                 log_to_db=True,
             )
             messages.add_message(request, messages.INFO, _("Membership approved."))
+            if self.object.identity:
+                identity_email = self.object.identity.email_addresses.first()
+                notify_email = identity_email.address if identity_email else self.object.invite_email_address
+                notify_language = (
+                    self.object.identity.preferred_language if self.object.identity else self.object.invite_language
+                )
+                if notify_email:
+                    send_approval_notification_to_member(
+                        membership=self.object, email_address=notify_email, lang=notify_language
+                    )
 
     def _resend_invite(self, request: HttpRequest) -> None:
         """
