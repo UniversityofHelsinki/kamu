@@ -206,8 +206,9 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
             self.object.approver = self.request.user
             self.object.set_status()
             self.object.save()
+            member = self.object.identity.display_name() if self.object.identity else self.object.invite_email_address
             audit_log.info(
-                f"Membership to {self.object.role} approved for identity: {self.object.identity}",
+                f"Membership to {self.object.role} approved for member: {member}",
                 category="membership",
                 action="update",
                 outcome="success",

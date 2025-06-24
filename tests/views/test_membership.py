@@ -96,13 +96,40 @@ class MembershipViewTests(BaseTestCase):
         self.assertIn("Cancel membership", response.content.decode("utf-8"))
         self.assertIn("End membership", response.content.decode("utf-8"))
 
-    def test_approve_membership(self):
+    @patch("kamu.utils.audit.logger_audit")
+    def test_approve_membership(self, mock_logger):
         self.role.approvers.add(self.group)
         response = self.client.post(self.url, {"approve_membership": "approve"}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Approval required", response.content.decode("utf-8"))
         self.membership.refresh_from_db()
         self.assertEqual(self.membership.approver, self.user)
+        mock_logger.log.assert_has_calls(
+            [
+                call(
+                    20,
+                    "Membership to External employee approved for member: Tester Mc.",
+                    extra=ANY,
+                ),
+            ]
+        )
+
+    @patch("kamu.utils.audit.logger_audit")
+    def test_approve_membership_without_identity(self, mock_logger):
+        self.membership.identity = None
+        self.membership.save()
+        self.role.approvers.add(self.group)
+        response = self.client.post(self.url, {"approve_membership": "approve"}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        mock_logger.log.assert_has_calls(
+            [
+                call(
+                    20,
+                    "Membership to External employee approved for member: invited_user@example.org",
+                    extra=ANY,
+                ),
+            ]
+        )
 
     def test_view_membership_approval_list(self):
         response = self.client.get("/membership/approval/")
