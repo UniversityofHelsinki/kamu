@@ -24,6 +24,7 @@ from kamu.connectors.email import (
     create_invite_message,
     send_add_email,
     send_approval_notification_to_member,
+    send_cancellation_notification_to_member,
     send_invite_email,
     send_notify_approvers_email,
 )
@@ -304,6 +305,18 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
                 log_to_db=True,
             )
             messages.add_message(request, messages.INFO, _("Membership cancelled."))
+            notify_email = self.object.invite_email_address
+            if self.object.identity:
+                identity_email = self.object.identity.email_addresses.first()
+                if identity_email:
+                    notify_email = identity_email.address
+            notify_language = (
+                self.object.identity.preferred_language if self.object.identity else self.object.invite_language
+            )
+            if notify_email:
+                send_cancellation_notification_to_member(
+                    membership=self.object, email_address=notify_email, lang=notify_language
+                )
 
     @method_decorator(csrf_protect)
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:

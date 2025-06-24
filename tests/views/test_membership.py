@@ -260,6 +260,8 @@ class MembershipViewTests(BaseTestCase):
                 ),
             ]
         )
+        self.assertIn("invited_user@example.org", mail.outbox[0].to)
+        self.assertIn("Your membership has been cancelled", mail.outbox[0].subject)
 
     def test_end_membership_without_access(self):
         self.membership.identity = self.superidentity

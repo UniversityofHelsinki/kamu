@@ -1884,12 +1884,14 @@ msgstr ""
 
 #: templates/email/expire_notification_member_message.txt:13
 #: templates/email/membership_approved_member_message.txt:8
+#: templates/email/membership_cancelled_member_message.txt:10
 #, python-format
 msgid "You were invited by %(inviter)s."
 msgstr ""
 
 #: templates/email/expire_notification_member_message.txt:14
 #: templates/email/membership_approved_member_message.txt:9
+#: templates/email/membership_cancelled_member_message.txt:11
 #, python-format
 msgid "Your membership was approved by %(approver)s."
 msgstr ""
@@ -1982,6 +1984,24 @@ msgstr ""
 
 #: templates/email/membership_approved_member_subject.txt:1
 msgid "Your membership has been approved"
+msgstr ""
+
+#: templates/email/membership_cancelled_member_message.txt:1
+#, python-format
+msgid ""
+"Hi\n"
+"\n"
+"Your role membership at the University of Helsinki has been cancelled.\n"
+"\n"
+"Role:\n"
+"%(role)s\n"
+"\n"
+"Please get in touch with your university contact if the membership should\n"
+"continue."
+msgstr ""
+
+#: templates/email/membership_cancelled_member_subject.txt:1
+msgid "Your membership has been cancelled"
 msgstr ""
 
 #: templates/email/membership_require_approval_role_message.txt:1
@@ -3170,69 +3190,69 @@ msgstr ""
 msgid "Identities combined."
 msgstr ""
 
-#: views/membership.py:82
+#: views/membership.py:83
 msgid "You need to create an identity first."
 msgstr ""
 
-#: views/membership.py:86
+#: views/membership.py:87
 msgid "You are already a member of this role."
 msgstr ""
 
-#: views/membership.py:220
+#: views/membership.py:221
 msgid "Membership approved."
 msgstr ""
 
-#: views/membership.py:252 views/membership.py:691
+#: views/membership.py:253 views/membership.py:704
 msgid "Invite email sent."
 msgstr ""
 
-#: views/membership.py:254
+#: views/membership.py:255
 msgid "Could not send invite email."
 msgstr ""
 
-#: views/membership.py:259
+#: views/membership.py:260
 msgid "Tried to send a new invite too soon. Please try again in one minute."
 msgstr ""
 
-#: views/membership.py:284
+#: views/membership.py:285
 msgid "Membership set to end today."
 msgstr ""
 
-#: views/membership.py:306
+#: views/membership.py:307
 msgid "Membership cancelled."
 msgstr ""
 
-#: views/membership.py:356
+#: views/membership.py:369
 msgid "Membership updated."
 msgstr ""
 
-#: views/membership.py:771
+#: views/membership.py:784
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and email address {email} are "
 "registered to different identities."
 msgstr ""
 
-#: views/membership.py:781
+#: views/membership.py:794
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and phone number {phone} are "
 "registered to different identities."
 msgstr ""
 
-#: views/membership.py:790
+#: views/membership.py:803
 #, python-brace-format
 msgid ""
 "Email address {email} and phone number {phone} are registered to different "
 "identities."
 msgstr ""
 
-#: views/membership.py:887
+#: views/membership.py:900
 #, python-brace-format
 msgid "Invite email sent to following addresses: {0}"
 msgstr ""
 
-#: views/membership.py:891
+#: views/membership.py:904
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr ""

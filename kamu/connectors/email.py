@@ -239,3 +239,29 @@ def send_approval_notification_to_member(membership: Membership, email_address: 
     finally:
         translation.activate(cur_language)
     return _send_email(subject, message, recipient_list=[email_address])
+
+
+def send_cancellation_notification_to_member(membership: Membership, email_address: str, lang: str = "en") -> bool:
+    """
+    Send a cancellation notification email to the member.
+    """
+
+    inviter = membership.inviter.get_full_name() if membership.inviter else None
+    approver = membership.approver.get_full_name() if membership.approver else None
+    cur_language = translation.get_language()
+    try:
+        translation.activate(lang)
+        subject = render_to_string("email/membership_cancelled_member_subject.txt")
+        message = render_to_string(
+            "email/membership_cancelled_member_message.txt",
+            {
+                "role": membership.role.name(),
+                "approver": approver,
+                "inviter": inviter,
+            },
+        )
+    except TemplateDoesNotExist:
+        return False
+    finally:
+        translation.activate(cur_language)
+    return _send_email(subject, message, recipient_list=[email_address])

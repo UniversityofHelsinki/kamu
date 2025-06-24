@@ -1,0 +1,11 @@
+{% load i18n %}{% blocktrans %}Hi
+
+Your role membership at the University of Helsinki has been cancelled.
+
+Role:
+{{ role }}
+
+Please get in touch with your university contact if the membership should
+continue.{% endblocktrans %}{% if inviter %}
+{% blocktrans %}You were invited by {{ inviter }}.{% endblocktrans %}{% if inviter != approver and approver %}
+{% blocktrans %}Your membership was approved by {{ approver }}.{% endblocktrans %}{% endif %}{% endif %}
