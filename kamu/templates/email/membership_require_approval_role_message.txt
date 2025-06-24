@@ -1,0 +1,8 @@
+{% load i18n %}{% blocktrans %}Hi
+
+A membership requiring approval has been created:
+
+Role: {{ role }}
+Member: {{ member }}
+Invited by: {{ inviter }}
+{% endblocktrans %}

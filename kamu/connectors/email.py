@@ -6,6 +6,7 @@ from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import translation
+from django.utils.translation import gettext_lazy as _
 
 from kamu.models.membership import Membership
 from kamu.models.role import Role
@@ -63,6 +64,44 @@ def send_add_email(membership: Membership) -> bool:
     finally:
         translation.activate(cur_language)
     return _send_email(subject, message, recipient_list=[address.address])
+
+
+def send_notify_approvers_email(membership: Membership, member_list: list[str] | None = None) -> bool:
+    """
+    Send an email notification to role notification address about the new membership invite requiring approval.
+    """
+    cur_language = translation.get_language()
+    if not membership or not membership.role.notification_email_address:
+        return False
+    lang = membership.role.notification_language
+    inviter = membership.inviter.get_full_name() if membership.inviter else None
+    try:
+        translation.activate(lang)
+        if member_list and len(member_list) > 1:
+            member = _("%(number)s new members") % {"number": len(member_list)}
+        else:
+            member = (
+                membership.identity.display_name() if membership.identity else str(membership.invite_email_address)
+            )
+        subject = render_to_string(
+            "email/membership_require_approval_role_subject.txt",
+            {
+                "role": membership.role.name(),
+            },
+        )
+        message = render_to_string(
+            "email/membership_require_approval_role_message.txt",
+            {
+                "inviter": inviter,
+                "member": member,
+                "role": membership.role.name(),
+            },
+        )
+    except TemplateDoesNotExist:
+        return False
+    finally:
+        translation.activate(cur_language)
+    return _send_email(subject, message, recipient_list=[membership.role.notification_email_address])
 
 
 def create_invite_message(

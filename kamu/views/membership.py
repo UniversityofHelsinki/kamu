@@ -24,6 +24,7 @@ from kamu.connectors.email import (
     create_invite_message,
     send_add_email,
     send_invite_email,
+    send_notify_approvers_email,
 )
 from kamu.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
 from kamu.forms.membership import (
@@ -105,6 +106,7 @@ class MembershipJoinView(LoginRequiredMixin, CreateView[Membership, MembershipCr
         """
         kwargs = super().get_form_kwargs()
         kwargs["role"] = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
+        kwargs["is_approver"] = True
         return kwargs
 
     def form_valid(self, form: MembershipCreateForm) -> HttpResponse:
@@ -476,7 +478,10 @@ class BaseMembershipInviteView(LoginRequiredMixin, CreateView[Membership, Member
         Add role to form kwargs.
         """
         kwargs = super().get_form_kwargs()
-        kwargs["role"] = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
+        role = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
+        kwargs["role"] = role
+        if self.request.user.is_authenticated:
+            kwargs["is_approver"] = role.is_approver(self.request.user)
         return kwargs
 
 
@@ -519,6 +524,8 @@ class MembershipInviteView(BaseMembershipInviteView):
                 log_to_db=True,
             )
             send_add_email(self.object)
+        if form.data.get("notify_approvers"):
+            send_notify_approvers_email(form.instance)
         return valid
 
 
@@ -592,6 +599,8 @@ class MembershipInviteLdapView(BaseMembershipInviteView):
                 log_to_db=True,
             )
             send_add_email(self.object)
+        if form.data.get("notify_approvers"):
+            send_notify_approvers_email(form.instance)
         return valid
 
 
@@ -668,6 +677,8 @@ class MembershipInviteEmailView(BaseMembershipInviteView):
             request=self.request,
         )
         messages.add_message(self.request, messages.INFO, _("Invite email sent."))
+        if form.data.get("notify_approvers"):
+            send_notify_approvers_email(form.instance)
         return redirect("membership-detail", pk=membership.pk)
 
 
@@ -710,6 +721,7 @@ class MembershipMassInviteView(BaseMembershipInviteView):
         """
         kwargs = super().get_form_kwargs()
         kwargs["invite_limit"] = get_mass_invite_limit(self.request.user)
+        kwargs["is_approver"] = kwargs["role"].is_approver(self.request.user)
         return kwargs
 
     def find_identity(self, info: dict[str, str]) -> Identity | None:
@@ -866,4 +878,6 @@ class MembershipMassInviteView(BaseMembershipInviteView):
             messages.add_message(
                 self.request, messages.INFO, _("Added following identities: {0}").format(", ".join(added_list))
             )
+        if form.data.get("notify_approvers"):
+            send_notify_approvers_email(form.instance, member_list=added_list + invited_list)
         return redirect("role-detail", pk=form.instance.role.pk)

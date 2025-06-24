@@ -426,6 +426,7 @@ class MembershipInviteTests(BaseTestCase):
                 "start_date": timezone.now().date(),
                 "expire_date": timezone.now().date() + datetime.timedelta(days=7),
                 "reason": "Because",
+                "notify_approvers": "on",
             },
             follow=True,
         )
@@ -450,6 +451,7 @@ class MembershipInviteTests(BaseTestCase):
         self.assertIn(
             f"{self.identity.display_name()} has added you a new role membership in Kamu", mail.outbox[0].body
         )
+        self.assertIn("A membership requiring approval has been created", mail.outbox[1].body)
 
     @mock.patch("kamu.connectors.ldap._get_connection")
     @override_settings(ALLOW_TEST_FPIC=True)
@@ -469,6 +471,31 @@ class MembershipInviteTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Membership.objects.filter(role=self.role, identity=self.identity).exists())
 
+    def test_email_invite_form_without_email(self):
+        url = f"{self.url}email/"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_email_invite_form_inviter_permissions(self):
+        url = f"{self.url}email/"
+        self.session = self.client.session
+        self.session["invitation_email_address"] = "invite@example.org"
+        self.session.save()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Membership reason", response.content.decode("utf-8"))
+        self.assertIn("Notify approvers", response.content.decode("utf-8"))
+
+    def test_email_invite_form_approver_permissions(self):
+        url = f"{self.url}email/"
+        self.role.approvers.add(self.group)
+        self.session = self.client.session
+        self.session["invitation_email_address"] = "invite@example.org"
+        self.session.save()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Notify approvers", response.content.decode("utf-8"))
+
     def _test_join_role_send_email_invite(self, preview=False):
         url = f"{self.url}email/"
         data = {
@@ -478,6 +505,7 @@ class MembershipInviteTests(BaseTestCase):
             "invite_text": "Test text",
             "invite_email_address": "invite@example.org",
             "invite_language": "en",
+            "notify_approvers": "on",
         }
 
         if preview:
@@ -513,6 +541,7 @@ class MembershipInviteTests(BaseTestCase):
         self.assertIsNone(membership.approver)
         self.assertIn("Your invite code is", mail.outbox[0].body)
         self.assertIn("Test text", mail.outbox[0].body)
+        self.assertIn("A membership requiring approval has been created", mail.outbox[1].body)
         mock_logger.log.assert_has_calls(
             [
                 call(20, f"Invited invite@example.org to role {self.role.name()}", extra=ANY),
@@ -551,6 +580,7 @@ class MembershipMassInviteViewTests(BaseTestCase):
             "expire_date": timezone.now().date() + datetime.timedelta(days=7),
             "reason": "Because",
             "invite_language": "en",
+            "notify_approvers": "on",
         }
         self.client = Client()
         self.client.force_login(self.user)
@@ -608,6 +638,7 @@ class MembershipMassInviteViewTests(BaseTestCase):
         )
         self.assertIn("Tester Mc. has added you a new role membership in Kamu", mail.outbox[0].body)
         self.assertIn("Tester Mc. has invited you to join the role", mail.outbox[1].body)
+        self.assertIn("Member: 3 new members", mail.outbox[2].body)
 
     @override_settings(MASS_INVITE_PERMISSION_GROUPS={"group": 1})
     def test_mass_invite_too_many_lines(self):

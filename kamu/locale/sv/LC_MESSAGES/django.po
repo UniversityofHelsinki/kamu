@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-19 15:44+0300\n"
+"POT-Creation-Date: 2025-08-12 17:01+0300\n"
 "Language: SV\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -99,6 +99,11 @@ msgid ""
 "the database: "
 msgstr ""
 "Misstänkt dubbel användare. Personbeteckningen finns redan i databasen: "
+
+#: connectors/email.py:81
+#, python-format
+msgid "%(number)s new members"
+msgstr "%(number)s nya medlemmar"
 
 #: forms/account.py:19
 msgid "Password"
@@ -417,38 +422,50 @@ msgstr "Spara ändringarna"
 msgid "Cannot set strong electrical verification manually."
 msgstr "Kan inte ställa in stark elektronisk verifiering manuellt."
 
-#: forms/membership.py:32
+#: forms/membership.py:26 forms/membership.py:104 forms/membership.py:176
+msgid "Notify approvers"
+msgstr "Meddela godkännare"
+
+#: forms/membership.py:29 forms/membership.py:106 forms/membership.py:178
+msgid ""
+"Send notification to the role notification address about the new invite "
+"requiring approval."
+msgstr ""
+"Skicka en avisering till rollens aviseringsadress om den nya inbjudan som "
+"kräver godkännande."
+
+#: forms/membership.py:42
 msgid "Add member"
 msgstr "Lägg till medlem"
 
-#: forms/membership.py:66
+#: forms/membership.py:76
 msgid "Update"
 msgstr "Uppdatera"
 
-#: forms/membership.py:106 forms/membership.py:163
+#: forms/membership.py:125 forms/membership.py:194
 #: templates/membership/membership_approval_list.html:20
 #: templates/membership/membership_expiring_list.html:20
 #: templates/role/role_detail.html:65
 msgid "Invite"
 msgstr "Inbjudan"
 
-#: forms/membership.py:107 forms/membership.py:164
+#: forms/membership.py:126 forms/membership.py:195
 #: templates/membership/membership_invite.html:44
 msgid "Preview message"
 msgstr "Förhandsgranska meddelande"
 
-#: forms/membership.py:135
+#: forms/membership.py:158
 msgid ""
 "This email address already has an invite to the role during this time period."
 msgstr ""
 "Den här e-postadressen har redan en inbjudan till rollen under den här "
 "tidsperioden."
 
-#: forms/membership.py:144
+#: forms/membership.py:167
 msgid "Invited persons"
 msgstr "Inbjudna personer"
 
-#: forms/membership.py:147
+#: forms/membership.py:170
 msgid ""
 "Invited persons, one per line. Each line should contain email address, "
 "followed by optional phone number and/or Finnish personal identity code, "
@@ -460,20 +477,20 @@ msgstr ""
 "Telefonnumret ska vara i internationellt format. Till exempel: "
 "\"person@example.org,+358501234567,010181-900C\""
 
-#: forms/membership.py:199
+#: forms/membership.py:230
 msgid "No invited persons."
 msgstr "Inga inbjudna personer."
 
-#: forms/membership.py:202
+#: forms/membership.py:233
 msgid "Too many invited persons."
 msgstr "För många inbjudna personer."
 
-#: forms/membership.py:213
+#: forms/membership.py:244
 #, python-format
 msgid "Invalid value: %(part)s"
 msgstr "Ogiltigt värde: %(part)s"
 
-#: forms/membership.py:216
+#: forms/membership.py:247
 #, python-format
 msgid "Invalid line: %(line)s"
 msgstr "Ogiltig rad: %(line)s"
@@ -2054,6 +2071,30 @@ msgstr "Du har ett nytt rollmedlemskap i Kamu:"
 msgid "New role membership in Kamu"
 msgstr "Nytt rollmedlemskap i Kamu"
 
+#: templates/email/membership_require_approval_role_message.txt:1
+#, python-format
+msgid ""
+"Hi\n"
+"\n"
+"A membership requiring approval has been created:\n"
+"\n"
+"Role: %(role)s\n"
+"Member: %(member)s\n"
+"Invited by: %(inviter)s\n"
+msgstr ""
+"Hej\n"
+"\n"
+"Ett medlemskap som kräver godkännande har skapats:\n"
+"\n"
+"Roll: %(role)s\n"
+"Medlem: %(member)s\n"
+"Inbjuden av: %(inviter)s\n"
+
+#: templates/email/membership_require_approval_role_subject.txt:1
+#, python-format
+msgid "Membership requiring approval for %(role)s"
+msgstr "Medlemskap som kräver godkännande för %(role)s"
+
 #: templates/email/verification_email_message.txt:1
 #, python-format
 msgid ""
@@ -3289,44 +3330,44 @@ msgstr "Felaktiga primärnycklar."
 msgid "Identities combined."
 msgstr "Identiteter kombinerade."
 
-#: views/membership.py:80
+#: views/membership.py:81
 msgid "You need to create an identity first."
 msgstr "Du måste först skapa en identitet."
 
-#: views/membership.py:84
+#: views/membership.py:85
 msgid "You are already a member of this role."
 msgstr "Du är redan medlem i den här rollen."
 
-#: views/membership.py:216
+#: views/membership.py:218
 msgid "Membership approved."
 msgstr "Medlemskap godkänt."
 
-#: views/membership.py:238 views/membership.py:670
+#: views/membership.py:240 views/membership.py:679
 msgid "Invite email sent."
 msgstr "E-postmeddelande med inbjudan skickad."
 
-#: views/membership.py:240
+#: views/membership.py:242
 msgid "Could not send invite email."
 msgstr "Kunde inte skicka e-postmeddelande med inbjudan."
 
-#: views/membership.py:245
+#: views/membership.py:247
 msgid "Tried to send a new invite too soon. Please try again in one minute."
 msgstr ""
 "Försökte skicka en ny inbjudan för tidigt. Vänligen försök igen om en minut."
 
-#: views/membership.py:270
+#: views/membership.py:272
 msgid "Membership set to end today."
 msgstr "Medlemskapet upphör idag."
 
-#: views/membership.py:292
+#: views/membership.py:294
 msgid "Membership cancelled."
 msgstr "Medlemskap avslutat."
 
-#: views/membership.py:342
+#: views/membership.py:344
 msgid "Membership updated."
 msgstr "Medlemskap uppdaterat."
 
-#: views/membership.py:747
+#: views/membership.py:759
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and email address {email} are "
@@ -3335,7 +3376,7 @@ msgstr ""
 "Personbeteckningen {fpic} och e-postadressen {email} är registrerade för "
 "olika identiteter."
 
-#: views/membership.py:757
+#: views/membership.py:769
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and phone number {phone} are "
@@ -3344,7 +3385,7 @@ msgstr ""
 "Personbeteckningen {fpic} och telefonnumret {phone} är registrerade för "
 "olika identiteter."
 
-#: views/membership.py:766
+#: views/membership.py:778
 #, python-brace-format
 msgid ""
 "Email address {email} and phone number {phone} are registered to different "
@@ -3353,12 +3394,12 @@ msgstr ""
 "E-postadressen {email} och telefonnumret {phone} är registrerade för olika "
 "identiteter."
 
-#: views/membership.py:863
+#: views/membership.py:875
 #, python-brace-format
 msgid "Invite email sent to following addresses: {0}"
 msgstr "Inbjudan skickades till följande e-postadresser: {0}"
 
-#: views/membership.py:867
+#: views/membership.py:879
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Följande identiteter har lagts till: {0}"

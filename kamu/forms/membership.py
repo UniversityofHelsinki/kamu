@@ -22,12 +22,22 @@ class MembershipCreateForm(forms.ModelForm[Membership]):
     Form for creating a new membership.
     """
 
+    notify_approvers = forms.BooleanField(
+        label=_("Notify approvers"),
+        required=False,
+        initial=True,
+        help_text=_("Send notification to the role notification address about the new invite requiring approval."),
+    )
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Get role from kwargs for form validation and set Crispy Forms helper.
         """
         self.role = kwargs.pop("role")
+        self.is_approver = kwargs.pop("is_approver", False)
         super().__init__(*args, **kwargs)
+        if self.is_approver:
+            del self.fields["notify_approvers"]
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Add member")))
 
@@ -90,6 +100,12 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
     Form for creating a new membership with email invite.
     """
 
+    notify_approvers = forms.BooleanField(
+        label=_("Notify approvers"),
+        required=False,
+        help_text=_("Send notification to the role notification address about the new invite requiring approval."),
+    )
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Get role from kwargs for form validation and set Crispy Forms helper.
@@ -98,7 +114,10 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
         """
         self.role = kwargs.pop("role")
         self.invite_email_address = kwargs.pop("email")
+        self.is_approver = kwargs.pop("is_approver", False)
         super().__init__(*args, **kwargs)
+        if self.is_approver:
+            del self.fields["notify_approvers"]
         if self.invite_email_address:
             self.fields["invite_email_address"].initial = self.invite_email_address
             self.fields["invite_email_address"].disabled = True
@@ -153,6 +172,11 @@ class MembershipMassCreateForm(forms.ModelForm[Membership]):
             'international format. Example: "person@example.org,+358501234567,010181-900C"'
         ),
     )
+    notify_approvers = forms.BooleanField(
+        label=_("Notify approvers"),
+        required=False,
+        help_text=_("Send notification to the role notification address about the new invite requiring approval."),
+    )
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -162,7 +186,10 @@ class MembershipMassCreateForm(forms.ModelForm[Membership]):
         """
         self.role = kwargs.pop("role")
         self.invite_limit = kwargs.pop("invite_limit")
+        self.is_approver = kwargs.pop("is_approver", False)
         super().__init__(*args, **kwargs)
+        if self.is_approver:
+            del self.fields["notify_approvers"]
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Invite")))
         self.helper.add_input(Submit("preview_message", _("Preview message"), css_class="btn-info"))
