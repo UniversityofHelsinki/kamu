@@ -57,6 +57,7 @@ from kamu.forms.auth import (
     RegistrationPhoneNumberVerificationForm,
 )
 from kamu.models.identity import EmailAddress, Identity, PhoneNumber
+from kamu.models.membership import Membership
 from kamu.models.token import TimeLimitError, Token
 from kamu.utils.audit import AuditLog
 from kamu.utils.identity import (
@@ -125,7 +126,11 @@ class BaseRegistrationView(View):
             messages.add_message(self.request, messages.INFO, _("You are already logged in."))
             return redirect("front-page")
         # checks session parameters and raises PermissionDenied in case of problems
-        get_invitation_session_parameters(request)
+        try:
+            get_invitation_session_parameters(request)
+        except PermissionDenied:
+            messages.add_message(self.request, messages.ERROR, _("Invalid invitation code."))
+            raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -136,6 +141,18 @@ class RegistrationView(BaseRegistrationView, FormView):
 
     template_name = "auth/registration.html"
     form_class = RegistrationForm
+
+    def get_form_kwargs(self) -> dict[str, Any]:
+        """
+        Add membership to form kwargs.
+        """
+        kwargs = super().get_form_kwargs()
+        try:
+            kwargs["membership"] = Membership.objects.get(pk=self.request.session["invitation_code"].split(":")[0])
+        except (KeyError, Membership.DoesNotExist):
+            messages.add_message(self.request, messages.ERROR, _("Invalid invitation code."))
+            raise PermissionDenied
+        return kwargs
 
     def form_valid(self, form: RegistrationForm) -> HttpResponse:
         """
@@ -210,6 +227,18 @@ class RegistrationPhoneNumberView(BaseRegistrationView, FormView):
         if "verified_email_address" not in self.request.session:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self) -> dict[str, Any]:
+        """
+        Add membership to form kwargs.
+        """
+        kwargs = super().get_form_kwargs()
+        try:
+            kwargs["membership"] = Membership.objects.get(pk=self.request.session["invitation_code"].split(":")[0])
+        except (KeyError, Membership.DoesNotExist):
+            messages.add_message(self.request, messages.ERROR, _("Invalid invitation code."))
+            raise PermissionDenied
+        return kwargs
 
     def form_valid(self, form: RegistrationPhoneNumberForm) -> HttpResponse:
         """
@@ -436,12 +465,11 @@ class BaseRemoteLoginView(View):
             )
             return render(request, "error.html", {"message": error_message})
         self._remote_auth_login(request, user)
-        if (
-            user.is_authenticated
-            and "invitation_code" in request.session
-            and "invitation_code_time" in request.session
-        ):
+        try:
+            get_invitation_session_parameters(self.request)
             return HttpResponseRedirect(reverse("membership-claim"))
+        except PermissionDenied:
+            pass
         return HttpResponseRedirect(redirect_to)
 
 
@@ -647,9 +675,17 @@ class LocalLoginView(LoginView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form: AuthenticationForm) -> HttpResponse:
-        """Security check complete. Log the user in."""
+        """
+        Security check complete. Log the user in.
+        Forward user to claim membership if user has an identity and invitation code in session.
+        """
         backend = "django.contrib.auth.backends.ModelBackend"
         auth_login(self.request, form.get_user(), backend=backend)
+        try:
+            get_invitation_session_parameters(self.request)
+            return HttpResponseRedirect(reverse("membership-claim"))
+        except PermissionDenied:
+            pass
         return HttpResponseRedirect(self.get_success_url())
 
 

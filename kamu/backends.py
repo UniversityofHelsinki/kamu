@@ -19,7 +19,6 @@ from django.core.exceptions import (
     ImproperlyConfigured,
     MultipleObjectsReturned,
     ObjectDoesNotExist,
-    PermissionDenied,
     ValidationError,
 )
 from django.core.validators import validate_email
@@ -32,7 +31,6 @@ from kamu.models.role import Role
 from kamu.models.token import Token
 from kamu.utils.audit import AuditLog, get_client_ip
 from kamu.utils.auth import set_default_permissions
-from kamu.utils.membership import claim_membership, get_invitation_session_parameters
 from kamu.validators.identity import validate_fpic
 
 audit_log = AuditLog()
@@ -371,16 +369,7 @@ class LocalBaseBackend(ModelBackend):
     def post_authentication_tasks(self, request: HttpRequest, user: UserType) -> None:
         """
         Tasks to run after getting the user.
-
-        Try to claim membership if invitation token exists in session.
         """
-        try:
-            # checks session parameters and raises PermissionDenied in case of problems
-            get_invitation_session_parameters(request)
-            if hasattr(user, "identity"):
-                claim_membership(request, user.identity)
-        except PermissionDenied:
-            pass
         self._update_user_groups(request, user)
 
     def _identifier_validation(self, request: HttpRequest, identifier: str) -> None:

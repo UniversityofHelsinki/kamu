@@ -70,6 +70,7 @@ class MembershipEditForm(forms.ModelForm[Membership]):
         """
         Get role from kwargs for form validation and set Crispy Forms helper.
         """
+        self.membership = kwargs.pop("membership")
         super().__init__(*args, **kwargs)
         self.fields["start_date"].disabled = True
         self.helper = FormHelper()
@@ -121,17 +122,38 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
         if self.invite_email_address:
             self.fields["invite_email_address"].initial = self.invite_email_address
             self.fields["invite_email_address"].disabled = True
+        if self.role.require_sms_verification:
+            self.fields["verify_phone_number"].required = True
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Invite")))
         self.helper.add_input(Submit("preview_message", _("Preview message"), css_class="btn-info"))
 
     class Meta:
         model = Membership
-        fields = ["invite_email_address", "start_date", "expire_date", "reason", "invite_language", "invite_text"]
+        fields = [
+            "invite_email_address",
+            "verify_phone_number",
+            "start_date",
+            "expire_date",
+            "reason",
+            "invite_language",
+            "invite_text",
+        ]
         widgets = {
             "start_date": DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
             "expire_date": DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
         }
+
+    def clean_verify_phone_number(self) -> str | None:
+        """
+        Require verification phone number if the role requires it.
+        """
+        verify_phone_number = self.cleaned_data["verify_phone_number"]
+        if verify_phone_number:
+            validate_phone_number(verify_phone_number)
+        elif self.role.require_sms_verification:
+            raise ValidationError(_("Verification phone number is required for this role."))
+        return verify_phone_number
 
     def clean(self) -> None:
         """

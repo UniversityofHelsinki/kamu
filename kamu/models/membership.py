@@ -17,6 +17,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from kamu.models.role import Requirement, Role
+from kamu.validators.identity import validate_phone_number
 from kamu.validators.membership import validate_membership
 
 
@@ -65,6 +66,13 @@ class Membership(models.Model):
         help_text=_("Unique identifier for this membership."),
     )
     invite_email_address = models.EmailField(blank=True, null=True, verbose_name=_("Invite email address"))
+    verify_phone_number = models.CharField(
+        max_length=20,
+        blank=True,
+        verbose_name=_("Verify phone number"),
+        help_text=_("Phone number to send the verification SMS to. In international format, e.g. +358123456789."),
+        validators=[validate_phone_number],
+    )
 
     invite_language = models.CharField(
         max_length=2,

@@ -189,7 +189,12 @@ class RegistrationForm(forms.Form):
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
+        self.membership = kwargs.pop("membership")
         super().__init__(*args, **kwargs)
+        if self.membership.invite_email_address:
+            self.fields["email_address"].initial = self.membership.invite_email_address
+            self.fields["email_address"].disabled = True
+            self.fields["email_address"].help_text = _("This email address is already set by the inviter.")
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Send verification code")))
 
@@ -262,7 +267,13 @@ class RegistrationPhoneNumberForm(forms.Form):
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
+        self.membership = kwargs.pop("membership")
         super().__init__(*args, **kwargs)
+        if self.membership.verify_phone_number:
+            self.fields["phone_number"].initial = self.membership.verify_phone_number
+            self.fields["phone_number"].disabled = True
+            self.fields["phone_number"].help_text = _("This phone number is already set by the inviter.")
+
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Send verification code")))
 

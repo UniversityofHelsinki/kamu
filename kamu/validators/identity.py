@@ -69,14 +69,14 @@ class PhoneNumberValidator:
             self.code = code
 
     def __call__(self, value: str) -> None:
+        if len(value) < 8:
+            message = self.message or _("Phone number is too short.")
+            raise ValidationError(message, self.code, params={"value": value})
         if value[0] != "+":
             message = self.message or _("Phone number must start with a plus sign.")
             raise ValidationError(message, self.code, params={"value": value})
         if not set(value[1:]).issubset(string.digits):
             message = self.message or _("Phone number contains invalid characters.")
-            raise ValidationError(message, self.code, params={"value": value})
-        if len(value) < 8:
-            message = self.message or _("Phone number is too short.")
             raise ValidationError(message, self.code, params={"value": value})
 
     def __eq__(self, other: object) -> bool:

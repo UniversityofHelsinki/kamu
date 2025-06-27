@@ -11,13 +11,13 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q, QuerySet
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseBase
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.decorators.csrf import csrf_protect
-from django.views.generic import DetailView, ListView, View
+from django.views.generic import DetailView, FormView, ListView
 from django.views.generic.edit import CreateView, UpdateView
 
 from kamu.connectors.email import (
@@ -29,6 +29,7 @@ from kamu.connectors.email import (
     send_notify_approvers_email,
 )
 from kamu.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
+from kamu.forms.auth import RegistrationPhoneNumberVerificationForm
 from kamu.forms.membership import (
     MembershipCreateForm,
     MembershipEditForm,
@@ -40,7 +41,11 @@ from kamu.models.membership import Membership
 from kamu.models.role import Role
 from kamu.models.token import TimeLimitError, Token
 from kamu.utils.audit import AuditLog
-from kamu.utils.identity import import_identity
+from kamu.utils.identity import (
+    create_or_verify_phone_number,
+    create_phone_verification_token,
+    import_identity,
+)
 from kamu.utils.membership import (
     add_missing_requirement_messages,
     claim_membership,
@@ -345,6 +350,14 @@ class MembershipUpdateView(LoginRequiredMixin, UpdateView[Membership, Membership
     model = Membership
     form_class = MembershipEditForm
     template_name = "membership/membership_edit_form.html"
+
+    def get_form_kwargs(self) -> dict[str, Any]:
+        """
+        Add role to form kwargs.
+        """
+        kwargs = super().get_form_kwargs()
+        kwargs["membership"] = self.object
+        return kwargs
 
     def form_valid(self, form: MembershipEditForm) -> HttpResponse:
         """
@@ -707,27 +720,100 @@ class MembershipInviteEmailView(BaseMembershipInviteView):
         return redirect("membership-detail", pk=membership.pk)
 
 
-class MembershipClaimView(LoginRequiredMixin, View):
+class MembershipClaimView(LoginRequiredMixin, FormView):
     """
     Claim an invitation to a role membership.
     """
 
-    def get(self, request: HttpRequest) -> HttpResponse:
-        user = self.request.user
-        if not user.is_authenticated:
+    template_name = "membership/verification_form.html"
+    form_class = RegistrationPhoneNumberVerificationForm
+
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        """
+        Check if user is authenticated and has an identity.
+
+        Identity is created if it does not exist. This currently happens only with local logins.
+
+        Save identity and membership to instance variables for later use.
+        """
+        self.user = self.request.user
+        if not self.user.is_authenticated:
             raise PermissionDenied
-        if not hasattr(user, "identity"):
-            identity = Identity.objects.create(user=user, given_names=user.first_name, surname=user.last_name)
+        if not hasattr(self.user, "identity"):
+            self.identity = Identity.objects.create(
+                user=self.user, given_names=self.user.first_name, surname=self.user.last_name
+            )
             audit_log.info(
                 "Identity created.",
                 category="identity",
                 action="create",
                 outcome="success",
                 request=self.request,
-                objects=[identity],
+                objects=[self.identity],
                 log_to_db=True,
             )
-        membership_pk = claim_membership(request, user.identity)
+        else:
+            self.identity = self.user.identity
+        try:
+            self.membership = Membership.objects.get(pk=self.request.session["invitation_code"].split(":")[0])
+        except (KeyError, Membership.DoesNotExist):
+            messages.add_message(request, messages.ERROR, _("Invalid invitation code."))
+            raise PermissionDenied
+        if self.membership.identity:
+            messages.add_message(request, messages.ERROR, _("This invitation is already claimed."))
+            return redirect("front-page")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Add membership and information whether the code has already been sent to context.
+        """
+        kwargs["membership"] = self.membership
+        kwargs["code_sent"] = self.request.session.get("code_sent") == self.membership.pk
+        return super().get_context_data(**kwargs)
+
+    def get_form_kwargs(self) -> dict[str, Any]:
+        """
+        Add phone number to form kwargs.
+        """
+        kwargs = super().get_form_kwargs()
+        kwargs["phone_number"] = self.membership.verify_phone_number if self.membership else None
+        return kwargs
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        If user already has a correct verified phone number, claim membership. Otherwise show verification form.
+        """
+        if (
+            self.membership.verify_phone_number
+            and not self.identity.phone_numbers.filter(
+                number=self.membership.verify_phone_number, verified=True
+            ).exists()
+        ):
+            return self.render_to_response(self.get_context_data())
+        membership_pk = claim_membership(request, self.identity)
+        if membership_pk == -1:
+            return redirect("front-page")
+        return redirect("membership-detail", pk=membership_pk)
+
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Check for resend button.
+        """
+        if "resend_phone_code" in self.request.POST:
+            create_phone_verification_token(self.request, self.membership.verify_phone_number)
+            request.session["code_sent"] = self.membership.pk
+            return redirect("membership-claim")
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form: RegistrationPhoneNumberVerificationForm) -> HttpResponse:
+        """
+        Create a new user identity with the linked user. Set basic information from the registration forms.
+        """
+        create_or_verify_phone_number(
+            request=self.request, identity=self.identity, phone_number=self.membership.verify_phone_number
+        )
+        membership_pk = claim_membership(self.request, self.identity)
         if membership_pk == -1:
             return redirect("front-page")
         return redirect("membership-detail", pk=membership_pk)
@@ -825,15 +911,19 @@ class MembershipMassInviteView(BaseMembershipInviteView):
         invitees = form.cleaned_data["invited"]
         to_be_invited = []
         to_be_added = []
+        missing_phone = []
         for invited in invitees:
             if not invited or not isinstance(invited, dict):
                 continue
             identity = self.find_identity(invited)
             email = invited.get("email")
+            phone = invited.get("phone")
             if identity:
                 to_be_added.append(identity)
+            elif email and (not form.instance.role.require_sms_verification or phone):
+                to_be_invited.append((email, phone))
             elif email:
-                to_be_invited.append(email)
+                missing_phone.append(email)
         if "preview_message" in self.request.POST:
             subject, message = create_invite_message(
                 role=form.instance.role,
@@ -846,6 +936,7 @@ class MembershipMassInviteView(BaseMembershipInviteView):
             context = self.get_context_data()
             context["to_be_invited"] = to_be_invited
             context["to_be_added"] = to_be_added
+            context["missing_phone"] = missing_phone
             context["preview_subject"] = subject
             context["preview_message"] = message
             return self.render_to_response(context)
@@ -868,10 +959,12 @@ class MembershipMassInviteView(BaseMembershipInviteView):
             )
             send_add_email(membership)
             added_list.append(identity.display_name())
-        for email in to_be_invited:
+        for email, phone in to_be_invited:
             form.instance.pk = None
             form.instance.identity = None
             form.instance.invite_email_address = email
+            if form.instance.role.require_sms_verification:
+                form.instance.verify_phone_number = phone
             form.instance.identifier = uuid4()
             membership = form.save()
             audit_log.info(

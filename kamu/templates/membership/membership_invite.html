@@ -18,6 +18,8 @@
         <dd class="col-sm-8 mb-5">{{ role.get_cost }} €</dd>
         <dt class="col-sm-4">{% trans "Maximum duration" %}</dt>
         <dd class="col-sm-8">{{ role.maximum_duration }} {% trans "days" %}</dd>
+        <dt class="col-sm-4">{% trans "SMS verification" %}</dt>
+        <dd class="col-sm-8">{{ role.require_sms_verification }}</dd>
       </dl>
     </div>
     {% if identity %}<div class="col-xl-6">
@@ -60,7 +62,15 @@
     {% if to_be_invited %}
       <p>{% trans "Following email addresses will receive an invitation:" %}</p>
       <ul>
-        {% for email in to_be_invited %}
+        {% for email, phone in to_be_invited %}
+          <li>{{ email }}{% if phone %}, {{ phone }}{% endif %}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% if missing_phone %}
+      <p>{% trans "This role requires SMS verification and following addresses will be skipped because of the missing phone number:" %}</p>
+      <ul>
+        {% for email in missing_phone %}
           <li>{{ email }}</li>
         {% endfor %}
       </ul>

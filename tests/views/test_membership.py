@@ -14,6 +14,7 @@ from django.utils import timezone
 
 from kamu.models.identity import Identifier, Identity
 from kamu.models.membership import Membership
+from kamu.models.token import Token
 from kamu.utils.auth import set_default_permissions
 from tests.setup import BaseTestCase
 from tests.utils import MockLdapConn
@@ -528,7 +529,10 @@ class MembershipInviteTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Notify approvers", response.content.decode("utf-8"))
 
-    def _test_join_role_send_email_invite(self, preview=False):
+    def _test_join_role_send_email_invite(self, preview=False, verify_phone_number=""):
+        self.session = self.client.session
+        self.session["invitation_email_address"] = "invite@example.org"
+        self.session.save()
         url = f"{self.url}email/"
         data = {
             "start_date": timezone.now().date(),
@@ -539,6 +543,8 @@ class MembershipInviteTests(BaseTestCase):
             "invite_language": "en",
             "notify_approvers": "on",
         }
+        if verify_phone_number:
+            data["verify_phone_number"] = verify_phone_number
 
         if preview:
             data["preview_message"] = ""
@@ -550,9 +556,6 @@ class MembershipInviteTests(BaseTestCase):
 
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_join_role_send_email_invite_preview(self, mock_logger):
-        self.session = self.client.session
-        self.session["invitation_email_address"] = "invite@example.org"
-        self.session.save()
         response = self._test_join_role_send_email_invite(preview=True)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(
@@ -586,6 +589,21 @@ class MembershipInviteTests(BaseTestCase):
         membership = Membership.objects.get(role=self.role, identity=None, invite_email_address="invite@example.org")
         self.assertEqual(membership.inviter, self.user)
         self.assertEqual(membership.approver, self.user)
+
+    def test_join_role_invite_require_phone_missing(self):
+        self.role.require_sms_verification = True
+        self.role.save()
+        response = self._test_join_role_send_email_invite()
+        self.assertIn("error_1_id_verify_phone_number", response.content.decode("utf-8"))
+
+    def test_join_role_invite_require_phone(self):
+        self.role.require_sms_verification = True
+        self.role.save()
+        response = self._test_join_role_send_email_invite(verify_phone_number="+1234567890")
+        self.assertIn("Verification SMS will be sent to +1234567890.", response.content.decode("utf-8"))
+        Membership.objects.get(
+            role=self.role, identity=None, invite_email_address="invite@example.org", verify_phone_number="+1234567890"
+        )
 
     def test_invite_form_help_text(self):
         response = self.client.get(self.url)
@@ -643,6 +661,22 @@ class MembershipMassInviteViewTests(BaseTestCase):
 
     @override_settings(ALLOW_TEST_FPIC=True)
     @override_settings(MASS_INVITE_PERMISSION_GROUPS={"group": 3})
+    def test_mass_invite_preview_with_sms_verification(self):
+        self.role.require_sms_verification = True
+        self.role.save()
+        response = self.client.post(
+            self.url,
+            self.data
+            | {
+                "invited": "missing@example.org\ninvited@example.org,+1234567890",
+                "preview_message": "True",
+            },
+        )
+        self.assertIn("missing@example.org", response.context_data["missing_phone"])
+        self.assertIn(("invited@example.org", "+1234567890"), response.context_data["to_be_invited"])
+
+    @override_settings(ALLOW_TEST_FPIC=True)
+    @override_settings(MASS_INVITE_PERMISSION_GROUPS={"group": 3})
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_mass_invite(self, mock_logger):
         Identifier.objects.create(identity=self.superidentity, type=Identifier.Type.FPIC, value="010181-900C")
@@ -691,3 +725,84 @@ class MembershipMassInviteViewTests(BaseTestCase):
             | {"invited": f"{self.email_address},+1234000000\ninvited@example.org", "preview_message": "True"},
         )
         self.assertIn("are registered to different identities", response.content.decode("utf-8"))
+
+
+class MembershipClaimViewTests(BaseTestCase):
+    def setUp(self):
+        self.create_user()
+        self.role = self.create_role()
+        self.membership = Membership.objects.create(
+            role=self.role,
+            reason="Test",
+            start_date=timezone.now().date(),
+            expire_date=timezone.now().date() + datetime.timedelta(days=7),
+        )
+        self.url = "/membership/claim/"
+        self.secret = Token.objects.create_invite_token(self.membership)
+        self.client = Client()
+        self.session = self.client.session
+        self.session["invitation_code"] = self.secret
+        self.session["invitation_code_time"] = timezone.now().isoformat()
+        self.session.save()
+
+    def test_claim_membership_without_code(self):
+        del self.session["invitation_code"]
+        self.session.save()
+        self.client.force_login(self.user)
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 403)
+        self.assertIsNone(self.membership.identity)
+
+    def test_claim_membership_without_code_time(self):
+        del self.session["invitation_code_time"]
+        self.session.save()
+        self.client.force_login(self.user)
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 403)
+        self.assertIsNone(self.membership.identity)
+
+    def test_claim_membership_with_invalid_code_time(self):
+        self.session["invitation_code_time"] += "x"
+        self.session.save()
+        self.client.force_login(self.user)
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 403)
+        self.assertIsNone(self.membership.identity)
+
+    def test_claim_membership(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.membership.refresh_from_db()
+        self.assertIsNotNone(self.membership.identity)
+        self.assertEqual(self.membership.identity, self.user.identity)
+
+    def test_claim_membership_with_expired_code_time(self):
+        self.session["invitation_code_time"] = (timezone.now() - datetime.timedelta(seconds=600)).isoformat()
+        self.session.save()
+        self.client.force_login(self.user)
+        with self.settings(INVITATION_PROCESS_TIME=500):
+            response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.membership.refresh_from_db()
+        self.assertIsNone(self.membership.identity)
+        self.assertEqual(response.url, "/")
+
+    @mock.patch("kamu.utils.identity.SmsConnector")
+    def test_claim_membership_with_sms_verification(self, mock_connector):
+        mock_connector.return_value.send_sms.return_value = True
+        self.client.force_login(self.user)
+        self.membership.verify_phone_number = "+1234567890"
+        self.membership.save()
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Send verification code", response.content.decode("utf-8"))
+        response = self.client.post(self.url, {"resend_phone_code": True}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Resend verification code", response.content.decode("utf-8"))
+        code = mock_connector.return_value.send_sms.call_args.args[1].split(" ")[-1]
+        response = self.client.post(self.url, {"code": code}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.membership.refresh_from_db()
+        self.assertIsNotNone(self.membership.identity)
+        self.assertEqual(self.membership.identity, self.user.identity)

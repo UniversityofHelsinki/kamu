@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+  <h1 class="mb-5">{% trans "Membership verification" %}</h1>
+  <p>{% trans "You are required to verify the membership with the SMS message to phone number defined by the inviter." %}</p>
+  <dl class="row">
+    <dt class="col-sm-4">{% trans "Role" %}</dt>
+    <dd class="col-sm-8">{{ membership.role }}</dd>
+    <dt class="col-sm-4">{% trans "Verification phone number" %}</dt>
+    <dd class="col-sm-8">{{ membership.verify_phone_number }}</dd>
+    <dt class="col-sm-4">{% trans "Inviter" %}</dt>
+    <dd class="col-sm-8">{{ membership.inviter.get_full_name|default:"&nbsp;" }}</dd>
+  </dl>
+  {% if code_sent %}
+    {% crispy form %}
+  {% else %}
+    <form method="post">
+      {% csrf_token %}
+      <input type="submit" name="resend_phone_code" value="{% trans 'Send verification code' %}" class="btn btn-primary me-2"/>
+    </form>
+  {% endif %}
+{% endblock %}

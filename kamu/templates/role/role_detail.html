@@ -38,6 +38,9 @@
 
     <dt class="col-sm-4">{% trans "Maximum duration" %}</dt>
     <dd class="col-sm-8">{{ object.maximum_duration }} {% trans "days" %}</dd>
+
+    <dt class="col-sm-4">{% trans "SMS verification" %}</dt>
+    <dd class="col-sm-8">{{ object.require_sms_verification }}</dd>
   </dl>
   {% if is_inviter %}
     <a href="{% url 'role-invite-identity' object.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Invite a new member" %}</a>

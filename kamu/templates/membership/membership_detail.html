@@ -41,6 +41,7 @@
       {% else %}
         <p>{% trans "Identity has not yet been linked to this membership." %}</p>
         <p>{% blocktrans with address=membership.invite_email_address %}Invite has been sent to {{ address }}.{% endblocktrans %}</p>
+        <p>{% blocktrans with number=membership.verify_phone_number %}Verification SMS will be sent to {{ number }}.{% endblocktrans %}</p>
         {% if is_inviter %}
           <form method="post">{% csrf_token %}
             <input type="submit" name="resend_invite" value="{% trans 'Resend invite email' %}" class="btn btn-primary"/>
