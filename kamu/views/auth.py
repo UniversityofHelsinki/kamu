@@ -59,6 +59,12 @@ from kamu.forms.auth import (
 from kamu.models.identity import EmailAddress, Identity, PhoneNumber
 from kamu.models.token import TimeLimitError, Token
 from kamu.utils.audit import AuditLog
+from kamu.utils.identity import (
+    create_email_verification_token,
+    create_or_verify_email_address,
+    create_or_verify_phone_number,
+    create_phone_verification_token,
+)
 from kamu.utils.membership import (
     claim_membership,
     get_expiring_memberships,
@@ -122,44 +128,6 @@ class BaseRegistrationView(View):
         get_invitation_session_parameters(request)
         return super().dispatch(request, *args, **kwargs)
 
-    def _create_email_verification_token(self, email_address: str) -> bool:
-        """
-        Create and send a verification token.
-        """
-        try:
-            token = Token.objects.create_email_address_verification_token(email_address)
-        except TimeLimitError:
-            messages.add_message(
-                self.request, messages.WARNING, _("Tried to send a new code too soon. Please try again in one minute.")
-            )
-            return False
-        if send_verification_email(token, email_address=email_address, lang=get_language()):
-            messages.add_message(self.request, messages.INFO, _("Verification code sent."))
-            return True
-        else:
-            messages.add_message(self.request, messages.ERROR, _("Failed to send verification code."))
-            return False
-
-    def _create_phone_verification_token(self, phone_number: str) -> bool:
-        """
-        Create and send a verification token.
-        """
-        try:
-            token = Token.objects.create_phone_number_verification_token(phone_number)
-        except TimeLimitError:
-            messages.add_message(
-                self.request, messages.WARNING, _("Tried to send a new code too soon. Please try again in one minute.")
-            )
-            return False
-        sms_connector = SmsConnector()
-        success = sms_connector.send_sms(phone_number, _("Kamu verification code: %(token)s") % {"token": token})
-        if success:
-            messages.add_message(self.request, messages.INFO, _("Verification code sent."))
-            return True
-        else:
-            messages.add_message(self.request, messages.ERROR, _("Could not send an SMS message."))
-            return False
-
 
 class RegistrationView(BaseRegistrationView, FormView):
     """
@@ -176,7 +144,7 @@ class RegistrationView(BaseRegistrationView, FormView):
         email_address = form.cleaned_data["email_address"]
         given_names = form.cleaned_data["given_names"]
         surname = form.cleaned_data["surname"]
-        if not self._create_email_verification_token(email_address):
+        if not create_email_verification_token(self.request, email_address):
             return redirect("login-register")
         self.request.session["register_email_address"] = email_address
         self.request.session["register_given_names"] = given_names
@@ -214,7 +182,7 @@ class RegistrationEmailAddressVerificationView(BaseRegistrationView, FormView):
         """
         if "resend_email_code" in self.request.POST:
             email_address = self.request.session["register_email_address"]
-            self._create_email_verification_token(email_address)
+            create_email_verification_token(self.request, email_address)
             return redirect("login-register-email-verify")
         return super().post(request, *args, **kwargs)
 
@@ -248,7 +216,7 @@ class RegistrationPhoneNumberView(BaseRegistrationView, FormView):
         Create and send a code when loading a page.
         """
         phone_number = form.cleaned_data["phone_number"]
-        if not self._create_phone_verification_token(phone_number):
+        if not create_phone_verification_token(self.request, phone_number):
             return redirect("login-register-phone")
         self.request.session["register_phone_number"] = phone_number
         return redirect("login-register-phone-verify")
@@ -285,7 +253,7 @@ class RegistrationPhoneNumberVerificationView(BaseRegistrationView, FormView):
         """
         if "resend_phone_code" in self.request.POST:
             phone_number = self.request.session["register_phone_number"]
-            self._create_phone_verification_token(phone_number)
+            create_phone_verification_token(self.request, phone_number)
             return redirect("login-register-phone-verify")
         return super().post(request, *args, **kwargs)
 
@@ -334,26 +302,8 @@ class RegistrationPhoneNumberVerificationView(BaseRegistrationView, FormView):
             objects=[identity, user],
             log_to_db=True,
         )
-        email_object = EmailAddress.objects.create(address=email_address, identity=identity, verified=True)
-        audit_log.info(
-            f"Email address added to identity {identity}",
-            category="email_address",
-            action="create",
-            outcome="success",
-            request=self.request,
-            objects=[email_object, identity],
-            log_to_db=True,
-        )
-        phone_object = PhoneNumber.objects.create(number=phone_number, identity=identity, verified=True)
-        audit_log.info(
-            f"Phone number added to identity {identity}",
-            category="phone_number",
-            action="create",
-            outcome="success",
-            request=self.request,
-            objects=[phone_object, identity],
-            log_to_db=True,
-        )
+        create_or_verify_email_address(request=self.request, identity=identity, email_address=email_address)
+        create_or_verify_phone_number(request=self.request, identity=identity, phone_number=phone_number)
         auth_login(self.request, user, backend="kamu.backends.EmailSMSBackend")
         claim_membership(self.request, identity)
         del self.request.session["verified_email_address"]

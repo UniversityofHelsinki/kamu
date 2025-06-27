@@ -12,7 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.mail import send_mail
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError
 from django.db.models import OuterRef, Q, QuerySet, Subquery
 from django.forms import BaseForm
 from django.http import (
@@ -51,7 +51,12 @@ from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
 from kamu.models.membership import Membership
 from kamu.models.token import TimeLimitError, Token
 from kamu.utils.audit import AuditLog
-from kamu.utils.identity import combine_identities, combine_identities_requirements
+from kamu.utils.identity import (
+    combine_identities,
+    combine_identities_requirements,
+    create_or_verify_email_address,
+    create_or_verify_phone_number,
+)
 from kamu.utils.membership import add_missing_requirement_messages
 from settings.common import LdapSearchAttributeType
 
@@ -250,64 +255,6 @@ class BaseVerificationView(LoginRequiredMixin, UpdateView):
     def get_success_url(self) -> str:
         return reverse("contact-change", kwargs={"pk": self.object.identity.pk})
 
-    def form_valid(self, form: BaseForm) -> HttpResponse:
-        """
-        Verify a contact if code was correct.
-        """
-        if not self.object.verified:
-            with transaction.atomic():
-                self.object.verified = True
-                self.object.save()
-                if isinstance(self.object, EmailAddress):
-                    audit_log.info(
-                        "Verified email address",
-                        category="email_address",
-                        action="update",
-                        outcome="success",
-                        request=self.request,
-                        objects=[self.object, self.object.identity],
-                        log_to_db=True,
-                    )
-                    for email_obj in EmailAddress.objects.filter(address=self.object.address, verified=True).exclude(
-                        pk=self.object.pk
-                    ):
-                        email_obj.verified = False
-                        email_obj.save()
-                        audit_log.warning(
-                            "Removed verification from the email address as the address was verified elsewhere",
-                            category="email_address",
-                            action="update",
-                            outcome="success",
-                            request=self.request,
-                            objects=[email_obj, email_obj.identity],
-                            log_to_db=True,
-                        )
-                if isinstance(self.object, PhoneNumber):
-                    audit_log.info(
-                        "Verified phone number",
-                        category="phone_number",
-                        action="update",
-                        outcome="success",
-                        request=self.request,
-                        objects=[self.object, self.object.identity],
-                        log_to_db=True,
-                    )
-                    for phone_obj in PhoneNumber.objects.filter(number=self.object.number, verified=True).exclude(
-                        pk=self.object.pk
-                    ):
-                        phone_obj.verified = False
-                        phone_obj.save()
-                        audit_log.warning(
-                            "Removed verification from the phone number as the number was verified elsewhere",
-                            category="phone_number",
-                            action="update",
-                            outcome="success",
-                            request=self.request,
-                            objects=[phone_obj, phone_obj.identity],
-                            log_to_db=True,
-                        )
-        return super().form_valid(form)
-
 
 class EmailAddressVerificationView(BaseVerificationView):
     """
@@ -343,6 +290,13 @@ class EmailAddressVerificationView(BaseVerificationView):
         if not Token.objects.filter(email_object=self.object).exists():
             self._create_verification_token()
         return get
+
+    def form_valid(self, form: BaseForm) -> HttpResponse:
+        """
+        Verify a contact if code was correct.
+        """
+        create_or_verify_email_address(request=self.request, identity=self.object.identity, email_object=self.object)
+        return super().form_valid(form)
 
 
 class PhoneNumberVerificationView(BaseVerificationView):
@@ -382,6 +336,13 @@ class PhoneNumberVerificationView(BaseVerificationView):
         if not Token.objects.filter(phone_object=self.object).exists():
             self._create_verification_token()
         return get
+
+    def form_valid(self, form: BaseForm) -> HttpResponse:
+        """
+        Verify a contact if code was correct.
+        """
+        create_or_verify_phone_number(request=self.request, identity=self.object.identity, phone_object=self.object)
+        return super().form_valid(form)
 
 
 class ContactView(LoginRequiredMixin, FormView):

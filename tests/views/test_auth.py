@@ -482,7 +482,7 @@ class RegistrationViewTests(BaseTestCase):
         response = self.client.post(url, data={"phone_number": "+123456789"}, follow=True)
         self.assertEqual(response.status_code, 403)
 
-    @mock.patch("kamu.views.auth.SmsConnector")
+    @mock.patch("kamu.utils.identity.SmsConnector")
     def test_registration_phone_number(self, mock_connector):
         mock_connector.return_value.send_sms.return_value = True
         url = reverse("login-register-phone")
@@ -510,7 +510,7 @@ class RegistrationViewTests(BaseTestCase):
         self.membership.refresh_from_db()
         self.assertEqual(self.membership.identity, identity)
 
-    @mock.patch("kamu.views.auth.SmsConnector")
+    @mock.patch("kamu.utils.identity.SmsConnector")
     def test_verify_phone_number_resend_code(self, mock_connector):
         mock_connector.return_value.send_sms.return_value = True
         url = reverse("login-register-phone-verify")

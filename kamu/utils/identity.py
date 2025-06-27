@@ -8,15 +8,19 @@ from typing import TYPE_CHECKING, Callable
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.http import HttpRequest
 from django.utils import timezone
+from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
+from kamu.connectors.email import send_verification_email
 from kamu.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
+from kamu.connectors.sms import SmsConnector
 from kamu.models.contract import Contract
 from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
 from kamu.models.membership import Membership
+from kamu.models.token import TimeLimitError, Token
 from kamu.utils.audit import AuditLog
 from kamu.validators.identity import validate_fpic
 
@@ -387,3 +391,145 @@ def import_identity(uid: str | None = None, request: HttpRequest | None = None) 
     if uid:
         return create_identity_from_ldap(uid, request)
     return None
+
+
+def create_email_verification_token(request: HttpRequest, email_address: str) -> bool:
+    """
+    Create and send a verification token.
+    """
+    try:
+        token = Token.objects.create_email_address_verification_token(email_address)
+    except TimeLimitError:
+        messages.add_message(
+            request, messages.WARNING, _("Tried to send a new code too soon. Please try again in one minute.")
+        )
+        return False
+    if send_verification_email(token, email_address=email_address, lang=get_language()):
+        messages.add_message(request, messages.INFO, _("Verification code sent."))
+        return True
+    else:
+        messages.add_message(request, messages.ERROR, _("Failed to send verification code."))
+        return False
+
+
+def create_phone_verification_token(request: HttpRequest, phone_number: str) -> bool:
+    """
+    Create and send a verification token.
+    """
+    try:
+        token = Token.objects.create_phone_number_verification_token(phone_number)
+    except TimeLimitError:
+        messages.add_message(
+            request, messages.WARNING, _("Tried to send a new code too soon. Please try again in one minute.")
+        )
+        return False
+    sms_connector = SmsConnector()
+    success = sms_connector.send_sms(phone_number, _("Kamu verification code: %(token)s") % {"token": token})
+    if success:
+        messages.add_message(request, messages.INFO, _("Verification code sent."))
+        return True
+    else:
+        messages.add_message(request, messages.ERROR, _("Could not send an SMS message."))
+        return False
+
+
+def create_or_verify_email_address(
+    request: HttpRequest, identity: Identity, email_address: str = "", email_object: EmailAddress | None = None
+) -> EmailAddress | None:
+    """
+    Set email object verified or create verified email object.
+    """
+    if email_object and email_object.verified:
+        return email_object
+    with transaction.atomic():
+        if email_object:
+            email_object.verified = True
+            email_object.save()
+            audit_log.info(
+                "Verified email address",
+                category="email_address",
+                action="update",
+                outcome="success",
+                request=request,
+                objects=[email_object, email_object.identity],
+                log_to_db=True,
+            )
+        elif email_address:
+            email_object = EmailAddress.objects.create(address=email_address, identity=identity, verified=True)
+            audit_log.info(
+                f"Verified email address added to identity {identity}",
+                category="email_address",
+                action="create",
+                outcome="success",
+                request=request,
+                objects=[email_object, identity],
+                log_to_db=True,
+            )
+        else:
+            raise ValidationError(_("Email address is required."))
+        for email_obj in EmailAddress.objects.filter(address=email_object.address, verified=True).exclude(
+            pk=email_object.pk
+        ):
+            email_obj.verified = False
+            email_obj.save()
+            audit_log.warning(
+                "Removed verification from the email address as the address was verified elsewhere",
+                category="email_address",
+                action="update",
+                outcome="success",
+                request=request,
+                objects=[email_obj, email_obj.identity],
+                log_to_db=True,
+            )
+        return email_object
+
+
+def create_or_verify_phone_number(
+    request: HttpRequest, identity: Identity, phone_number: str = "", phone_object: PhoneNumber | None = None
+) -> PhoneNumber | None:
+    """
+    Set phone object verified or create verified phone number.
+    """
+    if phone_object and phone_object.verified:
+        return phone_object
+    with transaction.atomic():
+        if phone_object:
+            phone_object.verified = True
+            phone_object.save()
+            audit_log.info(
+                "Verified phone number",
+                category="phone_number",
+                action="update",
+                outcome="success",
+                request=request,
+                objects=[phone_object, phone_object.identity],
+                log_to_db=True,
+            )
+        elif phone_number:
+            phone_object = PhoneNumber.objects.create(number=phone_number, identity=identity, verified=True)
+            audit_log.info(
+                f"Verified phone number added to identity {identity}",
+                category="phone_number",
+                action="create",
+                outcome="success",
+                request=request,
+                objects=[phone_object, identity],
+                log_to_db=True,
+            )
+        else:
+            raise ValidationError(_("Phone number is required."))
+        for phone_obj in PhoneNumber.objects.filter(number=phone_object.number, verified=True).exclude(
+            pk=phone_object.pk
+        ):
+            phone_obj.verified = False
+            phone_obj.save()
+            audit_log.warning(
+                "Removed verification from the phone number as the number was verified elsewhere",
+                category="phone_number",
+                action="update",
+                outcome="success",
+                request=request,
+                objects=[phone_obj, phone_obj.identity],
+                log_to_db=True,
+            )
+        return phone_object
