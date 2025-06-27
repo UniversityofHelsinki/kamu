@@ -53,7 +53,8 @@ class MembershipSerializer(serializers.ModelSerializer[Membership], EagerLoading
         role = get_attribute("role")
         start_date = get_attribute("start_date")
         expire_date = get_attribute("expire_date")
-        validate_membership(serializers.ValidationError, role, start_date, expire_date)
+        old_start_date = getattr(self.instance, "start_date") if self.instance else None
+        validate_membership(serializers.ValidationError, role, start_date, expire_date, old_start_date=old_start_date)
         return data
 
     class Meta:

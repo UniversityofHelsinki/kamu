@@ -205,22 +205,39 @@ class MembershipViewTests(BaseTestCase):
             ]
         )
 
-    def test_edit_membership_ignore_disabled_start_date(self):
+    def test_edit_membership_past_start_date(self):
         self.role.approvers.add(self.group)
+        self.membership.start_date = timezone.now().date() - datetime.timedelta(days=1)
+        self.membership.save()
         url = f"{self.url}change/"
-        expire_date = timezone.now().date() + datetime.timedelta(days=2)
-        self.client.post(
+        response = self.client.post(
             url,
             {
                 "start_date": timezone.now().date() + datetime.timedelta(days=1),
-                "expire_date": expire_date,
+                "expire_date": self.membership.expire_date,
                 "reason": "Updated",
             },
             follow=True,
         )
-        self.membership.refresh_from_db()
-        self.assertEqual(self.membership.start_date, timezone.now().date())
-        self.assertEqual(self.membership.expire_date, expire_date)
+        self.assertIn("Past membership start date cannot be changed", response.content.decode("utf-8"))
+
+    def test_edit_membership_update_verification_phone_number(self):
+        self.membership.identity = None
+        self.membership.save()
+        self.role.approvers.add(self.group)
+        self.membership.save()
+        url = f"{self.url}change/"
+        response = self.client.post(
+            url,
+            {
+                "start_date": self.membership.start_date,
+                "expire_date": self.membership.expire_date,
+                "reason": "Updated",
+                "verify_phone_number": "+123456789",
+            },
+            follow=True,
+        )
+        self.assertIn("Verification SMS will be sent to +123456789.", response.content.decode("utf-8"))
 
     @patch("kamu.utils.audit.logger_audit")
     def test_end_membership(self, mock_logger):

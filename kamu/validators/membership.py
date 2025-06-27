@@ -22,6 +22,7 @@ def validate_membership(
     start_date: Any | None,
     expire_date: Any | None,
     edit: bool = False,
+    old_start_date: Any | None = None,
 ) -> None:
     """
     Validates membership dates.
@@ -39,6 +40,8 @@ def validate_membership(
         raise error_class({"expire_date": [_("Membership expiry date cannot be in the past.")]})
     if not edit and start_date < timezone.now().date():
         raise error_class({"start_date": [_("Membership start date cannot be in the past.")]})
+    if old_start_date != start_date and start_date < timezone.now().date():
+        raise error_class({"start_date": [_("Past membership start date cannot be changed.")]})
     compare_date = max(start_date, timezone.now().date())
     if role and (expire_date - compare_date).days > role.maximum_duration:
         last_date = formats.date_format(compare_date + timedelta(days=role.maximum_duration), "SHORT_DATE_FORMAT")

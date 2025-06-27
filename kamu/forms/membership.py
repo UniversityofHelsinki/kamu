@@ -10,6 +10,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.forms.widgets import DateInput
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from kamu.models.membership import Membership
@@ -69,20 +70,37 @@ class MembershipEditForm(forms.ModelForm[Membership]):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Get role from kwargs for form validation and set Crispy Forms helper.
+        Remove verify_phone_number field if membership is already linked to identity.
         """
         self.membership = kwargs.pop("membership")
         super().__init__(*args, **kwargs)
-        self.fields["start_date"].disabled = True
+        if self.membership.start_date <= timezone.now().date():
+            self.fields["start_date"].disabled = True
+        if self.membership.identity:
+            del self.fields["verify_phone_number"]
+        elif self.membership.role.require_sms_verification:
+            self.fields["verify_phone_number"].required = True
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Update")))
 
     class Meta:
         model = Membership
-        fields = ["start_date", "expire_date", "reason"]
+        fields = ["start_date", "expire_date", "verify_phone_number", "reason"]
         widgets = {
             "start_date": DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
             "expire_date": DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
         }
+
+    def clean_verify_phone_number(self) -> str | None:
+        """
+        Require verification phone number if the role requires it.
+        """
+        verify_phone_number = self.cleaned_data["verify_phone_number"]
+        if verify_phone_number:
+            validate_phone_number(verify_phone_number)
+        elif self.instance.role.require_sms_verification:
+            raise ValidationError(_("Verification phone number is required for this role."))
+        return verify_phone_number
 
     def clean(self) -> None:
         """
@@ -93,7 +111,14 @@ class MembershipEditForm(forms.ModelForm[Membership]):
             cleaned_data = self.cleaned_data
         start_date = cleaned_data.get("start_date")
         expire_date = cleaned_data.get("expire_date")
-        validate_membership(ValidationError, self.instance.role, start_date, expire_date, edit=True)
+        validate_membership(
+            ValidationError,
+            self.instance.role,
+            start_date,
+            expire_date,
+            edit=True,
+            old_start_date=self.membership.start_date,
+        )
 
 
 class MembershipEmailCreateForm(forms.ModelForm[Membership]):

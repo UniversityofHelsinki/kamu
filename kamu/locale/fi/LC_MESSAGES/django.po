@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-13 13:02+0300\n"
+"POT-Creation-Date: 2025-08-13 13:03+0300\n"
 "Language: FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -438,11 +438,11 @@ msgstr "Tallenna muutokset"
 msgid "Cannot set strong electrical verification manually."
 msgstr "Vahvaa sähköistä tunnistustasoa ei voi asettaa käsin."
 
-#: forms/membership.py:26 forms/membership.py:105 forms/membership.py:198
+#: forms/membership.py:27 forms/membership.py:130 forms/membership.py:223
 msgid "Notify approvers"
 msgstr "Ilmoita hyväksyjille"
 
-#: forms/membership.py:29 forms/membership.py:107 forms/membership.py:200
+#: forms/membership.py:30 forms/membership.py:132 forms/membership.py:225
 msgid ""
 "Send notification to the role notification address about the new invite "
 "requiring approval."
@@ -450,41 +450,41 @@ msgstr ""
 "Lähetä ilmoitus roolin ilmoitusosoitteeseen uudesta kutsusta, joka vaatii "
 "hyväksynnän."
 
-#: forms/membership.py:42
+#: forms/membership.py:43
 msgid "Add member"
 msgstr "Lisää jäsen"
 
-#: forms/membership.py:77
+#: forms/membership.py:84
 msgid "Update"
 msgstr "Päivitä"
 
-#: forms/membership.py:128 forms/membership.py:216
+#: forms/membership.py:102 forms/membership.py:180
+msgid "Verification phone number is required for this role."
+msgstr "Roolin jäsenyys vaatii vahvistuksessa käytetyn puhelinnummeron."
+
+#: forms/membership.py:153 forms/membership.py:241
 #: templates/membership/membership_approval_list.html:20
 #: templates/membership/membership_expiring_list.html:20
 #: templates/role/role_detail.html:68
 msgid "Invite"
 msgstr "Lähetä kutsu"
 
-#: forms/membership.py:129 forms/membership.py:217
+#: forms/membership.py:154 forms/membership.py:242
 #: templates/membership/membership_invite.html:46
 msgid "Preview message"
 msgstr "Esikatsele viesti"
 
-#: forms/membership.py:155
-msgid "Verification phone number is required for this role."
-msgstr "Roolin jäsenyys vaatii vahvistuksessa käytetyn puhelinnummeron."
-
-#: forms/membership.py:180
+#: forms/membership.py:205
 msgid ""
 "This email address already has an invite to the role during this time period."
 msgstr ""
 "Tällä sähköpostiosoitteella on jo kutsu rooliin tämän aikajakson aikana."
 
-#: forms/membership.py:189
+#: forms/membership.py:214
 msgid "Invited persons"
 msgstr "Kutsutut henkilöt"
 
-#: forms/membership.py:192
+#: forms/membership.py:217
 msgid ""
 "Invited persons, one per line. Each line should contain email address, "
 "followed by optional phone number and/or Finnish personal identity code, "
@@ -497,20 +497,20 @@ msgstr ""
 "kansainvälisessä muodossa. Esimerkki: \"henkilo@example.org,"
 "+358501234567,010181-900C\""
 
-#: forms/membership.py:252
+#: forms/membership.py:277
 msgid "No invited persons."
 msgstr "Ei kutsuttuja henkilöitä."
 
-#: forms/membership.py:255
+#: forms/membership.py:280
 msgid "Too many invited persons."
 msgstr "Liian monta kutsuttua henkilöä."
 
-#: forms/membership.py:266
+#: forms/membership.py:291
 #, python-format
 msgid "Invalid value: %(part)s"
 msgstr "Virheellinen arvo: %(part)s"
 
-#: forms/membership.py:269
+#: forms/membership.py:294
 #, python-format
 msgid "Invalid line: %(line)s"
 msgstr "Virheellinen rivi: %(line)s"
@@ -3267,27 +3267,31 @@ msgstr "Puhelinnumero sisältää virheellisiä merkkejä."
 msgid "Invalid eIDAS identifier format."
 msgstr "Virheellinen eIDAS-tunnisteen muoto."
 
-#: validators/membership.py:33
+#: validators/membership.py:34
 msgid "Invalid start date format."
 msgstr "Virheellinen aloituspäivämäärän muoto."
 
-#: validators/membership.py:35
+#: validators/membership.py:36
 msgid "Invalid expiry date format."
 msgstr "Virheellinen päättymispäivämäärän muoto."
 
-#: validators/membership.py:37
+#: validators/membership.py:38
 msgid "Membership expiry date cannot be earlier than start date."
 msgstr "Jäsenyyden päättymispäivämäärä ei voi olla ennen aloituspäivämäärää."
 
-#: validators/membership.py:39
+#: validators/membership.py:40
 msgid "Membership expiry date cannot be in the past."
 msgstr "Jäsenyyden päättymispäivämäärä ei voi olla menneisyydessä."
 
-#: validators/membership.py:41
+#: validators/membership.py:42
 msgid "Membership start date cannot be in the past."
 msgstr "Jäsenyyden aloituspäivämäärä ei voi olla menneisyydessä."
 
-#: validators/membership.py:49
+#: validators/membership.py:44
+msgid "Past membership start date cannot be changed."
+msgstr "Mennyttä aloituspäivää ei voida muuttaa."
+
+#: validators/membership.py:52
 #, python-format
 msgid ""
 "Maximum membership duration for this role is %(max_duration)s days. Last "
