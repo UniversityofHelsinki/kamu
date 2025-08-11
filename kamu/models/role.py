@@ -396,7 +396,7 @@ class Requirement(models.Model):
                 raise ValidationError(
                     {
                         "level": [
-                            _("Allowed assurance levels are from %(min) (low) to %(max) (high).")
+                            _("Allowed assurance levels are from %(min)d (low) to %(max)d (high).")
                             % {"min": min_assurance, "max": max_assurance}
                         ]
                     }

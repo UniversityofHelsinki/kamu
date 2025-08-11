@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-13 13:03+0300\n"
+"POT-Creation-Date: 2025-08-13 13:04+0300\n"
 "Language: SV\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1267,8 +1267,9 @@ msgid "Contract version must be a positive integer."
 msgstr "Avtalsversionen måste vara ett positivt heltal."
 
 #: models/role.py:399
-msgid "Allowed assurance levels are from %(min) (low) to %(max) (high)."
-msgstr "Tillåtna kontrollnivåer är från %(min) (low) till %(max) (high)."
+#, python-format
+msgid "Allowed assurance levels are from %(min)d (low) to %(max)d (high)."
+msgstr "Tillåtna kontrollnivåer är från %(min)d (låg) till %(max)d (hög)."
 
 #: models/role.py:409
 msgid "Invalid attribute name."
