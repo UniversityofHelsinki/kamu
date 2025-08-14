@@ -47,7 +47,7 @@ CSRF_COOKIE_SECURE: bool = True
 CSRF_COOKIE_HTTPONLY: bool = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE: bool = True
 
-TIME_ZONE: str = "EET"
+TIME_ZONE: str = "Europe/Helsinki"
 
 # Email backend, see https://docs.djangoproject.com/en/dev/topics/email/
 # EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
