@@ -27,17 +27,6 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'identity-me' %}">{% trans "My information" %}</a>
             </li>
-            {% if perms.kamu.search_roles %}
-              <li class="nav-item dropdown ms-3">
-                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">{% trans "Roles" %}</a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{% url 'role-search' %}">{% trans "Search" %}</a></li>
-                  <li><a class="dropdown-item" href="{% url 'role-list-inviter' %}">{% trans "Inviter" %}</a></li>
-                  <li><a class="dropdown-item" href="{% url 'role-list-approver' %}">{% trans "Approver" %}</a></li>
-                  <li><a class="dropdown-item" href="{% url 'role-list-owner' %}">{% trans "Owner" %}</a></li>
-                </ul>
-              </li>
-            {% endif %}
             {% if perms.kamu.search_identities %}
               <li class="nav-item dropdown ms-3">
                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">{% trans "Memberships" %}</a>
@@ -45,6 +34,17 @@
                   <li><a class="dropdown-item" href="{% url 'membership-approval' %}">{% trans "Requiring approval" %}</a></li>
                   <li><a class="dropdown-item" href="{% url 'membership-expiring' %}">{% trans "Expiring" %}</a></li>
                   <li><a class="dropdown-item" href="{% url 'identity-search' %}">{% trans "Search identities" %}</a></li>
+                </ul>
+              </li>
+            {% endif %}
+            {% if perms.kamu.search_roles %}
+              <li class="nav-item dropdown ms-3">
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">{% trans "Roles" %}</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{% url 'role-list-inviter' %}">{% trans "Inviter" %}</a></li>
+                  <li><a class="dropdown-item" href="{% url 'role-list-approver' %}">{% trans "Approver" %}</a></li>
+                  <li><a class="dropdown-item" href="{% url 'role-list-owner' %}">{% trans "Owner" %}</a></li>
+                  <li><a class="dropdown-item" href="{% url 'role-search' %}">{% trans "Search" %}</a></li>
                 </ul>
               </li>
             {% endif %}

@@ -5,13 +5,6 @@
   <h1 class="mb-3">{% trans "Kamu" %}</h1>
   <p>{% trans "University of Helsinki registry for external identities." %}</p>
   {% if user.is_authenticated %}
-    <div class="row">
-      <div class="col-lg-4 col-md-6 mb-3">
-        <h2 class="mt-4">{% trans "My information" %}</h2>
-        <p>{% trans "Show and manage your own information. This includes your role memberships and basic information such as names, contacts and contracts." %}</p>
-        <a href="{% url 'identity-me' %}" class="btn btn-primary mb-3">{% trans "My information" %}</a>
-      </div>
-    </div>
     {% if perms.kamu.search_roles %}
       <h2 class="mb-4 mt-4">{% trans "Role and membership management" %}<button type="button" class="btn btn-info btn-sm info-button" data-bs-toggle="modal" data-bs-target="#infoModal">{% trans "info" %}</button></h2>
       <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
@@ -69,6 +62,13 @@
         </div>
       </div>
     {% endif %}
+    <div class="row">
+      <div class="col-lg-4 col-md-6 mb-3">
+        <h2 class="mt-4">{% trans "My information" %}</h2>
+        <p>{% trans "Show and manage your own information. This includes your role memberships and basic information such as names, contacts and contracts." %}</p>
+        <a href="{% url 'identity-me' %}" class="btn btn-primary mb-3">{% trans "My information" %}</a>
+      </div>
+    </div>
     {% if request.user.is_staff %}
       <h2 class="mb-4 mt-4">{% trans "Admin utilities" %}</h2>
       <div class="row">
