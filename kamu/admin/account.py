@@ -16,3 +16,4 @@ class AccountAdmin(AuditModelAdmin):
         "uid",
     ]
     autocomplete_fields = ["identity"]
+    readonly_fields = ["created_at", "updated_at"]

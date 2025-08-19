@@ -9,3 +9,4 @@ class OrganisationAdmin(AuditModelAdmin):
     list_display = ["name", "code", "parent"]
     search_fields = ["identifier", "name_en", "name_fi", "name_sv", "abbreviation", "code"]
     autocomplete_fields = ["parent"]
+    readonly_fields = ["created_at", "updated_at"]

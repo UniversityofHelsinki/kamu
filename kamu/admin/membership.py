@@ -17,3 +17,4 @@ class MembershipAdmin(AuditModelAdmin):
         "approver__last_name",
     ]
     autocomplete_fields = ["identity", "role", "approver", "inviter"]
+    readonly_fields = ["created_at", "updated_at"]

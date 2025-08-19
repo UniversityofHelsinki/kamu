@@ -16,6 +16,7 @@ class ContractAdmin(AuditModelAdmin):
         "template__type",
     ]
     autocomplete_fields = ["identity"]
+    readonly_fields = ["created_at"]
 
 
 class ContractTemplateAdmin(AuditModelAdmin):
@@ -26,6 +27,7 @@ class ContractTemplateAdmin(AuditModelAdmin):
         "name_fi",
         "name_sv",
     ]
+    readonly_fields = ["created_at"]
 
 
 class EmailAddressAdmin(AuditModelAdmin):
@@ -39,6 +41,7 @@ class EmailAddressAdmin(AuditModelAdmin):
         "address",
     ]
     autocomplete_fields = ["identity"]
+    readonly_fields = ["created_at", "updated_at"]
 
 
 class IdentifierAdmin(AuditModelAdmin):
@@ -51,6 +54,7 @@ class IdentifierAdmin(AuditModelAdmin):
         "value",
     ]
     autocomplete_fields = ["identity"]
+    readonly_fields = ["created_at", "updated_at"]
 
 
 class IdentityAdmin(AuditModelAdmin):
@@ -66,6 +70,7 @@ class IdentityAdmin(AuditModelAdmin):
     ]
     autocomplete_fields = ["user"]
     filter_horizontal = ("nationality",)
+    readonly_fields = ["created_at", "updated_at"]
 
 
 class PhoneNumberAdmin(AuditModelAdmin):
@@ -79,3 +84,4 @@ class PhoneNumberAdmin(AuditModelAdmin):
         "number",
     ]
     autocomplete_fields = ["identity"]
+    readonly_fields = ["created_at", "updated_at"]

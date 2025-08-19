@@ -13,6 +13,8 @@ class AuditUserAdmin(AuditModelAdmin, UserAdmin):
     Customized class for Django UserAdmin that adds Kamu auditing.
     """
 
+    readonly_fields = ["date_joined", "last_login"]
+
 
 class AuditGroupAdmin(AuditModelAdmin, GroupAdmin):
     """
