@@ -60,6 +60,7 @@ from kamu.views.membership import (
     MembershipInviteLdapView,
     MembershipInviteView,
     MembershipJoinView,
+    MembershipManagedListView,
     MembershipMassInviteView,
     MembershipUpdateView,
 )
@@ -118,6 +119,7 @@ urlpatterns = [
     path("membership/<int:pk>/change/", MembershipUpdateView.as_view(), name="membership-change"),
     path("membership/approval/", MembershipApprovalListView.as_view(), name="membership-approval"),
     path("membership/expiring/", MembershipExpiringListView.as_view(), name="membership-expiring"),
+    path("membership/managed/", MembershipManagedListView.as_view(), name="membership-managed"),
     path("membership/claim/", MembershipClaimView.as_view(), name="membership-claim"),
     path("role/approver/", RoleListApproverView.as_view(), name="role-list-approver"),
     path("role/inviter/", RoleListInviterView.as_view(), name="role-list-inviter"),

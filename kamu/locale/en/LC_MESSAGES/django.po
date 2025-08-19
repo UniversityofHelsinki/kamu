@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-13 13:04+0300\n"
+"POT-Creation-Date: 2025-08-19 11:35+0300\n"
 "Language: EN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -151,7 +151,7 @@ msgstr ""
 #: forms/auth.py:54 forms/auth.py:329 templates/auth/invite.html:18
 #: templates/auth/invite.html:20 templates/auth/login.html:7
 #: templates/auth/login_email.html:5 templates/auth/login_local.html:5
-#: templates/base.html:73 templates/front.html:86 templates/front.html:88
+#: templates/base.html:74 templates/front.html:86 templates/front.html:88
 msgid "Login"
 msgstr ""
 
@@ -267,7 +267,7 @@ msgstr ""
 
 #: forms/auth.py:372 forms/auth.py:378 forms/auth.py:382 forms/auth.py:384
 #: views/auth.py:132 views/auth.py:153 views/auth.py:239
-#: views/membership.py:760
+#: views/membership.py:786
 msgid "Invalid invitation code."
 msgstr ""
 
@@ -275,8 +275,7 @@ msgstr ""
 msgid "Search text"
 msgstr ""
 
-#: forms/generic.py:30 forms/identity.py:64 templates/base.html:34
-#: templates/front.html:53
+#: forms/generic.py:30 forms/identity.py:64 templates/base.html:48
 msgid "Search"
 msgstr ""
 
@@ -337,7 +336,7 @@ msgid "Name search"
 msgstr ""
 
 #: forms/identity.py:82 models/identity.py:561
-#: templates/identity/identity_detail.html:72
+#: templates/identity/identity_detail.html:73
 msgid "Identifiers"
 msgstr ""
 
@@ -398,7 +397,7 @@ msgstr ""
 msgid "Resend a code"
 msgstr ""
 
-#: forms/identity.py:279 templates/identity/identity_detail.html:66
+#: forms/identity.py:279 templates/identity/identity_detail.html:67
 msgid "Basic information"
 msgstr ""
 
@@ -439,6 +438,7 @@ msgstr ""
 #: forms/membership.py:153 forms/membership.py:241
 #: templates/membership/membership_approval_list.html:20
 #: templates/membership/membership_expiring_list.html:20
+#: templates/membership/membership_managed_list.html:22
 #: templates/role/role_detail.html:68
 msgid "Invite"
 msgstr ""
@@ -501,10 +501,11 @@ msgstr ""
 
 #: models/account.py:29 templates/account/account_detail.html:14
 #: templates/account/account_list.html:17
-#: templates/identity/identity_detail.html:88
+#: templates/identity/identity_detail.html:90
 #: templates/membership/membership_approval_list.html:13
 #: templates/membership/membership_detail.html:55
 #: templates/membership/membership_expiring_list.html:13
+#: templates/membership/membership_managed_list.html:15
 #: templates/role/role_detail.html:61
 msgid "Status"
 msgstr ""
@@ -532,7 +533,7 @@ msgstr ""
 msgid "Updated at"
 msgstr ""
 
-#: models/account.py:40 templates/identity/identity_detail.html:77
+#: models/account.py:40 templates/identity/identity_detail.html:80
 msgid "User accounts"
 msgstr ""
 
@@ -562,7 +563,7 @@ msgstr ""
 
 #: models/contract.py:64 templates/contract/contract_list.html:6
 #: templates/identity/identity_combine.html:20
-#: templates/identity/identity_detail.html:75
+#: templates/identity/identity_detail.html:76
 msgid "Contracts"
 msgstr ""
 
@@ -801,6 +802,7 @@ msgstr ""
 #: templates/membership/membership_expiring_list.html:11
 #: templates/membership/membership_invite.html:26
 #: templates/membership/membership_invite.html:34
+#: templates/membership/membership_managed_list.html:13
 #: templates/role/role_detail.html:60
 msgid "Identity"
 msgstr ""
@@ -901,7 +903,7 @@ msgstr ""
 msgid "Active"
 msgstr ""
 
-#: models/membership.py:59 templates/identity/identity_detail.html:114
+#: models/membership.py:59 templates/identity/identity_detail.html:116
 msgid "Expired"
 msgstr ""
 
@@ -974,7 +976,7 @@ msgstr ""
 msgid "Membership"
 msgstr ""
 
-#: models/membership.py:115 templates/base.html:43
+#: models/membership.py:115 templates/base.html:32
 msgid "Memberships"
 msgstr ""
 
@@ -1091,20 +1093,21 @@ msgstr ""
 msgid "Grace period from membership expiration to purge (days)"
 msgstr ""
 
-#: models/role.py:90 templates/identity/identity_detail.html:87
-#: templates/identity/identity_detail.html:112
+#: models/role.py:90 templates/identity/identity_detail.html:89
+#: templates/identity/identity_detail.html:114
 #: templates/membership/membership_approval_list.html:12
 #: templates/membership/membership_detail.html:16
 #: templates/membership/membership_detail.html:87
 #: templates/membership/membership_detail.html:116
 #: templates/membership/membership_expiring_list.html:12
 #: templates/membership/membership_invite.html:9
+#: templates/membership/membership_managed_list.html:14
 #: templates/membership/verification_form.html:9
 #: templates/role/role_list.html:12 templates/role/role_search.html:14
 msgid "Role"
 msgstr ""
 
-#: models/role.py:91 templates/base.html:32
+#: models/role.py:91 templates/base.html:43
 msgid "Roles"
 msgstr ""
 
@@ -1457,10 +1460,10 @@ msgid "Confirm disabling user account"
 msgstr ""
 
 #: templates/account/account_detail.html:27
-#: templates/account/account_detail.html:51 templates/front.html:22
-#: templates/front.html:34 templates/identity/identifier.html:35
-#: templates/identity/identity_detail.html:50
-#: templates/identity/identity_detail.html:60
+#: templates/account/account_detail.html:51 templates/front.html:15
+#: templates/front.html:27 templates/identity/identifier.html:35
+#: templates/identity/identity_detail.html:51
+#: templates/identity/identity_detail.html:61
 #: templates/membership/membership_detail.html:82
 #: templates/membership/membership_detail.html:111
 msgid "Close"
@@ -1677,7 +1680,7 @@ msgstr ""
 msgid "Continue to logout"
 msgstr ""
 
-#: templates/auth/logout.html:13 templates/base.html:71
+#: templates/auth/logout.html:13 templates/base.html:72
 msgid "Logout"
 msgstr ""
 
@@ -1753,48 +1756,54 @@ msgstr ""
 msgid "Toggle navigation"
 msgstr ""
 
-#: templates/base.html:28 templates/front.html:10 templates/front.html:12
+#: templates/base.html:28 templates/front.html:67 templates/front.html:69
 msgid "My information"
 msgstr ""
 
-#: templates/base.html:35 templates/front.html:56 templates/front.html:58
+#: templates/base.html:34 templates/front.html:34 templates/front.html:36
+msgid "Requiring approval"
+msgstr ""
+
+#: templates/base.html:35 templates/front.html:39 templates/front.html:41
+msgid "Expiring"
+msgstr ""
+
+#: templates/base.html:36 templates/front.html:44 templates/front.html:46
+msgid "Managed"
+msgstr ""
+
+#: templates/base.html:37
+msgid "Search identities"
+msgstr ""
+
+#: templates/base.html:45 templates/front.html:49 templates/front.html:51
 #: templates/membership/membership_detail.html:63
+#: templates/membership/membership_managed_list.html:8
 #: templates/membership/verification_form.html:13
 msgid "Inviter"
 msgstr ""
 
-#: templates/base.html:36 templates/front.html:61 templates/front.html:63
+#: templates/base.html:46 templates/front.html:54 templates/front.html:56
 #: templates/membership/membership_detail.html:61
+#: templates/membership/membership_managed_list.html:7
 msgid "Approver"
 msgstr ""
 
-#: templates/base.html:37 templates/front.html:66 templates/front.html:68
+#: templates/base.html:47 templates/front.html:59 templates/front.html:61
 #: templates/role/role_detail.html:13 templates/role/role_list.html:14
 #: templates/role/role_search.html:16
 msgid "Owner"
 msgstr ""
 
-#: templates/base.html:45 templates/front.html:41 templates/front.html:43
-msgid "Requiring approval"
-msgstr ""
-
-#: templates/base.html:46 templates/front.html:46 templates/front.html:48
-msgid "Expiring"
-msgstr ""
-
-#: templates/base.html:47
-msgid "Search identities"
-msgstr ""
-
-#: templates/base.html:106
+#: templates/base.html:107
 msgid "Accessibility"
 msgstr ""
 
-#: templates/base.html:107
+#: templates/base.html:108
 msgid "https://helpdesk.it.helsinki.fi/en"
 msgstr ""
 
-#: templates/base.html:107
+#: templates/base.html:108
 msgid "Helpdesk"
 msgstr ""
 
@@ -2122,48 +2131,42 @@ msgstr ""
 msgid "University of Helsinki registry for external identities."
 msgstr ""
 
-#: templates/front.html:11
-msgid ""
-"Show and manage your own information. This includes your role memberships "
-"and basic information such as names, contacts and contracts."
-msgstr ""
-
-#: templates/front.html:16
+#: templates/front.html:9
 msgid "Role and membership management"
 msgstr ""
 
-#: templates/front.html:16 templates/identity/identity_detail.html:44
+#: templates/front.html:9 templates/identity/identity_detail.html:45
 msgid "info"
 msgstr ""
 
-#: templates/front.html:21
+#: templates/front.html:14
 msgid "Manage role memberships"
 msgstr ""
 
-#: templates/front.html:25
+#: templates/front.html:18
 msgid ""
 "All permissions provided to users are based on the active role memberships. "
 "Role membership becomes active when all requirements of the membership are "
 "fulfilled:"
 msgstr ""
 
-#: templates/front.html:27
+#: templates/front.html:20
 msgid "Membership has been approved"
 msgstr ""
 
-#: templates/front.html:28
+#: templates/front.html:21
 msgid ""
 "Membership is in active period, i.e. after start date and before expiration "
 "date."
 msgstr ""
 
-#: templates/front.html:29
+#: templates/front.html:22
 msgid ""
 "Role requirements are fulfilled. This may include signing agreements, giving "
 "certain user information and confirming user identity."
 msgstr ""
 
-#: templates/front.html:31 templates/identity/identity_detail.html:57
+#: templates/front.html:24 templates/identity/identity_detail.html:58
 #: templates/membership/membership_invite_identity.html:12
 #, python-format
 msgid ""
@@ -2171,32 +2174,34 @@ msgid ""
 "a>."
 msgstr ""
 
-#: templates/front.html:42 templates/membership/membership_approval_list.html:6
+#: templates/front.html:35 templates/membership/membership_approval_list.html:6
 msgid "List memberships requiring approval."
 msgstr ""
 
-#: templates/front.html:47
+#: templates/front.html:40
 msgid "List memberships expiring soon."
 msgstr ""
 
-#: templates/front.html:51 templates/role/role_search.html:6
-msgid "Role search"
+#: templates/front.html:45
+msgid "List memberships where you are inviter or approver."
 msgstr ""
 
-#: templates/front.html:52
-msgid "Search all possible roles here and see their details."
-msgstr ""
-
-#: templates/front.html:57
+#: templates/front.html:50
 msgid "Show roles which you have the right to invite others to."
 msgstr ""
 
-#: templates/front.html:62
+#: templates/front.html:55
 msgid "Show roles that you have the approval rights to."
 msgstr ""
 
-#: templates/front.html:67
+#: templates/front.html:60
 msgid "Show roles that you have the owner rights to."
+msgstr ""
+
+#: templates/front.html:68
+msgid ""
+"Show and manage your own information. This includes your role memberships "
+"and basic information such as names, contacts and contracts."
 msgstr ""
 
 #: templates/front.html:73
@@ -2227,7 +2232,7 @@ msgid "If you have an invite code, register here."
 msgstr ""
 
 #: templates/identity/contact_address.html:8
-#: templates/identity/identity_detail.html:69
+#: templates/identity/identity_detail.html:70
 msgid "Contact information"
 msgstr ""
 
@@ -2371,7 +2376,7 @@ msgid "Suomi.fi and eIDAS"
 msgstr ""
 
 #: templates/identity/identity_combine.html:7
-#: templates/identity/identity_detail.html:130
+#: templates/identity/identity_detail.html:132
 msgid "Combine identities"
 msgstr ""
 
@@ -2484,68 +2489,68 @@ msgstr ""
 msgid "verified"
 msgstr ""
 
-#: templates/identity/identity_detail.html:44
+#: templates/identity/identity_detail.html:45
 msgid "View details and update"
 msgstr ""
 
-#: templates/identity/identity_detail.html:49
+#: templates/identity/identity_detail.html:50
 msgid "View and manage your information"
 msgstr ""
 
-#: templates/identity/identity_detail.html:53
+#: templates/identity/identity_detail.html:54
 msgid ""
 "Basic information includes personal details such as names, preferred "
 "language, date of birth, and nationality."
 msgstr ""
 
-#: templates/identity/identity_detail.html:54
+#: templates/identity/identity_detail.html:55
 msgid ""
 "Contact information includes external email addresses and phone numbers."
 msgstr ""
 
-#: templates/identity/identity_detail.html:55
+#: templates/identity/identity_detail.html:56
 msgid ""
 "Identifiers include external login methods such as Google and Microsoft "
 "accounts or accounts from other universities."
 msgstr ""
 
-#: templates/identity/identity_detail.html:56
+#: templates/identity/identity_detail.html:57
 msgid ""
 "The Contracts section allows you to sign agreements required for certain "
 "roles, such as the Acceptable Use Policy and NDA."
 msgstr ""
 
-#: templates/identity/identity_detail.html:79
+#: templates/identity/identity_detail.html:81
 msgid "Manage user accounts"
 msgstr ""
 
-#: templates/identity/identity_detail.html:81
+#: templates/identity/identity_detail.html:83
 msgid "Role memberships"
 msgstr ""
 
-#: templates/identity/identity_detail.html:89
+#: templates/identity/identity_detail.html:91
 #: templates/membership/membership_expiring_list.html:14
 #: templates/role/role_detail.html:62
 msgid "Expires"
 msgstr ""
 
-#: templates/identity/identity_detail.html:104
+#: templates/identity/identity_detail.html:106
 msgid "You do not have any current or upcoming memberships."
 msgstr ""
 
-#: templates/identity/identity_detail.html:107
+#: templates/identity/identity_detail.html:109
 msgid "Expired memberships"
 msgstr ""
 
-#: templates/identity/identity_detail.html:113
+#: templates/identity/identity_detail.html:115
 msgid "Started"
 msgstr ""
 
-#: templates/identity/identity_detail.html:132
+#: templates/identity/identity_detail.html:134
 msgid "Set as target"
 msgstr ""
 
-#: templates/identity/identity_detail.html:133
+#: templates/identity/identity_detail.html:135
 msgid "Set as source"
 msgstr ""
 
@@ -2831,6 +2836,18 @@ msgstr ""
 msgid "Send invitation"
 msgstr ""
 
+#: templates/membership/membership_managed_list.html:5
+msgid "Memberships you have invited or approved"
+msgstr ""
+
+#: templates/membership/membership_managed_list.html:6
+msgid "All"
+msgstr ""
+
+#: templates/membership/membership_managed_list.html:16
+msgid "Validity"
+msgstr ""
+
 #: templates/membership/verification_form.html:6
 msgid "Membership verification"
 msgstr ""
@@ -2889,6 +2906,10 @@ msgstr ""
 
 #: templates/role/role_list_owner.html:4
 msgid "Roles you own"
+msgstr ""
+
+#: templates/role/role_search.html:6
+msgid "Role search"
 msgstr ""
 
 #: templates/role/role_search.html:7
@@ -3273,65 +3294,65 @@ msgstr ""
 msgid "You are already a member of this role."
 msgstr ""
 
-#: views/membership.py:226
+#: views/membership.py:228
 msgid "Membership approved."
 msgstr ""
 
-#: views/membership.py:258 views/membership.py:717
+#: views/membership.py:260 views/membership.py:743
 msgid "Invite email sent."
 msgstr ""
 
-#: views/membership.py:260
+#: views/membership.py:262
 msgid "Could not send invite email."
 msgstr ""
 
-#: views/membership.py:265
+#: views/membership.py:267
 msgid "Tried to send a new invite too soon. Please try again in one minute."
 msgstr ""
 
-#: views/membership.py:290
+#: views/membership.py:292
 msgid "Membership set to end today."
 msgstr ""
 
-#: views/membership.py:312
+#: views/membership.py:314
 msgid "Membership cancelled."
 msgstr ""
 
-#: views/membership.py:382
+#: views/membership.py:384
 msgid "Membership updated."
 msgstr ""
 
-#: views/membership.py:763
+#: views/membership.py:789
 msgid "This invitation is already claimed."
 msgstr ""
 
-#: views/membership.py:870
+#: views/membership.py:896
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and email address {email} are "
 "registered to different identities."
 msgstr ""
 
-#: views/membership.py:880
+#: views/membership.py:906
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and phone number {phone} are "
 "registered to different identities."
 msgstr ""
 
-#: views/membership.py:889
+#: views/membership.py:915
 #, python-brace-format
 msgid ""
 "Email address {email} and phone number {phone} are registered to different "
 "identities."
 msgstr ""
 
-#: views/membership.py:993
+#: views/membership.py:1019
 #, python-brace-format
 msgid "Invite email sent to following addresses: {0}"
 msgstr ""
 
-#: views/membership.py:997
+#: views/membership.py:1023
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr ""

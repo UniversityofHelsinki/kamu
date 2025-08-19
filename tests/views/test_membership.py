@@ -163,6 +163,25 @@ class MembershipViewTests(BaseTestCase):
         response = self.client.get("/membership/expiring/")
         self.assertEqual(response.context_data["object_list"].count(), 0)
 
+    def test_view_membership_managed_list(self):
+        response = self.client.get("/membership/managed/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data["object_list"].count(), 0)
+        self.membership.inviter = self.user
+        self.membership.save()
+        response = self.client.get("/membership/managed/")
+        self.assertEqual(response.context_data["object_list"].count(), 1)
+        response = self.client.get("/membership/managed/?limit=inviter")
+        self.assertEqual(response.context_data["object_list"].count(), 1)
+        response = self.client.get("/membership/managed/?limit=approver")
+        self.assertEqual(response.context_data["object_list"].count(), 0)
+        self.membership.approver = self.user
+        self.membership.save()
+        response = self.client.get("/membership/managed/?limit=approver")
+        self.assertEqual(response.context_data["object_list"].count(), 1)
+        response = self.client.get("/membership/managed/")
+        self.assertEqual(response.context_data["object_list"].count(), 1)
+
     def test_edit_membership_without_access(self):
         url = f"{self.url}change/"
         response = self.client.post(

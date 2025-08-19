@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-13 13:04+0300\n"
+"POT-Creation-Date: 2025-08-19 11:35+0300\n"
 "Language: FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -165,7 +165,7 @@ msgstr "Tämä tunnus ei ole käytössä."
 #: forms/auth.py:54 forms/auth.py:329 templates/auth/invite.html:18
 #: templates/auth/invite.html:20 templates/auth/login.html:7
 #: templates/auth/login_email.html:5 templates/auth/login_local.html:5
-#: templates/base.html:73 templates/front.html:86 templates/front.html:88
+#: templates/base.html:74 templates/front.html:86 templates/front.html:88
 msgid "Login"
 msgstr "Kirjaudu sisään"
 
@@ -283,7 +283,7 @@ msgstr "Kutsukoodi"
 
 #: forms/auth.py:372 forms/auth.py:378 forms/auth.py:382 forms/auth.py:384
 #: views/auth.py:132 views/auth.py:153 views/auth.py:239
-#: views/membership.py:760
+#: views/membership.py:786
 msgid "Invalid invitation code."
 msgstr "Virheellinen kutsukoodi."
 
@@ -291,8 +291,7 @@ msgstr "Virheellinen kutsukoodi."
 msgid "Search text"
 msgstr "Hakuteksti"
 
-#: forms/generic.py:30 forms/identity.py:64 templates/base.html:34
-#: templates/front.html:53
+#: forms/generic.py:30 forms/identity.py:64 templates/base.html:48
 msgid "Search"
 msgstr "Etsi"
 
@@ -357,7 +356,7 @@ msgid "Name search"
 msgstr "Nimihaku"
 
 #: forms/identity.py:82 models/identity.py:561
-#: templates/identity/identity_detail.html:72
+#: templates/identity/identity_detail.html:73
 msgid "Identifiers"
 msgstr "Tunnisteet"
 
@@ -422,7 +421,7 @@ msgstr "Tallenna"
 msgid "Resend a code"
 msgstr "Uudelleenlähetä koodi"
 
-#: forms/identity.py:279 templates/identity/identity_detail.html:66
+#: forms/identity.py:279 templates/identity/identity_detail.html:67
 msgid "Basic information"
 msgstr "Perustiedot"
 
@@ -465,6 +464,7 @@ msgstr "Roolin jäsenyys vaatii vahvistuksessa käytetyn puhelinnummeron."
 #: forms/membership.py:153 forms/membership.py:241
 #: templates/membership/membership_approval_list.html:20
 #: templates/membership/membership_expiring_list.html:20
+#: templates/membership/membership_managed_list.html:22
 #: templates/role/role_detail.html:68
 msgid "Invite"
 msgstr "Lähetä kutsu"
@@ -533,10 +533,11 @@ msgstr "Kevyttunnus"
 
 #: models/account.py:29 templates/account/account_detail.html:14
 #: templates/account/account_list.html:17
-#: templates/identity/identity_detail.html:88
+#: templates/identity/identity_detail.html:90
 #: templates/membership/membership_approval_list.html:13
 #: templates/membership/membership_detail.html:55
 #: templates/membership/membership_expiring_list.html:13
+#: templates/membership/membership_managed_list.html:15
 #: templates/role/role_detail.html:61
 msgid "Status"
 msgstr "Tila"
@@ -564,7 +565,7 @@ msgstr "Luotu"
 msgid "Updated at"
 msgstr "Päivitetty"
 
-#: models/account.py:40 templates/identity/identity_detail.html:77
+#: models/account.py:40 templates/identity/identity_detail.html:80
 msgid "User accounts"
 msgstr "Käyttäjätunnukset"
 
@@ -594,7 +595,7 @@ msgstr "Sopimus"
 
 #: models/contract.py:64 templates/contract/contract_list.html:6
 #: templates/identity/identity_combine.html:20
-#: templates/identity/identity_detail.html:75
+#: templates/identity/identity_detail.html:76
 msgid "Contracts"
 msgstr "Sopimukset"
 
@@ -835,6 +836,7 @@ msgstr "Toivottu asiointikieli."
 #: templates/membership/membership_expiring_list.html:11
 #: templates/membership/membership_invite.html:26
 #: templates/membership/membership_invite.html:34
+#: templates/membership/membership_managed_list.html:13
 #: templates/role/role_detail.html:60
 msgid "Identity"
 msgstr "Henkilöllisyys"
@@ -935,7 +937,7 @@ msgstr "Odottaa voimaantuloa"
 msgid "Active"
 msgstr "Aktiivinen"
 
-#: models/membership.py:59 templates/identity/identity_detail.html:114
+#: models/membership.py:59 templates/identity/identity_detail.html:116
 msgid "Expired"
 msgstr "Päättynyt"
 
@@ -1013,7 +1015,7 @@ msgstr "Vaatimusten epäonnistumisaika"
 msgid "Membership"
 msgstr "Jäsenyys"
 
-#: models/membership.py:115 templates/base.html:43
+#: models/membership.py:115 templates/base.html:32
 msgid "Memberships"
 msgstr "Jäsenyydet"
 
@@ -1130,20 +1132,21 @@ msgstr "Poiston viive (päivissä)"
 msgid "Grace period from membership expiration to purge (days)"
 msgstr "Aika jäsenyyden päättymisestä jäsenyystietojen poistoon (päivissä)"
 
-#: models/role.py:90 templates/identity/identity_detail.html:87
-#: templates/identity/identity_detail.html:112
+#: models/role.py:90 templates/identity/identity_detail.html:89
+#: templates/identity/identity_detail.html:114
 #: templates/membership/membership_approval_list.html:12
 #: templates/membership/membership_detail.html:16
 #: templates/membership/membership_detail.html:87
 #: templates/membership/membership_detail.html:116
 #: templates/membership/membership_expiring_list.html:12
 #: templates/membership/membership_invite.html:9
+#: templates/membership/membership_managed_list.html:14
 #: templates/membership/verification_form.html:9
 #: templates/role/role_list.html:12 templates/role/role_search.html:14
 msgid "Role"
 msgstr "Rooli"
 
-#: models/role.py:91 templates/base.html:32
+#: models/role.py:91 templates/base.html:43
 msgid "Roles"
 msgstr "Roolit"
 
@@ -1515,10 +1518,10 @@ msgid "Confirm disabling user account"
 msgstr "Vahvista käyttäjätunnuksen sulkeminen"
 
 #: templates/account/account_detail.html:27
-#: templates/account/account_detail.html:51 templates/front.html:22
-#: templates/front.html:34 templates/identity/identifier.html:35
-#: templates/identity/identity_detail.html:50
-#: templates/identity/identity_detail.html:60
+#: templates/account/account_detail.html:51 templates/front.html:15
+#: templates/front.html:27 templates/identity/identifier.html:35
+#: templates/identity/identity_detail.html:51
+#: templates/identity/identity_detail.html:61
 #: templates/membership/membership_detail.html:82
 #: templates/membership/membership_detail.html:111
 msgid "Close"
@@ -1755,7 +1758,7 @@ msgstr ""
 msgid "Continue to logout"
 msgstr "Jatka uloskirjautumiseen"
 
-#: templates/auth/logout.html:13 templates/base.html:71
+#: templates/auth/logout.html:13 templates/base.html:72
 msgid "Logout"
 msgstr "Kirjaudu ulos"
 
@@ -1840,48 +1843,54 @@ msgstr "Helsingin yliopisto"
 msgid "Toggle navigation"
 msgstr "Valikko"
 
-#: templates/base.html:28 templates/front.html:10 templates/front.html:12
+#: templates/base.html:28 templates/front.html:67 templates/front.html:69
 msgid "My information"
 msgstr "Omat tietoni"
 
-#: templates/base.html:35 templates/front.html:56 templates/front.html:58
+#: templates/base.html:34 templates/front.html:34 templates/front.html:36
+msgid "Requiring approval"
+msgstr "Vaatii hyväksynnän"
+
+#: templates/base.html:35 templates/front.html:39 templates/front.html:41
+msgid "Expiring"
+msgstr "Vanhentumassa"
+
+#: templates/base.html:36 templates/front.html:44 templates/front.html:46
+msgid "Managed"
+msgstr "Hallinnoitu"
+
+#: templates/base.html:37
+msgid "Search identities"
+msgstr "Etsi identiteettejä"
+
+#: templates/base.html:45 templates/front.html:49 templates/front.html:51
 #: templates/membership/membership_detail.html:63
+#: templates/membership/membership_managed_list.html:8
 #: templates/membership/verification_form.html:13
 msgid "Inviter"
 msgstr "Kutsuja"
 
-#: templates/base.html:36 templates/front.html:61 templates/front.html:63
+#: templates/base.html:46 templates/front.html:54 templates/front.html:56
 #: templates/membership/membership_detail.html:61
+#: templates/membership/membership_managed_list.html:7
 msgid "Approver"
 msgstr "Hyväksyjä"
 
-#: templates/base.html:37 templates/front.html:66 templates/front.html:68
+#: templates/base.html:47 templates/front.html:59 templates/front.html:61
 #: templates/role/role_detail.html:13 templates/role/role_list.html:14
 #: templates/role/role_search.html:16
 msgid "Owner"
 msgstr "Omistaja"
 
-#: templates/base.html:45 templates/front.html:41 templates/front.html:43
-msgid "Requiring approval"
-msgstr "Vaatii hyväksynnän"
-
-#: templates/base.html:46 templates/front.html:46 templates/front.html:48
-msgid "Expiring"
-msgstr "Vanhentumassa"
-
-#: templates/base.html:47
-msgid "Search identities"
-msgstr "Etsi identiteettejä"
-
-#: templates/base.html:106
+#: templates/base.html:107
 msgid "Accessibility"
 msgstr "Saavutettavuus"
 
-#: templates/base.html:107
+#: templates/base.html:108
 msgid "https://helpdesk.it.helsinki.fi/en"
 msgstr "https://helpdesk.it.helsinki.fi"
 
-#: templates/base.html:107
+#: templates/base.html:108
 msgid "Helpdesk"
 msgstr "Helpdesk"
 
@@ -2265,27 +2274,19 @@ msgstr "Jotain meni pieleen. Palvelun ylläpitäjille on ilmoitettu asiasta."
 msgid "University of Helsinki registry for external identities."
 msgstr "Helsingin yliopiston rekisteri ulkoisille henkilöllisyyksille."
 
-#: templates/front.html:11
-msgid ""
-"Show and manage your own information. This includes your role memberships "
-"and basic information such as names, contacts and contracts."
-msgstr ""
-"Näytä ja hallinnoi omia tietojasi. Niihin kuuluvat roolijäsenyydet ja "
-"perustiedot, kuten nimet, yhteystiedot ja sopimukset."
-
-#: templates/front.html:16
+#: templates/front.html:9
 msgid "Role and membership management"
 msgstr "Roolien ja jäsenyyksien hallinta"
 
-#: templates/front.html:16 templates/identity/identity_detail.html:44
+#: templates/front.html:9 templates/identity/identity_detail.html:45
 msgid "info"
 msgstr "info"
 
-#: templates/front.html:21
+#: templates/front.html:14
 msgid "Manage role memberships"
 msgstr "Hallitse roolijäsenyyksiä"
 
-#: templates/front.html:25
+#: templates/front.html:18
 msgid ""
 "All permissions provided to users are based on the active role memberships. "
 "Role membership becomes active when all requirements of the membership are "
@@ -2295,18 +2296,18 @@ msgstr ""
 "roolijäsenyyksiin. Roolijäsenyys tulee aktiiviseksi, kun kaikki jäsenyyden "
 "vaatimukset on täytetty:"
 
-#: templates/front.html:27
+#: templates/front.html:20
 msgid "Membership has been approved"
 msgstr "Jäsenyys on hyväksytty"
 
-#: templates/front.html:28
+#: templates/front.html:21
 msgid ""
 "Membership is in active period, i.e. after start date and before expiration "
 "date."
 msgstr ""
 "Jäsenyys on aktiivinen, eli aloituspäivän ja vanhentumispäivän välillä."
 
-#: templates/front.html:29
+#: templates/front.html:22
 msgid ""
 "Role requirements are fulfilled. This may include signing agreements, giving "
 "certain user information and confirming user identity."
@@ -2315,7 +2316,7 @@ msgstr ""
 "allekirjoittamisen, käyttäjätietojen antamisen ja käyttäjän henkilöllisyyden "
 "vahvistamisen."
 
-#: templates/front.html:31 templates/identity/identity_detail.html:57
+#: templates/front.html:24 templates/identity/identity_detail.html:58
 #: templates/membership/membership_invite_identity.html:12
 #, python-format
 msgid ""
@@ -2324,33 +2325,37 @@ msgid ""
 msgstr ""
 "Lue lisää roolien hallinnasta <a href=\"%(link)s\">IT-tukisivuilta</a>."
 
-#: templates/front.html:42 templates/membership/membership_approval_list.html:6
+#: templates/front.html:35 templates/membership/membership_approval_list.html:6
 msgid "List memberships requiring approval."
 msgstr "Listaa hyväksyntää vaativat jäsenyydet."
 
-#: templates/front.html:47
+#: templates/front.html:40
 msgid "List memberships expiring soon."
 msgstr "Listaa lähiaikoina vanhenevat jäsenyydet."
 
-#: templates/front.html:51 templates/role/role_search.html:6
-msgid "Role search"
-msgstr "Roolien haku"
+#: templates/front.html:45
+msgid "List memberships where you are inviter or approver."
+msgstr "Listaa jäsenyydet, joissa olet kutsujana tai hyväksyjänä"
 
-#: templates/front.html:52
-msgid "Search all possible roles here and see their details."
-msgstr "Hae rooleja ja tarkastele niiden tietoja."
-
-#: templates/front.html:57
+#: templates/front.html:50
 msgid "Show roles which you have the right to invite others to."
 msgstr "Näytä roolit, joihin sinulla on oikeus kutsua muita."
 
-#: templates/front.html:62
+#: templates/front.html:55
 msgid "Show roles that you have the approval rights to."
 msgstr "Näytä roolit, joihin sinulla on hyväksymisoikeudet."
 
-#: templates/front.html:67
+#: templates/front.html:60
 msgid "Show roles that you have the owner rights to."
 msgstr "Näytä roolit, joihin sinulla on omistusoikeudet."
+
+#: templates/front.html:68
+msgid ""
+"Show and manage your own information. This includes your role memberships "
+"and basic information such as names, contacts and contracts."
+msgstr ""
+"Näytä ja hallinnoi omia tietojasi. Niihin kuuluvat roolijäsenyydet ja "
+"perustiedot, kuten nimet, yhteystiedot ja sopimukset."
 
 #: templates/front.html:73
 msgid "Admin utilities"
@@ -2382,7 +2387,7 @@ msgid "If you have an invite code, register here."
 msgstr "Jos sinulla on kutsukoodi, rekisteröidy tästä."
 
 #: templates/identity/contact_address.html:8
-#: templates/identity/identity_detail.html:69
+#: templates/identity/identity_detail.html:70
 msgid "Contact information"
 msgstr "Yhteystiedot"
 
@@ -2533,7 +2538,7 @@ msgid "Suomi.fi and eIDAS"
 msgstr "Suomi.fi ja eIDAS"
 
 #: templates/identity/identity_combine.html:7
-#: templates/identity/identity_detail.html:130
+#: templates/identity/identity_detail.html:132
 msgid "Combine identities"
 msgstr "Yhdistä henkilöllisyydet"
 
@@ -2653,15 +2658,15 @@ msgstr "Ulkoiset tunnisteet"
 msgid "verified"
 msgstr "vahvistettu"
 
-#: templates/identity/identity_detail.html:44
+#: templates/identity/identity_detail.html:45
 msgid "View details and update"
 msgstr "Lisätiedot ja päivitys"
 
-#: templates/identity/identity_detail.html:49
+#: templates/identity/identity_detail.html:50
 msgid "View and manage your information"
 msgstr "Hallinnoi ja katso tietojasi"
 
-#: templates/identity/identity_detail.html:53
+#: templates/identity/identity_detail.html:54
 msgid ""
 "Basic information includes personal details such as names, preferred "
 "language, date of birth, and nationality."
@@ -2669,13 +2674,13 @@ msgstr ""
 "Perustiedot sisältävät henkilökohtaiset tiedot, kuten nimet, käyttökielen, "
 "syntymäajan ja kansalaisuuden."
 
-#: templates/identity/identity_detail.html:54
+#: templates/identity/identity_detail.html:55
 msgid ""
 "Contact information includes external email addresses and phone numbers."
 msgstr ""
 "Yhteystiedot sisältävät ulkoiset sähköpostiosoitteet ja puhelinnumerot."
 
-#: templates/identity/identity_detail.html:55
+#: templates/identity/identity_detail.html:56
 msgid ""
 "Identifiers include external login methods such as Google and Microsoft "
 "accounts or accounts from other universities."
@@ -2683,7 +2688,7 @@ msgstr ""
 "Tunnisteet sisältävät ulkoiset kirjautumistavat kuten Google- ja Microsoft-"
 "tilit tai muiden yliopistojen tunnukset."
 
-#: templates/identity/identity_detail.html:56
+#: templates/identity/identity_detail.html:57
 msgid ""
 "The Contracts section allows you to sign agreements required for certain "
 "roles, such as the Acceptable Use Policy and NDA."
@@ -2691,37 +2696,37 @@ msgstr ""
 "Sopimukset-osion kautta on mahdollista allekirjoittaa tietyille rooleille "
 "pakollisia sopimuksia, kuten käyttöehtosopimuksen ja salassapitosopimuksen."
 
-#: templates/identity/identity_detail.html:79
+#: templates/identity/identity_detail.html:81
 msgid "Manage user accounts"
 msgstr "Hallinnoi käyttäjätunnuksia"
 
-#: templates/identity/identity_detail.html:81
+#: templates/identity/identity_detail.html:83
 msgid "Role memberships"
 msgstr "Roolien jäsenyydet"
 
-#: templates/identity/identity_detail.html:89
+#: templates/identity/identity_detail.html:91
 #: templates/membership/membership_expiring_list.html:14
 #: templates/role/role_detail.html:62
 msgid "Expires"
 msgstr "Päättyy"
 
-#: templates/identity/identity_detail.html:104
+#: templates/identity/identity_detail.html:106
 msgid "You do not have any current or upcoming memberships."
 msgstr "Sinulla ei ole nykyisiä tai tulevia jäsenyyksiä."
 
-#: templates/identity/identity_detail.html:107
+#: templates/identity/identity_detail.html:109
 msgid "Expired memberships"
 msgstr "Päättyneet jäsenyydet"
 
-#: templates/identity/identity_detail.html:113
+#: templates/identity/identity_detail.html:115
 msgid "Started"
 msgstr "Aloitettu"
 
-#: templates/identity/identity_detail.html:132
+#: templates/identity/identity_detail.html:134
 msgid "Set as target"
 msgstr "Aseta kohteeksi"
 
-#: templates/identity/identity_detail.html:133
+#: templates/identity/identity_detail.html:135
 msgid "Set as source"
 msgstr "Aseta lähteeksi"
 
@@ -3022,6 +3027,18 @@ msgstr "Sähköpostiosoitetta ei löytynyt rekisteristä: %(email)s"
 msgid "Send invitation"
 msgstr "Lähetä kutsu"
 
+#: templates/membership/membership_managed_list.html:5
+msgid "Memberships you have invited or approved"
+msgstr "Jäsenyydet joissa olet kutsujana tai hyväksyjänä"
+
+#: templates/membership/membership_managed_list.html:6
+msgid "All"
+msgstr "Kaikki"
+
+#: templates/membership/membership_managed_list.html:16
+msgid "Validity"
+msgstr "Voimassaolo"
+
 #: templates/membership/verification_form.html:6
 msgid "Membership verification"
 msgstr "Jäsenyyden vahvistaminen"
@@ -3083,6 +3100,10 @@ msgstr "Rooleja, joihin sinulla on kutsuoikeudet"
 #: templates/role/role_list_owner.html:4
 msgid "Roles you own"
 msgstr "Omistamasi roolit"
+
+#: templates/role/role_search.html:6
+msgid "Role search"
+msgstr "Roolien haku"
 
 #: templates/role/role_search.html:7
 msgid "Search roles with role name or description."
@@ -3492,41 +3513,41 @@ msgstr "Sinun täytyy rekisteröidä henkilöllisyys ensin."
 msgid "You are already a member of this role."
 msgstr "Olet jo tämän roolin jäsen."
 
-#: views/membership.py:226
+#: views/membership.py:228
 msgid "Membership approved."
 msgstr "Jäsenyys hyväksytty."
 
-#: views/membership.py:258 views/membership.py:717
+#: views/membership.py:260 views/membership.py:743
 msgid "Invite email sent."
 msgstr "Kutsusähköposti lähetetty."
 
-#: views/membership.py:260
+#: views/membership.py:262
 msgid "Could not send invite email."
 msgstr "Kutsusähköpostin lähetys epäonnistui."
 
-#: views/membership.py:265
+#: views/membership.py:267
 msgid "Tried to send a new invite too soon. Please try again in one minute."
 msgstr ""
 "Yritit lähettää uuden kutsun liian pian. Ole hyvä ja odota yksi minuutti "
 "ennen uutta yritystä."
 
-#: views/membership.py:290
+#: views/membership.py:292
 msgid "Membership set to end today."
 msgstr "Jäsenyys asetettu päättymään tänään."
 
-#: views/membership.py:312
+#: views/membership.py:314
 msgid "Membership cancelled."
 msgstr "Jäsenyys peruttu."
 
-#: views/membership.py:382
+#: views/membership.py:384
 msgid "Membership updated."
 msgstr "Jäsenyys päivitetty."
 
-#: views/membership.py:763
+#: views/membership.py:789
 msgid "This invitation is already claimed."
 msgstr "Kutsu on jo käytetty."
 
-#: views/membership.py:870
+#: views/membership.py:896
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and email address {email} are "
@@ -3535,7 +3556,7 @@ msgstr ""
 "Henkilötunnus {fpic} ja sähköpostiosoite {email} ovat rekisteröity eri "
 "henkilöille."
 
-#: views/membership.py:880
+#: views/membership.py:906
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and phone number {phone} are "
@@ -3544,7 +3565,7 @@ msgstr ""
 "Henkilötunnus {fpic} ja puhelinnumero {phone} ovat rekisteröity eri "
 "henkilöille."
 
-#: views/membership.py:889
+#: views/membership.py:915
 #, python-brace-format
 msgid ""
 "Email address {email} and phone number {phone} are registered to different "
@@ -3553,12 +3574,15 @@ msgstr ""
 "Sähköpostiosoite {email} ja puhelinnumero {phone} ovat rekisteröity eri "
 "henkilöille."
 
-#: views/membership.py:993
+#: views/membership.py:1019
 #, python-brace-format
 msgid "Invite email sent to following addresses: {0}"
 msgstr "Sähköpostikutsu lähetetty seuraaviin osoitteisiin: {0}"
 
-#: views/membership.py:997
+#: views/membership.py:1023
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Lisätty seuraavat henkilöllisyydet: {0}"
+
+#~ msgid "Search all possible roles here and see their details."
+#~ msgstr "Hae rooleja ja tarkastele niiden tietoja."

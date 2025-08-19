@@ -445,6 +445,30 @@ class MembershipExpiringListView(MembershipListBaseView):
         return Membership.objects.none()
 
 
+class MembershipManagedListView(MembershipListBaseView):
+    """
+    List memberships that user has invited or approved.
+    """
+
+    template_name = "membership/membership_managed_list.html"
+
+    def get_queryset(self) -> QuerySet[Membership]:
+        """
+        Include only memberships that user has invited or approved.
+        """
+        if self.request.user.is_authenticated:
+            limit = self.request.GET.get("limit")
+            if limit == "inviter":
+                return Membership.objects.filter(inviter=self.request.user).order_by("-start_date")
+            elif limit == "approver":
+                return Membership.objects.filter(approver=self.request.user).order_by("-start_date")
+            else:
+                return Membership.objects.filter(
+                    Q(approver=self.request.user) | Q(inviter=self.request.user)
+                ).order_by("-start_date")
+        return Membership.objects.none()
+
+
 class MembershipInviteIdentitySearch(IdentitySearchView):
     """
     Subclass of IdentitySearchView for adding identities to role.

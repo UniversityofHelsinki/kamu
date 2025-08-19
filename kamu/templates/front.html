@@ -41,9 +41,9 @@
           <a href="{% url 'membership-expiring' %}" class="btn btn-primary mb-3">{% trans "Expiring" %}</a>
         </div>
         <div class="col-lg-4 col-md-6 mb-3">
-          <h3>{% trans "Role search" %}</h3>
-          <p>{% blocktrans %}Search all possible roles here and see their details.{% endblocktrans %}</p>
-          <a href="{% url 'role-search' %}" class="btn btn-primary mb-3">{% trans "Search" %}</a>
+          <h3>{% trans "Managed" %}</h3>
+          <p>{% blocktrans %}List memberships where you are inviter or approver.{% endblocktrans %}</p>
+          <a href="{% url 'membership-managed' %}" class="btn btn-primary mb-3">{% trans "Managed" %}</a>
         </div>
         <div class="col-lg-4 col-md-6 mb-3">
           <h3>{% trans "Inviter" %}</h3>

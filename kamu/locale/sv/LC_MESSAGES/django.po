@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-13 13:04+0300\n"
+"POT-Creation-Date: 2025-08-19 11:35+0300\n"
 "Language: SV\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -159,7 +159,7 @@ msgstr "Detta konto är inaktivt."
 #: forms/auth.py:54 forms/auth.py:329 templates/auth/invite.html:18
 #: templates/auth/invite.html:20 templates/auth/login.html:7
 #: templates/auth/login_email.html:5 templates/auth/login_local.html:5
-#: templates/base.html:73 templates/front.html:86 templates/front.html:88
+#: templates/base.html:74 templates/front.html:86 templates/front.html:88
 msgid "Login"
 msgstr "Logga in"
 
@@ -277,7 +277,7 @@ msgstr "Inbjudningskod"
 
 #: forms/auth.py:372 forms/auth.py:378 forms/auth.py:382 forms/auth.py:384
 #: views/auth.py:132 views/auth.py:153 views/auth.py:239
-#: views/membership.py:760
+#: views/membership.py:786
 msgid "Invalid invitation code."
 msgstr "Ogiltig inbjudningskod."
 
@@ -285,8 +285,7 @@ msgstr "Ogiltig inbjudningskod."
 msgid "Search text"
 msgstr "Söktext"
 
-#: forms/generic.py:30 forms/identity.py:64 templates/base.html:34
-#: templates/front.html:53
+#: forms/generic.py:30 forms/identity.py:64 templates/base.html:48
 msgid "Search"
 msgstr "Sök"
 
@@ -351,7 +350,7 @@ msgid "Name search"
 msgstr "Namnsökning"
 
 #: forms/identity.py:82 models/identity.py:561
-#: templates/identity/identity_detail.html:72
+#: templates/identity/identity_detail.html:73
 msgid "Identifiers"
 msgstr "Identifierare"
 
@@ -417,7 +416,7 @@ msgstr "Spara"
 msgid "Resend a code"
 msgstr "Skicka kod igen"
 
-#: forms/identity.py:279 templates/identity/identity_detail.html:66
+#: forms/identity.py:279 templates/identity/identity_detail.html:67
 msgid "Basic information"
 msgstr "Allmänna uppgifter"
 
@@ -460,6 +459,7 @@ msgstr "Verifieringsnummer krävs för denna roll."
 #: forms/membership.py:153 forms/membership.py:241
 #: templates/membership/membership_approval_list.html:20
 #: templates/membership/membership_expiring_list.html:20
+#: templates/membership/membership_managed_list.html:22
 #: templates/role/role_detail.html:68
 msgid "Invite"
 msgstr "Inbjudan"
@@ -528,10 +528,11 @@ msgstr "Lätt konto"
 
 #: models/account.py:29 templates/account/account_detail.html:14
 #: templates/account/account_list.html:17
-#: templates/identity/identity_detail.html:88
+#: templates/identity/identity_detail.html:90
 #: templates/membership/membership_approval_list.html:13
 #: templates/membership/membership_detail.html:55
 #: templates/membership/membership_expiring_list.html:13
+#: templates/membership/membership_managed_list.html:15
 #: templates/role/role_detail.html:61
 msgid "Status"
 msgstr "Status"
@@ -559,7 +560,7 @@ msgstr "Skapat den"
 msgid "Updated at"
 msgstr "Uppdaterat den"
 
-#: models/account.py:40 templates/identity/identity_detail.html:77
+#: models/account.py:40 templates/identity/identity_detail.html:80
 msgid "User accounts"
 msgstr "Användarnamn"
 
@@ -589,7 +590,7 @@ msgstr "Avtal"
 
 #: models/contract.py:64 templates/contract/contract_list.html:6
 #: templates/identity/identity_combine.html:20
-#: templates/identity/identity_detail.html:75
+#: templates/identity/identity_detail.html:76
 msgid "Contracts"
 msgstr "Avtal"
 
@@ -829,6 +830,7 @@ msgstr "Föredraget språk för tjänsten."
 #: templates/membership/membership_expiring_list.html:11
 #: templates/membership/membership_invite.html:26
 #: templates/membership/membership_invite.html:34
+#: templates/membership/membership_managed_list.html:13
 #: templates/role/role_detail.html:60
 msgid "Identity"
 msgstr "Identitet"
@@ -929,7 +931,7 @@ msgstr "Väntar"
 msgid "Active"
 msgstr "Aktiva"
 
-#: models/membership.py:59 templates/identity/identity_detail.html:114
+#: models/membership.py:59 templates/identity/identity_detail.html:116
 msgid "Expired"
 msgstr "Utgångna"
 
@@ -1007,7 +1009,7 @@ msgstr "Tid då kraven inte kunde uppfyllas"
 msgid "Membership"
 msgstr "Medlemskap"
 
-#: models/membership.py:115 templates/base.html:43
+#: models/membership.py:115 templates/base.html:32
 msgid "Memberships"
 msgstr "Medlemskap"
 
@@ -1124,20 +1126,21 @@ msgstr "Reningsfördröjning (dagar)"
 msgid "Grace period from membership expiration to purge (days)"
 msgstr "Anstånd från medlemskapets utgång till rensning (dagar)"
 
-#: models/role.py:90 templates/identity/identity_detail.html:87
-#: templates/identity/identity_detail.html:112
+#: models/role.py:90 templates/identity/identity_detail.html:89
+#: templates/identity/identity_detail.html:114
 #: templates/membership/membership_approval_list.html:12
 #: templates/membership/membership_detail.html:16
 #: templates/membership/membership_detail.html:87
 #: templates/membership/membership_detail.html:116
 #: templates/membership/membership_expiring_list.html:12
 #: templates/membership/membership_invite.html:9
+#: templates/membership/membership_managed_list.html:14
 #: templates/membership/verification_form.html:9
 #: templates/role/role_list.html:12 templates/role/role_search.html:14
 msgid "Role"
 msgstr "Roll"
 
-#: models/role.py:91 templates/base.html:32
+#: models/role.py:91 templates/base.html:43
 msgid "Roles"
 msgstr "Roller"
 
@@ -1510,10 +1513,10 @@ msgid "Confirm disabling user account"
 msgstr "Bekräfta deaktivering av användarnamn"
 
 #: templates/account/account_detail.html:27
-#: templates/account/account_detail.html:51 templates/front.html:22
-#: templates/front.html:34 templates/identity/identifier.html:35
-#: templates/identity/identity_detail.html:50
-#: templates/identity/identity_detail.html:60
+#: templates/account/account_detail.html:51 templates/front.html:15
+#: templates/front.html:27 templates/identity/identifier.html:35
+#: templates/identity/identity_detail.html:51
+#: templates/identity/identity_detail.html:61
 #: templates/membership/membership_detail.html:82
 #: templates/membership/membership_detail.html:111
 msgid "Close"
@@ -1750,7 +1753,7 @@ msgstr ""
 msgid "Continue to logout"
 msgstr "Fortsätt till utloggning"
 
-#: templates/auth/logout.html:13 templates/base.html:71
+#: templates/auth/logout.html:13 templates/base.html:72
 msgid "Logout"
 msgstr "Logga ut"
 
@@ -1835,48 +1838,54 @@ msgstr "Helsingfors universitet"
 msgid "Toggle navigation"
 msgstr "Växla navigation"
 
-#: templates/base.html:28 templates/front.html:10 templates/front.html:12
+#: templates/base.html:28 templates/front.html:67 templates/front.html:69
 msgid "My information"
 msgstr "Mina uppgifter"
 
-#: templates/base.html:35 templates/front.html:56 templates/front.html:58
+#: templates/base.html:34 templates/front.html:34 templates/front.html:36
+msgid "Requiring approval"
+msgstr "Godkännande krävs"
+
+#: templates/base.html:35 templates/front.html:39 templates/front.html:41
+msgid "Expiring"
+msgstr "Utgår"
+
+#: templates/base.html:36 templates/front.html:44 templates/front.html:46
+msgid "Managed"
+msgstr "Hanterade"
+
+#: templates/base.html:37
+msgid "Search identities"
+msgstr "Sök identiteter"
+
+#: templates/base.html:45 templates/front.html:49 templates/front.html:51
 #: templates/membership/membership_detail.html:63
+#: templates/membership/membership_managed_list.html:8
 #: templates/membership/verification_form.html:13
 msgid "Inviter"
 msgstr "Inbjudare"
 
-#: templates/base.html:36 templates/front.html:61 templates/front.html:63
+#: templates/base.html:46 templates/front.html:54 templates/front.html:56
 #: templates/membership/membership_detail.html:61
+#: templates/membership/membership_managed_list.html:7
 msgid "Approver"
 msgstr "Godkännare"
 
-#: templates/base.html:37 templates/front.html:66 templates/front.html:68
+#: templates/base.html:47 templates/front.html:59 templates/front.html:61
 #: templates/role/role_detail.html:13 templates/role/role_list.html:14
 #: templates/role/role_search.html:16
 msgid "Owner"
 msgstr "Ägare"
 
-#: templates/base.html:45 templates/front.html:41 templates/front.html:43
-msgid "Requiring approval"
-msgstr "Godkännande krävs"
-
-#: templates/base.html:46 templates/front.html:46 templates/front.html:48
-msgid "Expiring"
-msgstr "Utgår"
-
-#: templates/base.html:47
-msgid "Search identities"
-msgstr "Sök identiteter"
-
-#: templates/base.html:106
+#: templates/base.html:107
 msgid "Accessibility"
 msgstr "Tillgänglighet"
 
-#: templates/base.html:107
+#: templates/base.html:108
 msgid "https://helpdesk.it.helsinki.fi/en"
 msgstr "https://helpdesk.it.helsinki.fi/sv"
 
-#: templates/base.html:107
+#: templates/base.html:108
 msgid "Helpdesk"
 msgstr "Helpdesk"
 
@@ -2259,27 +2268,19 @@ msgstr "Något gick fel och tjänstens administratörer har informerats."
 msgid "University of Helsinki registry for external identities."
 msgstr "Helsingfors universitets register för externa identiteter."
 
-#: templates/front.html:11
-msgid ""
-"Show and manage your own information. This includes your role memberships "
-"and basic information such as names, contacts and contracts."
-msgstr ""
-"Visa och hantera dina egna uppgifter. Detta inkluderar dina rollmedlemskap "
-"och grundläggande uppgifter som namn, kontakter och avtal."
-
-#: templates/front.html:16
+#: templates/front.html:9
 msgid "Role and membership management"
 msgstr "Roll- och medlemskapshantering"
 
-#: templates/front.html:16 templates/identity/identity_detail.html:44
+#: templates/front.html:9 templates/identity/identity_detail.html:45
 msgid "info"
 msgstr "info"
 
-#: templates/front.html:21
+#: templates/front.html:14
 msgid "Manage role memberships"
 msgstr "Hantera rollmedlemskap"
 
-#: templates/front.html:25
+#: templates/front.html:18
 msgid ""
 "All permissions provided to users are based on the active role memberships. "
 "Role membership becomes active when all requirements of the membership are "
@@ -2288,11 +2289,11 @@ msgstr ""
 "Alla rättigheter som tilldelas användare baseras på aktiva rollmedlemskap. "
 "Rollmedlemskapet blir aktivt när alla krav för medlemskapet är uppfyllda:"
 
-#: templates/front.html:27
+#: templates/front.html:20
 msgid "Membership has been approved"
 msgstr "Medlemskapet har godkänts"
 
-#: templates/front.html:28
+#: templates/front.html:21
 msgid ""
 "Membership is in active period, i.e. after start date and before expiration "
 "date."
@@ -2300,7 +2301,7 @@ msgstr ""
 "Medlemskapet är i den aktiva perioden, dvs. efter startdagen och före "
 "avslutningsdagen."
 
-#: templates/front.html:29
+#: templates/front.html:22
 msgid ""
 "Role requirements are fulfilled. This may include signing agreements, giving "
 "certain user information and confirming user identity."
@@ -2308,7 +2309,7 @@ msgstr ""
 "Rollkraven är uppfyllda. Detta kan inkludera signering av avtal, utlämnande "
 "av vissa användaruppgifter och bekräftande av användarens identitet."
 
-#: templates/front.html:31 templates/identity/identity_detail.html:57
+#: templates/front.html:24 templates/identity/identity_detail.html:58
 #: templates/membership/membership_invite_identity.html:12
 #, python-format
 msgid ""
@@ -2316,33 +2317,37 @@ msgid ""
 "a>."
 msgstr "Läs mer om rollhantering på <a href=\"%(link)s\">IT-Helpdesk</a>."
 
-#: templates/front.html:42 templates/membership/membership_approval_list.html:6
+#: templates/front.html:35 templates/membership/membership_approval_list.html:6
 msgid "List memberships requiring approval."
 msgstr "Lista medlemskap som kräver godkännande."
 
-#: templates/front.html:47
+#: templates/front.html:40
 msgid "List memberships expiring soon."
 msgstr "Lista medlemskap som snart går ut."
 
-#: templates/front.html:51 templates/role/role_search.html:6
-msgid "Role search"
-msgstr "Rollsökning"
+#: templates/front.html:45
+msgid "List memberships where you are inviter or approver."
+msgstr "Lista medlemskap som du har bjudit in eller godkänt."
 
-#: templates/front.html:52
-msgid "Search all possible roles here and see their details."
-msgstr "Sök efter alla möjliga roller här och se deras detaljer."
-
-#: templates/front.html:57
+#: templates/front.html:50
 msgid "Show roles which you have the right to invite others to."
 msgstr "Visa roller som du har rätt att skicka inbjudningar till."
 
-#: templates/front.html:62
+#: templates/front.html:55
 msgid "Show roles that you have the approval rights to."
 msgstr "Visa roller som du har godkännanderättigheter till."
 
-#: templates/front.html:67
+#: templates/front.html:60
 msgid "Show roles that you have the owner rights to."
 msgstr "Visa roller som du har ägarrättigheter till."
+
+#: templates/front.html:68
+msgid ""
+"Show and manage your own information. This includes your role memberships "
+"and basic information such as names, contacts and contracts."
+msgstr ""
+"Visa och hantera dina egna uppgifter. Detta inkluderar dina rollmedlemskap "
+"och grundläggande uppgifter som namn, kontakter och avtal."
 
 #: templates/front.html:73
 msgid "Admin utilities"
@@ -2375,7 +2380,7 @@ msgid "If you have an invite code, register here."
 msgstr "Registrera dig här om du har en inbjudan."
 
 #: templates/identity/contact_address.html:8
-#: templates/identity/identity_detail.html:69
+#: templates/identity/identity_detail.html:70
 msgid "Contact information"
 msgstr "Kontaktuppgifter"
 
@@ -2527,7 +2532,7 @@ msgid "Suomi.fi and eIDAS"
 msgstr "Suomi.fi och eIDAS"
 
 #: templates/identity/identity_combine.html:7
-#: templates/identity/identity_detail.html:130
+#: templates/identity/identity_detail.html:132
 msgid "Combine identities"
 msgstr "Kombinera identiteter"
 
@@ -2646,15 +2651,15 @@ msgstr "Externa identifierare"
 msgid "verified"
 msgstr "verifierade"
 
-#: templates/identity/identity_detail.html:44
+#: templates/identity/identity_detail.html:45
 msgid "View details and update"
 msgstr "Visa detaljer och uppdatera"
 
-#: templates/identity/identity_detail.html:49
+#: templates/identity/identity_detail.html:50
 msgid "View and manage your information"
 msgstr "Visa och hantera dina uppgifter"
 
-#: templates/identity/identity_detail.html:53
+#: templates/identity/identity_detail.html:54
 msgid ""
 "Basic information includes personal details such as names, preferred "
 "language, date of birth, and nationality."
@@ -2662,13 +2667,13 @@ msgstr ""
 "Grundläggande uppgifter inkluderar personuppgifter som namn, föredraget "
 "språk, födelsedatum och nationalitet."
 
-#: templates/identity/identity_detail.html:54
+#: templates/identity/identity_detail.html:55
 msgid ""
 "Contact information includes external email addresses and phone numbers."
 msgstr ""
 "Kontaktuppgifterna inkluderar externa e-postadresser och telefonnummer."
 
-#: templates/identity/identity_detail.html:55
+#: templates/identity/identity_detail.html:56
 msgid ""
 "Identifiers include external login methods such as Google and Microsoft "
 "accounts or accounts from other universities."
@@ -2676,7 +2681,7 @@ msgstr ""
 "Identifierarna inkluderar externa inloggningsmetoder som Google- och "
 "Microsoft-konton eller konton från andra universitet."
 
-#: templates/identity/identity_detail.html:56
+#: templates/identity/identity_detail.html:57
 msgid ""
 "The Contracts section allows you to sign agreements required for certain "
 "roles, such as the Acceptable Use Policy and NDA."
@@ -2684,37 +2689,37 @@ msgstr ""
 "I avsnittet Avtal kan du signera avtal som krävs för vissa roller, till "
 "exempel riktlinjerna för användning och sekretessavtal."
 
-#: templates/identity/identity_detail.html:79
+#: templates/identity/identity_detail.html:81
 msgid "Manage user accounts"
 msgstr "Hantera användarnamn"
 
-#: templates/identity/identity_detail.html:81
+#: templates/identity/identity_detail.html:83
 msgid "Role memberships"
 msgstr "Rollmedlemskap"
 
-#: templates/identity/identity_detail.html:89
+#: templates/identity/identity_detail.html:91
 #: templates/membership/membership_expiring_list.html:14
 #: templates/role/role_detail.html:62
 msgid "Expires"
 msgstr "Går ut"
 
-#: templates/identity/identity_detail.html:104
+#: templates/identity/identity_detail.html:106
 msgid "You do not have any current or upcoming memberships."
 msgstr "Du har inga aktuella eller kommande medlemskap."
 
-#: templates/identity/identity_detail.html:107
+#: templates/identity/identity_detail.html:109
 msgid "Expired memberships"
 msgstr "Utgångna medlemskap"
 
-#: templates/identity/identity_detail.html:113
+#: templates/identity/identity_detail.html:115
 msgid "Started"
 msgstr "Startad"
 
-#: templates/identity/identity_detail.html:132
+#: templates/identity/identity_detail.html:134
 msgid "Set as target"
 msgstr "Ange som mål"
 
-#: templates/identity/identity_detail.html:133
+#: templates/identity/identity_detail.html:135
 msgid "Set as source"
 msgstr "Ange som källa"
 
@@ -3012,6 +3017,18 @@ msgstr "E-postadressen finns inte i registret: %(email)s"
 msgid "Send invitation"
 msgstr "Skicka inbjudan"
 
+#: templates/membership/membership_managed_list.html:5
+msgid "Memberships you have invited or approved"
+msgstr "Medlemskap du har bjudit in eller godkänt"
+
+#: templates/membership/membership_managed_list.html:6
+msgid "All"
+msgstr "Alla"
+
+#: templates/membership/membership_managed_list.html:16
+msgid "Validity"
+msgstr "Giltighetstid"
+
 #: templates/membership/verification_form.html:6
 msgid "Membership verification"
 msgstr "Medlemskapsverifiering"
@@ -3073,6 +3090,10 @@ msgstr "Roller som du har inbjudningsrätt för"
 #: templates/role/role_list_owner.html:4
 msgid "Roles you own"
 msgstr "Roller som du äger"
+
+#: templates/role/role_search.html:6
+msgid "Role search"
+msgstr "Rollsökning"
 
 #: templates/role/role_search.html:7
 msgid "Search roles with role name or description."
@@ -3471,40 +3492,40 @@ msgstr "Du måste först skapa en identitet."
 msgid "You are already a member of this role."
 msgstr "Du är redan medlem i den här rollen."
 
-#: views/membership.py:226
+#: views/membership.py:228
 msgid "Membership approved."
 msgstr "Medlemskap godkänt."
 
-#: views/membership.py:258 views/membership.py:717
+#: views/membership.py:260 views/membership.py:743
 msgid "Invite email sent."
 msgstr "E-postmeddelande med inbjudan skickad."
 
-#: views/membership.py:260
+#: views/membership.py:262
 msgid "Could not send invite email."
 msgstr "Kunde inte skicka e-postmeddelande med inbjudan."
 
-#: views/membership.py:265
+#: views/membership.py:267
 msgid "Tried to send a new invite too soon. Please try again in one minute."
 msgstr ""
 "Försökte skicka en ny inbjudan för tidigt. Vänligen försök igen om en minut."
 
-#: views/membership.py:290
+#: views/membership.py:292
 msgid "Membership set to end today."
 msgstr "Medlemskapet upphör idag."
 
-#: views/membership.py:312
+#: views/membership.py:314
 msgid "Membership cancelled."
 msgstr "Medlemskap avslutat."
 
-#: views/membership.py:382
+#: views/membership.py:384
 msgid "Membership updated."
 msgstr "Medlemskap uppdaterat."
 
-#: views/membership.py:763
+#: views/membership.py:789
 msgid "This invitation is already claimed."
 msgstr "Den här inbjudan är redan använd."
 
-#: views/membership.py:870
+#: views/membership.py:896
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and email address {email} are "
@@ -3513,7 +3534,7 @@ msgstr ""
 "Personbeteckningen {fpic} och e-postadressen {email} är registrerade för "
 "olika identiteter."
 
-#: views/membership.py:880
+#: views/membership.py:906
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and phone number {phone} are "
@@ -3522,7 +3543,7 @@ msgstr ""
 "Personbeteckningen {fpic} och telefonnumret {phone} är registrerade för "
 "olika identiteter."
 
-#: views/membership.py:889
+#: views/membership.py:915
 #, python-brace-format
 msgid ""
 "Email address {email} and phone number {phone} are registered to different "
@@ -3531,12 +3552,15 @@ msgstr ""
 "E-postadressen {email} och telefonnumret {phone} är registrerade för olika "
 "identiteter."
 
-#: views/membership.py:993
+#: views/membership.py:1019
 #, python-brace-format
 msgid "Invite email sent to following addresses: {0}"
 msgstr "Inbjudan skickades till följande e-postadresser: {0}"
 
-#: views/membership.py:997
+#: views/membership.py:1023
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Följande identiteter har lagts till: {0}"
+
+#~ msgid "Search all possible roles here and see their details."
+#~ msgstr "Sök efter alla möjliga roller här och se deras detaljer."
