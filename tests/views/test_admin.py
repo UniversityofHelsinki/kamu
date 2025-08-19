@@ -5,6 +5,7 @@ View tests for admin site.
 import datetime
 from unittest.mock import ANY, call, patch
 
+from django.contrib.auth.models import Group
 from django.test import Client, override_settings
 from django.utils import timezone
 
@@ -80,6 +81,17 @@ class AdminSiteTests(BaseTestCase):
         response = self.client.get(f"{self.url}permission/")
         self.assertEqual(response.status_code, 200)
         self.assertIn(permission.name(), response.content.decode("utf-8"))
+
+    def test_group_add_has_no_permissions(self):
+        response = self.client.get("/admin/auth/group/add/")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Can add group", response.content.decode("utf-8"))
+
+    def test_group_edit_has_permissions(self):
+        group = Group.objects.create(name="test")
+        response = self.client.get(f"/admin/auth/group/{group.pk}/change/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Can add group", response.content.decode("utf-8"))
 
     def _test_add_phone_number(self, number: str):
         url = f"{self.url}phonenumber/add/"
