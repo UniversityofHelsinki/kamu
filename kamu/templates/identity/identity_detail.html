@@ -41,41 +41,43 @@
     </div>
   </div>
   <p><span class="text-success"> *</span> {% trans "verified" %}</p>
-  <h2>{% trans "View details and update" %}<button type="button" class="btn btn-info btn-sm info-button" data-bs-toggle="modal" data-bs-target="#infoModal">{% trans "info" %}</button></h2>
-  <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="infoModalLabel">{% trans "View and manage your information" %}</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
-        </div>
-        <div class="modal-body">
-          <p class="text-break">{% trans "Basic information includes personal details such as names, preferred language, date of birth, and nationality." %}</p>
-          <p class="text-break">{% trans "Contact information includes external email addresses and phone numbers." %}</p>
-          <p class="text-break">{% trans "Identifiers include external login methods such as Google and Microsoft accounts or accounts from other universities." %}</p>
-          <p class="text-break">{% trans "The Contracts section allows you to sign agreements required for certain roles, such as the Acceptable Use Policy and NDA." %}</p>
-          {% if HELP_LINK_USERS %}<p class="text-break">{% blocktrans with link=HELP_LINK_USERS %}Read more about role management from the <a href="{{ link }}">IT Helpdesk</a>.{% endblocktrans %}</p>{% endif %}
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Close" %}</button>
+  {% if user == object.user or perms.kamu.change_basic_information or perms.kamu.change_contacts or perms.kamu.change_identifiers or perms.kamu.view_contracts or perms.kamu.view_accounts %}
+    <h2>{% trans "View details and update" %}<button type="button" class="btn btn-info btn-sm info-button" data-bs-toggle="modal" data-bs-target="#infoModal">{% trans "info" %}</button></h2>
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="infoModalLabel">{% trans "View and manage your information" %}</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+          </div>
+          <div class="modal-body">
+            <p class="text-break">{% trans "Basic information includes personal details such as names, preferred language, date of birth, and nationality." %}</p>
+            <p class="text-break">{% trans "Contact information includes external email addresses and phone numbers." %}</p>
+            <p class="text-break">{% trans "Identifiers include external login methods such as Google and Microsoft accounts or accounts from other universities." %}</p>
+            <p class="text-break">{% trans "The Contracts section allows you to sign agreements required for certain roles, such as the Acceptable Use Policy and NDA." %}</p>
+            {% if HELP_LINK_USERS %}<p class="text-break">{% blocktrans with link=HELP_LINK_USERS %}Read more about role management from the <a href="{{ link }}">IT Helpdesk</a>.{% endblocktrans %}</p>{% endif %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Close" %}</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  {% if user == object.user or perms.kamu.change_basic_information %}
-    <a href="{% url 'identity-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Basic information" %}</a>
+    {% if user == object.user or perms.kamu.change_basic_information %}
+      <a href="{% url 'identity-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Basic information" %}</a>
+    {% endif %}
+    {% if user == object.user or perms.kamu.change_contacts %}
+      <a href="{% url 'contact-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Contact information" %}</a>
+    {% endif %}
+    {% if user == object.user or perms.kamu.change_identifiers %}
+      <a href="{% url 'identity-identifier' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Identifiers" %}</a>
+    {% endif %}
+    {% if user == object.user or perms.kamu.view_contracts %}
+      <a href="{% url 'contract-list' object.pk %}" class="btn btn-primary mb-2">{% trans "Contracts" %}</a>
+    {% endif %}
   {% endif %}
-  {% if user == object.user or perms.kamu.change_contacts %}
-    <a href="{% url 'contact-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Contact information" %}</a>
-  {% endif %}
-  {% if user == object.user or perms.kamu.change_identifiers %}
-    <a href="{% url 'identity-identifier' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Identifiers" %}</a>
-  {% endif %}
-  {% if user == object.user or perms.kamu.view_contracts %}
-    <a href="{% url 'contract-list' object.pk %}" class="btn btn-primary mb-2">{% trans "Contracts" %}</a>
-  {% endif %}
-  <h2 class="mt-4">{% trans "User accounts" %}</h2>
   {% if user == object.user or perms.kamu.view_accounts %}
+    <h2 class="mt-4">{% trans "User accounts" %}</h2>
     <a href="{% url 'account-list' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Manage user accounts" %}</a>
   {% endif %}
   <h2 id="roles-list" class="mt-4">{% trans "Role memberships" %}</h2>
