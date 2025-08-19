@@ -18,10 +18,12 @@ def set_default_permissions(instance: AbstractBaseUser | Group, remove: bool = F
     Set default permissions for a group or user.
     """
 
-    for app, model, codename in [
+    default_permissions = [
         ("kamu", "role", "search_roles"),
         ("kamu", "identity", "search_identities"),
-    ]:
+        ("kamu", "identity", "view_basic_information"),
+    ]
+    for app, model, codename in default_permissions:
         content_type = ContentType.objects.get(app_label=app, model=model)
         permission = Permission.objects.get(content_type=content_type, codename=codename)
         if remove:

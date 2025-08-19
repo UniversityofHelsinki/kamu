@@ -112,3 +112,13 @@ SAML2 and OIDC does not always return user to the application.
 
 mod_auth_openidc does not support multiple simultaneous logins, so if remote login paths are defined and user is
 linking remote identifier using OIDC, they are first redirected to logout path.
+
+Default permissions
+-------------------
+
+If user is the owner of a role, or has any group defined (suggesting inviter or approver permissions), they are
+granted the following permissions:
+
+  * Search identities
+  * Search roles
+  * View identity basic information

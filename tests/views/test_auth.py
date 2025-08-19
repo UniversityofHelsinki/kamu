@@ -84,7 +84,7 @@ class LoginViewTests(BaseTestCase):
         Identifier.objects.create(type=Identifier.Type.EPPN, value="testuser@example.org", identity=self.identity)
         url = reverse("login-shibboleth")
         self.client.get(url, follow=True, headers={"EPPN": "testuser@example.org"})
-        self.assertEqual(self.user.user_permissions.count(), 2)
+        self.assertEqual(self.user.user_permissions.count(), 3)
         self.assertTrue(self.user.has_perm("kamu.search_roles"))
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")

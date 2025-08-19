@@ -200,6 +200,8 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
                 | Q(role__inviters__in=groups)
                 | Q(role__owner=user)
                 | Q(identity__user=user)
+                | Q(approver=user)
+                | Q(inviter=user)
             ).distinct()
         return queryset.prefetch_related("identity", "role")
 

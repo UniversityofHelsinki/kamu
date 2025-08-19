@@ -28,7 +28,10 @@ class IdentityViewTests(BaseTestCase):
         self.create_user()
         self.url = "/identity/"
         self.client = Client()
-        set_default_permissions(self.user)
+
+    def _login_user(self, permissions=True):
+        if permissions:
+            set_default_permissions(self.user)
         self.client.force_login(self.user)
 
     def test_anonymous_view_redirects_to_login(self):
@@ -38,6 +41,7 @@ class IdentityViewTests(BaseTestCase):
         self.assertIn("/login/", response["location"])
 
     def test_view_identity_without_identity(self):
+        self._login_user()
         self.user.email = "test.user@example.org"
         self.user.save()
         response = self.client.get(f"{self.url}me/", follow=True)
@@ -53,7 +57,8 @@ class IdentityViewTests(BaseTestCase):
         )
 
     @mock.patch("kamu.utils.audit.logger_audit")
-    def test_view_identity(self, mock_logger):
+    def test_view_own_identity(self, mock_logger):
+        self._login_user()
         self.create_identity()
         response = self.client.get(f"{self.url}{self.identity.pk}/")
         self.assertEqual(response.status_code, 200)
@@ -65,7 +70,28 @@ class IdentityViewTests(BaseTestCase):
             ]
         )
 
+    @mock.patch("kamu.utils.audit.logger_audit")
+    def test_view_other_identity(self, mock_logger):
+        self._login_user()
+        self.create_superidentity()
+        response = self.client.get(f"{self.url}{self.superidentity.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("alert", response.content.decode("utf-8"))
+        self.assertIn(f"{self.superidentity.display_name()} |", response.content.decode("utf-8"))
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Read identity information", extra=ANY),
+            ]
+        )
+
+    def test_view_identity_without_default_permissions(self):
+        self._login_user(permissions=False)
+        self.create_superidentity()
+        response = self.client.get(f"{self.url}{self.superidentity.pk}/")
+        self.assertEqual(response.status_code, 404)
+
     def test_view_identity_list_memberships(self):
+        self._login_user()
         self.create_identity()
         role = self.create_role()
         self.create_membership(
@@ -81,6 +107,7 @@ class IdentityViewTests(BaseTestCase):
         self.assertIn(role.name(), response.content.decode("utf-8"))
 
     def test_view_identity_list_expired_memberships(self):
+        self._login_user()
         self.create_identity()
         role = self.create_role()
         self.create_membership(

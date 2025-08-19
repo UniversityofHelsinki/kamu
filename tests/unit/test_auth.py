@@ -20,7 +20,7 @@ class SetPermissionTests(TestCase):
     def test_set_default_permissions_for_user(self):
         set_default_permissions(self.user)
         self.user.refresh_from_db()
-        self.assertEqual(self.user.user_permissions.count(), 2)
+        self.assertEqual(self.user.user_permissions.count(), 3)
         set_default_permissions(self.user, remove=True)
         self.user.refresh_from_db()
         self.assertEqual(self.user.user_permissions.count(), 0)
@@ -28,7 +28,7 @@ class SetPermissionTests(TestCase):
     def test_set_default_permissions_for_group(self):
         set_default_permissions(self.group)
         self.group.refresh_from_db()
-        self.assertEqual(self.group.permissions.count(), 2)
+        self.assertEqual(self.group.permissions.count(), 3)
         set_default_permissions(self.group, remove=True)
         self.group.refresh_from_db()
         self.assertEqual(self.group.permissions.count(), 0)
