@@ -14,6 +14,7 @@ from django.db import models
 from django.db.models import Q, QuerySet
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
 from kamu.models.role import Requirement, Role
@@ -133,6 +134,19 @@ class Membership(models.Model):
                 validate_membership(ValidationError, self.role, self.start_date, self.expire_date, edit=False)
             except ObjectDoesNotExist:
                 validate_membership(ValidationError, None, self.start_date, self.expire_date, edit=False)
+
+    @staticmethod
+    def get_ordering_by_role_name() -> list[str]:
+        """
+        Order by name in current language.
+        """
+        lang = get_language()
+        if lang == "fi":
+            return ["role__name_fi"]
+        elif lang == "sv":
+            return ["role__name_sv"]
+        else:
+            return ["role__name_en"]
 
     def log_values(self) -> dict[str, str | int]:
         """

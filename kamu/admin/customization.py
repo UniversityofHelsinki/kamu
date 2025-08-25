@@ -1,8 +1,10 @@
 from django.contrib.admin.models import LogEntry
 from django.contrib.admin.options import ModelAdmin
 from django.contrib.admin.views.main import ChangeList
+from django.core.exceptions import FieldDoesNotExist
 from django.db.models.base import Model
 from django.http import HttpRequest
+from django.utils import translation
 from typing_extensions import TypeVar
 
 from kamu.utils.audit import ActionTypes, AuditLog, CategoryTypes, ModelToCategoryMap
@@ -10,6 +12,24 @@ from kamu.utils.audit import ActionTypes, AuditLog, CategoryTypes, ModelToCatego
 _Model = TypeVar("_Model", bound=Model, covariant=True)
 
 audit_log = AuditLog()
+
+
+class OrderByNameMixin(ModelAdmin):
+    """
+    A mixin for Django ModelAdmin that orders by language specific name.
+    """
+
+    def get_ordering(cls, request: HttpRequest) -> list[str] | tuple[str, ...]:
+        """
+        Return the ordering for the admin list view based on current language.
+        """
+        lang_code = translation.get_language()
+        field = "name_" + lang_code
+        try:
+            cls.model._meta.get_field(field)
+            return [field]
+        except FieldDoesNotExist:
+            return super().get_ordering(request)
 
 
 class AuditModelAdmin(ModelAdmin):

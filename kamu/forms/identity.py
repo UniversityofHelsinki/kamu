@@ -14,7 +14,7 @@ from django.core.validators import validate_email
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from kamu.models.identity import EmailAddress, Identity, PhoneNumber
+from kamu.models.identity import EmailAddress, Identity, Nationality, PhoneNumber
 from kamu.models.token import Token
 from kamu.validators.identity import validate_fpic, validate_phone_number
 
@@ -353,6 +353,8 @@ class IdentityForm(forms.ModelForm):
         """
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
+        if hasattr(self.fields["nationality"], "queryset"):
+            self.fields["nationality"].queryset = Nationality.objects.order_by(*Nationality.get_ordering_by_name())
         self.helper = FormHelper()
         restricted_fields = True
         verification_fields = True

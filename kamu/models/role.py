@@ -119,6 +119,19 @@ class Role(models.Model):
         else:
             return self.description_en
 
+    @staticmethod
+    def get_ordering_by_name() -> list[str]:
+        """
+        Order by name in current language.
+        """
+        lang = get_language()
+        if lang == "fi":
+            return ["name_fi"]
+        elif lang == "sv":
+            return ["name_sv"]
+        else:
+            return ["name_en"]
+
     def log_values(self) -> dict[str, str | int]:
         """
         Return values for audit log.
@@ -296,6 +309,19 @@ class Permission(models.Model):
         else:
             return self.description_en
 
+    @staticmethod
+    def get_ordering_by_name() -> list[str]:
+        """
+        Order by name in current language.
+        """
+        lang = get_language()
+        if lang == "fi":
+            return ["name_fi"]
+        elif lang == "sv":
+            return ["name_sv"]
+        else:
+            return ["name_en"]
+
     def log_values(self) -> dict[str, str | int]:
         """
         Return values for audit log.
@@ -368,6 +394,19 @@ class Requirement(models.Model):
             return self.name_sv
         else:
             return self.name_en
+
+    @staticmethod
+    def get_ordering_by_name() -> list[str]:
+        """
+        Order by name in current language.
+        """
+        lang = get_language()
+        if lang == "fi":
+            return ["name_fi"]
+        elif lang == "sv":
+            return ["name_sv"]
+        else:
+            return ["name_en"]
 
     def log_values(self) -> dict[str, str | int]:
         """

@@ -72,7 +72,11 @@ class RoleListApproverView(LoginRequiredMixin, ListView[Role]):
         if not user.is_authenticated:
             raise PermissionDenied
         groups = user.groups.all()
-        queryset = Role.objects.filter(Q(approvers__in=groups) | Q(owner=user)).distinct()
+        queryset = (
+            Role.objects.filter(Q(approvers__in=groups) | Q(owner=user))
+            .distinct()
+            .order_by(*Role.get_ordering_by_name())
+        )
         return queryset.prefetch_related("owner", "parent")
 
 
@@ -92,7 +96,11 @@ class RoleListInviterView(LoginRequiredMixin, ListView[Role]):
         if not user.is_authenticated:
             raise PermissionDenied
         groups = user.groups.all()
-        queryset = Role.objects.filter(Q(approvers__in=groups) | Q(inviters__in=groups) | Q(owner=user)).distinct()
+        queryset = (
+            Role.objects.filter(Q(approvers__in=groups) | Q(inviters__in=groups) | Q(owner=user))
+            .distinct()
+            .order_by(*Role.get_ordering_by_name())
+        )
         return queryset.prefetch_related("owner", "parent")
 
 
@@ -111,7 +119,7 @@ class RoleListOwnerView(LoginRequiredMixin, ListView[Role]):
         user = self.request.user
         if not user.is_authenticated:
             raise PermissionDenied
-        queryset = Role.objects.filter(owner=user)
+        queryset = Role.objects.filter(owner=user).order_by(*Role.get_ordering_by_name())
         return queryset.prefetch_related("owner", "parent")
 
 
@@ -159,4 +167,4 @@ class RoleSearchView(LoginRequiredMixin, ListView[Role]):
             queryset = queryset.filter(
                 Q(identifier__icontains=search) | Q(name_en__icontains=search) | Q(description_en__icontains=search)
             )
-        return queryset.prefetch_related("owner", "parent")
+        return queryset.prefetch_related("owner", "parent").order_by(*Role.get_ordering_by_name())

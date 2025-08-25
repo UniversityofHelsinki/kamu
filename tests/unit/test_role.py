@@ -13,7 +13,7 @@ from django.utils import timezone
 from kamu.models.contract import Contract, ContractTemplate
 from kamu.models.identity import Identity
 from kamu.models.membership import Membership
-from kamu.models.role import Permission, Requirement
+from kamu.models.role import Permission, Requirement, Role
 from kamu.utils.membership import add_missing_requirement_messages
 from tests.data import ROLES
 from tests.setup import BaseTestCase
@@ -244,3 +244,40 @@ class RequirementsTests(BaseRoleTestCase):
             'Role requires a contract "NDA", version 2 or higher.',
             messages._queued_messages[3].message,
         )
+
+
+class RoleOrderingTestCase(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        identity = self.create_identity()
+        self.role = Role.objects.create(identifier="a", name_en="A", name_fi="B", name_sv="C", maximum_duration=1)
+        self.role2 = Role.objects.create(identifier="b", name_en="C", name_fi="A", name_sv="B", maximum_duration=1)
+        self.create_membership(self.role2, identity, start_delta_days=0, expire_delta_days=1)
+        self.create_membership(self.role, identity, start_delta_days=0, expire_delta_days=1)
+
+    def test_ordering_fi(self):
+        with override_settings(LANGUAGE_CODE="fi"):
+            roles = Role.objects.all().order_by(*Role.get_ordering_by_name())
+            self.assertEqual(roles[0], self.role2)
+            self.assertEqual(roles[1], self.role)
+            memberships = Membership.objects.all().order_by(*Membership.get_ordering_by_role_name())
+            self.assertEqual(memberships[0].role, self.role2)
+            self.assertEqual(memberships[1].role, self.role)
+
+    def test_ordering_sv(self):
+        with override_settings(LANGUAGE_CODE="sv"):
+            roles = Role.objects.all().order_by(*Role.get_ordering_by_name())
+            self.assertEqual(roles[0], self.role2)
+            self.assertEqual(roles[1], self.role)
+            memberships = Membership.objects.all().order_by(*Membership.get_ordering_by_role_name())
+            self.assertEqual(memberships[0].role, self.role2)
+            self.assertEqual(memberships[1].role, self.role)
+
+    def test_ordering_en(self):
+        with override_settings(LANGUAGE_CODE="en"):
+            roles = Role.objects.all().order_by(*Role.get_ordering_by_name())
+            self.assertEqual(roles[0], self.role)
+            self.assertEqual(roles[1], self.role2)
+            memberships = Membership.objects.all().order_by(*Membership.get_ordering_by_role_name())
+            self.assertEqual(memberships[0].role, self.role)
+            self.assertEqual(memberships[1].role, self.role2)

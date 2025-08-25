@@ -461,13 +461,17 @@ class MembershipManagedListView(MembershipListBaseView):
         if self.request.user.is_authenticated:
             limit = self.request.GET.get("limit")
             if limit == "inviter":
-                return Membership.objects.filter(inviter=self.request.user).order_by("-start_date")
+                return Membership.objects.filter(inviter=self.request.user).order_by(
+                    *Membership.get_ordering_by_role_name()
+                )
             elif limit == "approver":
-                return Membership.objects.filter(approver=self.request.user).order_by("-start_date")
+                return Membership.objects.filter(approver=self.request.user).order_by(
+                    *Membership.get_ordering_by_role_name()
+                )
             else:
                 return Membership.objects.filter(
                     Q(approver=self.request.user) | Q(inviter=self.request.user)
-                ).order_by("-start_date")
+                ).order_by(*Membership.get_ordering_by_role_name())
         return Membership.objects.none()
 
 

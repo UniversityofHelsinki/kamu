@@ -78,10 +78,10 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context["memberships"] = Membership.objects.filter(
             identity=self.object, expire_date__gte=timezone.now().date()
-        )
+        ).order_by(*Membership.get_ordering_by_role_name())
         context["expired_memberships"] = Membership.objects.filter(
             identity=self.object, expire_date__lt=timezone.now().date()
-        )
+        ).order_by(*Membership.get_ordering_by_role_name())
         context["identifiers"] = Identifier.objects.filter(identity=self.object, deactivated_at=None)
         return context
 

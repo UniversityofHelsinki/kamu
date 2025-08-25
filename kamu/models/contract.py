@@ -134,6 +134,19 @@ class ContractTemplate(models.Model):
         else:
             return self.name_en
 
+    @staticmethod
+    def get_ordering_by_name() -> list[str]:
+        """
+        Order by name in current language.
+        """
+        lang = get_language()
+        if lang == "fi":
+            return ["name_fi"]
+        elif lang == "sv":
+            return ["name_sv"]
+        else:
+            return ["name_en"]
+
     def text(self, lang: str | None = None) -> str:
         """
         Returns contract text in a given language (defaulting current language, or English).
