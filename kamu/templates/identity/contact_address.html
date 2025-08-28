@@ -22,7 +22,7 @@
           {% for address in email_list %}
             <tr>
               <th scope="row">{{ address.address }}</th>
-              <td>{% if address.verified %}{% trans "Verified" %}{% else %}<a href="{% url 'email-verify' address.pk %}" class="btn btn-primary btn-sm">{% trans "Verify" %}</a>{% endif %}</td>
+              <td>{% if address.verified %}{% trans "Verified" %}{% elif user == address.identity.user %}<a href="{% url 'email-verify' address.pk %}" class="btn btn-primary btn-sm">{% trans "Verify" %}</a>{% endif %}</td>
               <td>{% if not forloop.first %}<button type="submit" name="email_up" value="{{ address.pk }}" class="btn btn-warning btn-sm">{% trans "Up" %}</button>{% endif %}
                 {% if not forloop.last %}<button type="submit" name="email_down" value="{{ address.pk }}" class="btn btn-warning btn-sm">{% trans "Down" %}</button>{% endif %}</td>
               <td>
@@ -70,7 +70,7 @@
           {% for number in phone_list %}
             <tr>
               <th scope="row">{{ number.number }}</th>
-              <td>{% if number.verified %}{% trans "Verified" %}{% else %}<a href="{% url 'phone-verify' number.pk %}" class="btn btn-primary btn-sm">{% trans "Verify" %}</a>{% endif %}</td>
+              <td>{% if number.verified %}{% trans "Verified" %}{% elif user == number.identity.user %}<a href="{% url 'phone-verify' number.pk %}" class="btn btn-primary btn-sm">{% trans "Verify" %}</a>{% endif %}</td>
               <td>{% if not forloop.first %}<button type="submit" name="phone_up" value="{{ number.pk }}" class="btn btn-warning btn-sm">{% trans "Up" %}</button>{% endif %}
                 {% if not forloop.last %}<button type="submit" name="phone_down" value="{{ number.pk }}" class="btn btn-warning btn-sm">{% trans "Down" %}</button>{% endif %}</td>
               <td>
