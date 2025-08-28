@@ -665,6 +665,7 @@ class ContractTests(BaseTestCase):
         self.assertTrue(Contract.objects.filter(identity=self.identity, template=self.contract_template).exists())
         self.assertIn("Contract signed", response.content.decode("utf-8"))
         self.assertIn(self.contract_template.name(), response.content.decode("utf-8"))
+        self.assertIn(f"{self.identity.display_name()} | Contracts", response.content.decode("utf-8"))
         self.assertEqual(
             LogEntry.objects.filter(
                 change_message=f"Contract {self.contract_template.type}-{self.contract_template.version} signed"
