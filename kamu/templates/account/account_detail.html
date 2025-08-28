@@ -77,4 +77,5 @@
       {% crispy form form.helper %}
     {% endif %}
   </div>
+  <a class="btn btn-secondary" href="{% url 'account-list' pk=object.identity.pk %}">{% trans "Return" %}</a>
 {% endblock %}
