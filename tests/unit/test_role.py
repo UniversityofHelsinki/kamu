@@ -153,7 +153,7 @@ class RequirementsTests(BaseRoleTestCase):
         self.assertEqual(self.parent_membership.get_missing_requirements().count(), 2)
         email_address = self.identity.email_addresses.create(address="test@example.org")
         self.assertEqual(self.membership.get_missing_requirements().count(), 4)
-        email_address.verified = True
+        email_address.verified = timezone.now()
         email_address.save()
         self.assertEqual(self.membership.get_missing_requirements().count(), 3)
         self.identity.date_of_birth = timezone.now().date() - datetime.timedelta(days=365 * 18)

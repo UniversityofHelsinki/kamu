@@ -100,7 +100,6 @@ class AdminSiteTests(BaseTestCase):
             "identity": identity.pk,
             "number": number,
             "priority": 1,
-            "verified": False,
         }
         form_data.update(self.created_at)
         return self.client.post(url, form_data, follow=True)
@@ -122,7 +121,6 @@ class AdminSiteTests(BaseTestCase):
             "identity": identity.pk,
             "type": identifier_type,
             "value": identifier_value,
-            "verified": False,
         }
         form_data.update(self.created_at)
         return self.client.post(url, form_data, follow=True)
@@ -176,7 +174,6 @@ class AdminSiteTests(BaseTestCase):
             "identity": self.identity.pk,
             "address": "modified@example.org",
             "priority": 1,
-            "verified": False,
         }
         form_data.update(self.created_at)
         self.client.post(url, form_data, follow=True)

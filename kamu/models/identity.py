@@ -286,14 +286,14 @@ class Identity(models.Model):
         """
         Returns the highest priority verified email address, if available.
         """
-        email_address = self.email_addresses.filter(verified=True).order_by("priority").first()
+        email_address = self.email_addresses.filter(verified__isnull=False).order_by("priority").first()
         return email_address.address if email_address else None
 
     def phone_number(self) -> str | None:
         """
         Returns the highest priority verified phone number, if available.
         """
-        phone_number = self.phone_numbers.filter(verified=True).order_by("priority").first()
+        phone_number = self.phone_numbers.filter(verified__isnull=False).order_by("priority").first()
         return phone_number.number if phone_number else None
 
     def log_values(self) -> dict[str, str | int]:
@@ -394,13 +394,13 @@ class Identity(models.Model):
         """
         Returns True if the identity has at least one verified email address.
         """
-        return self.email_addresses.filter(verified=True).exists()
+        return self.email_addresses.filter(verified__isnull=False).exists()
 
     def has_phone_number(self) -> bool:
         """
         Returns True if the identity has at least one verified phone number.
         """
-        return self.phone_numbers.filter(verified=True).exists()
+        return self.phone_numbers.filter(verified__isnull=False).exists()
 
     def get_roles(self, membership_statuses: Sequence[Membership.Status] | None = None) -> QuerySet[Role]:
         """
@@ -463,14 +463,14 @@ class EmailAddress(models.Model):
     )
     address = models.CharField(max_length=320, verbose_name=_("Email address"), validators=[validate_email])
     priority = models.SmallIntegerField(default=0, verbose_name=_("Priority"))
-    verified = models.BooleanField(default=False, verbose_name=_("Verified"))
+    verified = models.DateTimeField(blank=True, null=True, verbose_name=_("Verified at"))
 
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["identity", "address"], name="unique_email_address")]
-        ordering = ["identity", "verified", "priority"]
+        ordering = ["identity", "priority"]
         verbose_name = _("Email address")
         verbose_name_plural = _("Email addresses")
 
@@ -499,14 +499,14 @@ class PhoneNumber(models.Model):
     )
     number = models.CharField(max_length=20, validators=[validate_phone_number], verbose_name=_("Phone number"))
     priority = models.SmallIntegerField(default=0, verbose_name=_("Priority"))
-    verified = models.BooleanField(default=False, verbose_name=_("Verified"))
+    verified = models.DateTimeField(blank=True, null=True, verbose_name=_("Verified at"))
 
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["identity", "number"], name="unique_phone_number")]
-        ordering = ["identity", "verified", "priority"]
+        ordering = ["identity", "priority"]
         verbose_name = _("Phone number")
         verbose_name_plural = _("Phone numbers")
 
@@ -561,7 +561,7 @@ class Identifier(models.Model):
     value = models.CharField(max_length=4000, verbose_name=_("Identifier value"))
     name = models.CharField(max_length=256, blank=True, verbose_name=_("Identifier name"))
 
-    verified = models.BooleanField(default=False, verbose_name=_("Verified"))
+    verified = models.DateTimeField(blank=True, null=True, verbose_name=_("Verified at"))
 
     deactivated_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Deactivated at"))
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))

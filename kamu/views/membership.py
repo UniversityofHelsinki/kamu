@@ -817,7 +817,7 @@ class MembershipClaimView(LoginRequiredMixin, FormView):
         if (
             self.membership.verify_phone_number
             and not self.identity.phone_numbers.filter(
-                number=self.membership.verify_phone_number, verified=True
+                number=self.membership.verify_phone_number, verified__isnull=False
             ).exists()
         ):
             return self.render_to_response(self.get_context_data())
@@ -882,13 +882,15 @@ class MembershipMassInviteView(BaseMembershipInviteView):
         )
         email = info.get("email")
         email_identity = (
-            Identity.objects.filter(email_addresses__address__iexact=email, email_addresses__verified=True).first()
+            Identity.objects.filter(
+                email_addresses__address__iexact=email, email_addresses__verified__isnull=False
+            ).first()
             if email
             else None
         )
         phone = info.get("phone")
         phone_identity = (
-            Identity.objects.filter(phone_numbers__number=phone, phone_numbers__verified=True).first()
+            Identity.objects.filter(phone_numbers__number=phone, phone_numbers__verified__isnull=False).first()
             if phone
             else None
         )

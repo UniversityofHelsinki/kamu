@@ -147,7 +147,7 @@ class PurgeIdentifierTests(ManagementCommandTestCase):
                 identity=self.identities[i],
                 type=Identifier.Type.values[i % 3],
                 value="whatever",
-                verified=bool(i % 3),
+                verified=None if i % 3 == 0 else timezone.now() - datetime.timedelta(days=5 * i + 1),
                 deactivated_at=None if i % 2 == 1 else timezone.now() - datetime.timedelta(days=5 * i),
             )
             for i in range(10)

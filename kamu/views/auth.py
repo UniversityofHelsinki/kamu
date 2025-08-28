@@ -620,7 +620,7 @@ class LoginEmailPhoneVerificationView(LoginView):
         if "resend_email_code" in self.request.POST:
             try:
                 email_address = EmailAddress.objects.get(
-                    address=self.request.session["login_email_address"], verified=True
+                    address=self.request.session["login_email_address"], verified__isnull=False
                 )
             except EmailAddress.DoesNotExist:
                 return self.redirect_to_self()
@@ -639,7 +639,7 @@ class LoginEmailPhoneVerificationView(LoginView):
         if "resend_phone_code" in self.request.POST:
             try:
                 phone_number = PhoneNumber.objects.get(
-                    number=self.request.session["login_phone_number"], verified=True
+                    number=self.request.session["login_phone_number"], verified__isnull=False
                 )
             except PhoneNumber.DoesNotExist:
                 return self.redirect_to_self()

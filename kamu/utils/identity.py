@@ -443,7 +443,7 @@ def create_or_verify_email_address(
         return email_object
     with transaction.atomic():
         if email_object:
-            email_object.verified = True
+            email_object.verified = timezone.now()
             email_object.save()
             audit_log.info(
                 "Verified email address",
@@ -455,7 +455,9 @@ def create_or_verify_email_address(
                 log_to_db=True,
             )
         elif email_address:
-            email_object = EmailAddress.objects.create(address=email_address, identity=identity, verified=True)
+            email_object = EmailAddress.objects.create(
+                address=email_address, identity=identity, verified=timezone.now()
+            )
             audit_log.info(
                 f"Verified email address added to identity {identity}",
                 category="email_address",
@@ -467,10 +469,10 @@ def create_or_verify_email_address(
             )
         else:
             raise ValidationError(_("Email address is required."))
-        for email_obj in EmailAddress.objects.filter(address=email_object.address, verified=True).exclude(
+        for email_obj in EmailAddress.objects.filter(address=email_object.address, verified__isnull=False).exclude(
             pk=email_object.pk
         ):
-            email_obj.verified = False
+            email_obj.verified = None
             email_obj.save()
             audit_log.warning(
                 "Removed verification from the email address as the address was verified elsewhere",
@@ -494,7 +496,7 @@ def create_or_verify_phone_number(
         return phone_object
     with transaction.atomic():
         if phone_object:
-            phone_object.verified = True
+            phone_object.verified = timezone.now()
             phone_object.save()
             audit_log.info(
                 "Verified phone number",
@@ -506,7 +508,7 @@ def create_or_verify_phone_number(
                 log_to_db=True,
             )
         elif phone_number:
-            phone_object = PhoneNumber.objects.create(number=phone_number, identity=identity, verified=True)
+            phone_object = PhoneNumber.objects.create(number=phone_number, identity=identity, verified=timezone.now())
             audit_log.info(
                 f"Verified phone number added to identity {identity}",
                 category="phone_number",
@@ -518,10 +520,10 @@ def create_or_verify_phone_number(
             )
         else:
             raise ValidationError(_("Phone number is required."))
-        for phone_obj in PhoneNumber.objects.filter(number=phone_object.number, verified=True).exclude(
+        for phone_obj in PhoneNumber.objects.filter(number=phone_object.number, verified__isnull=False).exclude(
             pk=phone_object.pk
         ):
-            phone_obj.verified = False
+            phone_obj.verified = None
             phone_obj.save()
             audit_log.warning(
                 "Removed verification from the phone number as the number was verified elsewhere",

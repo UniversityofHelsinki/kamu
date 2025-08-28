@@ -16,6 +16,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 from faker import Faker
 
 from kamu.models.contract import Contract, ContractTemplate
@@ -344,14 +345,14 @@ class Command(BaseCommand):
                     identity=identity,
                     number=f"{fake.country_calling_code()}{fake.msisdn()}"[:20].replace(" ", ""),
                     priority=r,
-                    verified=True,
+                    verified=timezone.now(),
                 )
             for r in range(random.randint(0, 2)):
                 EmailAddress.objects.create(
                     identity=identity,
                     address=fake.email(),
                     priority=r,
-                    verified=True,
+                    verified=timezone.now(),
                 )
 
             def add_membership() -> None:

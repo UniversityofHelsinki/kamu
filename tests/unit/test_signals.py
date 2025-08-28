@@ -174,6 +174,8 @@ class SignalUpdateTestCase(BaseTestCase):
         self.permission.requirements.add(self.requirement)
         self.membership.refresh_from_db()
         self.assertEqual(self.membership.status, Membership.Status.REQUIRE)
-        self.phone_number = PhoneNumber.objects.create(identity=self.identity, number="+1234567890", verified=True)
+        self.phone_number = PhoneNumber.objects.create(
+            identity=self.identity, number="+1234567890", verified=timezone.now()
+        )
         self.membership.refresh_from_db()
         self.assertEqual(self.membership.status, Membership.Status.ACTIVE)

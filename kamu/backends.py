@@ -1007,8 +1007,8 @@ class EmailSMSBackend(LocalBaseBackend):
         if not email_address or not email_token or not phone_number or not phone_token:
             raise AuthenticationError(self.error_messages["invalid_parameters"])
         try:
-            email_obj = EmailAddress.objects.get(address=email_address, verified=True)
-            phone_obj = PhoneNumber.objects.get(number=phone_number, verified=True)
+            email_obj = EmailAddress.objects.get(address=email_address, verified__isnull=False)
+            phone_obj = PhoneNumber.objects.get(number=phone_number, verified__isnull=False)
         except (ObjectDoesNotExist, MultipleObjectsReturned) as e:
             raise AuthenticationError(self.error_messages["invalid_email_or_phone"]) from e
         if email_obj.identity.user and email_obj.identity.user == phone_obj.identity.user:

@@ -163,7 +163,7 @@ class LoginViewTests(BaseTestCase):
     @override_settings(SMS_DEBUG=True)
     @mock.patch("kamu.connectors.sms.logger")
     def test_email_login(self, mock_logger):
-        phone_number = PhoneNumber.objects.create(identity=self.identity, number="+123456789", verified=True)
+        phone_number = PhoneNumber.objects.create(identity=self.identity, number="+123456789", verified=timezone.now())
 
         url = reverse("login-email") + "?next=/identity/me/"
         response = self.client.post(
@@ -177,7 +177,7 @@ class LoginViewTests(BaseTestCase):
         mock_logger.debug.assert_called_once()
 
     def test_email_login_non_verified_number(self):
-        self.phone_number.verified = False
+        self.phone_number.verified = None
         self.phone_number.save()
         url = reverse("login-email") + "?next=/identity/me/"
         response = self.client.post(

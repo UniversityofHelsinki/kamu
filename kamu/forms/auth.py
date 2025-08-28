@@ -69,8 +69,8 @@ class LoginEmailPhoneForm(forms.Form):
         email_address = self.cleaned_data.get("email_address")
         phone_number = self.cleaned_data.get("phone_number")
         try:
-            email_obj = EmailAddress.objects.get(address=email_address, verified=True)
-            phone_obj = PhoneNumber.objects.get(number=phone_number, verified=True)
+            email_obj = EmailAddress.objects.get(address=email_address, verified__isnull=False)
+            phone_obj = PhoneNumber.objects.get(number=phone_number, verified__isnull=False)
         except (MultipleObjectsReturned, ObjectDoesNotExist):
             raise ValidationError(_("This contact information cannot be used to login."))
         if email_obj.identity.user and email_obj.identity.user == phone_obj.identity.user:
@@ -119,7 +119,7 @@ class LoginEmailPhoneVerificationForm(AuthenticationForm):
         if not token or len(token) < 4:
             raise ValidationError(_("Invalid verification code."))
         try:
-            email_address = EmailAddress.objects.get(address=self.email_address, verified=True)
+            email_address = EmailAddress.objects.get(address=self.email_address, verified__isnull=False)
         except EmailAddress.DoesNotExist:
             raise ValidationError(_("This email address cannot be used to login."))
         except EmailAddress.MultipleObjectsReturned:
@@ -136,7 +136,7 @@ class LoginEmailPhoneVerificationForm(AuthenticationForm):
         if not token or len(token) < 4:
             raise ValidationError(_("Invalid verification code."))
         try:
-            phone_number = PhoneNumber.objects.get(number=self.phone_number, verified=True)
+            phone_number = PhoneNumber.objects.get(number=self.phone_number, verified__isnull=False)
         except PhoneNumber.DoesNotExist:
             raise ValidationError(_("This phone number cannot be used to login."))
         except PhoneNumber.MultipleObjectsReturned:
@@ -203,7 +203,7 @@ class RegistrationForm(forms.Form):
         Test if email address is already in use.
         """
         email_address = self.cleaned_data["email_address"]
-        if EmailAddress.objects.filter(address=email_address, verified=True).exists():
+        if EmailAddress.objects.filter(address=email_address, verified__isnull=False).exists():
             raise ValidationError(_("This email address is already linked to an account."))
         return email_address
 

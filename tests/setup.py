@@ -57,10 +57,12 @@ class TestData(TestCase):
         )
         if email:
             self.email_address = EmailAddress.objects.create(
-                identity=self.identity, address="test@example.org", verified=True
+                identity=self.identity, address="test@example.org", verified=timezone.now()
             )
         if phone:
-            self.phone_number = PhoneNumber.objects.create(identity=self.identity, number="+1234567890", verified=True)
+            self.phone_number = PhoneNumber.objects.create(
+                identity=self.identity, number="+1234567890", verified=timezone.now()
+            )
         return self.identity
 
     def create_superidentity(self, user=True, email=False, phone=False):
@@ -71,7 +73,7 @@ class TestData(TestCase):
         )
         if email:
             self.email_address = EmailAddress.objects.create(
-                identity=self.superidentity, address="super_test@example.org", verified=True
+                identity=self.superidentity, address="super_test@example.org", verified=timezone.now()
             )
         if phone:
             self.phone_number = PhoneNumber.objects.create(

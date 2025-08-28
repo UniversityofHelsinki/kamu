@@ -525,9 +525,9 @@ class VerificationTests(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.create_identity(user=True, email=True, phone=True)
-        self.email_address.verified = False
+        self.email_address.verified = None
         self.email_address.save()
-        self.phone_number.verified = False
+        self.phone_number.verified = None
         self.phone_number.save()
         self.url = f"/email/{self.email_address.pk}/verify/"
         self.client = Client()
@@ -550,7 +550,7 @@ class VerificationTests(BaseTestCase):
         self.assertIn(self.email_address.address, response.content.decode("utf-8"))
         self.assertIn("Verified", response.content.decode("utf-8"))
         self.email_address.refresh_from_db()
-        self.assertTrue(self.email_address.verified)
+        self.assertIsNotNone(self.email_address.verified)
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Verified email address", extra=ANY),
@@ -561,13 +561,13 @@ class VerificationTests(BaseTestCase):
     def test_verify_already_verified_address(self, mock_logger):
         self.create_superidentity()
         email = EmailAddress.objects.create(
-            identity=self.superidentity, address=self.email_address.address, verified=True
+            identity=self.superidentity, address=self.email_address.address, verified=timezone.now()
         )
         self._verify_address()
         self.email_address.refresh_from_db()
-        self.assertTrue(self.email_address.verified)
+        self.assertIsNotNone(self.email_address.verified)
         email.refresh_from_db()
-        self.assertFalse(email.verified)
+        self.assertIsNone(email.verified)
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Verified email address", extra=ANY),
@@ -606,7 +606,7 @@ class VerificationTests(BaseTestCase):
     def test_verify_sms(self, mock_logger, mock_connector):
         self._verify_sms(mock_connector, self.phone_number)
         self.phone_number.refresh_from_db()
-        self.assertTrue(self.phone_number.verified)
+        self.assertIsNotNone(self.phone_number.verified)
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Verified phone number", extra=ANY),
@@ -618,13 +618,13 @@ class VerificationTests(BaseTestCase):
     def test_verify_existing_sms(self, mock_logger, mock_connector):
         self.create_superidentity()
         verified_number = PhoneNumber.objects.create(
-            identity=self.superidentity, number=self.phone_number.number, verified=True
+            identity=self.superidentity, number=self.phone_number.number, verified=timezone.now()
         )
         self._verify_sms(mock_connector, self.phone_number)
         verified_number.refresh_from_db()
-        self.assertFalse(verified_number.verified)
+        self.assertIsNone(verified_number.verified)
         self.phone_number.refresh_from_db()
-        self.assertTrue(self.phone_number.verified)
+        self.assertIsNotNone(self.phone_number.verified)
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Verified phone number", extra=ANY),
@@ -837,7 +837,7 @@ class IdentityCombineTests(BaseTestCase):
         PhoneNumber.objects.create(identity=self.identity, number="+358123456789")
         PhoneNumber.objects.create(identity=self.identity, number="+358012345678")
         PhoneNumber.objects.create(identity=self.superidentity, number="+358001234567")
-        EmailAddress.objects.create(identity=self.identity, address="test1@example.org", verified=True)
+        EmailAddress.objects.create(identity=self.identity, address="test1@example.org", verified=timezone.now())
         EmailAddress.objects.create(identity=self.superidentity, address="supertest@example.org")
         EmailAddress.objects.create(identity=self.superidentity, address="test2@example.org")
         Identifier.objects.create(identity=self.identity, type=Identifier.Type.EPPN, value="test2@example.org")

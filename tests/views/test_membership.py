@@ -753,7 +753,7 @@ class MembershipMassInviteViewTests(BaseTestCase):
 
     @override_settings(MASS_INVITE_PERMISSION_GROUPS={"group": 3})
     def test_mass_invite_attribute_conflict(self):
-        self.phone_number.verified = True
+        self.phone_number.verified = timezone.now()
         self.phone_number.save()
         response = self.client.post(
             self.url,
