@@ -67,7 +67,7 @@ class AccountTests(BaseTestCase):
         self.identity.save()
         response = self.client.get(f"/identity/{self.identity.pk}/account/lightaccount/", follow=True)
         self.assertEqual(response.status_code, 200)
-        mock_connector_get.assert_called_with(number=5, exclude_chars=" .cemrstu", exclude_string="900")
+        mock_connector_get.assert_called_with(number=5, exclude_chars="cemrstu", exclude_string="900")
 
     def test_view_account_create_invalid_password(self):
         data = {

@@ -2,6 +2,7 @@
 User account views for the UI.
 """
 
+import string
 from typing import Any
 
 from django.conf import settings
@@ -91,11 +92,32 @@ class AccountCreateView(LoginRequiredMixin, FormView):
         context["min_password_length"] = get_minimum_password_length()
         return context
 
+    def get_alphabetic_characters_from_names(self) -> str:
+        """
+        Return all alphabetic characters from names.
+        """
+        if not self.identity:
+            return ""
+        return "".join(
+            sorted(
+                set(
+                    char
+                    for char in (
+                        self.identity.given_names
+                        + self.identity.surname
+                        + self.identity.given_name_display
+                        + self.identity.surname_display
+                    ).lower()
+                )
+                & set(string.ascii_lowercase)
+            )
+        )
+
     def generate_uids(self, forced: bool = False) -> list[str]:
         """
         Generate user ID choices or return saved choices from the session.
 
-        Exclude 3 digit part from FPIC and all characters from names.
+        Exclude 3 digit part from FPIC and all alphabetic characters from names.
         """
         if not forced and self.request.session.get("uid_choices"):
             return self.request.session["uid_choices"]
@@ -107,18 +129,7 @@ class AccountCreateView(LoginRequiredMixin, FormView):
                     exclude_string = self.identity.fpic[7:10]
                 except IndexError:
                     pass
-            exclude_chars = "".join(
-                sorted(
-                    set(
-                        (
-                            self.identity.given_names
-                            + self.identity.surname
-                            + self.identity.given_name_display
-                            + self.identity.surname_display
-                        ).lower()
-                    )
-                )
-            )
+            exclude_chars = self.get_alphabetic_characters_from_names()
         try:
             connector = AccountApiConnector()
             uid_choices = connector.get_uid_choices(
