@@ -2,6 +2,8 @@
 Helper functions for accounts
 """
 
+import unicodedata
+
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 
@@ -71,6 +73,17 @@ def get_account_base_membership(identity: Identity, account_type: Account.Type) 
     raise PermissionDenied
 
 
+def get_gecos(identity: Identity) -> str:
+    """
+    Returns the gecos field for the identity.
+
+    The field is normalized to ASCII and truncated to 127 characters.
+    """
+    normalized = unicodedata.normalize("NFKD", identity.display_name())
+    ascii_encoded = normalized.encode("ascii", "ignore").decode("ascii")
+    return ascii_encoded[:127]
+
+
 def get_account_data(identity: Identity, account_type: Account.Type) -> dict[str, str | int | list[str] | None]:
     """
     Returns data for creating or updating a user account.
@@ -82,7 +95,7 @@ def get_account_data(identity: Identity, account_type: Account.Type) -> dict[str
         settings.ACCOUNT_ATTRIBUTES["displayName"]: identity.display_name(),
         settings.ACCOUNT_ATTRIBUTES["eduPersonAffiliation"]: get_affiliation(account_type),
         settings.ACCOUNT_ATTRIBUTES["eduPersonPrimaryAffiliation"]: get_affiliation(account_type)[0],
-        settings.ACCOUNT_ATTRIBUTES["gecos"]: identity.display_name(),
+        settings.ACCOUNT_ATTRIBUTES["gecos"]: get_gecos(identity),
         settings.ACCOUNT_ATTRIBUTES["givenName"]: identity.given_name_display,
         settings.ACCOUNT_ATTRIBUTES["kamuIdentifier"]: str(identity.kamu_id),
         settings.ACCOUNT_ATTRIBUTES["mail"]: identity.email_address(),

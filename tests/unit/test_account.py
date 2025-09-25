@@ -51,3 +51,10 @@ class AccountUnitTests(BaseTestCase):
         self.identifier.save()
         data = get_account_data(self.identity, Account.Type.LIGHT)
         self.assertEqual(1, len(data.get("lightAccountExternalIdentifier")))
+
+    def test_account_data_gecos_normalised(self):
+        self.identity.given_name_display = "Ääkköset"
+        self.identity.surname_display = "Æaz-1-Д’at"
+        self.identity.save()
+        data = get_account_data(self.identity, Account.Type.LIGHT)
+        self.assertEqual("Aakkoset az-1-at", data.get("gecos"))
