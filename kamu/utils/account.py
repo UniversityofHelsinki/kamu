@@ -16,7 +16,7 @@ def get_light_account_external_identifiers(identity: Identity) -> list[str]:
     Returns external identifiers for a light account.
     """
     identifiers = []
-    for identifier in identity.identifiers.all():
+    for identifier in identity.identifiers.filter(deactivated_at__isnull=True):
         if identifier.type == Identifier.Type.EPPN:
             identifiers.append(f"EPPN:{identifier.value}")
         elif identifier.type == Identifier.Type.GOOGLE:
