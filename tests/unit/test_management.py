@@ -6,6 +6,7 @@ import datetime
 import json
 from io import StringIO
 from unittest import mock
+from unittest.mock import ANY, patch
 
 from django.contrib.auth import get_user_model
 from django.core import mail
@@ -478,7 +479,8 @@ class MembershipStatusUpdateTests(TestData, ManagementCommandTestCase):
         )
         return expired, expiring, staying
 
-    def test_status_expiring_today(self):
+    @patch("kamu.utils.audit.logger_audit.log")
+    def test_status_expiring_today(self, mock_audit_logger):
         expired, expiring, staying = self._setup_status_expiring()
         out, _ = self.call_command("-v 2")
         expired.refresh_from_db()
@@ -488,6 +490,9 @@ class MembershipStatusUpdateTests(TestData, ManagementCommandTestCase):
         self.assertEqual(expiring.status, Membership.Status.EXPIRED)
         self.assertEqual(staying.status, Membership.Status.ACTIVE)
         self.assertIn(f"Updating membership {expiring} status from active to expired", out)
+        mock_audit_logger.assert_called_with(
+            20, "Scheduled membership status update from active to expired", extra=ANY
+        )
 
     def test_status_expiring_days(self):
         expired, expiring, staying = self._setup_status_expiring()

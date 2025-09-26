@@ -11,6 +11,9 @@ from django.core.management.base import BaseCommand
 from django.db.models import Q
 
 from kamu.models.membership import Membership
+from kamu.utils.audit import AuditLog
+
+audit_log = AuditLog()
 
 
 class Command(BaseCommand):
@@ -47,12 +50,25 @@ class Command(BaseCommand):
             )
         )
         for membership in memberships:
-            if membership.get_status() != membership.status:
+            current_status = membership.status
+            calculated_status = membership.get_status()
+            if calculated_status != current_status:
                 if options["verbosity"] > 1:
                     self.stdout.write(
-                        f"Updating membership {membership} status from "
-                        f"{membership.status} to {membership.get_status()}"
+                        f"Updating membership {membership} status from {current_status} to {calculated_status}"
                     )
                 if not options["dry_run"]:
-                    membership.status = membership.get_status()
+                    membership.status = calculated_status
                     membership.save()
+                    if membership.identity:
+                        objects = [membership, membership.identity]
+                    else:
+                        objects = [membership]
+                    audit_log.info(
+                        f"Scheduled membership status update from {current_status} to {calculated_status}",
+                        category="membership",
+                        action="update",
+                        outcome="success",
+                        objects=objects,
+                        log_to_db=False,
+                    )
