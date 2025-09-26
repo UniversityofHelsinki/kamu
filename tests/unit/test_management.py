@@ -127,6 +127,11 @@ class PurgeMembershipTests(ManagementCommandTestCase):
         self.call_command("-v=0")
         self.assertEqual(Membership.objects.all().count(), 2)
 
+    @patch("kamu.utils.audit.logger_audit.log")
+    def test_purge_logging(self, mock_audit_logger):
+        self.call_command("-v=0", "--days=3", "-t=membership")
+        mock_audit_logger.assert_called_with(20, "Will delete Third Role - Test User", extra=ANY)
+
 
 class PurgeIdentifierTests(ManagementCommandTestCase):
     command = "purge_data"
@@ -175,6 +180,11 @@ class PurgeIdentifierTests(ManagementCommandTestCase):
         self.assertEqual(Identifier.objects.all().count(), 10)
         self.call_command("-v=0", "--days=41", "-t=identity")
         self.assertEqual(Identifier.objects.all().count(), 8)  # 0 1 2 3 4 5 6 7
+
+    @patch("kamu.utils.audit.logger_audit.log")
+    def test_purge_logging(self, mock_audit_logger):
+        self.call_command("-v=0", "--days=26", "-t=identifier")
+        mock_audit_logger.assert_called_with(20, "Will delete Test 8 User8-eppn", extra=ANY)
 
 
 class PurgeIdentityTests(ManagementCommandTestCase):
@@ -242,6 +252,11 @@ class PurgeIdentityTests(ManagementCommandTestCase):
         self.assertEqual(Identity.objects.all().count(), 4)
         self.call_command("-v=0", "--days=4", "-t=identity")
         self.assertEqual(Identity.objects.all().count(), 3)
+
+    @patch("kamu.utils.audit.logger_audit.log")
+    def test_purge_logging(self, mock_audit_logger):
+        self.call_command("-v=0", "--days=11", "-t=identity")
+        mock_audit_logger.assert_called_with(20, "Will delete Test 5 User5", extra=ANY)
 
 
 class PurgeUserTests(ManagementCommandTestCase):
@@ -328,6 +343,11 @@ class PurgeUserTests(ManagementCommandTestCase):
         self.assertEqual(user.objects.all().count(), 4)
         self.call_command("-v=0", "--days=6", "-t=user")
         self.assertEqual(user.objects.all().count(), 3)
+
+    @patch("kamu.utils.audit.logger_audit.log")
+    def test_purge_logging(self, mock_audit_logger):
+        self.call_command("-v=0", "--days=6", "-t=user")
+        mock_audit_logger.assert_called_with(20, "Will delete testuser4", extra=ANY)
 
 
 class MembershipExpireNotifications(TestData, ManagementCommandTestCase):

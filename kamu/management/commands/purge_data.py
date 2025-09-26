@@ -4,7 +4,7 @@ Remove expired data (currently just memberships) X days after expiry.
 Usage help: ./manage.py purge_data -h
 """
 
-from typing import Any
+from typing import Any, cast
 
 from django.core.management.base import BaseCommand, CommandError
 
@@ -16,6 +16,9 @@ from kamu.models.identity import (
     IdentityManager,
 )
 from kamu.models.membership import Membership, MembershipManager
+from kamu.utils.audit import AuditLog, CategoryTypes
+
+audit_log = AuditLog()
 
 
 class UsageError(CommandError):
@@ -49,6 +52,24 @@ class Command(BaseCommand):
             help="type(s) of data to purge (default: purge everything)",
         )
 
+    def log_deletion(self, obj: object) -> None:
+        """
+        Log deletion of an object to audit log.
+        """
+        category: CategoryTypes = cast(CategoryTypes, obj.__class__.__name__)
+        objects = [obj]
+        identity = getattr(obj, "identity", None)
+        if identity is not None:
+            objects.append(identity)
+        audit_log.info(
+            f"Will delete {obj}",
+            category=category,
+            action="delete",
+            outcome="success",
+            objects=objects,
+            log_to_db=False,
+        )
+
     def handle(self, **options: Any) -> None:
         if options["list_types"]:
             self.stdout.write(f"Supported types: {' '.join(self.types.keys())}")
@@ -74,4 +95,5 @@ class Command(BaseCommand):
                 if options["verbosity"] > 0:
                     self.stdout.write(f"{action} {t} {obj}")
                 if not options["dry_run"]:
+                    self.log_deletion(obj)
                     obj.delete()
