@@ -224,12 +224,10 @@ class MembershipViewTests(BaseTestCase):
             ]
         )
 
-    def test_edit_membership_past_start_date(self):
+    def test_edit_membership_ignore_past_start_date_change(self):
         self.role.approvers.add(self.group)
-        self.membership.start_date = timezone.now().date() - datetime.timedelta(days=1)
-        self.membership.save()
         url = f"{self.url}change/"
-        response = self.client.post(
+        self.client.post(
             url,
             {
                 "start_date": timezone.now().date() + datetime.timedelta(days=1),
@@ -238,7 +236,8 @@ class MembershipViewTests(BaseTestCase):
             },
             follow=True,
         )
-        self.assertIn("Past membership start date cannot be changed", response.content.decode("utf-8"))
+        self.membership.refresh_from_db()
+        self.assertEqual(self.membership.start_date, timezone.now().date())
 
     def test_edit_membership_update_verification_phone_number(self):
         self.membership.identity = None

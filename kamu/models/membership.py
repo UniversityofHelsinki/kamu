@@ -128,7 +128,14 @@ class Membership(models.Model):
         not exist yet in the validated data. It is validated in the form validation.
         """
         if self.pk:
-            validate_membership(ValidationError, self.role, self.start_date, self.expire_date, edit=True)
+            validate_membership(
+                ValidationError,
+                self.role,
+                self.start_date,
+                self.expire_date,
+                edit=True,
+                old_start_date=Membership.objects.get(pk=self.pk).start_date,
+            )
         else:
             try:
                 validate_membership(ValidationError, self.role, self.start_date, self.expire_date, edit=False)
