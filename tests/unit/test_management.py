@@ -421,6 +421,16 @@ class AccountSynchronizationTests(TestData, ManagementCommandTestCase):
         self.assertEqual("", err)
         self.assertEqual(AccountSynchronization.objects.all().count(), 0)
 
+    @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_post")
+    def test_synchronization_expired(self, mock_connector):
+        mock_connector.return_value = AccountApiResponseMock()
+        self.permission.delete()
+        out, err = self.call_command("-v 2")
+        self.assertIn(f"Syncing account {self.account.uid}", out)
+        self.assertIn(f"Disabling account {self.account.uid}", out)
+        self.assertEqual("", err)
+        self.assertEqual(AccountSynchronization.objects.all().count(), 0)
+
 
 class OrganisationApiResponseMock:
     def __init__(self, status: int = 200):

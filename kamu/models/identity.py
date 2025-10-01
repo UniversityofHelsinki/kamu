@@ -362,7 +362,7 @@ class Identity(models.Model):
         super().save(*args, **kwargs)
         accounts = self.useraccount.filter(status="enabled")
         for account in accounts:
-            account.accountsynchronization_set.create()
+            account.accountsynchronization_set.update_or_create()
 
     def has_attribute(self, name: str, level: int = 0) -> bool:
         """

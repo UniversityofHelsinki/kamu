@@ -9,7 +9,7 @@ from unittest.mock import ANY, call
 
 from django.test import Client, override_settings
 
-from kamu.models.account import Account
+from kamu.models.account import Account, AccountSynchronization
 from tests.setup import BaseTestCase
 
 
@@ -124,6 +124,39 @@ class AccountTests(BaseTestCase):
             ]
         )
 
+    @mock.patch("kamu.utils.audit.logger_audit")
+    def test_view_account(self, mock_logger):
+        account = self.create_account()
+        response = self.client.get(f"/account/{account.pk}/", follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Account details", response.content.decode("utf-8"))
+        self.assertIn("Reset account password", response.content.decode("utf-8"))
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Read account information", extra=ANY),
+            ]
+        )
+
+    @mock.patch("kamu.utils.audit.logger_audit")
+    def test_view_account_permission_expired(self, mock_logger):
+        """
+        If permission has expired, account status is changed to expired and as disabling account
+        fails in this test, account is added to synchronization queue.
+        """
+        account = self.create_account()
+        self.role.permissions.remove(self.permission)
+        AccountSynchronization.objects.all().delete()
+        response = self.client.get(f"/account/{account.pk}/", follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Account details", response.content.decode("utf-8"))
+        self.assertIn("Your permission to this account has expired", response.content.decode("utf-8"))
+        self.assertEqual(AccountSynchronization.objects.count(), 1)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Read account information", extra=ANY),
+            ]
+        )
+
     @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_post")
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_view_account_disable_status(self, mock_logger, mock_connector):
@@ -170,7 +203,7 @@ class AccountTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Your permission to this account has expired", response.content.decode("utf-8"))
         account.refresh_from_db()
-        self.assertEqual(account.status, Account.Status.DISABLED)
+        self.assertEqual(account.status, Account.Status.EXPIRED)
 
     @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_post")
     @mock.patch("kamu.utils.audit.logger_audit")
@@ -192,10 +225,12 @@ class AccountTests(BaseTestCase):
             ]
         )
 
-    def test_view_account_update(self):
+    def test_view_add_account_sync_on_identity_save(self):
         account = self.create_account()
         self.identity.given_name_display = "Updated"
         self.identity.save()
         self.assertEqual(account.accountsynchronization_set.all().count(), 1)
+        updated_at = account.accountsynchronization_set.first().updated_at
         self.identity.save()
-        self.assertEqual(account.accountsynchronization_set.all().count(), 2)
+        self.assertEqual(account.accountsynchronization_set.all().count(), 1)
+        self.assertGreater(account.accountsynchronization_set.first().updated_at, updated_at)

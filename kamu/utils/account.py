@@ -3,14 +3,17 @@ Helper functions for accounts
 """
 
 import unicodedata
+from datetime import date
 
 from django.conf import settings
-from django.core.exceptions import PermissionDenied
 
 from kamu.models.account import Account
 from kamu.models.identity import Identifier, Identity
 from kamu.models.membership import Membership
 from kamu.models.role import Permission
+from kamu.utils.audit import AuditLog
+
+audit_log = AuditLog()
 
 
 def get_light_account_external_identifiers(identity: Identity) -> list[str]:
@@ -56,12 +59,12 @@ def get_affiliation(account_type: Account.Type) -> list[str]:
     return settings.ACCOUNT_AFFILIATIONS.get(account_type, ["affiliate"])
 
 
-def get_account_base_membership(identity: Identity, account_type: Account.Type) -> Membership:
+def get_account_base_membership(identity: Identity, account_type: Account.Type) -> Membership | None:
     """
     Get membership where the account is based on. This is an active membership which gives the required permission
     and which has the longest membership period left.
 
-    Raise PermissionDenied if no membership is found.
+    Return None if no such membership exists.
     """
     memberships = Membership.objects.filter(identity=identity, status=Membership.Status.ACTIVE).order_by(
         "-expire_date"
@@ -70,7 +73,7 @@ def get_account_base_membership(identity: Identity, account_type: Account.Type) 
         for permission in membership.role.get_permissions():
             if permission.identifier == account_type:
                 return membership
-    raise PermissionDenied
+    return None
 
 
 def get_gecos(identity: Identity) -> str:
@@ -100,9 +103,11 @@ def get_account_data(identity: Identity, account_type: Account.Type) -> dict[str
         settings.ACCOUNT_ATTRIBUTES["kamuIdentifier"]: str(identity.kamu_id),
         settings.ACCOUNT_ATTRIBUTES["mail"]: identity.email_address(),
         settings.ACCOUNT_ATTRIBUTES["organizationUnit"]: (
-            membership.role.organisation.code if membership.role.organisation else None
+            membership.role.organisation.code if membership and membership.role.organisation else None
         ),
-        settings.ACCOUNT_ATTRIBUTES["schacExpiryDate"]: membership.expire_date.isoformat(),
+        settings.ACCOUNT_ATTRIBUTES["schacExpiryDate"]: (
+            membership.expire_date.isoformat() if membership else date.today().isoformat()
+        ),
         settings.ACCOUNT_ATTRIBUTES["sn"]: identity.surname_display,
     }
     if account_type == Account.Type.LIGHT:

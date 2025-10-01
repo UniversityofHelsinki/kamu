@@ -145,12 +145,15 @@ class AccountApiConnector:
     def disable_account(self, account: Account) -> None:
         """
         Disables the account.
+
+        Set account status to DISABLED if it was ENABLED. This leaves EXPIRED accounts as they are.
         """
         data = {"uid": account.uid}
         self.api_call(path=getattr(settings, "ACCOUNT_API_DISABLE_PATH", "disable"), http_method="post", data=data)
-        account.deactivated_at = timezone.now()
-        account.status = Account.Status.DISABLED
-        account.save()
+        if account.status == Account.Status.ENABLED:
+            account.deactivated_at = timezone.now()
+            account.status = Account.Status.DISABLED
+            account.save()
 
     def enable_account(self, account: Account) -> None:
         """

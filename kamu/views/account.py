@@ -299,7 +299,12 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
         """
         Log viewing account information.
         """
-        get = super().get(request, *args, **kwargs)
+        self.object = self.get_object()
+        if self.object:
+            if self.object.update_status(request=self.request):
+                self.object.refresh_from_db()
+            if self.object.status == Account.Status.EXPIRED:
+                messages.add_message(self.request, messages.WARNING, _("Your permission to this account has expired."))
         audit_log.info(
             "Read account information",
             category="account",
@@ -308,6 +313,7 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
             request=self.request,
             objects=[self.object, self.object.identity],
         )
+        get = super().get(request, *args, **kwargs)
         return get
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
@@ -419,8 +425,16 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
         """
         Check for account methods.
         """
-        self.object = self.get_object()
         if not self.request.user.is_authenticated:
+            raise PermissionDenied
+        self.object = self.get_object()
+        if self.object:
+            if self.object.update_status(request=self.request):
+                self.object.refresh_from_db()
+            if self.object.status == Account.Status.EXPIRED:
+                messages.add_message(self.request, messages.WARNING, _("Your permission to this account has expired."))
+                return HttpResponseRedirect(self.get_success_url())
+        else:
             raise PermissionDenied
         if "enable_account" in self.request.POST:
             self._enable_account()
