@@ -158,6 +158,17 @@ class ShibbolethBackendTests(TransactionTestCase):
         user = backend.authenticate(request=self.request, create_user=True)
         self.assertIsNone(user.identity.uid)
 
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    def test_local_login_with_identity_without_user(self):
+        identity = Identity.objects.create()
+        Identifier.objects.create(identity=identity, type=Identifier.Type.EPPN, value="tester@example.org")
+        self.assertIsNone(identity.user)
+        self.request.META = {settings.SAML_ATTR_EPPN: "tester@example.org"}
+        backend = ShibbolethLocalBackend()
+        user = backend.authenticate(request=self.request, create_user=True)
+        identity.refresh_from_db()
+        self.assertEqual(identity.user, user)
+
 
 class GoogleBackendTests(TestCase):
     def setUp(self):
@@ -187,16 +198,16 @@ class GoogleBackendTests(TestCase):
         self.assertEqual(user.username, f"0123456789{settings.ACCOUNT_SUFFIX_GOOGLE}")
         self.assertEqual(Identifier.objects.get(value="0123456789").identity.user, user)
 
-    def test_login_google_create_user_existing_identifier(self):
+    def test_login_google_existing_identifier_without_user_creates_user(self):
         request = self.factory.get(reverse("login-google"))
+        setattr(request, "session", {})
         identity = Identity.objects.create()
         Identifier.objects.create(identity=identity, value="0123456789", type=Identifier.Type.GOOGLE)
         request.user = AnonymousUser()
         request.META = {settings.OIDC_CLAIM_SUB: "0123456789"}
         backend = GoogleBackend()
-        with self.assertRaises(AuthenticationError) as e:
-            backend.authenticate(request=request, create_user=True)
-        self.assertEqual(str(e.exception), "Unexpected error.")
+        user = backend.authenticate(request=request)
+        self.assertEqual(user.username, f"0123456789{settings.ACCOUNT_SUFFIX_GOOGLE}")
 
     def test_login_google_create_user_with_logged_in_user(self):
         request = self.factory.get(reverse("login-google"))

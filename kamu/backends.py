@@ -289,6 +289,27 @@ class LocalBaseBackend(ModelBackend):
             raise AuthenticationError(self.error_messages["identity_already_exists"])
         return None
 
+    def _link_identity_to_new_user(self, request: HttpRequest, identity: Identity, unique_identifier: str) -> None:
+        """
+        If identity exists but is not yet linked to user, create new user and link identity to it.
+        """
+        if identity.user:
+            return
+        given_names, surname, email, preferred_username = self._get_meta_user_info(request)
+        username = self._get_username(preferred_username, unique_identifier)
+        user = self._create_user(username=username, email=email, given_names=given_names, surname=surname)
+        identity.user = user
+        identity.save()
+        audit_log.info(
+            f"Linked identity {identity} to user {user}",
+            category="identity",
+            action="update",
+            outcome="success",
+            request=request,
+            objects=[identity, user],
+            log_to_db=True,
+        )
+
     def _get_groups(self, request: HttpRequest) -> list[str]:
         """
         Get groups from request.META.
@@ -387,9 +408,16 @@ class LocalBaseBackend(ModelBackend):
             identifier = Identifier.objects.get(type=identifier_type, value=unique_identifier, deactivated_at=None)
         except Identifier.DoesNotExist:
             raise AuthenticationError(self.error_messages["identifier_not_found"])
-        if not identifier.identity.user:
-            # Identifier exists but is not linked to a user. Should not happen.
+        if not identifier.identity:
+            # Identifier exists but is not linked to an identity. This should not be possible.
             raise AuthenticationError(self.error_messages["unexpected"])
+        if not identifier.identity.user:
+            # Identifier and identity exists but is not linked to a user. Create user.
+            self._link_identity_to_new_user(request, identifier.identity, unique_identifier)
+            identifier.refresh_from_db()
+            if not identifier.identity.user:
+                # Linking identity to new user failed. This should not be possible but is checked to satisfy mypy.
+                raise AuthenticationError(self.error_messages["unexpected"])
         if not isinstance(request.user, UserType) or not request.user.is_authenticated:
             # Identifier exists and is linked to an unauthenticated user.
             self.post_authentication_tasks(request, identifier.identity.user)
@@ -431,11 +459,14 @@ class LocalBaseBackend(ModelBackend):
             self._link_identifier(request, user, identifier_type, unique_identifier)
             self.post_authentication_tasks(request, user)
             return user
+        if not identity.user:
+            # Identifier exists but is not linked to a user. Create user.
+            self._link_identity_to_new_user(request, identity, unique_identifier)
+            identity.refresh_from_db()
         if identity.user:
             # Identifier exists and is linked to a user. Log in.
             self.post_authentication_tasks(request, identity.user)
             return identity.user
-        # Identifier exists but is not linked to a user. Should not happen.
         raise AuthenticationError(self.error_messages["unexpected"])
 
     def _authenticate_link_identifier(
