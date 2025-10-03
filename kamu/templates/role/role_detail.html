@@ -7,20 +7,35 @@
     <dt class="col-sm-4">{% trans "Name" %}</dt>
     <dd class="col-sm-8">{{ object.name }}</dd>
 
-    <dt class="col-sm-4">{% trans "Organisation unit" %}</dt>
-    <dd class="col-sm-8">{{ object.organisation|default:"&nbsp;" }}{% if object.organisation.code %} ({{ object.organisation.code }}){% endif %}</dd>
-
-    <dt class="col-sm-4">{% trans "Owner" %}</dt>
-    <dd class="col-sm-8">{{ object.owner.get_full_name|default:"&nbsp;" }}</dd>
-
-    <dt class="col-sm-4">{% trans "Parent" %}</dt>
-    <dd class="col-sm-8">{{ object.parent|default:"&nbsp;" }}</dd>
+    <dt class="col-sm-4">{% trans "Description" %}</dt>
+    <dd class="col-sm-8">{{ object.description }}</dd>
 
     <dt class="col-sm-4">{% trans "Permissions" %}</dt>
     <dd class="col-sm-8">{% for permission in object.get_permissions %}{{ permission }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
 
     <dt class="col-sm-4">{% trans "Total cost" %}</dt>
     <dd class="col-sm-8">{{ object.get_cost }} €</dd>
+
+    <dt class="col-sm-4">{% trans "Organisation unit" %}</dt>
+    <dd class="col-sm-8">{{ object.organisation|default:"&nbsp;" }}{% if object.organisation.code %} ({{ object.organisation.code }}){% endif %}</dd>
+
+    <dt class="col-sm-4">{% trans "Maximum duration" %}</dt>
+    <dd class="col-sm-8">{{ object.maximum_duration }} {% trans "days" %}</dd>
+
+    <dt class="col-sm-4">{% trans "Parent" %}</dt>
+    <dd class="col-sm-8">{{ object.parent|default:"&nbsp;" }}</dd>
+
+    <dt class="col-sm-4">{% trans "Owner" %}</dt>
+    <dd class="col-sm-8">{{ object.owner.get_full_name|default:"&nbsp;" }}</dd>
+
+    <dt class="col-sm-4">{% trans "Inviter groups" %}</dt>
+    <dd class="col-sm-8">{% for inviter in object.inviters.all %}{{ inviter }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+
+    <dt class="col-sm-4">{% trans "Approver groups" %}</dt>
+    <dd class="col-sm-8">{% for approver in object.approvers.all %}{{ approver }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+
+    <dt class="col-sm-4">{% trans "SMS verification" %}</dt>
+    <dd class="col-sm-8">{{ object.require_sms_verification }}</dd>
 
     <dt class="col-sm-4">{% trans "Notification address" %}</dt>
     <dd class="col-sm-8">{{ object.notification_email_address|default:"&nbsp;" }}</dd>
@@ -29,18 +44,6 @@
       <dt class="col-sm-4">{% trans "Notification language" %}</dt>
       <dd class="col-sm-8">{{ object.get_notification_language_display }}</dd>
     {% endif %}
-
-    <dt class="col-sm-4">{% trans "Inviter groups" %}</dt>
-    <dd class="col-sm-8">{% for inviter in object.inviters.all %}{{ inviter }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
-
-    <dt class="col-sm-4">{% trans "Approver groups" %}</dt>
-    <dd class="col-sm-8">{% for approver in object.approvers.all %}{{ approver }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
-
-    <dt class="col-sm-4">{% trans "Maximum duration" %}</dt>
-    <dd class="col-sm-8">{{ object.maximum_duration }} {% trans "days" %}</dd>
-
-    <dt class="col-sm-4">{% trans "SMS verification" %}</dt>
-    <dd class="col-sm-8">{{ object.require_sms_verification }}</dd>
   </dl>
   {% if is_inviter %}
     <a href="{% url 'role-invite-identity' object.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Invite a new member" %}</a>
