@@ -474,15 +474,40 @@ class IdentifierTests(BaseTestCase):
         self.client.force_login(self.user)
 
     @mock.patch("kamu.utils.audit.logger_audit")
-    def test_view_identifiers(self, mock_logger):
+    def test_view_one_identifier(self, mock_logger):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("identifier@example.org", response.content.decode("utf-8"))
+        # Hide deactivate button if only one identifier
+        self.assertNotIn("identifier_deactivate", response.content.decode("utf-8"))
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Listed identifier information", extra=ANY),
             ]
         )
+
+    @override_settings(ALLOW_TEST_FPIC=True)
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    def test_view_multiple_identifiers(self):
+        Identifier.objects.create(
+            identity=self.identity,
+            type=Identifier.Type.EPPN,
+            value="identifier@example.com",
+        )
+        Identifier.objects.create(
+            identity=self.identity,
+            type=Identifier.Type.FPIC,
+            value="010181-900C",
+        )
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "You are deactivating eduPersonPrincipalName with value identifier@example.com",
+            response.content.decode("utf-8"),
+        )
+        # Hide deactivations for local EPPN and FPIC identifiers
+        self.assertNotIn("with value identifier@example.org", response.content.decode("utf-8"))
+        self.assertNotIn("with value 010181-900C", response.content.decode("utf-8"))
 
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_deactivate_identifier(self, mock_logger):
@@ -506,9 +531,21 @@ class IdentifierTests(BaseTestCase):
         self.assertIsNone(self.identifier.deactivated_at)
         data = {"identifier_deactivate": self.identifier.pk}
         response = self.client.post(self.url, data, follow=True)
-        self.assertIn("Cannot deactivate", response.content.decode("utf-8"))
+        self.assertIn("Permission denied", response.content.decode("utf-8"))
         self.identifier.refresh_from_db()
         self.assertIsNone(self.identifier.deactivated_at)
+
+    def test_deactivate_last_identifier_with_change_permissions(self):
+        self.assertIsNone(self.identifier.deactivated_at)
+        content_type = ContentType.objects.get(app_label="kamu", model="identity")
+        permission = Permission.objects.get(content_type=content_type, codename="change_identifiers")
+        self.user.user_permissions.add(permission)
+        self.client.force_login(self.user)
+        data = {"identifier_deactivate": self.identifier.pk}
+        response = self.client.post(self.url, data, follow=True)
+        self.assertIn("Deactivated identifier", response.content.decode("utf-8"))
+        self.identifier.refresh_from_db()
+        self.assertIsNotNone(self.identifier.deactivated_at)
 
     def test_deactivate_identifier_with_another_user(self):
         user = get_user_model().objects.create_user(username="another")

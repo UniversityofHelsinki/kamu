@@ -742,6 +742,29 @@ class IdentifierView(LoginRequiredMixin, TemplateView):
         )
         return get
 
+    def get_list_of_identifiers_user_cannot_deactivate(self) -> set[int]:
+        """
+        Get a set of identifiers that the user cannot deactivate.
+
+        If the user does not have generic change_identifiers permission,
+        prevent deactivation of last active identifier.
+
+        Also prevent deactivation of FPIC and local EPPN identifiers.
+        """
+        if self.request.user.has_perms(["kamu.change_identifiers"]):
+            return set()
+        active_identifiers = Identifier.objects.filter(identity=self.identity, deactivated_at__isnull=True)
+        if self.identity.user != self.request.user or active_identifiers.count() <= 1:
+            return {identifier.pk for identifier in active_identifiers}
+        return {
+            identifier.pk
+            for identifier in active_identifiers
+            if (
+                identifier.type == Identifier.Type.FPIC
+                or (identifier.type == Identifier.Type.EPPN and identifier.value.endswith(settings.LOCAL_EPPN_SUFFIX))
+            )
+        }
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add lists of users email_addresses and phone_numbers to context.
@@ -752,6 +775,7 @@ class IdentifierView(LoginRequiredMixin, TemplateView):
         context["identifier_deactivated_list"] = Identifier.objects.filter(
             identity=identity, deactivated_at__isnull=False
         )
+        context["cannot_deactivate_list"] = self.get_list_of_identifiers_user_cannot_deactivate()
         context["identity"] = identity
         return context
 
@@ -802,28 +826,23 @@ class IdentifierView(LoginRequiredMixin, TemplateView):
         data = self.request.POST
         if "identifier_deactivate" in data:
             pk = int(data["identifier_deactivate"])
-            if not self.request.user.has_perms(["kamu.change_identifiers"]) and (
-                not Identifier.objects.filter(identity=self.identity, deactivated_at__isnull=True)
-                .exclude(pk=pk)
-                .exists()
-            ):
-                messages.add_message(self.request, messages.WARNING, _("Cannot deactivate last active identifier."))
-            else:
-                try:
-                    identifier = Identifier.objects.get(pk=pk, identity=self.identity, deactivated_at__isnull=True)
-                    identifier.deactivated_at = timezone.now()
-                    identifier.save()
-                    audit_log.info(
-                        "Deactivated identifier",
-                        category="identifier",
-                        action="unlink",
-                        outcome="success",
-                        request=self.request,
-                        objects=[identifier, self.identity],
-                        log_to_db=True,
-                    )
-                except Identifier.DoesNotExist:
-                    pass
+            if pk in self.get_list_of_identifiers_user_cannot_deactivate():
+                raise PermissionDenied
+            try:
+                identifier = Identifier.objects.get(pk=pk, identity=self.identity, deactivated_at__isnull=True)
+                identifier.deactivated_at = timezone.now()
+                identifier.save()
+                audit_log.info(
+                    "Deactivated identifier",
+                    category="identifier",
+                    action="unlink",
+                    outcome="success",
+                    request=self.request,
+                    objects=[identifier, self.identity],
+                    log_to_db=True,
+                )
+            except Identifier.DoesNotExist:
+                pass
         elif "link_identifier" in data and self.request.user == self.identity.user:
             identifier_type = str(data["link_identifier"])
             linking_view = self._get_linking_view(identifier_type)
