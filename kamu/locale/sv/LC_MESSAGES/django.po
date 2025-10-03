@@ -939,11 +939,11 @@ msgstr "Unik identifierare för detta medlemskap."
 
 #: models/membership.py:69
 msgid "Invite email address"
-msgstr "E-postadress för inbjudan"
+msgstr "E-postadress till den inbjudna personen"
 
 #: models/membership.py:73
 msgid "Verify phone number"
-msgstr "Verifiera telefonnummer"
+msgstr "Mobilnummer till den inbjudna personen"
 
 #: models/membership.py:74
 msgid ""

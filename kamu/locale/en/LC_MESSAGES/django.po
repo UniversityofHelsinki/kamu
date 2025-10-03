@@ -911,11 +911,11 @@ msgstr ""
 
 #: models/membership.py:69
 msgid "Invite email address"
-msgstr ""
+msgstr "Email address of the person being invited"
 
 #: models/membership.py:73
 msgid "Verify phone number"
-msgstr ""
+msgstr "Mobile phone number of the person being invited"
 
 #: models/membership.py:74
 msgid ""

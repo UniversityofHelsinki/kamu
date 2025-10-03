@@ -945,11 +945,11 @@ msgstr "Yksilöllinen tunniste tälle jäsenyydelle."
 
 #: models/membership.py:69
 msgid "Invite email address"
-msgstr "Virheellinen sähköpostiosoite"
+msgstr "Kutsuttavan henkilön sähköpostiosoite"
 
 #: models/membership.py:73
 msgid "Verify phone number"
-msgstr "Vahvista puhelinnumero"
+msgstr "Kutsuttavan henkilön matkapuhelinnumero"
 
 #: models/membership.py:74
 msgid ""
