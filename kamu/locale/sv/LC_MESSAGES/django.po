@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-03 12:25+0300\n"
+"POT-Creation-Date: 2025-10-09 14:09+0300\n"
 "Language: SV\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3118,22 +3118,22 @@ msgstr "Resultat"
 msgid "Submit a search to get results."
 msgstr "Gör en sökning för att få resultat."
 
-#: utils/identity.py:42
+#: utils/identity.py:44
 msgid "Cannot combine identity with itself."
 msgstr "Kan inte kombinera en identitet med sig själv."
 
-#: utils/identity.py:49
+#: utils/identity.py:51
 msgid "Source identity cannot have higher assurance level than target."
 msgstr "Källidentiteten kan inte ha en högre kontrollnivå än målidentiteten."
 
-#: utils/identity.py:56
+#: utils/identity.py:58
 msgid ""
 "Cannot combine two identities with uid. Please remove uid from the source "
 "first."
 msgstr ""
 "Kan inte kombinera två identiteter med uid. Ta först bort uid från källan."
 
-#: utils/identity.py:64
+#: utils/identity.py:66
 msgid ""
 "Cannot combine two identities with Finnish personal identity code. Please "
 "remove FPIC from the source first."
@@ -3141,46 +3141,59 @@ msgstr ""
 "Kan inte kombinera två identiteter med finländsk personbeteckning. Ta först "
 "bort personbeteckningen från källan."
 
-#: utils/identity.py:73
+#: utils/identity.py:75
 msgid "Source identity is linked to user and target identity is not."
 msgstr ""
 "Källidentiteten är länkad till användaren, medan målidentiteten inte är det."
 
-#: utils/identity.py:84
+#: utils/identity.py:86
 msgid "Current user's identity cannot be the source identity."
 msgstr "Den aktuella användarens identitet kan inte vara källidentiteten."
 
-#: utils/identity.py:404 utils/identity.py:423 views/auth.py:636
+#: utils/identity.py:406 utils/identity.py:425 views/auth.py:636
 #: views/auth.py:655
 msgid "Tried to send a new code too soon. Please try again in one minute."
 msgstr ""
 "Försökte skicka en ny kod för tidigt. Vänligen försök igen om en minut."
 
-#: utils/identity.py:408 utils/identity.py:429 views/identity.py:282
-#: views/identity.py:325
+#: utils/identity.py:410 utils/identity.py:431 views/identity.py:308
+#: views/identity.py:351
 msgid "Verification code sent."
 msgstr "Verifieringskoden har skickats."
 
-#: utils/identity.py:411
+#: utils/identity.py:413
 msgid "Failed to send verification code."
 msgstr "Det gick inte att skicka verifieringskoden."
 
-#: utils/identity.py:427 views/identity.py:323
+#: utils/identity.py:429 views/identity.py:349
 #, python-format
 msgid "Kamu verification code: %(token)s"
 msgstr "Kamu-verifieringskod: %(token)s"
 
-#: utils/identity.py:432 views/identity.py:328
+#: utils/identity.py:434 views/identity.py:354
 msgid "Could not send an SMS message."
 msgstr "Det gick inte att skicka SMS."
 
-#: utils/identity.py:471
+#: utils/identity.py:473
 msgid "Email address is required."
 msgstr "E-postadress krävs."
 
-#: utils/identity.py:522
+#: utils/identity.py:524
 msgid "Phone number is required."
 msgstr "Telefonnummer krävs."
+
+#: utils/identity.py:549
+#, python-format
+msgid "You can activate a new user account of type \"%(account_type)s\"."
+msgstr "Du kan aktivera ett nytt användarkonto av typen ”%(account_type)s”."
+
+#: utils/identity.py:554
+msgid "Activate account"
+msgstr "Aktivera konto"
+
+#: utils/identity.py:569
+msgid "Continue to external service to activate account"
+msgstr "Fortsätt till extern tjänst för att aktivera konto"
 
 #: utils/membership.py:98
 msgid "Role requires a contract you cannot currently sign."
@@ -3422,76 +3435,76 @@ msgid "Memberships are ending soon in roles you have approval rights."
 msgstr ""
 "Medlemskap upphör snart för roller som du har godkännanderättigheter för."
 
-#: views/identity.py:145
+#: views/identity.py:171
 msgid "Selected as the target identity for identity combining."
 msgstr "Vald som målidentitet för identitetskombination."
 
-#: views/identity.py:151
+#: views/identity.py:177
 msgid "Selected as the source identity for identity combining."
 msgstr "Vald som källidentitet för identitetskombination."
 
-#: views/identity.py:276 views/identity.py:319
+#: views/identity.py:302 views/identity.py:345
 msgid "Tried to send a new code too soon."
 msgstr "Försökte skicka en ny kod för tidigt."
 
-#: views/identity.py:278
+#: views/identity.py:304
 msgid "Kamu: email address verification"
 msgstr "Kamu: verifiering av e-postadress"
 
-#: views/identity.py:279
+#: views/identity.py:305
 #, python-format
 msgid "Your verification code is: %(token)s"
 msgstr "Din verifieringskod är: %(token)s"
 
-#: views/identity.py:653
+#: views/identity.py:679
 msgid "Contract already signed."
 msgstr "Avtalet har redan signerats."
 
-#: views/identity.py:659
+#: views/identity.py:685
 msgid "Contract version has changed. Please try again."
 msgstr "Avtalsversionen har ändrats. Vänligen försök igen."
 
-#: views/identity.py:662
+#: views/identity.py:688
 msgid "Contract signed."
 msgstr "Avtal signerat."
 
-#: views/identity.py:810
+#: views/identity.py:836
 msgid "Cannot deactivate last active identifier."
 msgstr "Kan inte inaktivera senaste aktiva identifierare."
 
-#: views/identity.py:863
+#: views/identity.py:889
 msgid "New identity created."
 msgstr "Ny identitet skapad."
 
-#: views/identity.py:922
+#: views/identity.py:948
 msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr "LDAP-sökningen gav för många resultat, förfina sökparametrarna."
 
-#: views/identity.py:1037
+#: views/identity.py:1063
 msgid "Too many results, please refine your search parameters."
 msgstr "För många resultat, förfina sökparametrarna."
 
-#: views/identity.py:1044
+#: views/identity.py:1070
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 "Partiella namnträffar gav för många resultat. Återger endast exakta träffar."
 
-#: views/identity.py:1068
+#: views/identity.py:1094
 msgid "LDAP search failed, could not search existing accounts."
 msgstr ""
 "LDAP-sökningen misslyckades, det gick inte att söka efter befintliga konton."
 
-#: views/identity.py:1076
+#: views/identity.py:1102
 msgid "Identifier match found, skipping name search."
 msgstr "Identifierarträff hittades, skippar namnsökning."
 
-#: views/identity.py:1188
+#: views/identity.py:1214
 msgid "Incorrect primary keys."
 msgstr "Felaktiga primärnycklar."
 
-#: views/identity.py:1194
+#: views/identity.py:1220
 msgid "Identities combined."
 msgstr "Identiteter kombinerade."
 

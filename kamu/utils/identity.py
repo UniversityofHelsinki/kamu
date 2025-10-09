@@ -8,8 +8,10 @@ from typing import TYPE_CHECKING, Callable
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from django.db import IntegrityError, transaction
 from django.http import HttpRequest
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
@@ -535,3 +537,38 @@ def create_or_verify_phone_number(
                 log_to_db=True,
             )
         return phone_object
+
+
+def add_account_messages(request: HttpRequest, activable_accounts: list[dict[str, str]], identity: Identity) -> None:
+    """
+    Add messages for accounts you can activate.
+    """
+    url_validator = URLValidator(schemes=("http", "https"))
+
+    for account in activable_accounts:
+        message = _('You can activate a new user account of type "%(account_type)s".') % {
+            "account_type": account.get("name", "")
+        }
+        if account.get("action") == "create":
+            if request.user == identity.user:
+                link_text = _("Activate account")
+                link = reverse(
+                    "account-create", kwargs={"identity_pk": identity.pk, "account_type": account.get("type")}
+                )
+                message = (
+                    f'<p class="fw-bold">{message}</p>' + f'<a href="{link}" class="btn btn-success">{link_text}</a>'
+                )
+            messages.add_message(request, messages.WARNING, message, extra_tags="safe")
+        else:
+            action = account.get("action", "")
+            try:
+                url_validator(action)
+            except ValidationError:
+                continue
+            if request.user == identity.user:
+                link_text = _("Continue to external service to activate account")
+                link = action
+                message = (
+                    f'<p class="fw-bold">{message}</p>' + f'<a href="{link}" class="btn btn-success">{link_text}</a>'
+                )
+            messages.add_message(request, messages.WARNING, message, extra_tags="safe")

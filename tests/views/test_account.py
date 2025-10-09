@@ -234,3 +234,23 @@ class AccountTests(BaseTestCase):
         self.identity.save()
         self.assertEqual(account.accountsynchronization_set.all().count(), 1)
         self.assertGreater(account.accountsynchronization_set.first().updated_at, updated_at)
+
+    def test_view_notification_no_accounts(self):
+        self.role.permissions.remove(self.permission)
+        response = self.client.get(f"/identity/{self.identity.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("You can activate a new user account", response.content.decode("utf-8"))
+
+    def test_view_notification_of_available_account(self):
+        response = self.client.get(f"/identity/{self.identity.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("You can activate a new user account", response.content.decode("utf-8"))
+        self.assertIn("Activate account", response.content.decode("utf-8"))
+
+    def test_view_notification_of_available_external_account(self):
+        self.permission_account = self.create_permission("account")
+        self.role.permissions.add(self.permission_account)
+        response = self.client.get(f"/identity/{self.identity.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("You can activate a new user account", response.content.decode("utf-8"))
+        self.assertIn("Continue to external service to activate account", response.content.decode("utf-8"))
