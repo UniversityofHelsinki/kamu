@@ -4,6 +4,7 @@ Unit tests for template tags
 
 from django.test import override_settings
 
+from kamu.templatetags.account_tags import manage_link
 from kamu.templatetags.identity_tags import (
     matching_attributes,
     matching_attributes_ldap,
@@ -65,3 +66,29 @@ class MatchingAttributeLdapTests(TestData):
     def test_matching_attributes(self):
         attributes = matching_attributes_ldap(self.ldap_result, email="test@example.org", fpic="010181-900C")
         self.assertEqual(attributes, "<b>test@example.org</b>, <b>010181-900C</b>")
+
+
+class AccountManageLinkTests(TestData):
+    def setUp(self):
+        super().setUp()
+        self.identity = self.create_identity()
+        self.account = self.create_account()
+
+    @override_settings(ACCOUNT_ACTIONS={})
+    def test_create_unknown_type(self):
+        link = manage_link(self.account)
+        self.assertEqual(link, "")
+
+    @override_settings(ACCOUNT_ACTIONS={"lightaccount": "create"})
+    def test_create_link(self):
+        link = manage_link(self.account)
+        self.assertEqual(link, '<a href="/account/1/" class="btn btn-primary mb-2">Manage account</a>')
+
+    @override_settings(ACCOUNT_ACTIONS={"lightaccount": "https://localhost/manage"})
+    def test_create_external_link(self):
+        link = manage_link(self.account)
+        self.assertEqual(
+            link,
+            '<a href="https://localhost/manage" class="btn btn-primary mb-2" target="_blank" rel="noopener">'
+            "Manage in external service</a>",
+        )

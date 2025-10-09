@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load crispy_forms_tags %}
+{% load account_tags %}
 
 {% block content %}
   <form method='POST'>
@@ -24,9 +25,7 @@
               <th scope="row">{{ account.get_type_display }}</th>
               <td>{{ account.uid }}</td>
               <td>{{ account.get_status_display }}</td>
-              {% if perms.kamu.change_accounts or user == identity.user %}<td>
-                <a href="{% url 'account-detail' pk=account.pk %}" class="btn btn-primary mb-2">{% trans "Manage account" %}</a>
-              </td>{% endif %}
+              {% if perms.kamu.change_accounts or user == identity.user %}<td>{% autoescape off %}{% manage_link account=account %}{% endautoescape %}</td>{% endif %}
             </tr>
           {% endfor %}
           </tbody>
