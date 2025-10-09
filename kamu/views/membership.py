@@ -846,7 +846,7 @@ class MembershipClaimView(LoginRequiredMixin, FormView):
         membership_pk = claim_membership(self.request, self.identity)
         if membership_pk == -1:
             return redirect("front-page")
-        return redirect("membership-detail", pk=membership_pk)
+        return redirect("identity-detail", pk=self.identity.pk)
 
 
 class MembershipMassInviteView(BaseMembershipInviteView):

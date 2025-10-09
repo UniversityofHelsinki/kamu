@@ -83,6 +83,7 @@ class AccountTests(BaseTestCase):
     @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_post")
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_view_account_create(self, mock_logger, mock_connector_post, mock_connector_get):
+        # User is redirected to identity details after creating an account
         mock_connector_post.return_value = AccountApiResponseMock()
         mock_connector_get.return_value = AccountApiResponseMock(content='["1k234567", "2k234567"]')
 
@@ -95,6 +96,7 @@ class AccountTests(BaseTestCase):
         response = self.client.post(f"/identity/{self.identity.pk}/account/lightaccount/", data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Account created", response.content.decode("utf-8"))
+        self.assertIn("Identity information", response.content.decode("utf-8"))
         self.assertTrue(Account.objects.filter(identity=self.identity).exists())
         mock_logger.log.assert_has_calls(
             [

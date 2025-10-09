@@ -26,12 +26,12 @@ class FrontPageViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("register here", response.content.decode("utf-8"))
 
-    def test_front_page_view_logged_in(self):
+    def test_front_page_view_logged_in_basic_user_redirected_to_identity_details(self):
         self.create_user()
         self.client.force_login(self.user)
-        response = self.client.get(self.url, follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("manage your own information", response.content.decode("utf-8"))
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/identity/me/")
 
     def test_front_page_view_logged_in_with_role_permissions(self):
         self.create_user()

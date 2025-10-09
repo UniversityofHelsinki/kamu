@@ -694,6 +694,7 @@ class ContractTests(BaseTestCase):
 
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_contract_sign_contract(self, mock_logger):
+        # User is redirected to identity details after signing contract
         response = self.client.post(
             f"/identity/{self.identity.pk}/contracts/{self.contract_template.pk}/sign/",
             {"sign_contract": self.contract_template.pk},
@@ -701,8 +702,7 @@ class ContractTests(BaseTestCase):
         )
         self.assertTrue(Contract.objects.filter(identity=self.identity, template=self.contract_template).exists())
         self.assertIn("Contract signed", response.content.decode("utf-8"))
-        self.assertIn(self.contract_template.name(), response.content.decode("utf-8"))
-        self.assertIn(f"{self.identity.display_name()} | Contracts", response.content.decode("utf-8"))
+        self.assertIn("Identity information", response.content.decode("utf-8"))
         self.assertEqual(
             LogEntry.objects.filter(
                 change_message=f"Contract {self.contract_template.type}-{self.contract_template.version} signed"

@@ -208,7 +208,7 @@ class AccountCreateView(LoginRequiredMixin, FormView):
             )
             messages.add_message(self.request, messages.INFO, _("Account created."))
             del self.request.session["uid_choices"]
-            self.success_url = reverse("account-detail", kwargs={"pk": account.pk})
+            self.success_url = reverse("identity-detail", kwargs={"pk": self.identity.pk})
             return super().form_valid(form)
         raise PermissionDenied
 

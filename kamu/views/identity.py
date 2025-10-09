@@ -686,7 +686,7 @@ class ContractSignView(LoginRequiredMixin, TemplateView):
                 )
                 return redirect("contract-list", pk=identity.pk)
             messages.add_message(self.request, messages.INFO, _("Contract signed."))
-            return redirect("contract-list", pk=identity.pk)
+            return redirect("identity-detail", pk=identity.pk)
         return redirect("contract-list", pk=identity.pk)
 
 

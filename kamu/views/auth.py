@@ -703,6 +703,8 @@ class CustomLoginView(View):
 class FrontPageView(View):
     """
     Front page view.
+
+    Redirect logged in basic users to their identity page.
     """
 
     template_name = "front.html"
@@ -722,6 +724,8 @@ class FrontPageView(View):
                     _("Memberships are ending soon in roles you have approval rights.") + link,
                     extra_tags="safe",
                 )
+        elif request.user.is_authenticated and not request.user.is_staff:
+            return redirect("identity-me")
         return render(request, self.template_name)
 
 
