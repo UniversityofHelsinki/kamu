@@ -27,6 +27,8 @@
     </div>
     <div class="col-12 col-lg-6">
       <dl>
+        <dt class="col-sm-4">{% trans "Accounts" %}</dt>
+        <dd class="col-sm-8">{% for account in object.useraccount.all %}{{ account.uid }} ({{ account.get_type_display | lower }}, {{ account.get_status_display | lower }}){% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
         {% if user == object.user or perms.kamu.view_contacts %}
           <dt class="col-sm-4">{% trans "Email addresses" %}</dt>
           <dd class="col-sm-8">{% for address in object.email_addresses.all %}{{ address.address }}{% if address.verified %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
