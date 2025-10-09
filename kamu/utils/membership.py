@@ -80,7 +80,11 @@ def add_missing_requirement_messages(
         Add link to the message.
         """
         url = reverse(url_name, kwargs=kwargs)
-        return f' | <a href="{url}">{text}</a>'
+        notification = _(
+            "<p>Membership and privileges (e.g., a user account) activate only after the required action is "
+            "completed.</p>"
+        )
+        return f'{notification}<a href="{url}" class="btn btn-success">{text}</a>'
 
     def _add_contract_message() -> None:
         """
@@ -98,18 +102,17 @@ def add_missing_requirement_messages(
                 _("Role requires a contract you cannot currently sign."),
             )
         else:
-            message = _('Role requires a contract "%(name)s".') % {"name": template.name()}
+            message = _('Role requires a signed contract: "%(name)s".') % {"name": template.name()}
             if requirement.level:
-                message = _('Role requires a contract "%(name)s", version %(version)d or higher.') % {
+                message = _('Role requires a signed contract "%(name)s", version %(version)d or higher.') % {
                     "name": template.name(),
                     "version": requirement.level,
                 }
             if request.user == identity.user:
-                message += _get_link(
-                    "contract-sign",
-                    _("Open contract"),
-                    {"identity_pk": identity.pk, "template_pk": template.pk},
+                link = _get_link(
+                    "contract-sign", _("Review and sign"), {"identity_pk": identity.pk, "template_pk": template.pk}
                 )
+                message = f'<p class="fw-bold">{message}</p>{link}'
             messages.add_message(request, messages.WARNING, message, extra_tags="safe")
 
     def _add_attribute_message() -> None:
@@ -122,13 +125,15 @@ def add_missing_requirement_messages(
         if requirement.value == "email_address":
             message = _("Role requires a verified email address.")
             if request.user == identity.user:
-                message += _get_link("contact-change", _("Add here"), {"pk": identity.pk})
+                link = _get_link("contact-change", _("Add and verify email address"), {"pk": identity.pk})
+                message = f'<p class="fw-bold">{message}</p>{link}'
             messages.add_message(request, messages.WARNING, message, extra_tags="safe")
             return
         if requirement.value == "phone_number":
             message = _("Role requires a verified phone number.")
             if request.user == identity.user:
-                message += _get_link("contact-change", _("Add here"), {"pk": identity.pk})
+                link = _get_link("contact-change", _("Add and verify phone number"), {"pk": identity.pk})
+                message = f'<p class="fw-bold">{message}</p>{link}'
             messages.add_message(request, messages.WARNING, message, extra_tags="safe")
             return
         field = Identity._meta.get_field(requirement.value)
@@ -148,7 +153,8 @@ def add_missing_requirement_messages(
         else:
             message = _('Role requires an attribute "%(name)s".') % {"name": name}
         if request.user == identity.user or request.user.has_perm("kamu.change_restricted_information"):
-            message += _get_link("identity-change", _("Add here"), {"pk": identity.pk})
+            link = _get_link("identity-change", _("Add %(name)s") % {"name": name}, {"pk": identity.pk})
+            message = f'<p class="fw-bold">{message}</p>{link}'
         messages.add_message(request, messages.WARNING, message, extra_tags="safe")
 
     for requirement in missing_requirements:

@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-09 14:09+0300\n"
+"POT-Creation-Date: 2025-10-09 14:36+0300\n"
 "Language: SV\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -138,13 +138,13 @@ msgid "Reset password"
 msgstr "Återställ lösenord"
 
 #: forms/auth.py:36 forms/auth.py:186 forms/identity.py:47
-#: models/identity.py:464 models/identity.py:474 models/token.py:296
+#: models/identity.py:466 models/identity.py:476 models/token.py:296
 #: templates/account/account_create.html:16
 msgid "Email address"
 msgstr "E-postadress"
 
 #: forms/auth.py:38 forms/auth.py:261 forms/identity.py:49
-#: models/identity.py:500 models/identity.py:510 models/token.py:293
+#: models/identity.py:502 models/identity.py:512 models/token.py:293
 msgid "Phone number"
 msgstr "Telefonnummer"
 
@@ -322,7 +322,7 @@ msgstr ""
 "Använd internationellt format, t.ex. +358401234567, endast siffror och +-"
 "tecken."
 
-#: forms/identity.py:54 models/identity.py:241 models/identity.py:553
+#: forms/identity.py:54 models/identity.py:241 models/identity.py:555
 #: templates/identity/identity_combine.html:15
 #: templates/identity/identity_combine.html:112
 #: templates/identity/identity_detail.html:23
@@ -349,7 +349,7 @@ msgstr "Namnsökningen ger partiella träffar från Kamu."
 msgid "Name search"
 msgstr "Namnsökning"
 
-#: forms/identity.py:82 models/identity.py:574
+#: forms/identity.py:82 models/identity.py:576
 #: templates/identity/identity_detail.html:73
 msgid "Identifiers"
 msgstr "Identifierare"
@@ -547,21 +547,21 @@ msgstr "Status"
 msgid "Account type"
 msgstr "Typ av konto"
 
-#: models/account.py:41 models/identity.py:566
+#: models/account.py:41 models/identity.py:568
 msgid "Deactivated at"
 msgstr "Deaktiverat den"
 
 #: models/account.py:42 models/account.py:141 models/contract.py:55
 #: models/contract.py:112 models/identity.py:40 models/identity.py:257
-#: models/identity.py:468 models/identity.py:504 models/identity.py:567
+#: models/identity.py:470 models/identity.py:506 models/identity.py:569
 #: models/membership.py:108 models/organisation.py:31 models/role.py:83
 #: models/role.py:275 models/role.py:371 models/token.py:313
 msgid "Created at"
 msgstr "Skapat den"
 
 #: models/account.py:43 models/account.py:142 models/identity.py:41
-#: models/identity.py:258 models/identity.py:469 models/identity.py:505
-#: models/identity.py:568 models/membership.py:109 models/organisation.py:32
+#: models/identity.py:258 models/identity.py:471 models/identity.py:507
+#: models/identity.py:570 models/membership.py:109 models/organisation.py:32
 #: models/role.py:84 models/role.py:276 models/role.py:372
 msgid "Updated at"
 msgstr "Uppdaterat den"
@@ -829,7 +829,7 @@ msgstr "Föredraget språk"
 msgid "Preferred service language."
 msgstr "Föredraget språk för tjänsten."
 
-#: models/identity.py:276 templates/membership/membership_approval_list.html:11
+#: models/identity.py:278 templates/membership/membership_approval_list.html:11
 #: templates/membership/membership_detail.html:33
 #: templates/membership/membership_detail.html:93
 #: templates/membership/membership_detail.html:122
@@ -841,67 +841,67 @@ msgstr "Föredraget språk för tjänsten."
 msgid "Identity"
 msgstr "Identitet"
 
-#: models/identity.py:277
+#: models/identity.py:279
 msgid "Identities"
 msgstr "Identiteter"
 
-#: models/identity.py:465 models/identity.py:501
+#: models/identity.py:467 models/identity.py:503
 #: templates/identity/contact_address.html:17
 #: templates/identity/contact_address.html:65
 msgid "Priority"
 msgstr "Prioritet"
 
-#: models/identity.py:466 models/identity.py:502 models/identity.py:564
+#: models/identity.py:468 models/identity.py:504 models/identity.py:566
 msgid "Verified at"
 msgstr "Verifierad"
 
-#: models/identity.py:475 templates/identity/contact_address.html:9
+#: models/identity.py:477 templates/identity/contact_address.html:9
 #: templates/identity/identity_detail.html:31
 msgid "Email addresses"
 msgstr "E-postadresser"
 
-#: models/identity.py:511 templates/identity/contact_address.html:57
+#: models/identity.py:513 templates/identity/contact_address.html:57
 #: templates/identity/identity_detail.html:33
 msgid "Phone numbers"
 msgstr "Telefonnummer"
 
-#: models/identity.py:554
+#: models/identity.py:556
 msgid "eIDAS identifier"
 msgstr "eIDAS-identifierare"
 
-#: models/identity.py:555
+#: models/identity.py:557
 msgid "eduPersonPrincipalName"
 msgstr "eduPersonPrincipalNamn"
 
-#: models/identity.py:556
+#: models/identity.py:558
 msgid "Google account"
 msgstr "Google-konto"
 
-#: models/identity.py:557
+#: models/identity.py:559
 msgid "Microsoft account"
 msgstr "Microsoft-konto"
 
-#: models/identity.py:558 templates/identity/identity_combine.html:45
+#: models/identity.py:560 templates/identity/identity_combine.html:45
 msgid "Kamu identifier"
 msgstr "Kamu-identifierare"
 
-#: models/identity.py:560
+#: models/identity.py:562
 msgid "Identifier type"
 msgstr "Typ av identifierare"
 
-#: models/identity.py:561
+#: models/identity.py:563
 msgid "Identifier value"
 msgstr "Identifierarens värde"
 
-#: models/identity.py:562
+#: models/identity.py:564
 msgid "Identifier name"
 msgstr "Identifierarens namn"
 
-#: models/identity.py:573
+#: models/identity.py:575
 msgid "Identifier"
 msgstr "Identifierare"
 
-#: models/identity.py:591
+#: models/identity.py:593
 msgid "Invalid eduPersonPrincipalName format."
 msgstr "Ogiltigt format för eduPersonPrincipalName."
 
@@ -1961,7 +1961,7 @@ msgstr "Avtal som kan signeras"
 msgid "Sign"
 msgstr "Signera"
 
-#: templates/contract/contract_list.html:54 utils/membership.py:110
+#: templates/contract/contract_list.html:54
 msgid "Open contract"
 msgstr "Öppna avtal"
 
@@ -3195,33 +3195,50 @@ msgstr "Aktivera konto"
 msgid "Continue to external service to activate account"
 msgstr "Fortsätt till extern tjänst för att aktivera konto"
 
-#: utils/membership.py:98
+#: utils/membership.py:84
+msgid ""
+"<p>Membership and privileges (e.g., a user account) activate only after the "
+"required action is completed.</p>"
+msgstr ""
+"<p>Medlemskap och privilegier (t.ex. ett användarkonto) aktiveras endast när "
+"den nödvändiga åtgärden är slutförd.</p>"
+
+#: utils/membership.py:102
 msgid "Role requires a contract you cannot currently sign."
 msgstr "Rollen kräver ett avtal som du för närvarande inte kan signera."
 
-#: utils/membership.py:101
+#: utils/membership.py:105
 #, python-format
-msgid "Role requires a contract \"%(name)s\"."
-msgstr "Rollen kräver avtalet ”%(name)s”."
+msgid "Role requires a signed contract: \"%(name)s\"."
+msgstr "Rollen kräver det signerade avtalet: ”%(name)s”."
 
-#: utils/membership.py:103
+#: utils/membership.py:107
 #, python-format
-msgid "Role requires a contract \"%(name)s\", version %(version)d or higher."
-msgstr "Rollen kräver avtalet ”%(name)s”, version %(version)d eller högre."
+msgid ""
+"Role requires a signed contract \"%(name)s\", version %(version)d or higher."
+msgstr "Rollen kräver det signerade avtalet ”%(name)s”, version %(version)d eller högre."
 
-#: utils/membership.py:123
+#: utils/membership.py:113
+msgid "Review and sign"
+msgstr "Granska och signera"
+
+#: utils/membership.py:126
 msgid "Role requires a verified email address."
 msgstr "Rollen kräver en verifierad e-postadress."
 
-#: utils/membership.py:125 utils/membership.py:131 utils/membership.py:151
-msgid "Add here"
-msgstr "Lägg till här"
+#: utils/membership.py:128
+msgid "Add and verify email address"
+msgstr "Lägg till eller verifiera e-post"
 
-#: utils/membership.py:129
+#: utils/membership.py:133
 msgid "Role requires a verified phone number."
 msgstr "Rollen kräver ett verifierat telefonnummer."
 
-#: utils/membership.py:142
+#: utils/membership.py:135
+msgid "Add and verify phone number"
+msgstr "Lägg till eller verifiera telefon"
+
+#: utils/membership.py:147
 #, python-format
 msgid ""
 "Role requires an attribute \"%(name)s\" of at least verification level: "
@@ -3230,38 +3247,43 @@ msgstr ""
 "Rollen kräver attributet ”%(name)s” med minst verifieringsnivå: %(level)d "
 "(%(level_text)s)."
 
-#: utils/membership.py:149
+#: utils/membership.py:154
 #, python-format
 msgid "Role requires an attribute \"%(name)s\"."
 msgstr "Rollen kräver attributet ”%(name)s”."
 
-#: utils/membership.py:160
+#: utils/membership.py:156
+#, python-format
+msgid "Add %(name)s"
+msgstr "Lägg till %(name)s"
+
+#: utils/membership.py:166
 msgid "Role requires higher assurance level: "
 msgstr "Rollen kräver högre kontrollnivå: "
 
-#: utils/membership.py:170
+#: utils/membership.py:176
 #, python-format
 msgid "Role requires a requirement you cannot currently fulfill: %(name)s."
 msgstr ""
 "Rollen kräver ett krav som du för närvarande inte kan uppfylla: %(name)s."
 
-#: utils/membership.py:233
+#: utils/membership.py:239
 msgid "Invitation process has taken too long."
 msgstr "Inbjudningsprocessen har tagit för lång tid."
 
-#: utils/membership.py:239
+#: utils/membership.py:245
 msgid "This invitation has already been used."
 msgstr "Denna inbjudan har redan använts."
 
-#: utils/membership.py:243
+#: utils/membership.py:249
 msgid "This invitation has expired."
 msgstr "Denna inbjudan har gått ut."
 
-#: utils/membership.py:247
+#: utils/membership.py:253
 msgid "Invalid invitation token."
 msgstr "Ogiltig inbjudningstoken."
 
-#: utils/membership.py:250
+#: utils/membership.py:256
 msgid "Membership created."
 msgstr "Medlemskap skapat."
 
@@ -3585,6 +3607,9 @@ msgstr "Inbjudan skickades till följande e-postadresser: {0}"
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Följande identiteter har lagts till: {0}"
+
+#~ msgid "Add here"
+#~ msgstr "Lägg till här"
 
 #~ msgid "Search all possible roles here and see their details."
 #~ msgstr "Sök efter alla möjliga roller här och se deras detaljer."

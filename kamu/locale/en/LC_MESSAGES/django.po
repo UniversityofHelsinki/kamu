@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-09 14:09+0300\n"
+"POT-Creation-Date: 2025-10-09 14:36+0300\n"
 "Language: EN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -130,13 +130,13 @@ msgid "Reset password"
 msgstr ""
 
 #: forms/auth.py:36 forms/auth.py:186 forms/identity.py:47
-#: models/identity.py:464 models/identity.py:474 models/token.py:296
+#: models/identity.py:466 models/identity.py:476 models/token.py:296
 #: templates/account/account_create.html:16
 msgid "Email address"
 msgstr ""
 
 #: forms/auth.py:38 forms/auth.py:261 forms/identity.py:49
-#: models/identity.py:500 models/identity.py:510 models/token.py:293
+#: models/identity.py:502 models/identity.py:512 models/token.py:293
 msgid "Phone number"
 msgstr ""
 
@@ -310,7 +310,7 @@ msgid ""
 "sign."
 msgstr ""
 
-#: forms/identity.py:54 models/identity.py:241 models/identity.py:553
+#: forms/identity.py:54 models/identity.py:241 models/identity.py:555
 #: templates/identity/identity_combine.html:15
 #: templates/identity/identity_combine.html:112
 #: templates/identity/identity_detail.html:23
@@ -335,7 +335,7 @@ msgstr ""
 msgid "Name search"
 msgstr ""
 
-#: forms/identity.py:82 models/identity.py:574
+#: forms/identity.py:82 models/identity.py:576
 #: templates/identity/identity_detail.html:73
 msgid "Identifiers"
 msgstr ""
@@ -520,21 +520,21 @@ msgstr ""
 msgid "Account type"
 msgstr ""
 
-#: models/account.py:41 models/identity.py:566
+#: models/account.py:41 models/identity.py:568
 msgid "Deactivated at"
 msgstr ""
 
 #: models/account.py:42 models/account.py:141 models/contract.py:55
 #: models/contract.py:112 models/identity.py:40 models/identity.py:257
-#: models/identity.py:468 models/identity.py:504 models/identity.py:567
+#: models/identity.py:470 models/identity.py:506 models/identity.py:569
 #: models/membership.py:108 models/organisation.py:31 models/role.py:83
 #: models/role.py:275 models/role.py:371 models/token.py:313
 msgid "Created at"
 msgstr ""
 
 #: models/account.py:43 models/account.py:142 models/identity.py:41
-#: models/identity.py:258 models/identity.py:469 models/identity.py:505
-#: models/identity.py:568 models/membership.py:109 models/organisation.py:32
+#: models/identity.py:258 models/identity.py:471 models/identity.py:507
+#: models/identity.py:570 models/membership.py:109 models/organisation.py:32
 #: models/role.py:84 models/role.py:276 models/role.py:372
 msgid "Updated at"
 msgstr ""
@@ -801,7 +801,7 @@ msgstr ""
 msgid "Preferred service language."
 msgstr ""
 
-#: models/identity.py:276 templates/membership/membership_approval_list.html:11
+#: models/identity.py:278 templates/membership/membership_approval_list.html:11
 #: templates/membership/membership_detail.html:33
 #: templates/membership/membership_detail.html:93
 #: templates/membership/membership_detail.html:122
@@ -813,67 +813,67 @@ msgstr ""
 msgid "Identity"
 msgstr ""
 
-#: models/identity.py:277
+#: models/identity.py:279
 msgid "Identities"
 msgstr ""
 
-#: models/identity.py:465 models/identity.py:501
+#: models/identity.py:467 models/identity.py:503
 #: templates/identity/contact_address.html:17
 #: templates/identity/contact_address.html:65
 msgid "Priority"
 msgstr ""
 
-#: models/identity.py:466 models/identity.py:502 models/identity.py:564
+#: models/identity.py:468 models/identity.py:504 models/identity.py:566
 msgid "Verified at"
 msgstr ""
 
-#: models/identity.py:475 templates/identity/contact_address.html:9
+#: models/identity.py:477 templates/identity/contact_address.html:9
 #: templates/identity/identity_detail.html:31
 msgid "Email addresses"
 msgstr ""
 
-#: models/identity.py:511 templates/identity/contact_address.html:57
+#: models/identity.py:513 templates/identity/contact_address.html:57
 #: templates/identity/identity_detail.html:33
 msgid "Phone numbers"
 msgstr ""
 
-#: models/identity.py:554
+#: models/identity.py:556
 msgid "eIDAS identifier"
 msgstr ""
 
-#: models/identity.py:555
+#: models/identity.py:557
 msgid "eduPersonPrincipalName"
 msgstr ""
 
-#: models/identity.py:556
+#: models/identity.py:558
 msgid "Google account"
 msgstr ""
 
-#: models/identity.py:557
+#: models/identity.py:559
 msgid "Microsoft account"
 msgstr ""
 
-#: models/identity.py:558 templates/identity/identity_combine.html:45
+#: models/identity.py:560 templates/identity/identity_combine.html:45
 msgid "Kamu identifier"
 msgstr ""
 
-#: models/identity.py:560
+#: models/identity.py:562
 msgid "Identifier type"
 msgstr ""
 
-#: models/identity.py:561
+#: models/identity.py:563
 msgid "Identifier value"
 msgstr ""
 
-#: models/identity.py:562
+#: models/identity.py:564
 msgid "Identifier name"
 msgstr ""
 
-#: models/identity.py:573
+#: models/identity.py:575
 msgid "Identifier"
 msgstr ""
 
-#: models/identity.py:591
+#: models/identity.py:593
 msgid "Invalid eduPersonPrincipalName format."
 msgstr ""
 
@@ -1879,7 +1879,7 @@ msgstr ""
 msgid "Sign"
 msgstr ""
 
-#: templates/contract/contract_list.html:54 utils/membership.py:110
+#: templates/contract/contract_list.html:54
 msgid "Open contract"
 msgstr ""
 
@@ -3007,70 +3007,94 @@ msgstr ""
 msgid "Continue to external service to activate account"
 msgstr ""
 
-#: utils/membership.py:98
+#: utils/membership.py:84
+msgid ""
+"<p>Membership and privileges (e.g., a user account) activate only after the "
+"required action is completed.</p>"
+msgstr ""
+
+#: utils/membership.py:102
 msgid "Role requires a contract you cannot currently sign."
 msgstr ""
 
-#: utils/membership.py:101
+#: utils/membership.py:105
 #, python-format
-msgid "Role requires a contract \"%(name)s\"."
+msgid "Role requires a signed contract: \"%(name)s\"."
 msgstr ""
 
-#: utils/membership.py:103
+#: utils/membership.py:107
 #, python-format
-msgid "Role requires a contract \"%(name)s\", version %(version)d or higher."
+msgid ""
+"Role requires a signed contract \"%(name)s\", version %(version)d or higher."
 msgstr ""
 
-#: utils/membership.py:123
+#: utils/membership.py:113
+msgid "Review and sign"
+msgstr ""
+
+#: utils/membership.py:126
 msgid "Role requires a verified email address."
 msgstr ""
 
-#: utils/membership.py:125 utils/membership.py:131 utils/membership.py:151
-msgid "Add here"
-msgstr ""
+#: utils/membership.py:128
+#, fuzzy
+#| msgid "Invite email address"
+msgid "Add and verify email address"
+msgstr "Email address of the person being invited"
 
-#: utils/membership.py:129
+#: utils/membership.py:133
 msgid "Role requires a verified phone number."
 msgstr ""
 
-#: utils/membership.py:142
+#: utils/membership.py:135
+#, fuzzy
+#| msgid "Verify phone number"
+msgid "Add and verify phone number"
+msgstr "Mobile phone number of the person being invited"
+
+#: utils/membership.py:147
 #, python-format
 msgid ""
 "Role requires an attribute \"%(name)s\" of at least verification level: "
 "%(level)d (%(level_text)s)."
 msgstr ""
 
-#: utils/membership.py:149
+#: utils/membership.py:154
 #, python-format
 msgid "Role requires an attribute \"%(name)s\"."
 msgstr ""
 
-#: utils/membership.py:160
+#: utils/membership.py:156
+#, python-format
+msgid "Add %(name)s"
+msgstr ""
+
+#: utils/membership.py:166
 msgid "Role requires higher assurance level: "
 msgstr ""
 
-#: utils/membership.py:170
+#: utils/membership.py:176
 #, python-format
 msgid "Role requires a requirement you cannot currently fulfill: %(name)s."
 msgstr ""
 
-#: utils/membership.py:233
+#: utils/membership.py:239
 msgid "Invitation process has taken too long."
 msgstr ""
 
-#: utils/membership.py:239
+#: utils/membership.py:245
 msgid "This invitation has already been used."
 msgstr ""
 
-#: utils/membership.py:243
+#: utils/membership.py:249
 msgid "This invitation has expired."
 msgstr ""
 
-#: utils/membership.py:247
+#: utils/membership.py:253
 msgid "Invalid invitation token."
 msgstr ""
 
-#: utils/membership.py:250
+#: utils/membership.py:256
 msgid "Membership created."
 msgstr ""
 

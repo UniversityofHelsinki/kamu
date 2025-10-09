@@ -237,11 +237,11 @@ class RequirementsTests(BaseRoleTestCase):
         missing = self.membership.get_missing_requirements()
         add_missing_requirement_messages(request, missing, self.identity)
         self.assertIn(
-            "Add here",
+            "Add and verify email address",
             messages._queued_messages[2].message,
         )
         self.assertIn(
-            'Role requires a contract "NDA", version 2 or higher.',
+            'Role requires a signed contract "NDA", version 2 or higher.',
             messages._queued_messages[3].message,
         )
 
