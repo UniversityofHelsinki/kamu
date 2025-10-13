@@ -31,7 +31,8 @@ build-ldap:
     SKIP_PIP_INSTALL: "yes"
   script:
   - apt update && apt install -y libldap-dev python3-dev libsasl2-dev
-  - pip install python-ldap
+  - grep python-ldap requirements.txt > requirements_ldap.txt
+  - pip install -r requirements_ldap.txt
   - mkdir .wheels
   - find .cache/pip -name 'python_ldap*.whl' -print0 | xargs -0 -i cp -v "{}" .wheels/
   artifacts:
