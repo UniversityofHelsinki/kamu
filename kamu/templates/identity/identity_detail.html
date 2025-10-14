@@ -90,6 +90,7 @@
         <tr>
           <th scope="col">{% trans "Role" %}</th>
           <th scope="col">{% trans "Status" %}</th>
+          <th scope="col" class="d-none d-lg-block">{% trans "Started" %}</th>
           <th scope="col">{% trans "Expires" %}</th>
         </tr>
         </thead>
@@ -98,7 +99,8 @@
           <tr>
             <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{{ membership.role.name }}</a></th>
             <td>{{ membership.get_status_display }}</td>
-            <td>{{ membership.expire_date }}</td>
+            <td class="d-none d-lg-table-cell">{{ membership.start_date|date:"SHORT_DATE_FORMAT" }}</td>
+            <td>{{ membership.expire_date|date:"SHORT_DATE_FORMAT" }}</td>
           </tr>
         {% endfor %}
         </tbody>
@@ -122,8 +124,8 @@
         {% for membership in expired_memberships %}
           <tr>
             <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{{ membership.role.name }}</a></th>
-            <td>{{ membership.start_date }}</td>
-            <td>{{ membership.expire_date }}</td>
+            <td>{{ membership.start_date|date:"SHORT_DATE_FORMAT" }}</td>
+            <td>{{ membership.expire_date|date:"SHORT_DATE_FORMAT" }}</td>
           </tr>
         {% endfor %}
         </tbody>

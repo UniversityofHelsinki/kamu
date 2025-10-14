@@ -12,6 +12,7 @@
         <th scope="col">{% trans "Role" %}</th>
         <th scope="col">{% trans "Status" %}</th>
         <th scope="col">{% trans "Starts" %}</th>
+        <th scope="col" class="d-none d-xl-block">{% trans "Expires" %}</th>
       </tr>
       </thead>
       <tbody>
@@ -20,7 +21,8 @@
           <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{% if membership.identity %}{{ membership.identity }}{% else %}{% trans "Invite" %}: {{ membership.invite_email_address }}{% endif %}</a></th>
           <td>{{ membership.role }}</td>
           <td>{{ membership.get_status_display }}</td>
-          <td>{{ membership.start_date }}</td>
+          <td>{{ membership.start_date|date:"SHORT_DATE_FORMAT" }}</td>
+          <td class="d-none d-xl-table-cell">{{ membership.expire_date|date:"SHORT_DATE_FORMAT" }}</td>
         </tr>
       {% endfor %}
       </tbody>
