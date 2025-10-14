@@ -100,11 +100,11 @@ class ContractTemplate(models.Model):
     in the UI, as signable contract.
     """
 
-    type = models.CharField(max_length=20, verbose_name=_("Contract type"))
+    type = models.CharField(max_length=50, verbose_name=_("Contract type"))
     version = models.SmallIntegerField(verbose_name=_("Contract version"))
-    name_fi = models.CharField(max_length=100, verbose_name=_("Contract name (fi)"))
-    name_en = models.CharField(max_length=100, verbose_name=_("Contract name (en)"))
-    name_sv = models.CharField(max_length=100, verbose_name=_("Contract name (sv)"))
+    name_fi = models.CharField(max_length=200, verbose_name=_("Contract name (fi)"))
+    name_en = models.CharField(max_length=200, verbose_name=_("Contract name (en)"))
+    name_sv = models.CharField(max_length=200, verbose_name=_("Contract name (sv)"))
     text_fi = models.TextField(verbose_name=_("Contract text (fi)"))
     text_en = models.TextField(verbose_name=_("Contract text (en)"))
     text_sv = models.TextField(verbose_name=_("Contract text (sv)"))

@@ -35,13 +35,13 @@ class Role(models.Model):
         ("sv", _("Swedish")),
     )
 
-    identifier = models.CharField(max_length=20, unique=True, verbose_name=_("Role identifier"))
-    name_fi = models.CharField(max_length=50, verbose_name=_("Role name (fi)"))
-    name_en = models.CharField(max_length=50, verbose_name=_("Role name (en)"))
-    name_sv = models.CharField(max_length=50, verbose_name=_("Role name (sv)"))
-    description_fi = models.CharField(max_length=255, verbose_name=_("Role description (fi)"))
-    description_en = models.CharField(max_length=255, verbose_name=_("Role description (en)"))
-    description_sv = models.CharField(max_length=255, verbose_name=_("Role description (sv)"))
+    identifier = models.CharField(max_length=50, unique=True, verbose_name=_("Role identifier"))
+    name_fi = models.CharField(max_length=200, verbose_name=_("Role name (fi)"))
+    name_en = models.CharField(max_length=200, verbose_name=_("Role name (en)"))
+    name_sv = models.CharField(max_length=200, verbose_name=_("Role name (sv)"))
+    description_fi = models.TextField(verbose_name=_("Role description (fi)"))
+    description_en = models.TextField(verbose_name=_("Role description (en)"))
+    description_sv = models.TextField(verbose_name=_("Role description (sv)"))
 
     parent = models.ForeignKey("self", null=True, blank=True, default=None, on_delete=models.SET_NULL)
 
@@ -247,7 +247,7 @@ class Permission(models.Model):
     Stores a permission.
     """
 
-    identifier = models.CharField(max_length=20, unique=True, verbose_name=_("Permission identifier"))
+    identifier = models.CharField(max_length=50, unique=True, verbose_name=_("Permission identifier"))
 
     class Type(models.TextChoices):
         ACCOUNT = ("account", _("User account"))
@@ -258,12 +258,12 @@ class Permission(models.Model):
         max_length=10, choices=Type.choices, default=Type.GENERIC, verbose_name=_("Permission type")
     )
 
-    name_fi = models.CharField(max_length=50, verbose_name=_("Permission name (fi)"))
-    name_en = models.CharField(max_length=50, verbose_name=_("Permission name (en)"))
-    name_sv = models.CharField(max_length=50, verbose_name=_("Permission name (sv)"))
-    description_fi = models.CharField(max_length=255, verbose_name=_("Permission description (fi)"))
-    description_en = models.CharField(max_length=255, verbose_name=_("Permission description (en)"))
-    description_sv = models.CharField(max_length=255, verbose_name=_("Permission description (sv)"))
+    name_fi = models.CharField(max_length=200, verbose_name=_("Permission name (fi)"))
+    name_en = models.CharField(max_length=200, verbose_name=_("Permission name (en)"))
+    name_sv = models.CharField(max_length=200, verbose_name=_("Permission name (sv)"))
+    description_fi = models.TextField(verbose_name=_("Permission description (fi)"))
+    description_en = models.TextField(verbose_name=_("Permission description (en)"))
+    description_sv = models.TextField(verbose_name=_("Permission description (sv)"))
 
     cost = models.IntegerField(verbose_name=_("Permission cost"))
     value = models.CharField(max_length=4000, blank=True, verbose_name=_("Permission value"))
@@ -337,9 +337,9 @@ class Requirement(models.Model):
     Stores a requirement.
     """
 
-    name_fi = models.CharField(max_length=50, verbose_name=_("Requirement name (fi)"))
-    name_en = models.CharField(max_length=50, verbose_name=_("Requirement name (en)"))
-    name_sv = models.CharField(max_length=50, verbose_name=_("Requirement name (sv)"))
+    name_fi = models.CharField(max_length=200, verbose_name=_("Requirement name (fi)"))
+    name_en = models.CharField(max_length=200, verbose_name=_("Requirement name (en)"))
+    name_sv = models.CharField(max_length=200, verbose_name=_("Requirement name (sv)"))
 
     class Type(models.TextChoices):
         CONTRACT = ("contract", _("Requires a signed contract of type (value)"))
