@@ -69,7 +69,29 @@ class IdentityAdmin(AuditModelAdmin):
         "roles__identifier",
     ]
     autocomplete_fields = ["user"]
-    filter_horizontal = ("nationality",)
+    readonly_fields = ["created_at", "updated_at"]
+
+
+class CountryAdmin(AuditModelAdmin):
+    list_display = ["code", "name_en", "name_fi", "name_sv"]
+    search_fields = ["code", "name_en", "name_fi", "name_sv"]
+    readonly_fields = ["created_at", "updated_at"]
+
+
+class NationalityAdmin(AuditModelAdmin):
+    list_display = ["identity", "country", "verification_method"]
+    list_filter = ["country"]
+    search_fields = [
+        "identity__given_names",
+        "identity__surname",
+        "identity__given_name_display",
+        "identity__surname_display",
+        "identity__user__username",
+        "country__code",
+        "country__name_en",
+        "country__name_fi",
+        "country__name_sv",
+    ]
     readonly_fields = ["created_at", "updated_at"]
 
 

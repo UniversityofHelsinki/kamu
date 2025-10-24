@@ -20,7 +20,13 @@ from django.utils import timezone
 from faker import Faker
 
 from kamu.models.contract import Contract, ContractTemplate
-from kamu.models.identity import EmailAddress, Identity, Nationality, PhoneNumber
+from kamu.models.identity import (
+    Country,
+    EmailAddress,
+    Identity,
+    Nationality,
+    PhoneNumber,
+)
 from kamu.models.membership import Membership
 from kamu.models.organisation import Organisation
 from kamu.models.role import Permission, Requirement, Role
@@ -90,8 +96,8 @@ class Command(BaseCommand):
         )
 
     def load_fixtures(self) -> None:
-        if Nationality.objects.count() == 0:
-            call_command("loaddata", "nationality.json", app="kamu", verbosity=(0 if self.silent else 1))
+        if Country.objects.count() == 0:
+            call_command("loaddata", "country.json", app="kamu", verbosity=(0 if self.silent else 1))
 
     def create_contracts(self) -> None:
         """
@@ -253,8 +259,9 @@ class Command(BaseCommand):
         user_owner = get_user_model().objects.get(username="owner")
 
         start_time = datetime.datetime.now()
-        finnish_nationality = Nationality.objects.get(code="FI")
+        finland = Country.objects.get(code="FI")
         contract_template = ContractTemplate.objects.filter(type="nda").order_by("-version").first()
+        number_of_countries = Country.objects.count()
         for n in range(number_of_identities):
             if not self.silent and n > 0 and n % 100 == 0:
                 time_elapsed = datetime.datetime.now() - start_time
@@ -311,18 +318,28 @@ class Command(BaseCommand):
             )
             rand = random.randint(0, 100)
             if 0 < rand < 50:
-                identity.nationality.add(random.randint(1, 250))
+                Nationality.objects.get_or_create(
+                    identity=identity,
+                    country=Country.objects.get(pk=random.randint(1, number_of_countries)),
+                    verification_method=verification_level,
+                )
             elif 50 <= rand < 90:
-                identity.nationality.add(finnish_nationality)
+                Nationality.objects.get_or_create(
+                    identity=identity, country=finland, verification_method=verification_level
+                )
             if 45 < rand < 55:  # Add second nationality
-                identity.nationality.add(random.randint(1, 250))
-            if identity.nationality.all().count() > 0:
-                identity.nationality_verification = verification_level
-                identity.save()
+                Nationality.objects.get_or_create(
+                    identity=identity,
+                    country=Country.objects.get(pk=random.randint(1, number_of_countries)),
+                    verification_method=verification_level,
+                )
             if (
                 date_of_birth
                 and isinstance(date_of_birth, datetime.date)
-                and (random.randint(0, 100) < 10 or finnish_nationality in identity.nationality.all())
+                and (
+                    random.randint(0, 100) < 10
+                    or Nationality.objects.filter(identity=identity, country=finland).exists()
+                )
             ):
                 year_part = date_of_birth.strftime("%d%m%y")
                 if date_of_birth.year < 2000:

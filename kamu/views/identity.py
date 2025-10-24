@@ -210,6 +210,37 @@ class IdentityUpdateView(LoginRequiredMixin, UpdateView):
                 ):
                     setattr(form.instance, f"{field}_verification", Identity.VerificationMethod.SELF_ASSURED)
         valid = super().form_valid(form)
+        remove_nationality = form.cleaned_data.get("remove_nationality")
+        if remove_nationality:
+            for nationality in remove_nationality:
+                audit_log.info(
+                    f"Will remove nationality {nationality.country.code}",
+                    category="identity",
+                    action="update",
+                    outcome="success",
+                    request=self.request,
+                    objects=[self.object],
+                    log_to_db=True,
+                )
+                nationality.delete()
+        add_nationality = form.cleaned_data.get("add_nationality")
+        if add_nationality:
+            verification_method = (
+                form.cleaned_data.get("add_nationality_verification") or Identity.VerificationMethod.SELF_ASSURED
+            )
+            nationality, created = self.object.nationalities.get_or_create(
+                country=add_nationality, defaults={"verification_method": verification_method}
+            )
+            if created:
+                audit_log.info(
+                    f"Added nationality {nationality.country.code}",
+                    category="identity",
+                    action="update",
+                    outcome="success",
+                    request=self.request,
+                    objects=[self.object],
+                    log_to_db=True,
+                )
         if form.changed_data:
             # construct_change_message is used for all models in admin, but limited to single form in django-stubs.
             change_message = construct_change_message(form, [], False)  # type: ignore[arg-type]

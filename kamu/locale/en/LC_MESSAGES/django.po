@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-09 14:36+0300\n"
+"POT-Creation-Date: 2025-10-31 12:37+0200\n"
 "Language: EN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -113,7 +113,7 @@ msgstr ""
 #: templates/account/account_detail.html:10
 #: templates/account/account_detail.html:33
 #: templates/account/account_detail.html:57
-#: templates/account/account_list.html:16
+#: templates/account/account_list.html:17
 msgid "User ID"
 msgstr ""
 
@@ -129,14 +129,14 @@ msgstr ""
 msgid "Reset password"
 msgstr ""
 
-#: forms/auth.py:36 forms/auth.py:186 forms/identity.py:47
-#: models/identity.py:466 models/identity.py:476 models/token.py:296
+#: forms/auth.py:36 forms/auth.py:186 forms/identity.py:53
+#: models/identity.py:494 models/identity.py:504 models/token.py:296
 #: templates/account/account_create.html:16
 msgid "Email address"
 msgstr ""
 
-#: forms/auth.py:38 forms/auth.py:261 forms/identity.py:49
-#: models/identity.py:502 models/identity.py:512 models/token.py:293
+#: forms/auth.py:38 forms/auth.py:261 forms/identity.py:55
+#: models/identity.py:530 models/identity.py:540 models/token.py:293
 msgid "Phone number"
 msgstr ""
 
@@ -164,11 +164,11 @@ msgid ""
 "Tried to send new login tokens too soon. Please try again in one minute."
 msgstr ""
 
-#: forms/auth.py:93 forms/auth.py:229 forms/identity.py:202
+#: forms/auth.py:93 forms/auth.py:229 forms/identity.py:208
 msgid "Email verification code"
 msgstr ""
 
-#: forms/auth.py:94 forms/auth.py:292 forms/identity.py:238
+#: forms/auth.py:94 forms/auth.py:292 forms/identity.py:244
 msgid "SMS verification code"
 msgstr ""
 
@@ -188,8 +188,8 @@ msgstr ""
 
 #: forms/auth.py:120 forms/auth.py:128 forms/auth.py:137 forms/auth.py:145
 #: forms/auth.py:249 forms/auth.py:251 forms/auth.py:312 forms/auth.py:314
-#: forms/identity.py:221 forms/identity.py:223 forms/identity.py:257
-#: forms/identity.py:259
+#: forms/identity.py:227 forms/identity.py:229 forms/identity.py:263
+#: forms/identity.py:265
 msgid "Invalid verification code."
 msgstr ""
 
@@ -220,7 +220,7 @@ msgstr ""
 msgid "All official given names."
 msgstr ""
 
-#: forms/auth.py:185 forms/identity.py:45 models/identity.py:189
+#: forms/auth.py:185 forms/identity.py:51 models/identity.py:189
 #: templates/account/account_create.html:12
 #: templates/identity/identity_combine.html:13
 #: templates/identity/identity_combine.html:75
@@ -275,27 +275,27 @@ msgstr ""
 msgid "Search text"
 msgstr ""
 
-#: forms/generic.py:30 forms/identity.py:64 templates/base.html:48
+#: forms/generic.py:30 forms/identity.py:70 templates/base.html:48
 msgid "Search"
 msgstr ""
 
-#: forms/identity.py:27
+#: forms/identity.py:33
 msgid "Target primary key"
 msgstr ""
 
-#: forms/identity.py:28
+#: forms/identity.py:34
 msgid "Source primary key"
 msgstr ""
 
-#: forms/identity.py:36
+#: forms/identity.py:42
 msgid "Combine"
 msgstr ""
 
-#: forms/identity.py:44
+#: forms/identity.py:50
 msgid "Given name(s)"
 msgstr ""
 
-#: forms/identity.py:46 models/account.py:46 models/role.py:253
+#: forms/identity.py:52 models/account.py:46 models/role.py:253
 #: templates/identity/identity_search.html:18
 #: templates/identity/identity_search.html:45
 #: templates/membership/membership_invite.html:40
@@ -304,65 +304,65 @@ msgstr ""
 msgid "User account"
 msgstr ""
 
-#: forms/identity.py:52
+#: forms/identity.py:58
 msgid ""
 "Use international format, e.g. +358401234567, including only numbers and + "
 "sign."
 msgstr ""
 
-#: forms/identity.py:54 models/identity.py:241 models/identity.py:555
+#: forms/identity.py:60 models/identity.py:236 models/identity.py:583
 #: templates/identity/identity_combine.html:15
 #: templates/identity/identity_combine.html:112
-#: templates/identity/identity_detail.html:23
+#: templates/identity/identity_detail.html:25
 msgid "Finnish personal identity code"
 msgstr ""
 
-#: forms/identity.py:65
+#: forms/identity.py:71
 msgid "Reset"
 msgstr ""
 
-#: forms/identity.py:69
+#: forms/identity.py:75
 msgid ""
 "Name search returns partial matches from Kamu and names starting with the "
 "search parameters in the user directory."
 msgstr ""
 
-#: forms/identity.py:73
+#: forms/identity.py:79
 msgid "Name search returns partial matches from Kamu."
 msgstr ""
 
-#: forms/identity.py:75
+#: forms/identity.py:81
 msgid "Name search"
 msgstr ""
 
-#: forms/identity.py:82 models/identity.py:576
-#: templates/identity/identity_detail.html:73
+#: forms/identity.py:88 models/identity.py:604
+#: templates/identity/identity_detail.html:77
 msgid "Identifiers"
 msgstr ""
 
-#: forms/identity.py:86
+#: forms/identity.py:92
 msgid ""
 "Identifier search matches only exact identifiers. Each identifier is "
 "searched separately and the results are added to the final search results."
 msgstr ""
 
-#: forms/identity.py:138
+#: forms/identity.py:144
 msgid "Email address or phone number"
 msgstr ""
 
-#: forms/identity.py:140
+#: forms/identity.py:146
 msgid ""
 "Phone number in international format, e.g. +358123456789. Values containing "
 "@ are treated as email addresses."
 msgstr ""
 
-#: forms/identity.py:157
+#: forms/identity.py:163
 msgid "Add"
 msgstr ""
 
-#: forms/identity.py:162 forms/identity.py:337
+#: forms/identity.py:168 forms/identity.py:379
 #: templates/account/account_detail.html:82
-#: templates/account/account_list.html:62
+#: templates/account/account_list.html:61
 #: templates/contract/contract_detail.html:26
 #: templates/contract/contract_list.html:64
 #: templates/identity/identifier.html:102
@@ -370,47 +370,63 @@ msgstr ""
 msgid "Return"
 msgstr ""
 
-#: forms/identity.py:177
+#: forms/identity.py:183
 msgid "Email address or phone number is required."
 msgstr ""
 
-#: forms/identity.py:183
+#: forms/identity.py:189
 msgid "Email address already exists."
 msgstr ""
 
-#: forms/identity.py:185
+#: forms/identity.py:191
 msgid "Maximum number of email addresses reached."
 msgstr ""
 
-#: forms/identity.py:191
+#: forms/identity.py:197
 msgid "Phone number already exists."
 msgstr ""
 
-#: forms/identity.py:193
+#: forms/identity.py:199
 msgid "Maximum number of phone numbers reached."
 msgstr ""
 
-#: forms/identity.py:212 forms/identity.py:248
+#: forms/identity.py:218 forms/identity.py:254
 msgid "Save"
 msgstr ""
 
-#: forms/identity.py:213 forms/identity.py:249
+#: forms/identity.py:219 forms/identity.py:255
 msgid "Resend a code"
 msgstr ""
 
-#: forms/identity.py:279 templates/identity/identity_detail.html:67
+#: forms/identity.py:296
+msgid "Add nationality"
+msgstr ""
+
+#: forms/identity.py:299
+msgid "Nationality verification method"
+msgstr ""
+
+#: forms/identity.py:305
+msgid "Remove nationality"
+msgstr ""
+
+#: forms/identity.py:316 templates/identity/identity_detail.html:71
 msgid "Basic information"
 msgstr ""
 
-#: forms/identity.py:307
+#: forms/identity.py:344
 msgid "Restricted information"
 msgstr ""
 
-#: forms/identity.py:332
+#: forms/identity.py:374
 msgid "Save changes"
 msgstr ""
 
-#: forms/identity.py:393
+#: forms/identity.py:444
+msgid "Cannot remove verified nationality."
+msgstr ""
+
+#: forms/identity.py:465
 msgid "Cannot set strong electrical verification manually."
 msgstr ""
 
@@ -437,10 +453,10 @@ msgid "Verification phone number is required for this role."
 msgstr ""
 
 #: forms/membership.py:153 forms/membership.py:241
-#: templates/membership/membership_approval_list.html:20
-#: templates/membership/membership_expiring_list.html:20
+#: templates/membership/membership_approval_list.html:21
+#: templates/membership/membership_expiring_list.html:21
 #: templates/membership/membership_managed_list.html:22
-#: templates/role/role_detail.html:71
+#: templates/role/role_detail.html:72
 msgid "Invite"
 msgstr ""
 
@@ -489,7 +505,7 @@ msgid "Enabled"
 msgstr ""
 
 #: models/account.py:29 models/membership.py:60
-#: templates/identity/identity_detail.html:116
+#: templates/identity/identity_detail.html:122
 msgid "Expired"
 msgstr ""
 
@@ -506,8 +522,8 @@ msgid "Light Account"
 msgstr ""
 
 #: models/account.py:36 templates/account/account_detail.html:14
-#: templates/account/account_list.html:17
-#: templates/identity/identity_detail.html:90
+#: templates/account/account_list.html:18
+#: templates/identity/identity_detail.html:94
 #: templates/membership/membership_approval_list.html:13
 #: templates/membership/membership_detail.html:59
 #: templates/membership/membership_expiring_list.html:13
@@ -520,26 +536,27 @@ msgstr ""
 msgid "Account type"
 msgstr ""
 
-#: models/account.py:41 models/identity.py:568
+#: models/account.py:41 models/identity.py:596
 msgid "Deactivated at"
 msgstr ""
 
 #: models/account.py:42 models/account.py:141 models/contract.py:55
-#: models/contract.py:112 models/identity.py:40 models/identity.py:257
-#: models/identity.py:470 models/identity.py:506 models/identity.py:569
-#: models/membership.py:108 models/organisation.py:31 models/role.py:83
-#: models/role.py:275 models/role.py:371 models/token.py:313
+#: models/contract.py:112 models/identity.py:40 models/identity.py:252
+#: models/identity.py:462 models/identity.py:498 models/identity.py:534
+#: models/identity.py:597 models/membership.py:108 models/organisation.py:31
+#: models/role.py:83 models/role.py:275 models/role.py:371 models/token.py:313
 msgid "Created at"
 msgstr ""
 
 #: models/account.py:43 models/account.py:142 models/identity.py:41
-#: models/identity.py:258 models/identity.py:471 models/identity.py:507
-#: models/identity.py:570 models/membership.py:109 models/organisation.py:32
-#: models/role.py:84 models/role.py:276 models/role.py:372
+#: models/identity.py:253 models/identity.py:463 models/identity.py:499
+#: models/identity.py:535 models/identity.py:598 models/membership.py:109
+#: models/organisation.py:32 models/role.py:84 models/role.py:276
+#: models/role.py:372
 msgid "Updated at"
 msgstr ""
 
-#: models/account.py:47 templates/identity/identity_detail.html:80
+#: models/account.py:47 templates/identity/identity_detail.html:84
 msgid "User accounts"
 msgstr ""
 
@@ -569,7 +586,7 @@ msgstr ""
 
 #: models/contract.py:64 templates/contract/contract_list.html:6
 #: templates/identity/identity_combine.html:20
-#: templates/identity/identity_detail.html:76
+#: templates/identity/identity_detail.html:80
 msgid "Contracts"
 msgstr ""
 
@@ -633,14 +650,12 @@ msgstr ""
 msgid "Country name (sv)"
 msgstr ""
 
-#: models/identity.py:44 models/identity.py:229
-#: templates/identity/identity_combine.html:118
-#: templates/identity/identity_detail.html:21
-msgid "Nationality"
+#: models/identity.py:44
+msgid "Country"
 msgstr ""
 
 #: models/identity.py:45
-msgid "Nationalities"
+msgid "Countries"
 msgstr ""
 
 #: models/identity.py:130 models/role.py:33
@@ -764,7 +779,7 @@ msgstr ""
 msgid "Date of birth"
 msgstr ""
 
-#: models/identity.py:212 models/identity.py:224 models/identity.py:228
+#: models/identity.py:212 models/identity.py:224
 msgid ""
 "Required for the user identification from the official identity documents."
 msgstr ""
@@ -774,34 +789,34 @@ msgid "Date of birth verification method"
 msgstr ""
 
 #: models/identity.py:223 templates/identity/identity_combine.html:100
-#: templates/identity/identity_detail.html:19
+#: templates/identity/identity_detail.html:20
 msgid "Gender"
 msgstr ""
 
-#: models/identity.py:234
-msgid "Nationality verification method"
+#: models/identity.py:229
+msgid "Gender verification method"
 msgstr ""
 
-#: models/identity.py:243
+#: models/identity.py:238
 msgid "Used for the strong electrical identification."
 msgstr ""
 
-#: models/identity.py:248
+#: models/identity.py:243
 msgid "FPIC verification method"
 msgstr ""
 
-#: models/identity.py:254 templates/identity/identity_combine.html:106
+#: models/identity.py:249 templates/identity/identity_combine.html:106
 #: templates/identity/identity_detail.html:14
 #: templates/membership/membership_detail.html:42
 #: templates/membership/membership_invite.html:32
 msgid "Preferred language"
 msgstr ""
 
-#: models/identity.py:255
+#: models/identity.py:250
 msgid "Preferred service language."
 msgstr ""
 
-#: models/identity.py:278 templates/membership/membership_approval_list.html:11
+#: models/identity.py:271 templates/membership/membership_approval_list.html:11
 #: templates/membership/membership_detail.html:33
 #: templates/membership/membership_detail.html:93
 #: templates/membership/membership_detail.html:122
@@ -813,67 +828,80 @@ msgstr ""
 msgid "Identity"
 msgstr ""
 
-#: models/identity.py:279
+#: models/identity.py:272
 msgid "Identities"
 msgstr ""
 
-#: models/identity.py:467 models/identity.py:503
+#: models/identity.py:459
+msgid "Verification method"
+msgstr ""
+
+#: models/identity.py:467 templates/identity/identity_combine.html:118
+#: templates/identity/identity_detail.html:23
+msgid "Nationality"
+msgstr ""
+
+#: models/identity.py:468
+msgid "Nationalities"
+msgstr ""
+
+#: models/identity.py:495 models/identity.py:531
 #: templates/identity/contact_address.html:17
 #: templates/identity/contact_address.html:65
 msgid "Priority"
 msgstr ""
 
-#: models/identity.py:468 models/identity.py:504 models/identity.py:566
+#: models/identity.py:496 models/identity.py:532 models/identity.py:594
 msgid "Verified at"
 msgstr ""
 
-#: models/identity.py:477 templates/identity/contact_address.html:9
-#: templates/identity/identity_detail.html:31
+#: models/identity.py:505 templates/identity/contact_address.html:9
+#: templates/identity/identity_detail.html:35
 msgid "Email addresses"
 msgstr ""
 
-#: models/identity.py:513 templates/identity/contact_address.html:57
-#: templates/identity/identity_detail.html:33
+#: models/identity.py:541 templates/identity/contact_address.html:57
+#: templates/identity/identity_detail.html:37
 msgid "Phone numbers"
 msgstr ""
 
-#: models/identity.py:556
+#: models/identity.py:584
 msgid "eIDAS identifier"
 msgstr ""
 
-#: models/identity.py:557
+#: models/identity.py:585
 msgid "eduPersonPrincipalName"
 msgstr ""
 
-#: models/identity.py:558
+#: models/identity.py:586
 msgid "Google account"
 msgstr ""
 
-#: models/identity.py:559
+#: models/identity.py:587
 msgid "Microsoft account"
 msgstr ""
 
-#: models/identity.py:560 templates/identity/identity_combine.html:45
+#: models/identity.py:588 templates/identity/identity_combine.html:45
 msgid "Kamu identifier"
 msgstr ""
 
-#: models/identity.py:562
+#: models/identity.py:590
 msgid "Identifier type"
 msgstr ""
 
-#: models/identity.py:563
+#: models/identity.py:591
 msgid "Identifier value"
 msgstr ""
 
-#: models/identity.py:564
+#: models/identity.py:592
 msgid "Identifier name"
 msgstr ""
 
-#: models/identity.py:575
+#: models/identity.py:603
 msgid "Identifier"
 msgstr ""
 
-#: models/identity.py:593
+#: models/identity.py:621
 msgid "Invalid eduPersonPrincipalName format."
 msgstr ""
 
@@ -911,11 +939,11 @@ msgstr ""
 
 #: models/membership.py:69
 msgid "Invite email address"
-msgstr "Email address of the person being invited"
+msgstr ""
 
 #: models/membership.py:73
 msgid "Verify phone number"
-msgstr "Mobile phone number of the person being invited"
+msgstr ""
 
 #: models/membership.py:74
 msgid ""
@@ -1083,8 +1111,8 @@ msgstr ""
 msgid "Grace period from membership expiration to purge (days)"
 msgstr ""
 
-#: models/role.py:90 templates/identity/identity_detail.html:89
-#: templates/identity/identity_detail.html:114
+#: models/role.py:90 templates/identity/identity_detail.html:93
+#: templates/identity/identity_detail.html:120
 #: templates/membership/membership_approval_list.html:12
 #: templates/membership/membership_detail.html:16
 #: templates/membership/membership_detail.html:91
@@ -1286,7 +1314,7 @@ msgstr ""
 msgid "Login tokens"
 msgstr ""
 
-#: serializers/identity.py:113
+#: serializers/identity.py:114
 msgid "This identity already has the given email address."
 msgstr ""
 
@@ -1435,8 +1463,8 @@ msgid "Account details"
 msgstr ""
 
 #: templates/account/account_detail.html:12
-#: templates/account/account_list.html:15
-#: templates/account/account_list.html:44 templates/identity/identifier.html:16
+#: templates/account/account_list.html:16
+#: templates/account/account_list.html:43 templates/identity/identifier.html:16
 #: templates/identity/identifier.html:62
 msgid "Type"
 msgstr ""
@@ -1452,8 +1480,8 @@ msgstr ""
 #: templates/account/account_detail.html:28
 #: templates/account/account_detail.html:52 templates/front.html:15
 #: templates/front.html:27 templates/identity/identifier.html:35
-#: templates/identity/identity_detail.html:51
-#: templates/identity/identity_detail.html:61
+#: templates/identity/identity_detail.html:55
+#: templates/identity/identity_detail.html:65
 #: templates/membership/membership_detail.html:86
 #: templates/membership/membership_detail.html:115
 msgid "Close"
@@ -1496,39 +1524,36 @@ msgstr ""
 msgid "Reset account password"
 msgstr ""
 
-#: templates/account/account_list.html:8
+#: templates/account/account_list.html:9
 msgid "Account information"
 msgstr ""
 
-#: templates/account/account_list.html:9
+#: templates/account/account_list.html:10
+#: templates/identity/identity_detail.html:32
 msgid "Accounts"
 msgstr ""
 
-#: templates/account/account_list.html:18
+#: templates/account/account_list.html:19
 msgid "Manage"
 msgstr ""
 
-#: templates/account/account_list.html:28
-msgid "Manage account"
-msgstr ""
-
-#: templates/account/account_list.html:36
+#: templates/account/account_list.html:35
 msgid "You do not have any accounts."
 msgstr ""
 
-#: templates/account/account_list.html:39
+#: templates/account/account_list.html:38
 msgid "Allowed accounts"
 msgstr ""
 
-#: templates/account/account_list.html:45
+#: templates/account/account_list.html:44
 msgid "Action"
 msgstr ""
 
-#: templates/account/account_list.html:52
+#: templates/account/account_list.html:51
 msgid "Create"
 msgstr ""
 
-#: templates/account/account_list.html:53
+#: templates/account/account_list.html:52 templatetags/account_tags.py:34
 msgid "Manage in external service"
 msgstr ""
 
@@ -2125,7 +2150,7 @@ msgstr ""
 msgid "Role and membership management"
 msgstr ""
 
-#: templates/front.html:9 templates/identity/identity_detail.html:45
+#: templates/front.html:9 templates/identity/identity_detail.html:49
 msgid "info"
 msgstr ""
 
@@ -2156,7 +2181,7 @@ msgid ""
 "certain user information and confirming user identity."
 msgstr ""
 
-#: templates/front.html:24 templates/identity/identity_detail.html:58
+#: templates/front.html:24 templates/identity/identity_detail.html:62
 #: templates/membership/membership_invite_identity.html:12
 #, python-format
 msgid ""
@@ -2222,7 +2247,7 @@ msgid "If you have an invite code, register here."
 msgstr ""
 
 #: templates/identity/contact_address.html:8
-#: templates/identity/identity_detail.html:70
+#: templates/identity/identity_detail.html:74
 msgid "Contact information"
 msgstr ""
 
@@ -2379,7 +2404,7 @@ msgid "Suomi.fi and eIDAS"
 msgstr ""
 
 #: templates/identity/identity_combine.html:7
-#: templates/identity/identity_detail.html:132
+#: templates/identity/identity_detail.html:138
 msgid "Combine identities"
 msgstr ""
 
@@ -2484,76 +2509,79 @@ msgstr ""
 msgid "Identity information"
 msgstr ""
 
-#: templates/identity/identity_detail.html:37
+#: templates/identity/identity_detail.html:41
 msgid "External identifiers"
 msgstr ""
 
-#: templates/identity/identity_detail.html:43
+#: templates/identity/identity_detail.html:47
 msgid "verified"
 msgstr ""
 
-#: templates/identity/identity_detail.html:45
+#: templates/identity/identity_detail.html:49
 msgid "View details and update"
 msgstr ""
 
-#: templates/identity/identity_detail.html:50
+#: templates/identity/identity_detail.html:54
 msgid "View and manage your information"
 msgstr ""
 
-#: templates/identity/identity_detail.html:54
+#: templates/identity/identity_detail.html:58
 msgid ""
 "Basic information includes personal details such as names, preferred "
 "language, date of birth, and nationality."
 msgstr ""
 
-#: templates/identity/identity_detail.html:55
+#: templates/identity/identity_detail.html:59
 msgid ""
 "Contact information includes external email addresses and phone numbers."
 msgstr ""
 
-#: templates/identity/identity_detail.html:56
+#: templates/identity/identity_detail.html:60
 msgid ""
 "Identifiers include external login methods such as Google and Microsoft "
 "accounts or accounts from other universities."
 msgstr ""
 
-#: templates/identity/identity_detail.html:57
+#: templates/identity/identity_detail.html:61
 msgid ""
 "The Contracts section allows you to sign agreements required for certain "
 "roles, such as the Acceptable Use Policy and NDA."
 msgstr ""
 
-#: templates/identity/identity_detail.html:81
+#: templates/identity/identity_detail.html:85
 msgid "Manage user accounts"
 msgstr ""
 
-#: templates/identity/identity_detail.html:83
+#: templates/identity/identity_detail.html:87
 msgid "Role memberships"
 msgstr ""
 
-#: templates/identity/identity_detail.html:91
+#: templates/identity/identity_detail.html:95
+#: templates/identity/identity_detail.html:121
 #: templates/membership/membership_expiring_list.html:14
-#: templates/role/role_detail.html:65
-msgid "Expires"
-msgstr ""
-
-#: templates/identity/identity_detail.html:106
-msgid "You do not have any current or upcoming memberships."
-msgstr ""
-
-#: templates/identity/identity_detail.html:109
-msgid "Expired memberships"
-msgstr ""
-
-#: templates/identity/identity_detail.html:115
 msgid "Started"
 msgstr ""
 
-#: templates/identity/identity_detail.html:134
+#: templates/identity/identity_detail.html:96
+#: templates/membership/membership_approval_list.html:15
+#: templates/membership/membership_expiring_list.html:15
+#: templates/role/role_detail.html:66
+msgid "Expires"
+msgstr ""
+
+#: templates/identity/identity_detail.html:112
+msgid "You do not have any current or upcoming memberships."
+msgstr ""
+
+#: templates/identity/identity_detail.html:115
+msgid "Expired memberships"
+msgstr ""
+
+#: templates/identity/identity_detail.html:140
 msgid "Set as target"
 msgstr ""
 
-#: templates/identity/identity_detail.html:135
+#: templates/identity/identity_detail.html:141
 msgid "Set as source"
 msgstr ""
 
@@ -2613,6 +2641,7 @@ msgid "Includes memberships in roles that you have approve or invite rights."
 msgstr ""
 
 #: templates/membership/membership_approval_list.html:14
+#: templates/role/role_detail.html:65
 msgid "Starts"
 msgstr ""
 
@@ -2935,6 +2964,10 @@ msgstr ""
 msgid "Submit a search to get results."
 msgstr ""
 
+#: templatetags/account_tags.py:26
+msgid "Manage account"
+msgstr ""
+
 #: utils/identity.py:44
 msgid "Cannot combine identity with itself."
 msgstr ""
@@ -2968,8 +3001,8 @@ msgstr ""
 msgid "Tried to send a new code too soon. Please try again in one minute."
 msgstr ""
 
-#: utils/identity.py:410 utils/identity.py:431 views/identity.py:308
-#: views/identity.py:351
+#: utils/identity.py:410 utils/identity.py:431 views/identity.py:339
+#: views/identity.py:382
 msgid "Verification code sent."
 msgstr ""
 
@@ -2977,12 +3010,12 @@ msgstr ""
 msgid "Failed to send verification code."
 msgstr ""
 
-#: utils/identity.py:429 views/identity.py:349
+#: utils/identity.py:429 views/identity.py:380
 #, python-format
 msgid "Kamu verification code: %(token)s"
 msgstr ""
 
-#: utils/identity.py:434 views/identity.py:354
+#: utils/identity.py:434 views/identity.py:385
 msgid "Could not send an SMS message."
 msgstr ""
 
@@ -3037,20 +3070,16 @@ msgid "Role requires a verified email address."
 msgstr ""
 
 #: utils/membership.py:128
-#, fuzzy
-#| msgid "Invite email address"
 msgid "Add and verify email address"
-msgstr "Email address of the person being invited"
+msgstr ""
 
 #: utils/membership.py:133
 msgid "Role requires a verified phone number."
 msgstr ""
 
 #: utils/membership.py:135
-#, fuzzy
-#| msgid "Verify phone number"
 msgid "Add and verify phone number"
-msgstr "Mobile phone number of the person being invited"
+msgstr ""
 
 #: utils/membership.py:147
 #, python-format
@@ -3251,15 +3280,15 @@ msgid ""
 "admins."
 msgstr ""
 
-#: views/auth.py:713 views/auth.py:718
+#: views/auth.py:715 views/auth.py:720
 msgid "List here"
 msgstr ""
 
-#: views/auth.py:715
+#: views/auth.py:717
 msgid "You have pending membership approvals."
 msgstr ""
 
-#: views/auth.py:722
+#: views/auth.py:724
 msgid "Memberships are ending soon in roles you have approval rights."
 msgstr ""
 
@@ -3271,66 +3300,62 @@ msgstr ""
 msgid "Selected as the source identity for identity combining."
 msgstr ""
 
-#: views/identity.py:302 views/identity.py:345
+#: views/identity.py:333 views/identity.py:376
 msgid "Tried to send a new code too soon."
 msgstr ""
 
-#: views/identity.py:304
+#: views/identity.py:335
 msgid "Kamu: email address verification"
 msgstr ""
 
-#: views/identity.py:305
+#: views/identity.py:336
 #, python-format
 msgid "Your verification code is: %(token)s"
 msgstr ""
 
-#: views/identity.py:679
+#: views/identity.py:710
 msgid "Contract already signed."
 msgstr ""
 
-#: views/identity.py:685
+#: views/identity.py:716
 msgid "Contract version has changed. Please try again."
 msgstr ""
 
-#: views/identity.py:688
+#: views/identity.py:719
 msgid "Contract signed."
 msgstr ""
 
-#: views/identity.py:836
-msgid "Cannot deactivate last active identifier."
-msgstr ""
-
-#: views/identity.py:889
+#: views/identity.py:939
 msgid "New identity created."
 msgstr ""
 
-#: views/identity.py:948
+#: views/identity.py:998
 msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr ""
 
-#: views/identity.py:1063
+#: views/identity.py:1113
 msgid "Too many results, please refine your search parameters."
 msgstr ""
 
-#: views/identity.py:1070
+#: views/identity.py:1120
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 
-#: views/identity.py:1094
+#: views/identity.py:1144
 msgid "LDAP search failed, could not search existing accounts."
 msgstr ""
 
-#: views/identity.py:1102
+#: views/identity.py:1152
 msgid "Identifier match found, skipping name search."
 msgstr ""
 
-#: views/identity.py:1214
+#: views/identity.py:1264
 msgid "Incorrect primary keys."
 msgstr ""
 
-#: views/identity.py:1220
+#: views/identity.py:1270
 msgid "Identities combined."
 msgstr ""
 

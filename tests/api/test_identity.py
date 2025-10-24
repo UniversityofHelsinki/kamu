@@ -70,9 +70,8 @@ class IdentityAPITests(BaseAPITestCase):
     @patch("kamu.utils.audit.logger_audit")
     def test_create_identity_superuser(self, mock_logger):
         self.create_superuser()
-        self.create_nationality()
         self.client.force_authenticate(user=self.superuser)
-        data = {"given_names": "Created", "surname": "User", "nationality": ["FI"]}
+        data = {"given_names": "Created", "surname": "User"}
         response = self.client.post(f"{self.url}identities/", data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         mock_logger.log.assert_has_calls(
@@ -81,6 +80,20 @@ class IdentityAPITests(BaseAPITestCase):
             ]
         )
         self.assertEqual("Created User", mock_logger.log.call_args_list[0][1]["extra"]["identity"])
+
+    @patch("kamu.utils.audit.logger_audit")
+    def test_add_country_to_superuser(self, mock_logger):
+        self.create_superuser()
+        self.create_country(code="FI")
+        self.client.force_authenticate(user=self.superuser)
+        data = {"identity": self.identity.pk, "country": "FI", "verification_method": 3}
+        response = self.client.post(f"{self.url}nationalities/", data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "API create", extra=ANY),
+            ]
+        )
 
     @patch("kamu.utils.audit.logger_audit")
     @override_settings(ALLOW_TEST_FPIC=True)

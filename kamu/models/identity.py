@@ -27,9 +27,9 @@ from kamu.validators.identity import (
 )
 
 
-class Nationality(models.Model):
+class Country(models.Model):
     """
-    Stores a nationality.
+    Stores a country.
     """
 
     code = models.CharField(max_length=2, unique=True, verbose_name=_("Country code"))
@@ -41,15 +41,15 @@ class Nationality(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
     class Meta:
-        verbose_name = _("Nationality")
-        verbose_name_plural = _("Nationalities")
+        verbose_name = _("Country")
+        verbose_name_plural = _("Countries")
 
     def __str__(self) -> str:
         return self.name()
 
     def name(self, lang: str | None = None) -> str:
         """
-        Returns nationality name in a given language (defaulting current language, or English).
+        Returns country name in a given language (defaulting current language, or English).
         """
         if not lang:
             lang = get_language()
@@ -78,8 +78,8 @@ class Nationality(models.Model):
         Return values for audit log.
         """
         return {
-            "nationality_id": self.pk,
-            "nationality_code": self.code,
+            "country_id": self.pk,
+            "country_code": self.code,
         }
 
 
@@ -223,15 +223,10 @@ class Identity(models.Model):
         verbose_name=_("Gender"),
         help_text=_("Required for the user identification from the official identity documents."),
     )
-    nationality = models.ManyToManyField(
-        Nationality,
-        help_text=_("Required for the user identification from the official identity documents."),
-        verbose_name=_("Nationality"),
-    )
-    nationality_verification = models.SmallIntegerField(
+    gender_verification = models.SmallIntegerField(
         choices=VerificationMethod.choices,
         default=VerificationMethod.UNVERIFIED,
-        verbose_name=_("Nationality verification method"),
+        verbose_name=_("Gender verification method"),
     )
     fpic = models.CharField(
         unique=True,
@@ -329,11 +324,11 @@ class Identity(models.Model):
 
     @staticmethod
     def restricted_fields() -> list[str]:
-        return ["date_of_birth", "gender", "nationality", "fpic"]
+        return ["date_of_birth", "gender", "fpic"]
 
     @staticmethod
     def restricted_verification_fields() -> list[str]:
-        return ["date_of_birth_verification", "nationality_verification", "fpic_verification"]
+        return ["date_of_birth_verification", "gender_verification", "fpic_verification"]
 
     def verifiable_fields(self) -> list[str]:
         """
@@ -449,6 +444,41 @@ class Identity(models.Model):
             if not requirement.test(self):
                 missing |= Requirement.objects.filter(pk=requirement.pk)
         return missing
+
+
+class Nationality(models.Model):
+    """
+    Stores a nationality, related to :class:`kamu.models.identity.Identity` and :class:`kamu.models.identity.Country`.
+    """
+
+    identity = models.ForeignKey(Identity, on_delete=models.CASCADE, related_name="nationalities")
+    country = models.ForeignKey(Country, on_delete=models.CASCADE)
+    verification_method = models.SmallIntegerField(
+        choices=Identity.VerificationMethod.choices,
+        default=Identity.VerificationMethod.UNVERIFIED,
+        verbose_name=_("Verification method"),
+    )
+
+    created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["identity", "country"], name="unique_identity_country")]
+        verbose_name = _("Nationality")
+        verbose_name_plural = _("Nationalities")
+
+    def __str__(self) -> str:
+        return f"{self.country.name()} ({self.get_verification_method_display()})"
+
+    def log_values(self) -> dict[str, str | int]:
+        """
+        Return values for audit log.
+        """
+        return {
+            "nationality_id": self.pk,
+            "identity_id": self.identity.pk,
+            "nationality_code": self.country.code,
+        }
 
 
 class EmailAddress(models.Model):

@@ -11,13 +11,20 @@ from kamu.api.generic import (
     CustomDjangoModelPermissions,
 )
 from kamu.models.contract import Contract, ContractTemplate
-from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
+from kamu.models.identity import (
+    EmailAddress,
+    Identifier,
+    Identity,
+    Nationality,
+    PhoneNumber,
+)
 from kamu.serializers.identity import (
     ContractSerializer,
     ContractTemplateSerializer,
     EmailAddressSerializer,
     IdentifierSerializer,
     IdentitySerializer,
+    NationalitySerializer,
     PhoneNumberSerializer,
 )
 
@@ -58,6 +65,16 @@ class EmailAddressViewSet(AuditLogModelViewSet):
     queryset = EmailAddress.objects.all()
     permission_classes = [CustomDjangoModelPermissions]
     serializer_class = EmailAddressSerializer
+
+
+class NationalityViewSet(AuditLogModelViewSet):
+    """
+    API endpoint for nationalities.
+    """
+
+    queryset = Nationality.objects.all()
+    permission_classes = [CustomDjangoModelPermissions]
+    serializer_class = NationalitySerializer
 
 
 class PhoneNumberViewSet(AuditLogModelViewSet):

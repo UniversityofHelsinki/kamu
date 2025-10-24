@@ -275,7 +275,6 @@ class IdentityEditTests(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.create_identity(user=True)
-        self.nationality = self.create_nationality("fi")
         self.url = f"/identity/{self.identity.pk}/change/"
         self.client = Client()
         self.data = {
@@ -286,11 +285,10 @@ class IdentityEditTests(BaseTestCase):
             "preferred_language": self.identity.preferred_language,
             "date_of_birth": "1999-01-01",
             "gender": self.identity.gender,
-            "nationality": self.nationality.pk,
             "given_names_verification": self.identity.given_names_verification,
             "surname_verification": self.identity.surname_verification,
             "date_of_birth_verification": self.identity.date_of_birth_verification,
-            "nationality_verification": self.identity.nationality_verification,
+            "gender_verification": self.identity.gender_verification,
             "fpic_verification": self.identity.fpic_verification,
         }
 
@@ -361,6 +359,35 @@ class IdentityEditTests(BaseTestCase):
         self.client.force_login(self.superuser)
         response = self.client.post(self.url, self.data)
         self.assertEqual(response.status_code, 302)
+
+    def test_change_nationality(self):
+        self.create_superuser()
+        finland = self.create_country("FI")
+        sweden = self.create_country("SE")
+        nat = self.identity.nationalities.create(country=sweden)
+        self.data["remove_nationality"] = nat.pk
+        self.data["add_nationality"] = finland.pk
+        self.data["add_nationality_verification"] = Identity.VerificationMethod.PHOTO_ID
+        self.client.force_login(self.superuser)
+        self.client.post(self.url, self.data)
+        self.assertEqual(self.identity.nationalities.all().count(), 1)
+        self.assertEqual(
+            self.identity.nationalities.filter(
+                country__code="FI", verification_method=Identity.VerificationMethod.PHOTO_ID
+            ).count(),
+            1,
+        )
+
+    def test_cannot_remove_verified_nationality(self):
+        finland = self.create_country("FI")
+        nat_fin = self.identity.nationalities.create(
+            country=finland, verification_method=Identity.VerificationMethod.STRONG
+        )
+        self.data["remove_nationality"] = [nat_fin.pk]
+        self.client.force_login(self.user)
+        response = self.client.post(self.url, self.data)
+        self.assertEqual(self.identity.nationalities.all().count(), 1)
+        self.assertIn("Cannot remove verified nationality", response.content.decode("utf-8"))
 
 
 class ContactTests(BaseTestCase):

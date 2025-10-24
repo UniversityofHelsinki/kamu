@@ -16,10 +16,12 @@
         {% if user == object.user or perms.kamu.view_restricted_information %}
           <dt class="col-sm-4">{% trans "Date of birth" %}</dt>
           <dd class="col-sm-8">{{ object.date_of_birth|default:"&nbsp;" }}{% if object.date_of_birth_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+          {% if object.gender %}
           <dt class="col-sm-4">{% trans "Gender" %}</dt>
-          <dd class="col-sm-8">{{ object.get_gender_display }}</dd>
+          <dd class="col-sm-8">{{ object.get_gender_display }}{% if object.gender_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+          {% endif %}
           <dt class="col-sm-4">{% trans "Nationality" %}</dt>
-          <dd class="col-sm-8">{% for nationality in object.nationality.all %}{{ nationality.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if object.nationality_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+          <dd class="col-sm-8">{% for nationality in object.nationalities.all %}{{ nationality.country.name }}{% if nationality.verification_method > 1 %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
           <dt class="col-sm-4">{% trans "Finnish personal identity code" %}</dt>
           <dd class="col-sm-8">{{ object.fpic|default:"&nbsp;" }}{% if object.fpic_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
         {% endif %}

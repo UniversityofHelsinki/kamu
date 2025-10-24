@@ -11,6 +11,7 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from kamu.models.contract import Contract, ContractTemplate
 from kamu.models.identity import (
+    Country,
     EmailAddress,
     Identifier,
     Identity,
@@ -218,6 +219,46 @@ class IdentifierLimitedSerializer(serializers.ModelSerializer[Identifier]):
         read_only_fields = fields
 
 
+class NationalitySerializer(serializers.ModelSerializer[Nationality]):
+    """
+    Serializer for :class:`kamu.models.identity.Nationality`.
+    """
+
+    country: Field = serializers.SlugRelatedField(queryset=Country.objects.all(), slug_field="code")
+
+    class Meta:
+        model = Nationality
+        fields = [
+            "id",
+            "identity",
+            "country",
+            "verification_method",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "created_at",
+            "updated_at",
+        ]
+        validators = [UniqueTogetherValidator(queryset=Nationality.objects.all(), fields=["identity", "country"])]
+
+
+class NationalityLimitedSerializer(serializers.ModelSerializer[Nationality]):
+    """
+    Limited read only serializer for :class:`kamu.models.identity.Nationality` to use with IdentitySerializer.
+    """
+
+    country: Field = serializers.SlugRelatedField(queryset=Country.objects.all(), slug_field="code")
+
+    class Meta:
+        model = Nationality
+        fields = [
+            "country",
+            "verification_method",
+        ]
+        read_only_fields = fields
+
+
 class IdentitySerializer(serializers.ModelSerializer[Identity], EagerLoadingMixin):
     """
     Serializer for :class:`kamu.models.identity.Identity`.
@@ -227,9 +268,7 @@ class IdentitySerializer(serializers.ModelSerializer[Identity], EagerLoadingMixi
     email_addresses: Field = EmailAddressLimitedSerializer(many=True, read_only=True)
     identifiers: Field = IdentifierLimitedSerializer(many=True, read_only=True)
     memberships: Field = MembershipLimitedIdentitySerializer(source="membership_set", many=True, read_only=True)
-    nationality: Field = serializers.SlugRelatedField(
-        many=True, queryset=Nationality.objects.all(), allow_null=True, slug_field="code"
-    )
+    nationalities: Field = NationalityLimitedSerializer(many=True, read_only=True)
     phone_numbers: Field = PhoneNumberLimitedSerializer(many=True, read_only=True)
 
     @staticmethod
@@ -243,7 +282,8 @@ class IdentitySerializer(serializers.ModelSerializer[Identity], EagerLoadingMixi
             "contracts__template",
             "email_addresses",
             "identifiers",
-            "nationality",
+            "nationalities",
+            "nationalities__country",
             "phone_numbers",
         ]
         parent = ""
@@ -281,7 +321,7 @@ class IdentitySerializer(serializers.ModelSerializer[Identity], EagerLoadingMixi
             "email_addresses",
             "identifiers",
             "memberships",
-            "nationality",
+            "nationalities",
             "phone_numbers",
             "created_at",
             "updated_at",

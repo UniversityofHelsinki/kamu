@@ -14,7 +14,13 @@ from django.core.validators import validate_email
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from kamu.models.identity import EmailAddress, Identity, Nationality, PhoneNumber
+from kamu.models.identity import (
+    Country,
+    EmailAddress,
+    Identity,
+    Nationality,
+    PhoneNumber,
+)
 from kamu.models.token import Token
 from kamu.validators.identity import validate_fpic, validate_phone_number
 
@@ -266,10 +272,41 @@ class PhoneNumberVerificationForm(forms.ModelForm):
         ]
 
 
+class CheckboxSelectMultipleWithDisable(forms.CheckboxSelectMultiple):
+    """
+    CheckboxSelectMultiple widget that disables choices in disabled_choices.
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self.disabled_choices = kwargs.pop("disabled_choices", [])
+        super().__init__(*args, **kwargs)
+
+    def create_option(self, name: str, value: Any, *args: Any, **kwargs: Any) -> dict[str, Any]:
+        option = super().create_option(name, value, *args, **kwargs)
+        option["attrs"]["disabled"] = value in self.disabled_choices
+        return option
+
+
 class IdentityForm(forms.ModelForm):
     """
     Create or update user identity
     """
+
+    add_nationality = forms.ModelChoiceField(
+        label=_("Add nationality"), queryset=Country.objects.all(), required=False
+    )
+    add_nationality_verification = forms.ChoiceField(
+        label=_("Nationality verification method"),
+        choices=Identity.VerificationMethod.choices,
+        initial=Identity.VerificationMethod.UNVERIFIED,
+        required=False,
+    )
+    remove_nationality = forms.ModelMultipleChoiceField(
+        label=_("Remove nationality"),
+        queryset=Nationality.objects.none(),
+        required=False,
+        widget=CheckboxSelectMultipleWithDisable,
+    )
 
     def _create_layout(self, include_restricted_fields: bool, include_verification_fields: bool) -> Layout:
         """
@@ -314,19 +351,24 @@ class IdentityForm(forms.ModelForm):
                         css_class="row mb-3",
                     ),
                     Div(
-                        Div("nationality", css_class="col-md-8"),
+                        Div("fpic", css_class="col-md-8"),
                         css_class="row mb-3",
                     ),
                     Div(
-                        Div("fpic", css_class="col-md-8"),
+                        Div("add_nationality", css_class="col-md-8"),
+                        css_class="row mb-3",
+                    ),
+                    Div(
+                        Div("remove_nationality", css_class="col-md-8"),
                         css_class="row mb-3",
                     ),
                 ]
             )
             if include_verification_fields:
                 layout[7].append(Div("date_of_birth_verification", css_class="col-md-4"))
-                layout[9].append(Div("nationality_verification", css_class="col-md-4"))
-                layout[10].append(Div("fpic_verification", css_class="col-md-4"))
+                layout[8].append(Div("gender_verification", css_class="col-md-4"))
+                layout[9].append(Div("fpic_verification", css_class="col-md-4"))
+                layout[10].append(Div("add_nationality_verification", css_class="col-md-4"))
             layout.append(
                 FormActions(
                     Submit("submit", _("Save changes")),
@@ -353,24 +395,57 @@ class IdentityForm(forms.ModelForm):
         """
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
-        if hasattr(self.fields["nationality"], "queryset"):
-            self.fields["nationality"].queryset = Nationality.objects.order_by(*Nationality.get_ordering_by_name())
+        if hasattr(self.fields["add_nationality"], "queryset"):
+            self.fields["add_nationality"].queryset = Country.objects.order_by(*Country.get_ordering_by_name())
+        if hasattr(self.fields["remove_nationality"], "queryset"):
+            self.fields["remove_nationality"].queryset = Nationality.objects.filter(identity=self.instance)
         self.helper = FormHelper()
         restricted_fields = True
         verification_fields = True
         self.fields["gender"].required = False
-        self.fields["nationality"].required = False
+        # Remove choice for strong electrical verification as it cannot be set manually.
+        # Ignore type checking as choices is not defined in base Field class.
+        self.fields["add_nationality_verification"].choices = [  # type: ignore[attr-defined]
+            choice
+            for choice in self.fields["add_nationality_verification"].choices  # type: ignore[attr-defined]
+            if choice[0] < Identity.VerificationMethod.STRONG
+        ]
+        for field in self.instance.basic_verification_fields() + self.instance.restricted_verification_fields():
+            if self.initial and self.initial[field] < Identity.VerificationMethod.STRONG:
+                self.fields[field].choices = [  # type: ignore[attr-defined]
+                    choice
+                    for choice in self.fields[field].choices  # type: ignore[attr-defined]
+                    if choice[0] < Identity.VerificationMethod.STRONG
+                ]
         if not self.instance or self.instance.user == self.request.user:
+            # Do not show verification fields when user is modifying their own information.
+            # Disable fields that are already strongly verified.
             verification_fields = False
             for field in self.instance.basic_verification_fields() + self.instance.restricted_verification_fields():
-                if self.initial and self.initial[field] == Identity.VerificationMethod.STRONG:
+                if self.initial and self.initial[field] >= Identity.VerificationMethod.STRONG:
                     self.fields[field.removesuffix("_verification")].disabled = True
                 del self.fields[field]
+            if "remove_nationality" in self.fields:
+                self.fields["remove_nationality"].widget.disabled_choices = Nationality.objects.filter(
+                    identity=self.instance, verification_method__gte=Identity.VerificationMethod.STRONG
+                ).values_list("pk", flat=True)
         elif not self.request.user.has_perms(["kamu.change_restricted_information"]):
+            # Remove restricted fields if user does not have permission to modify them.
             restricted_fields = False
             for field in self.instance.restricted_fields() + self.instance.restricted_verification_fields():
                 del self.fields[field]
         self.helper.layout = self._create_layout(restricted_fields, verification_fields)
+
+    def clean_remove_nationality(self) -> Any:
+        """
+        Prevent removing verified nationalities if current user.
+        """
+        remove_nationalities = self.cleaned_data["remove_nationality"]
+        if self.instance and self.instance.user == self.request.user:
+            for nationality in remove_nationalities:
+                if nationality.verification_method >= Identity.VerificationMethod.STRONG:
+                    raise ValidationError(_("Cannot remove verified nationality."))
+        return remove_nationalities
 
     def clean(self) -> None:
         """
@@ -405,8 +480,7 @@ class IdentityForm(forms.ModelForm):
             "date_of_birth",
             "date_of_birth_verification",
             "gender",
-            "nationality",
-            "nationality_verification",
+            "gender_verification",
             "fpic",
             "fpic_verification",
         ]

@@ -13,13 +13,13 @@ from rest_framework.test import APIRequestFactory, APITestCase
 
 from kamu.models.account import Account
 from kamu.models.contract import ContractTemplate
-from kamu.models.identity import EmailAddress, Identity, Nationality, PhoneNumber
+from kamu.models.identity import Country, EmailAddress, Identity, PhoneNumber
 from kamu.models.membership import Membership
 from kamu.models.organisation import Organisation
 from kamu.models.role import Permission, Requirement, Role
 from tests.data import (
     CONTRACT_TEMPLATES,
-    NATIONALITIES,
+    COUNTRIES,
     ORGANISATIONS,
     PERMISSIONS,
     REQUIREMENTS,
@@ -148,8 +148,8 @@ class TestData(TestCase):
     def create_contract_template(self, name="nda"):
         return ContractTemplate.objects.create(**CONTRACT_TEMPLATES[name])
 
-    def create_nationality(self, nationality="fi"):
-        return Nationality.objects.create(**NATIONALITIES[nationality])
+    def create_country(self, code="FI"):
+        return Country.objects.create(**COUNTRIES[code])
 
     def create_account(self, account_type=Account.Type.LIGHT, uid="1k234567", status=Account.Status.ENABLED):
         return Account.objects.create(identity=self.identity, type=account_type, uid=uid, status=status)

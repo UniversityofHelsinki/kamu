@@ -10,6 +10,7 @@ from kamu.api.identity import (
     EmailAddressViewSet,
     IdentifierViewSet,
     IdentityViewSet,
+    NationalityViewSet,
     PhoneNumberViewSet,
 )
 from kamu.api.membership import MembershipViewSet
@@ -22,6 +23,7 @@ router.register(r"emailaddresses", EmailAddressViewSet)
 router.register(r"identifiers", IdentifierViewSet)
 router.register(r"identities", IdentityViewSet)
 router.register(r"memberships", MembershipViewSet)
+router.register(r"nationalities", NationalityViewSet)
 router.register(r"permissions", PermissionViewSet)
 router.register(r"phonenumbers", PhoneNumberViewSet)
 router.register(r"roles", RoleViewSet)
