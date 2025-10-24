@@ -190,6 +190,17 @@ HELP_LINK_USERS: str = "https://helpdesk.it.helsinki.fi/"
 # Services that are allowed to each light account. List of identifiers.
 LIGHT_ACCOUNT_DEFAULT_SERVICES: list[str] = ["https://attributetest.it.helsinki.fi/sp"]
 
+CANDOUR_API = {
+    "URL": "https://rest-test.candour.fi/v1",
+    "PUBLIC_KEY": "public-key",
+    "SECRET_KEY": "secret-key",
+    "CALLBACK_URL": "http://localhost:8000/identity/me/verify/",
+    "TIMEOUT": 15,
+    "SESSION_TIMEOUT_HOURS": 24,
+    "REQUIRED_NAME_SCORE": 90,
+    "TRIES": 5,
+}
+
 # Account API URL, path is appended to this URL with urllib.parse.urljoin, so it should end with a slash.
 ACCOUNT_API_URL: str = "https://localhost/accountapi/v1/"
 ACCOUNT_API_KEY: str = "change-api-key"
