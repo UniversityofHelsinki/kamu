@@ -2,6 +2,7 @@
 Identity views for the UI.
 """
 
+from datetime import datetime
 from typing import Any
 from urllib.parse import quote_plus
 
@@ -36,6 +37,7 @@ from django.views.generic import (
     UpdateView,
 )
 
+from kamu.connectors.candour import CandourApiConnector
 from kamu.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
 from kamu.connectors.sms import SmsConnector
 from kamu.forms.identity import (
@@ -59,6 +61,7 @@ from kamu.utils.identity import (
     combine_identities_requirements,
     create_or_verify_email_address,
     create_or_verify_phone_number,
+    update_identity_attributes,
 )
 from kamu.utils.membership import add_missing_requirement_messages
 from settings.common import LdapSearchAttributeType
@@ -191,6 +194,227 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
                     secondary_pk=source,
                 )
         return redirect("identity-detail", pk=self.object.pk)
+
+
+class IdentityVerifyView(LoginRequiredMixin, DetailView):
+    """
+    Verify identity.
+    """
+
+    model = Identity
+    template_name = "identity/identity_verify.html"
+    candour_link: str = ""
+
+    def get_candour_verification_method(self, candour_response: dict[str, Any]) -> Identity.VerificationMethod:
+        """
+        Return verification method strength based on Candour ID verification method.
+        """
+        if candour_response.get("verificationMethod") == "rfidApp":
+            return Identity.VerificationMethod.STRONG
+        elif candour_response.get("verificationMethod") in ["idApp", "idWeb"]:
+            return Identity.VerificationMethod.PHOTO_ID
+        return Identity.VerificationMethod.UNVERIFIED
+
+    def update_candour_assurance_level(self, candour_response: dict[str, Any]) -> None:
+        """
+        Updates assurance level based on Candour ID verification method.
+        """
+        if candour_response.get("verificationMethod") == "rfidApp":
+            assurance_level = Identity.AssuranceLevel.HIGH
+        elif candour_response.get("verificationMethod") in ["idApp", "idWeb"]:
+            assurance_level = Identity.AssuranceLevel.MEDIUM
+        else:
+            assurance_level = Identity.AssuranceLevel.NONE
+        if self.object.assurance_level < assurance_level:
+            self.object.assurance_level = assurance_level
+            self.object.save()
+            audit_log.info(
+                f"Updated identity assurance level from Candour ID verification to {assurance_level}",
+                category="identity",
+                action="update",
+                outcome="success",
+                request=self.request,
+                objects=[self.object],
+                log_to_db=True,
+            )
+
+    def update_identifier(self, candour_response: dict[str, Any]) -> bool:
+        """
+        Updates or creates identifier based on Candour ID document.
+        """
+        try:
+            id_document_type = candour_response["idDocumentType"][:2].replace("<", "")
+            nationality = candour_response["nationality"]
+            id_number = candour_response["idNumber"]
+        except KeyError:
+            audit_log.warning(
+                "Candour ID verification response missing identifier information",
+                category="identifier",
+                action="create",
+                outcome="failure",
+                request=self.request,
+                objects=[self.object],
+                log_to_db=True,
+            )
+            return False
+        identifier_value = f"{id_document_type}:{nationality}:{id_number}"
+        try:
+            valid_until = (
+                datetime.strptime(candour_response.get("idExpiration", ""), "%Y-%m-%d").date()
+                if candour_response.get("idExpiration")
+                else None
+            )
+        except ValueError:
+            valid_until = None
+        identifier, created = self.object.identifiers.get_or_create(
+            type=Identifier.Type.ID,
+            value=identifier_value,
+            valid_until=valid_until,
+            defaults={"verified": timezone.now()},
+        )
+        if created:
+            audit_log.info(
+                f"Added identifier from Candour ID verification: {identifier_value}",
+                category="identifier",
+                action="create",
+                outcome="success",
+                request=self.request,
+                objects=[self.object, identifier],
+                log_to_db=True,
+            )
+        return True
+
+    def update_identity_attributes(self, candour_response: dict[str, Any]) -> None:
+        """
+        Update identity attributes from Candour ID verification response.
+        """
+        fields = {
+            "given_names": candour_response.get("firstName", ""),
+            "surname": candour_response.get("lastName", ""),
+            "date_of_birth": candour_response.get("dateOfBirth", ""),
+            "nationality": candour_response.get("nationality", ""),
+            "gender": candour_response.get("sex", ""),
+        }
+        verification_method = self.get_candour_verification_method(candour_response)
+        if self.update_identifier(candour_response=candour_response):
+            update_identity_attributes(self.request, self.object, fields, verification_method)
+            self.update_candour_assurance_level(candour_response=candour_response)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Add account information to context data
+        """
+        context = super().get_context_data(**kwargs)
+        context["candour_link"] = self.candour_link
+        context["assurance_level"] = {level.name: level.value for level in Identity.AssuranceLevel}
+        return context
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Check if user has active Candour ID verification and check it's status.
+        """
+        user = self.request.user
+        if not user.is_authenticated:
+            raise PermissionDenied
+        self.object = self.get_object()
+        if not self.object.user or self.object.user != user:
+            raise PermissionDenied
+        if self.object.candour_verification_session_id:
+            candour_connector = CandourApiConnector()
+            response = candour_connector.get_candour_result(
+                verification_session_id=self.object.candour_verification_session_id
+            )
+            status = response.get("status")
+            if status in ["pending", "opened", "started"]:
+                self.candour_link = response.get("invitationLink", "")
+            elif status == "finishedExpired":
+                audit_log.info(
+                    f"Candour ID session expired for {self.object}, session id "
+                    f"{self.object.candour_verification_session_id}",
+                    category="authentication",
+                    action="update",
+                    outcome="failure",
+                    request=request,
+                    objects=[self.object],
+                    log_to_db=True,
+                )
+                self.object.candour_verification_session_id = ""
+                self.object.save()
+            else:
+                if response.get("identityVerified"):
+                    self.update_identity_attributes(response)
+                    messages.add_message(
+                        self.request,
+                        messages.INFO,
+                        _("Your identity has been verified with Candour ID verification."),
+                    )
+                    self.object.candour_verification_session_id = ""
+                    self.object.save()
+                    return redirect("identity-detail", pk=self.object.pk)
+                else:
+                    audit_log.info(
+                        f"Candour ID verification failed for {self.object}",
+                        category="authentication",
+                        action="update",
+                        outcome="failure",
+                        request=request,
+                        objects=[self.object],
+                        log_to_db=True,
+                    )
+                    messages.add_message(
+                        self.request,
+                        messages.ERROR,
+                        _("Candour ID verification failed, please try again."),
+                    )
+                    self.object.candour_verification_session_id = ""
+                    self.object.save()
+        return super().get(request, *args, **kwargs)
+
+    @method_decorator(csrf_protect)
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Check redirection to either Suomi.fi or Candour ID verification.
+        """
+        self.object = self.get_object()
+        data = self.request.POST
+        if "verify_identity" in data and self.request.user == self.object.user:
+            verify_type = str(data["verify_identity"])
+            if verify_type == "suomifi":
+                self.request.session["link_identifier"] = True
+                self.request.session["link_identifier_time"] = timezone.now().isoformat()
+                linking_url = (
+                    reverse("login-suomifi") + "?next=" + reverse("identity-detail", kwargs={"pk": self.object.pk})
+                )
+                return HttpResponseRedirect(linking_url)
+            if verify_type == "candour" or verify_type == "candour_low":
+                if verify_type == "candour_low":
+                    verification_methods = ["idWeb", "idApp"]
+                else:
+                    verification_methods = ["rfidApp"]
+                candour_connector = CandourApiConnector()
+                response = candour_connector.create_candour_session(
+                    identity=self.object, valid_hours=1, verification_methods=verification_methods
+                )
+                redirect_url = response.get("redirectUrl")
+                verification_session_id = response.get("verificationSessionId")
+                if not redirect_url or not verification_session_id:
+                    messages.add_message(
+                        self.request, messages.ERROR, _("Could not start Candour ID process, please try again later.")
+                    )
+                    return redirect("identity-verify", pk=self.object.pk)
+                audit_log.info(
+                    f"Created Candour ID session: {verification_session_id}",
+                    category="authentication",
+                    action="create",
+                    outcome="success",
+                    request=request,
+                    objects=[self.object],
+                    log_to_db=True,
+                )
+                self.object.candour_verification_session_id = verification_session_id
+                self.object.save()
+                return redirect(redirect_url)
+        return redirect("identity-verify", pk=self.object.pk)
 
 
 class IdentityUpdateView(LoginRequiredMixin, UpdateView):
@@ -938,6 +1162,43 @@ class IdentityMeView(LoginRequiredMixin, View):
                 EmailAddress.objects.create(address=user.email, identity=identity)
             messages.add_message(request, messages.WARNING, _("New identity created."))
         return redirect("identity-detail", pk=identity.pk)
+
+
+class IdentityMeVerifyView(LoginRequiredMixin, View):
+    """
+    Redirect to current user's verify view.
+    """
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        """
+        Redirects user to their own identity verify page.
+        Used as a redirect target after external identity verify.
+        """
+        user = self.request.user if self.request.user.is_authenticated else None
+        if not user:
+            raise PermissionDenied
+        try:
+            identity = Identity.objects.get(user=user)
+        except Identity.DoesNotExist:
+            raise PermissionDenied
+        session_id = request.GET.get("sessionId")
+        status = request.GET.get("status")
+        if session_id and session_id != identity.candour_verification_session_id:
+            messages.add_message(request, messages.ERROR, _("Invalid verification session."))
+            audit_log.warning(
+                f"Invalid Candour session ID {identity}, user's session ID: "
+                f"{identity.candour_verification_session_id}, returned session ID: {session_id}",
+                category="identity",
+                action="update",
+                outcome="failure",
+                request=request,
+                objects=[identity],
+                log_to_db=True,
+            )
+            raise PermissionDenied
+        if status in ["cancelled", "cancelledUnsupportedDevice", "cancelledUnsupportedId"]:
+            messages.add_message(request, messages.WARNING, _("Identity verification was cancelled."))
+        return redirect("identity-verify", pk=identity.pk)
 
 
 class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+  <h1 class="mb-4">{{ object.display_name }} | {% trans "Identity verification" %}</h1>
+  {% if object.assurance_level > assurance_level.LOW %}
+    <div class="alert alert-success" role="alert">
+      {% trans "Your identity has already been verified." %}
+    </div>
+  {% endif %}
+  <p>{% trans "Current verification level:" %} {{ object.get_assurance_level_display }}</p>
+  <div class="alert alert-info" role="alert">
+    <p>{% trans "Following information will be added or updated to your identity during identify verification, if available." %}</p>
+    <ul>
+      <li>{% trans "Official names" %}</li>
+      <li>{% trans "Date of birth" %}</li>
+      <li>{% trans "Nationality" %}</li>
+      <li>{% trans "Gender" %}</li>
+      <li>{% trans "Finnish personal identity code" %}</li>
+      <li>{% trans "Identity document type and expiration date" %}</li>
+    </ul>
+  </div>
+  <form method='POST'>
+    {% csrf_token %}
+    {% if object.fpic %}
+      <h2>{% trans "Suomi.fi e-identification" %}</h2>
+      <p>{% trans "Verify your identity using Suomi.fi identification" %}</p>
+      <button type="submit" name="link_identifier" value="suomifi" class="btn btn-primary mb-4">{% trans "Verify with Suomi.fi" %}</button>
+    {% else %}
+      <h2>{% trans "Suomi.fi or eIDAS e-identification" %}</h2>
+      <p>{% trans "Verify your identity using Suomi.fi or eIDAS identification." %}</p>
+      <button type="submit" name="verify_identity" value="suomifi" class="btn btn-primary mb-4">{% trans "Verify with Suomi.fi or eIDAS" %}</button>
+      {% if object.assurance_level < assurance_level.HIGH %}
+        <h2>{% trans "Candour ID" %}</h2>
+        <div class="alert alert-info" role="alert">
+          <p>{% trans "To use Candour ID verification, please check that the following information matches your identity document." %}</p>
+          <dl class="row">
+            <dt class="col-sm-4">{% trans "Official given names" %}</dt>
+            <dd class="col-sm-8">{{ object.given_names|default:"&nbsp;" }}</dd>
+            <dt class="col-sm-4">{% trans "Official surname" %}</dt>
+            <dd class="col-sm-8">{{ object.surname|default:"&nbsp;" }}</dd>
+            {% if object.date_of_birth %}
+              <dt class="col-sm-4">{% trans "Date of birth" %}</dt>
+              <dd class="col-sm-8">{{ object.date_of_birth|default:"&nbsp;" }}</dd>
+            {% endif %}
+          </dl>
+        </div>
+        {% if candour_link %}
+          <p>{% trans "You have unfinished Candour ID identification process." %}</p>
+          <a href="{{ candour_link }}" class="btn btn-primary mb-4">{% trans "Continue" %}</a>
+        {% else %}
+          <p>{% trans "Verify your identity using passport or identity card and mobile app." %}</p>
+          <button type="submit" name="verify_identity" value="candour" class="btn btn-primary mb-4">{% trans "Verify with biometric passport or identity card" %}</button>
+          {% if object.assurance_level < assurance_level.MEDIUM %}
+            <p>{% trans "If your passport or identity card does not have electronic chip or you do not have NFC capable phone, you may verify your identity with lower level using non-biometric passport or identity card and a mobile app or a web browser with camera." %}</p>
+            <button type="submit" name="verify_identity" value="candour_low" class="btn btn-secondary mb-4">{% trans "Verify with lower level of identification" %}</button>
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    {% endif %}
+  </form>
+  <div>
+    <a class="btn btn-secondary" href="{% url 'identity-detail' pk=identity.pk %}">{% trans "Return" %}</a>
+  </div>
+{% endblock %}

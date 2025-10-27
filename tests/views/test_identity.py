@@ -15,7 +15,13 @@ from django.test import Client, override_settings
 from django.utils import timezone
 
 from kamu.models.contract import Contract, ContractTemplate
-from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
+from kamu.models.identity import (
+    EmailAddress,
+    Identifier,
+    Identity,
+    Nationality,
+    PhoneNumber,
+)
 from kamu.models.membership import Membership
 from kamu.models.role import Role
 from kamu.utils.auth import set_default_permissions
@@ -1059,4 +1065,203 @@ class IdentityCombineTests(BaseTestCase):
         response = self.client.post(self.url, self.data, follow=True)
         self.assertIn(
             "Cannot combine two identities with Finnish personal identity code", response.content.decode("utf-8")
+        )
+
+
+class IdentityVerificationTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.create_identity(user=True)
+        self.client = Client()
+        self.client.force_login(self.user)
+        self.url = f"/identity/{self.identity.pk}/verify/"
+
+    def test_identity_verify_view(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Verify with Suomi.fi", response.content.decode("utf-8"))
+        self.assertIn("Verify with biometric passport", response.content.decode("utf-8"))
+        self.assertIn("Verify with lower level", response.content.decode("utf-8"))
+
+    def test_identity_verify_view_already_verified(self):
+        self.identity.assurance_level = Identity.AssuranceLevel.HIGH
+        self.identity.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Verify with Suomi.fi", response.content.decode("utf-8"))
+        self.assertNotIn("Verify with biometric passport", response.content.decode("utf-8"))
+        self.assertNotIn("Verify with lower level", response.content.decode("utf-8"))
+
+    @override_settings(SAML_SUOMIFI_SSN="HTTP_SSN")
+    @override_settings(ALLOW_TEST_FPIC=True)
+    @mock.patch("kamu.utils.audit.logger_audit")
+    def test_identity_verify_suomifi(self, audit_logger):
+        response = self.client.post(
+            self.url, data={"verify_identity": "suomifi"}, follow=True, headers={"SSN": "010181-900C"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.identity.refresh_from_db()
+        self.assertEqual(self.identity.fpic, "010181-900C")
+        # self.assertEqual(self.identity.assurance_level, Identity.AssuranceLevel.HIGH)
+        audit_logger.log.assert_has_calls(
+            [
+                call(
+                    20,
+                    "Linked fpic identifier to identity Tester Mc.",
+                    extra=ANY,
+                ),
+            ]
+        )
+
+    @mock.patch("kamu.utils.audit.logger_audit")
+    @mock.patch("requests.post", return_value=mock.MagicMock())
+    def test_identity_verify_candour_start_view(self, mock_candour, audit_logger):
+        mock_candour.return_value.json.return_value = {
+            "verificationSessionId": "12345",
+            "redirectUrl": "https://example.com/redirect",
+        }
+        response = self.client.post(self.url, data={"verify_identity": "candour"})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "https://example.com/redirect")
+        self.identity.refresh_from_db()
+        self.assertEqual(self.identity.candour_verification_session_id, "12345")
+        audit_logger.log.assert_has_calls(
+            [
+                call(
+                    20,
+                    "Created Candour ID session: 12345",
+                    extra=ANY,
+                ),
+            ]
+        )
+
+    @mock.patch("kamu.utils.audit.logger_audit")
+    @mock.patch("requests.get", return_value=mock.MagicMock())
+    def test_identity_verify_candour_verification_unfinished(self, mock_candour, audit_logger):
+        mock_candour.return_value.json.return_value = {
+            "status": "pending",
+            "invitationLink": "https://example.com/redirect",
+        }
+        self.identity.candour_verification_session_id = "12345"
+        self.identity.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("You have unfinished Candour ID identification process", response.content.decode("utf-8"))
+        self.assertNotIn("Verify with biometric passport", response.content.decode("utf-8"))
+
+    @mock.patch("kamu.utils.audit.logger_audit")
+    @mock.patch("requests.get", return_value=mock.MagicMock())
+    def test_identity_verify_candour_verification_cancelled(self, mock_candour, audit_logger):
+        mock_candour.return_value.json.return_value = {
+            "status": "cancelled",
+            "invitationLink": "https://example.com/redirect",
+        }
+        self.identity.candour_verification_session_id = "12345"
+        self.identity.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Candour ID verification failed, please try again", response.content.decode("utf-8"))
+        self.assertIn("Verify with biometric passport", response.content.decode("utf-8"))
+        self.identity.refresh_from_db()
+        self.assertIn(self.identity.candour_verification_session_id, "")
+
+    @mock.patch("kamu.utils.audit.logger_audit")
+    @mock.patch("requests.get", return_value=mock.MagicMock())
+    def test_identity_verify_candour_verification_high(self, mock_candour, audit_logger):
+        mock_candour.return_value.json.return_value = {
+            "idDocumentType": "P<",
+            "idNumber": "AB1234567",
+            "idExpiration": "2030-12-31",
+            "status": "finished",
+            "identityVerified": True,
+            "verificationMethod": "rfidApp",
+            "firstName": "MICK ANDREW",
+            "lastName": "O'REILLY",
+            "dateOfBirth": "2001-01-01",
+            "nationality": "SWE",
+            "sex": "F",
+        }
+        self.create_country(code="SE")
+        self.identity.candour_verification_session_id = "12345"
+        self.identity.save()
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.identity.refresh_from_db()
+        self.assertEqual(self.identity.assurance_level, Identity.AssuranceLevel.HIGH)
+        self.assertEqual(self.identity.given_names, "Mick Andrew")
+        self.assertEqual(self.identity.given_names_verification, Identity.VerificationMethod.STRONG)
+        self.assertEqual(self.identity.surname, "O'Reilly")
+        self.assertEqual(self.identity.surname_verification, Identity.VerificationMethod.STRONG)
+        self.assertEqual(self.identity.date_of_birth, datetime.date(2001, 1, 1))
+        self.assertEqual(self.identity.date_of_birth_verification, Identity.VerificationMethod.STRONG)
+        self.assertEqual(self.identity.gender, "F")
+        self.assertEqual(self.identity.gender_verification, Identity.VerificationMethod.STRONG)
+        self.assertTrue(
+            Identifier.objects.filter(
+                identity=self.identity, type=Identifier.Type.ID, value="P:SWE:AB1234567"
+            ).exists()
+        )
+        self.assertTrue(
+            Nationality.objects.filter(
+                identity=self.identity, country__code="SE", verification_method=Identity.VerificationMethod.STRONG
+            )
+        )
+        audit_logger.log.assert_has_calls(
+            [
+                call(
+                    20,
+                    "Added identifier from Candour ID verification: P:SWE:AB1234567",
+                    extra=ANY,
+                ),
+                call(
+                    20,
+                    "Added nationality SE to identity Tester Mc.",
+                    extra=ANY,
+                ),
+                call(
+                    20,
+                    "Updated identity attributes: given_names, surname, date_of_birth, nationality, gender",
+                    extra=ANY,
+                ),
+                call(
+                    20,
+                    "Updated identity assurance level from Candour ID verification to 3",
+                    extra=ANY,
+                ),
+            ]
+        )
+
+    @mock.patch("kamu.utils.audit.logger_audit")
+    @mock.patch("requests.get", return_value=mock.MagicMock())
+    def test_identity_verify_candour_verification_invalid_document_info(self, mock_candour, audit_logger):
+        mock_candour.return_value.json.return_value = {
+            "idNumber": "AB1234567",
+            "idExpiration": "2030-12-31",
+            "status": "finished",
+            "identityVerified": True,
+            "verificationMethod": "rfidApp",
+            "dateOfBirth": "2001-01-01",
+            "nationality": "SWE",
+        }
+        self.create_country(code="SE")
+        self.identity.candour_verification_session_id = "12345"
+        self.identity.save()
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.identity.refresh_from_db()
+        self.assertEqual(self.identity.assurance_level, Identity.AssuranceLevel.NONE)
+        self.assertFalse(
+            Identifier.objects.filter(
+                identity=self.identity, type=Identifier.Type.ID, value="P:SWE:AB1234567"
+            ).exists()
+        )
+        self.assertIsNone(self.identity.date_of_birth)
+        audit_logger.log.assert_has_calls(
+            [
+                call(
+                    30,
+                    "Candour ID verification response missing identifier information",
+                    extra=ANY,
+                ),
+            ]
         )

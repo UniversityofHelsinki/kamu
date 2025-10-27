@@ -24,6 +24,8 @@
           <dd class="col-sm-8">{% for nationality in object.nationalities.all %}{{ nationality.country.name }}{% if nationality.verification_method > 1 %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
           <dt class="col-sm-4">{% trans "Finnish personal identity code" %}</dt>
           <dd class="col-sm-8">{{ object.fpic|default:"&nbsp;" }}{% if object.fpic_verification > 1 %}<span class="text-success"> *</span>{% endif %}</dd>
+          <dt class="col-sm-4">{% trans "Assurance level" %}</dt>
+          <dd class="col-sm-8">{{ object.get_assurance_level_display|default:"&nbsp;" }}{% if object.assurance_level >= 2 %}<span class="text-success"> *</span>{% endif %}</dd>
         {% endif %}
       </dl>
     </div>
@@ -77,7 +79,10 @@
       <a href="{% url 'identity-identifier' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Identifiers" %}</a>
     {% endif %}
     {% if user == object.user or perms.kamu.view_contracts %}
-      <a href="{% url 'contract-list' object.pk %}" class="btn btn-primary mb-2">{% trans "Contracts" %}</a>
+      <a href="{% url 'contract-list' object.pk %}" class="btn btn-primary mb-2 me-2">{% trans "Contracts" %}</a>
+    {% endif %}
+    {% if user == object.user %}
+      <a href="{% url 'identity-verify' object.pk %}" class="btn btn-primary mb-2">{% trans "Verify your identity" %}</a>
     {% endif %}
   {% endif %}
   {% if user == object.user or perms.kamu.view_accounts %}

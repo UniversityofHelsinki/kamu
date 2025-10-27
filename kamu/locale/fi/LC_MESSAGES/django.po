@@ -7,104 +7,96 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-31 12:37+0200\n"
+"POT-Creation-Date: 2025-10-31 12:55+0200\n"
 "Language: FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: backends.py:108
+#: backends.py:109
 msgid "Identifier not found."
 msgstr "Tunnistetta ei löytynyt."
 
-#: backends.py:109
+#: backends.py:110
 msgid "Valid identifier not found. This is probably a configuration error."
 msgstr ""
 "Hyväksyttävää tunnistetta ei löytynyt. Kyseessä on todennäköisesti "
 "määritysvirhe."
 
-#: backends.py:110
+#: backends.py:111
 msgid "Identifier is already linked to another user."
 msgstr "Tunniste on jo linkitetty toiseen käyttäjään."
 
-#: backends.py:111
+#: backends.py:112
 msgid "Invalid identifier format."
 msgstr "Virheellinen tunnisteen muoto."
 
-#: backends.py:112
+#: backends.py:113
 msgid "Could not authenticate. Please try again."
 msgstr "Tunnistautuminen ei onnistunut. Ole hyvä ja yritä uudelleen."
 
-#: backends.py:113
+#: backends.py:114
 msgid "Identity provider is not authorised."
 msgstr "Tunnistustietojen tarjoajaa ei ole hyväksytty."
 
-#: backends.py:114
+#: backends.py:115
 msgid "Unexpected error."
 msgstr "Odottamaton virhe."
 
-#: backends.py:115
+#: backends.py:116
 msgid "Missing required parameters. Please try again with an another browser."
 msgstr ""
 "Vaadittuja tietoja puuttuu. Ole hyvä ja yritä uudelleen toisella selaimella."
 
-#: backends.py:116 forms/auth.py:44 forms/auth.py:85
+#: backends.py:117 forms/auth.py:44 forms/auth.py:85
 msgid "Invalid email address or phone number."
 msgstr "Virheellinen sähköpostiosoite tai puhelinnumero."
 
-#: backends.py:117 views/auth.py:126
+#: backends.py:118 views/auth.py:126
 msgid "You are already logged in."
 msgstr "Olet jo kirjautunut sisään."
 
-#: backends.py:118
+#: backends.py:119
 msgid "User must be authenticated to link identifier."
 msgstr "Käyttäjän on tunnistauduttava tunnisteen linkittämiseksi."
 
-#: backends.py:119
+#: backends.py:120
 msgid ""
 "Staff and Superuser access is not allowed with this authentication method."
 msgstr ""
 "Henkilökunnan ja ylläpitäjän ei ole sallittua tunnistautua tällä "
 "tunnistautumismenetelmällä."
 
-#: backends.py:120
+#: backends.py:121
 msgid "Role owner access is not allowed with this authentication method."
 msgstr ""
 "Roolin omistajan ei ole sallittua tunnistautua tällä "
 "tunnistautumismenetelmällä."
 
-#: backends.py:121
+#: backends.py:122
 msgid "Staff and Superuser access is not allowed from this IP address."
 msgstr ""
 "Henkilökunnan ja ylläpitäjän ei ole sallittua tunnistautua tästä IP-"
 "osoitteesta."
 
-#: backends.py:122
+#: backends.py:123
 msgid "You belong to a group that is not allowed from this IP address."
 msgstr ""
 "Kuulut ryhmään, jonka tunnistautuminen ei ole sallittua tästä IP-osoitteesta."
 
-#: backends.py:123
+#: backends.py:124
 msgid "Configuration error, service administrators have been notified."
 msgstr "Määritysvirhe palvelussa, asiasta ilmoitettu palvelun ylläpitäjille."
 
-#: backends.py:696
+#: backends.py:697
 msgid "Suspected duplicate user. Username already exists in the database: "
 msgstr ""
 "Mahdollinen duplikaattikäyttäjä. Käyttäjänimi on jo olemassa tietokannassa: "
 
-#: backends.py:710
+#: backends.py:711
 msgid "Suspected duplicate user. Identity already has a different username: "
 msgstr "Mahdollinen duplikaattikäyttäjä. Tunnisteella on jo eri käyttäjänimi: "
-
-#: backends.py:898
-msgid ""
-"Suspected duplicate user. Finnish personal identity code already exists in "
-"the database: "
-msgstr ""
-"Mahdollinen duplikaattikäyttäjä. Suomalainen henkilötunnus on jo olemassa "
-"tietokannassa: "
 
 #: connectors/email.py:81
 #, python-format
@@ -144,13 +136,13 @@ msgid "Reset password"
 msgstr "Palauta salasana"
 
 #: forms/auth.py:36 forms/auth.py:186 forms/identity.py:53
-#: models/identity.py:494 models/identity.py:504 models/token.py:296
+#: models/identity.py:498 models/identity.py:508 models/token.py:296
 #: templates/account/account_create.html:16
 msgid "Email address"
 msgstr "Sähköpostiosoite"
 
 #: forms/auth.py:38 forms/auth.py:261 forms/identity.py:55
-#: models/identity.py:530 models/identity.py:540 models/token.py:293
+#: models/identity.py:534 models/identity.py:544 models/token.py:293
 msgid "Phone number"
 msgstr "Puhelinnumero"
 
@@ -225,18 +217,18 @@ msgstr "Virhe kirjautumisessa. Ole hyvä ja yritä uudelleen."
 msgid "This account is disabled."
 msgstr "Tämä käyttäjätili on suljettu."
 
-#: forms/auth.py:183 models/identity.py:181
+#: forms/auth.py:183 models/identity.py:182
 #: templates/identity/identity_combine.html:12
 #: templates/identity/identity_combine.html:69
 #: templates/identity/identity_detail.html:8
 msgid "Given names"
 msgstr "Etunimet"
 
-#: forms/auth.py:183 models/identity.py:181
+#: forms/auth.py:183 models/identity.py:182
 msgid "All official given names."
 msgstr "Kaikki viralliset etunimet."
 
-#: forms/auth.py:185 forms/identity.py:51 models/identity.py:189
+#: forms/auth.py:185 forms/identity.py:51 models/identity.py:190
 #: templates/account/account_create.html:12
 #: templates/identity/identity_combine.html:13
 #: templates/identity/identity_combine.html:75
@@ -244,7 +236,7 @@ msgstr "Kaikki viralliset etunimet."
 msgid "Surname"
 msgstr "Sukunimi"
 
-#: forms/auth.py:185 models/identity.py:189
+#: forms/auth.py:185 models/identity.py:190
 msgid "Official surname(s)."
 msgstr "Kaikki viralliset sukunimet."
 
@@ -328,10 +320,11 @@ msgstr ""
 "Käytä kansainvälistä muotoa, esim. +358401234567, käyttäen vain numeroita ja "
 "+-merkkiä."
 
-#: forms/identity.py:60 models/identity.py:236 models/identity.py:583
+#: forms/identity.py:60 models/identity.py:237 models/identity.py:587
 #: templates/identity/identity_combine.html:15
 #: templates/identity/identity_combine.html:112
 #: templates/identity/identity_detail.html:25
+#: templates/identity/identity_verify.html:18
 msgid "Finnish personal identity code"
 msgstr "Suomalainen henkilötunnus"
 
@@ -355,8 +348,8 @@ msgstr "Nimihaku palauttaa osittaisia osumia Kamusta."
 msgid "Name search"
 msgstr "Nimihaku"
 
-#: forms/identity.py:88 models/identity.py:604
-#: templates/identity/identity_detail.html:77
+#: forms/identity.py:88 models/identity.py:612
+#: templates/identity/identity_detail.html:79
 msgid "Identifiers"
 msgstr "Tunnisteet"
 
@@ -390,6 +383,7 @@ msgstr "Lisää"
 #: templates/contract/contract_detail.html:26
 #: templates/contract/contract_list.html:64
 #: templates/identity/identifier.html:102
+#: templates/identity/identity_verify.html:62
 #: templates/membership/membership_detail.html:128
 msgid "Return"
 msgstr "Palaa"
@@ -434,7 +428,7 @@ msgstr "Kansalaisuuden vahvistusmenetelmä"
 msgid "Remove nationality"
 msgstr "Poista kansalaisuus"
 
-#: forms/identity.py:316 templates/identity/identity_detail.html:71
+#: forms/identity.py:316 templates/identity/identity_detail.html:73
 msgid "Basic information"
 msgstr "Perustiedot"
 
@@ -537,7 +531,7 @@ msgid "Enabled"
 msgstr "Aktiivinen"
 
 #: models/account.py:29 models/membership.py:60
-#: templates/identity/identity_detail.html:122
+#: templates/identity/identity_detail.html:127
 msgid "Expired"
 msgstr "Päättynyt"
 
@@ -555,7 +549,7 @@ msgstr "Kevyttunnus"
 
 #: models/account.py:36 templates/account/account_detail.html:14
 #: templates/account/account_list.html:18
-#: templates/identity/identity_detail.html:94
+#: templates/identity/identity_detail.html:99
 #: templates/membership/membership_approval_list.html:13
 #: templates/membership/membership_detail.html:59
 #: templates/membership/membership_expiring_list.html:13
@@ -568,27 +562,27 @@ msgstr "Tila"
 msgid "Account type"
 msgstr "Tunnuksen tyyppi"
 
-#: models/account.py:41 models/identity.py:596
+#: models/account.py:41 models/identity.py:604
 msgid "Deactivated at"
 msgstr "Suljettu"
 
 #: models/account.py:42 models/account.py:141 models/contract.py:55
-#: models/contract.py:112 models/identity.py:40 models/identity.py:252
-#: models/identity.py:462 models/identity.py:498 models/identity.py:534
-#: models/identity.py:597 models/membership.py:108 models/organisation.py:31
+#: models/contract.py:112 models/identity.py:40 models/identity.py:256
+#: models/identity.py:466 models/identity.py:502 models/identity.py:538
+#: models/identity.py:605 models/membership.py:108 models/organisation.py:31
 #: models/role.py:83 models/role.py:275 models/role.py:371 models/token.py:313
 msgid "Created at"
 msgstr "Luotu"
 
 #: models/account.py:43 models/account.py:142 models/identity.py:41
-#: models/identity.py:253 models/identity.py:463 models/identity.py:499
-#: models/identity.py:535 models/identity.py:598 models/membership.py:109
+#: models/identity.py:257 models/identity.py:467 models/identity.py:503
+#: models/identity.py:539 models/identity.py:606 models/membership.py:109
 #: models/organisation.py:32 models/role.py:84 models/role.py:276
 #: models/role.py:372
 msgid "Updated at"
 msgstr "Päivitetty"
 
-#: models/account.py:47 templates/identity/identity_detail.html:84
+#: models/account.py:47 templates/identity/identity_detail.html:89
 msgid "User accounts"
 msgstr "Käyttäjätunnukset"
 
@@ -618,7 +612,7 @@ msgstr "Sopimus"
 
 #: models/contract.py:64 templates/contract/contract_list.html:6
 #: templates/identity/identity_combine.html:20
-#: templates/identity/identity_detail.html:80
+#: templates/identity/identity_detail.html:82
 msgid "Contracts"
 msgstr "Sopimukset"
 
@@ -735,122 +729,134 @@ msgstr ""
 msgid "High, eIDAS substantial level or similar"
 msgstr "Korkea, Suomi.fi korotettu taso tai vastaava"
 
-#: models/identity.py:148
+#: models/identity.py:146
+msgid "Highest, eIDAS high level or similar"
+msgstr "Korkein, Suomi.fi korkea taso tai vastaava"
+
+#: models/identity.py:149
 msgid "No verification"
 msgstr "Ei vahvistusta"
 
-#: models/identity.py:149
+#: models/identity.py:150
 msgid "Self assurance"
 msgstr "Itse vakuutettu"
 
-#: models/identity.py:150
+#: models/identity.py:151
 msgid "External source"
 msgstr "Ulkoinen lähde"
 
-#: models/identity.py:151
+#: models/identity.py:152
 msgid "Verified with a government issued photo-ID"
 msgstr "Vahvistettu viranomaisen myöntämällä kuvallisella henkilökortilla"
 
-#: models/identity.py:152
+#: models/identity.py:153
 msgid "Strong electrical verification"
 msgstr "Vahva sähköinen tunnistautuminen"
 
-#: models/identity.py:158
+#: models/identity.py:159
 msgid "Kamu ID"
 msgstr "Kamu-tunniste"
 
-#: models/identity.py:159
+#: models/identity.py:160
 msgid "Unique identifier for this identity."
 msgstr "Yksilöllinen tunniste tälle henkilöllisyydelle."
 
-#: models/identity.py:167
+#: models/identity.py:168
 msgid "User identifier"
 msgstr "Käyttäjän tunniste"
 
-#: models/identity.py:171 templates/identity/identity_combine.html:57
+#: models/identity.py:172 templates/identity/identity_combine.html:57
 msgid "External identity"
 msgstr "Ulkoinen tunniste"
 
-#: models/identity.py:172
+#: models/identity.py:173
 msgid "This identity is managed in another registry."
 msgstr "Tätä henkilöllisyyttä hallinnoidan toisessa rekisterissä."
 
-#: models/identity.py:177 templates/identity/identity_combine.html:63
+#: models/identity.py:178 templates/identity/identity_combine.html:63
+#: templates/identity/identity_detail.html:27
 msgid "Assurance level"
 msgstr "Varmuustaso"
 
-#: models/identity.py:178
+#: models/identity.py:179
 msgid "How strongly this user identity is identified."
 msgstr "Kuinka vahvasti käyttäjän henkilöllisyys on tunnistettu."
 
-#: models/identity.py:186
+#: models/identity.py:187
 msgid "Given names verification method"
 msgstr "Etunimien vahvistusmenetelmä"
 
-#: models/identity.py:194
+#: models/identity.py:195
 msgid "Surname verification method"
 msgstr "Sukunimen vahvistusmenetelmä"
 
-#: models/identity.py:199 templates/identity/identity_combine.html:82
+#: models/identity.py:200 templates/identity/identity_combine.html:82
 msgid "Displayed given name"
 msgstr "Näkyvä etunimi"
 
-#: models/identity.py:200
+#: models/identity.py:201
 msgid "A given name or nickname part of the user's display name."
 msgstr "Etunimi tai kutsumanimi käyttäjän näkyvässä nimessä."
 
-#: models/identity.py:205 templates/identity/identity_combine.html:88
+#: models/identity.py:206 templates/identity/identity_combine.html:88
 msgid "Displayed surname"
 msgstr "Näkyvä sukunimi"
 
-#: models/identity.py:206
+#: models/identity.py:207
 msgid "A surname part of the user's display name."
 msgstr "Sukunimi tai sen osa käyttäjän näkyvässä nimessä."
 
-#: models/identity.py:211 templates/identity/identity_combine.html:94
+#: models/identity.py:212 templates/identity/identity_combine.html:94
 #: templates/identity/identity_detail.html:17
+#: templates/identity/identity_verify.html:15
+#: templates/identity/identity_verify.html:42
 msgid "Date of birth"
 msgstr "Syntymäaika"
 
-#: models/identity.py:212 models/identity.py:224
+#: models/identity.py:213 models/identity.py:225
 msgid ""
 "Required for the user identification from the official identity documents."
 msgstr ""
 "Vaaditaan käyttäjän tunnistamiseksi virallisista henkilöllisyystodistuksista."
 
-#: models/identity.py:217
+#: models/identity.py:218
 msgid "Date of birth verification method"
 msgstr "Syntymäajan vahvistusmenetelmä"
 
-#: models/identity.py:223 templates/identity/identity_combine.html:100
+#: models/identity.py:224 templates/identity/identity_combine.html:100
 #: templates/identity/identity_detail.html:20
+#: templates/identity/identity_verify.html:17
 msgid "Gender"
 msgstr "Sukupuoli"
 
-#: models/identity.py:229
+#: models/identity.py:230
 msgid "Gender verification method"
 msgstr "Sukupuolen vahvistusmenetelmä"
 
-#: models/identity.py:238
+#: models/identity.py:239
 msgid "Used for the strong electrical identification."
 msgstr "Käytetään vahvassa sähköisessä tunnistautumisessa."
 
-#: models/identity.py:243
+#: models/identity.py:244
 msgid "FPIC verification method"
 msgstr "Suomalaisen henkilötunnuksen vahvistusmenetelmä"
 
-#: models/identity.py:249 templates/identity/identity_combine.html:106
+#: models/identity.py:250 templates/identity/identity_combine.html:106
 #: templates/identity/identity_detail.html:14
 #: templates/membership/membership_detail.html:42
 #: templates/membership/membership_invite.html:32
 msgid "Preferred language"
 msgstr "Asiointikieli"
 
-#: models/identity.py:250
+#: models/identity.py:251
 msgid "Preferred service language."
 msgstr "Toivottu asiointikieli."
 
-#: models/identity.py:271 templates/membership/membership_approval_list.html:11
+#: models/identity.py:254
+msgid "Candour session ID"
+msgstr "Candour-istunnon tunniste"
+
+#: models/identity.py:275 templates/membership/membership_approval_list.html:11
 #: templates/membership/membership_detail.html:33
 #: templates/membership/membership_detail.html:93
 #: templates/membership/membership_detail.html:122
@@ -862,80 +868,97 @@ msgstr "Toivottu asiointikieli."
 msgid "Identity"
 msgstr "Henkilöllisyys"
 
-#: models/identity.py:272
+#: models/identity.py:276
 msgid "Identities"
 msgstr "Henkilöllisyydet"
 
-#: models/identity.py:459
+#: models/identity.py:463
 msgid "Verification method"
 msgstr "Vahvistusmenetelmä"
 
-#: models/identity.py:467 templates/identity/identity_combine.html:118
+#: models/identity.py:471 templates/identity/identity_combine.html:118
 #: templates/identity/identity_detail.html:23
+#: templates/identity/identity_verify.html:16
 msgid "Nationality"
 msgstr "Kansalaisuus"
 
-#: models/identity.py:468
+#: models/identity.py:472
 msgid "Nationalities"
 msgstr "Kansalaisuudet"
 
-#: models/identity.py:495 models/identity.py:531
+#: models/identity.py:499 models/identity.py:535
 #: templates/identity/contact_address.html:17
 #: templates/identity/contact_address.html:65
 msgid "Priority"
 msgstr "Prioriteetti"
 
-#: models/identity.py:496 models/identity.py:532 models/identity.py:594
+#: models/identity.py:500 models/identity.py:536 models/identity.py:602
 msgid "Verified at"
 msgstr "Vahvistettu"
 
-#: models/identity.py:505 templates/identity/contact_address.html:9
-#: templates/identity/identity_detail.html:35
+#: models/identity.py:509 templates/identity/contact_address.html:9
+#: templates/identity/identity_detail.html:37
 msgid "Email addresses"
 msgstr "Sähköpostiosoitteet"
 
-#: models/identity.py:541 templates/identity/contact_address.html:57
-#: templates/identity/identity_detail.html:37
+#: models/identity.py:545 templates/identity/contact_address.html:57
+#: templates/identity/identity_detail.html:39
 msgid "Phone numbers"
 msgstr "Puhelinnumerot"
 
-#: models/identity.py:584
+#: models/identity.py:588
 msgid "eIDAS identifier"
 msgstr "eIDAS-tunniste"
 
-#: models/identity.py:585
+#: models/identity.py:589
 msgid "eduPersonPrincipalName"
 msgstr "eduPersonPrincipalName"
 
-#: models/identity.py:586
+#: models/identity.py:590
 msgid "Google account"
 msgstr "Google-tili"
 
-#: models/identity.py:587
+#: models/identity.py:591
 msgid "Microsoft account"
 msgstr "Microsoft-tili"
 
-#: models/identity.py:588 templates/identity/identity_combine.html:45
+#: models/identity.py:592 templates/identity/identity_combine.html:45
 msgid "Kamu identifier"
 msgstr "Kamu-tunniste"
 
-#: models/identity.py:590
+#: models/identity.py:593
+msgid "Person identifier"
+msgstr "Henkilön tunniste"
+
+#: models/identity.py:594
+msgid "Government issued ID"
+msgstr "Viranomaisen myöntämä henkilöllisyystodistus"
+
+#: models/identity.py:595
+msgid "Other identifier"
+msgstr "Muu tunniste"
+
+#: models/identity.py:597
 msgid "Identifier type"
 msgstr "Tunnisteen tyyppi"
 
-#: models/identity.py:591
+#: models/identity.py:598
 msgid "Identifier value"
 msgstr "Tunnisteen arvo"
 
-#: models/identity.py:592
+#: models/identity.py:599
 msgid "Identifier name"
 msgstr "Tunnisteen nimi"
 
-#: models/identity.py:603
+#: models/identity.py:600
+msgid "Valid until"
+msgstr "Voimassa"
+
+#: models/identity.py:611
 msgid "Identifier"
 msgstr "Tunniste"
 
-#: models/identity.py:621
+#: models/identity.py:629
 msgid "Invalid eduPersonPrincipalName format."
 msgstr "Virheellinen eduPersonPrincipalNamen muoto."
 
@@ -1150,8 +1173,8 @@ msgstr "Poiston viive (päivissä)"
 msgid "Grace period from membership expiration to purge (days)"
 msgstr "Aika jäsenyyden päättymisestä jäsenyystietojen poistoon (päivissä)"
 
-#: models/role.py:90 templates/identity/identity_detail.html:93
-#: templates/identity/identity_detail.html:120
+#: models/role.py:90 templates/identity/identity_detail.html:98
+#: templates/identity/identity_detail.html:125
 #: templates/membership/membership_approval_list.html:12
 #: templates/membership/membership_detail.html:16
 #: templates/membership/membership_detail.html:91
@@ -1538,8 +1561,8 @@ msgstr "Vahvista käyttäjätunnuksen sulkeminen"
 #: templates/account/account_detail.html:28
 #: templates/account/account_detail.html:52 templates/front.html:15
 #: templates/front.html:27 templates/identity/identifier.html:35
-#: templates/identity/identity_detail.html:55
-#: templates/identity/identity_detail.html:65
+#: templates/identity/identity_detail.html:57
+#: templates/identity/identity_detail.html:67
 #: templates/membership/membership_detail.html:86
 #: templates/membership/membership_detail.html:115
 msgid "Close"
@@ -1587,7 +1610,7 @@ msgid "Account information"
 msgstr "Tunnuksen tiedot"
 
 #: templates/account/account_list.html:10
-#: templates/identity/identity_detail.html:32
+#: templates/identity/identity_detail.html:34
 msgid "Accounts"
 msgstr "Tunnukset"
 
@@ -2293,7 +2316,7 @@ msgstr "Helsingin yliopiston rekisteri ulkoisille henkilöllisyyksille."
 msgid "Role and membership management"
 msgstr "Roolien ja jäsenyyksien hallinta"
 
-#: templates/front.html:9 templates/identity/identity_detail.html:49
+#: templates/front.html:9 templates/identity/identity_detail.html:51
 msgid "info"
 msgstr "info"
 
@@ -2331,7 +2354,7 @@ msgstr ""
 "allekirjoittamisen, käyttäjätietojen antamisen ja käyttäjän henkilöllisyyden "
 "vahvistamisen."
 
-#: templates/front.html:24 templates/identity/identity_detail.html:62
+#: templates/front.html:24 templates/identity/identity_detail.html:64
 #: templates/membership/membership_invite_identity.html:12
 #, python-format
 msgid ""
@@ -2402,7 +2425,7 @@ msgid "If you have an invite code, register here."
 msgstr "Jos sinulla on kutsukoodi, rekisteröidy tästä."
 
 #: templates/identity/contact_address.html:8
-#: templates/identity/identity_detail.html:74
+#: templates/identity/identity_detail.html:76
 msgid "Contact information"
 msgstr "Yhteystiedot"
 
@@ -2566,7 +2589,7 @@ msgid "Suomi.fi and eIDAS"
 msgstr "Suomi.fi ja eIDAS"
 
 #: templates/identity/identity_combine.html:7
-#: templates/identity/identity_detail.html:138
+#: templates/identity/identity_detail.html:143
 msgid "Combine identities"
 msgstr "Yhdistä henkilöllisyydet"
 
@@ -2678,23 +2701,23 @@ msgstr ""
 msgid "Identity information"
 msgstr "Henkilötiedot"
 
-#: templates/identity/identity_detail.html:41
+#: templates/identity/identity_detail.html:43
 msgid "External identifiers"
 msgstr "Ulkoiset tunnisteet"
 
-#: templates/identity/identity_detail.html:47
+#: templates/identity/identity_detail.html:49
 msgid "verified"
 msgstr "vahvistettu"
 
-#: templates/identity/identity_detail.html:49
+#: templates/identity/identity_detail.html:51
 msgid "View details and update"
 msgstr "Lisätiedot ja päivitys"
 
-#: templates/identity/identity_detail.html:54
+#: templates/identity/identity_detail.html:56
 msgid "View and manage your information"
 msgstr "Hallinnoi ja katso tietojasi"
 
-#: templates/identity/identity_detail.html:58
+#: templates/identity/identity_detail.html:60
 msgid ""
 "Basic information includes personal details such as names, preferred "
 "language, date of birth, and nationality."
@@ -2702,13 +2725,13 @@ msgstr ""
 "Perustiedot sisältävät henkilökohtaiset tiedot, kuten nimet, käyttökielen, "
 "syntymäajan ja kansalaisuuden."
 
-#: templates/identity/identity_detail.html:59
+#: templates/identity/identity_detail.html:61
 msgid ""
 "Contact information includes external email addresses and phone numbers."
 msgstr ""
 "Yhteystiedot sisältävät ulkoiset sähköpostiosoitteet ja puhelinnumerot."
 
-#: templates/identity/identity_detail.html:60
+#: templates/identity/identity_detail.html:62
 msgid ""
 "Identifiers include external login methods such as Google and Microsoft "
 "accounts or accounts from other universities."
@@ -2716,7 +2739,7 @@ msgstr ""
 "Tunnisteet sisältävät ulkoiset kirjautumistavat kuten Google- ja Microsoft-"
 "tilit tai muiden yliopistojen tunnukset."
 
-#: templates/identity/identity_detail.html:61
+#: templates/identity/identity_detail.html:63
 msgid ""
 "The Contracts section allows you to sign agreements required for certain "
 "roles, such as the Acceptable Use Policy and NDA."
@@ -2725,39 +2748,43 @@ msgstr ""
 "pakollisia sopimuksia, kuten käyttöehtosopimuksen ja salassapitosopimuksen."
 
 #: templates/identity/identity_detail.html:85
+msgid "Verify your identity"
+msgstr "Varmenna henkilöllisyytesi"
+
+#: templates/identity/identity_detail.html:90
 msgid "Manage user accounts"
 msgstr "Hallinnoi käyttäjätunnuksia"
 
-#: templates/identity/identity_detail.html:87
+#: templates/identity/identity_detail.html:92
 msgid "Role memberships"
 msgstr "Roolien jäsenyydet"
 
-#: templates/identity/identity_detail.html:95
-#: templates/identity/identity_detail.html:121
+#: templates/identity/identity_detail.html:100
+#: templates/identity/identity_detail.html:126
 #: templates/membership/membership_expiring_list.html:14
 msgid "Started"
 msgstr "Aloitettu"
 
-#: templates/identity/identity_detail.html:96
+#: templates/identity/identity_detail.html:101
 #: templates/membership/membership_approval_list.html:15
 #: templates/membership/membership_expiring_list.html:15
 #: templates/role/role_detail.html:66
 msgid "Expires"
 msgstr "Päättyy"
 
-#: templates/identity/identity_detail.html:112
+#: templates/identity/identity_detail.html:117
 msgid "You do not have any current or upcoming memberships."
 msgstr "Sinulla ei ole nykyisiä tai tulevia jäsenyyksiä."
 
-#: templates/identity/identity_detail.html:115
+#: templates/identity/identity_detail.html:120
 msgid "Expired memberships"
 msgstr "Päättyneet jäsenyydet"
 
-#: templates/identity/identity_detail.html:140
+#: templates/identity/identity_detail.html:145
 msgid "Set as target"
 msgstr "Aseta kohteeksi"
 
-#: templates/identity/identity_detail.html:141
+#: templates/identity/identity_detail.html:146
 msgid "Set as source"
 msgstr "Aseta lähteeksi"
 
@@ -2800,6 +2827,112 @@ msgstr "Ei tuloksia annetuilla hakuehdoilla."
 #: templates/membership/membership_invite_identity.html:52
 msgid "User directory results"
 msgstr "Käyttäjähakemiston tulokset"
+
+#: templates/identity/identity_verify.html:4
+msgid "Identity verification"
+msgstr "Henkilöllisyyden vahvistaminen"
+
+#: templates/identity/identity_verify.html:7
+msgid "Your identity has already been verified."
+msgstr "Henkilöllisyytesi on jo vahvistettu."
+
+#: templates/identity/identity_verify.html:10
+msgid "Current verification level:"
+msgstr "Nykyinen vahvistustaso:"
+
+#: templates/identity/identity_verify.html:12
+msgid ""
+"Following information will be added or updated to your identity during "
+"identify verification, if available."
+msgstr ""
+"Seuraavat tiedot lisätään tai päivitetään henkilöllisyyteesi "
+"henkilöllisyyden vahvistamisen yhteydessä, jos saatavilla."
+
+#: templates/identity/identity_verify.html:14
+msgid "Official names"
+msgstr "Kaikki viralliset nimet."
+
+#: templates/identity/identity_verify.html:19
+msgid "Identity document type and expiration date"
+msgstr "Henkilöllisyystodistuksen tyyppi ja vanhentumispäivä"
+
+#: templates/identity/identity_verify.html:25
+msgid "Suomi.fi e-identification"
+msgstr "Suomi.fi-tunnistautuminen"
+
+#: templates/identity/identity_verify.html:26
+msgid "Verify your identity using Suomi.fi identification"
+msgstr "Vahvista henkilöllisyytesti Suomi.fi-tunnistautumisella"
+
+#: templates/identity/identity_verify.html:27
+msgid "Verify with Suomi.fi"
+msgstr "Vahvista Suomi.fi:llä"
+
+#: templates/identity/identity_verify.html:29
+msgid "Suomi.fi or eIDAS e-identification"
+msgstr "Suomi.fi tai eIDAS-tunnistautuminen"
+
+#: templates/identity/identity_verify.html:30
+msgid "Verify your identity using Suomi.fi or eIDAS identification."
+msgstr "Vahvista henkilöllisyytesi Suomi.fi- tai eIDAS-tunnistautumisella."
+
+#: templates/identity/identity_verify.html:31
+msgid "Verify with Suomi.fi or eIDAS"
+msgstr "Vahvista Suomi.fi:llä tai eIDAS:lla"
+
+#: templates/identity/identity_verify.html:33
+msgid "Candour ID"
+msgstr "Candour ID"
+
+#: templates/identity/identity_verify.html:35
+msgid ""
+"To use Candour ID verification, please check that the following information "
+"matches your identity document."
+msgstr ""
+"Käyttääksesi Candour ID -vahvistusta, tarkista että seuraavat tiedot "
+"vastaavat henkilöllisyystodistustasi."
+
+#: templates/identity/identity_verify.html:37
+msgid "Official given names"
+msgstr "Viralliset etunimet."
+
+#: templates/identity/identity_verify.html:39
+msgid "Official surname"
+msgstr "Virallinen sukunimi."
+
+#: templates/identity/identity_verify.html:48
+msgid "You have unfinished Candour ID identification process."
+msgstr "Sinulla on keskeneräinen Candour ID -tunnistautumisprosessi."
+
+#: templates/identity/identity_verify.html:49
+msgid "Continue"
+msgstr "Jatka"
+
+#: templates/identity/identity_verify.html:51
+msgid "Verify your identity using passport or identity card and mobile app."
+msgstr ""
+"Vahvista henkilöllisyytesi passilla tai henkilökortilla, ja "
+"mobiilisovelluksella."
+
+#: templates/identity/identity_verify.html:52
+msgid "Verify with biometric passport or identity card"
+msgstr "Vahvista biometrisellä passilla tai henkilökortilla"
+
+#: templates/identity/identity_verify.html:54
+msgid ""
+"If your passport or identity card does not have electronic chip or you do "
+"not have NFC capable phone, you may verify your identity with lower level "
+"using non-biometric passport or identity card and a mobile app or a web "
+"browser with camera."
+msgstr ""
+"Jos passissasi tai henkilökortissasi ei ole elektronista sirua tai sinulla "
+"ei ole NFC-yhteensopivaa puhelinta, voit vahvistaa henkilöllisyytesi "
+"alemmalla tasolla käyttämällä ei-biometrista passia tai henkilökorttia sekä "
+"mobiili-sovellusta tai kameraa käyttävää verkkoselainta."
+
+#: templates/identity/identity_verify.html:55
+msgid "Verify with lower level of identification"
+msgstr "Vahvista alemmalla tunnistautumistasolla"
 
 #: templates/identity/phone_number_verification.html:6
 msgid "Phone number verification"
@@ -3161,16 +3294,16 @@ msgstr "Suorita haku saadaksesi tuloksia."
 msgid "Manage account"
 msgstr "Hallinnoi tunnusta"
 
-#: utils/identity.py:44
+#: utils/identity.py:52
 msgid "Cannot combine identity with itself."
 msgstr "Et voi yhdistää henkilöllisyyttä siihen itseensä."
 
-#: utils/identity.py:51
+#: utils/identity.py:59
 msgid "Source identity cannot have higher assurance level than target."
 msgstr ""
 "Lähdehenkilöllisyydellä ei voi olla korkeampaa varmuustasoa kuin kohteella."
 
-#: utils/identity.py:58
+#: utils/identity.py:66
 msgid ""
 "Cannot combine two identities with uid. Please remove uid from the source "
 "first."
@@ -3178,7 +3311,7 @@ msgstr ""
 "Et voi yhdistää kahta henkilöllisyyttä UID:n kanssa. Poista UID ensin "
 "lähteestä."
 
-#: utils/identity.py:66
+#: utils/identity.py:74
 msgid ""
 "Cannot combine two identities with Finnish personal identity code. Please "
 "remove FPIC from the source first."
@@ -3186,58 +3319,66 @@ msgstr ""
 "Et voi yhdistää kahta henkilöllisyyttä suomalaisella henkilötunnuksella. "
 "Poista henkilötunnus ensin lähteestä."
 
-#: utils/identity.py:75
+#: utils/identity.py:83
 msgid "Source identity is linked to user and target identity is not."
 msgstr ""
 "Lähdehenkilöllisyys on liitetty käyttäjään ja kohdehenkilöllisyyttä ei ole."
 
-#: utils/identity.py:86
+#: utils/identity.py:94
 msgid "Current user's identity cannot be the source identity."
 msgstr "Nykyisen käyttäjän henkilöllisyys ei voi olla lähdehenkilöllisyys."
 
-#: utils/identity.py:406 utils/identity.py:425 views/auth.py:636
+#: utils/identity.py:414 utils/identity.py:433 views/auth.py:636
 #: views/auth.py:655
 msgid "Tried to send a new code too soon. Please try again in one minute."
 msgstr ""
 "Yritit lähettää uuden koodin liian pian. Ole hyvä ja odota yksi minuutti "
 "ennen uutta yritystä."
 
-#: utils/identity.py:410 utils/identity.py:431 views/identity.py:339
-#: views/identity.py:382
+#: utils/identity.py:418 utils/identity.py:439 views/identity.py:549
+#: views/identity.py:592
 msgid "Verification code sent."
 msgstr "Vahvistuskoodi lähetetty."
 
-#: utils/identity.py:413
+#: utils/identity.py:421
 msgid "Failed to send verification code."
 msgstr "Vahvistuskoodin lähetys epäonnistui."
 
-#: utils/identity.py:429 views/identity.py:380
+#: utils/identity.py:437 views/identity.py:590
 #, python-format
 msgid "Kamu verification code: %(token)s"
 msgstr "Kamu-vahvistuskoodi: %(token)s"
 
-#: utils/identity.py:434 views/identity.py:385
+#: utils/identity.py:442 views/identity.py:595
 msgid "Could not send an SMS message."
 msgstr "Tekstiviestin lähetys epäonnistui."
 
-#: utils/identity.py:473
+#: utils/identity.py:481
 msgid "Email address is required."
 msgstr "Sähköpostiosoite vaaditaan."
 
-#: utils/identity.py:524
+#: utils/identity.py:532
 msgid "Phone number is required."
 msgstr "Puhelinnumero vaaditaan."
 
-#: utils/identity.py:549
+#: utils/identity.py:649
+msgid ""
+"Suspected duplicate user. Finnish personal identity code already exists in "
+"the database: "
+msgstr ""
+"Mahdollinen duplikaattikäyttäjä. Suomalainen henkilötunnus on jo olemassa "
+"tietokannassa: "
+
+#: utils/identity.py:699
 #, python-format
 msgid "You can activate a new user account of type \"%(account_type)s\"."
 msgstr "Voit aktivoida uuden käyttäjätunnuksen tyyppiä \"%(account_type)s\"."
 
-#: utils/identity.py:554
+#: utils/identity.py:704
 msgid "Activate account"
 msgstr "Aktivoi tunnus"
 
-#: utils/identity.py:569
+#: utils/identity.py:719
 msgid "Continue to external service to activate account"
 msgstr "Jatka ulkoiseen palveluun tunnuksen aktivoimiseksi"
 
@@ -3512,73 +3653,95 @@ msgid "Memberships are ending soon in roles you have approval rights."
 msgstr ""
 "Jäsenyyksiä päättyy pian rooleissa, joissa sinulla on hyväksymisoikeudet."
 
-#: views/identity.py:171
+#: views/identity.py:174
 msgid "Selected as the target identity for identity combining."
 msgstr "Valittu kohteeksi henkilöllisyyksien yhdistämisessä."
 
-#: views/identity.py:177
+#: views/identity.py:180
 msgid "Selected as the source identity for identity combining."
 msgstr "Valittu lähteeksi henkilöllisyyksien yhdistämisessä."
 
-#: views/identity.py:333 views/identity.py:376
+#: views/identity.py:335
+msgid "Your identity has been verified with Candour ID verification."
+msgstr "Henkilöllisyytesi on vahvistettu Candourin ID‑varmennuksella."
+
+#: views/identity.py:353
+msgid "Candour ID verification failed, please try again."
+msgstr "Candourin henkilöllisyyden varmentaminen epäonnistui, yritä uudelleen."
+
+#: views/identity.py:397
+msgid "Could not start Candour ID process, please try again later."
+msgstr ""
+"Candourin henkilöllisyyden varmentamisprosessia ei voitu käynnistää, yritä "
+"myöhemmin uudelleen."
+
+#: views/identity.py:543 views/identity.py:586
 msgid "Tried to send a new code too soon."
 msgstr "Yritit lähettää uuden tunnisteen liian pian."
 
-#: views/identity.py:335
+#: views/identity.py:545
 msgid "Kamu: email address verification"
 msgstr "Kamu: sähköpostiosoitteen vahvistaminen"
 
-#: views/identity.py:336
+#: views/identity.py:546
 #, python-format
 msgid "Your verification code is: %(token)s"
 msgstr "Vahvistuskoodisi on: %(token)s"
 
-#: views/identity.py:710
+#: views/identity.py:920
 msgid "Contract already signed."
 msgstr "Sopimus on jo allekirjoitettu."
 
-#: views/identity.py:716
+#: views/identity.py:926
 msgid "Contract version has changed. Please try again."
 msgstr "Sopimuksen versio on muuttunut. Ole hyvä ja yritä uudelleen."
 
-#: views/identity.py:719
+#: views/identity.py:929
 msgid "Contract signed."
 msgstr "Sopimus allekirjoitettu."
 
-#: views/identity.py:939
+#: views/identity.py:1149
 msgid "New identity created."
 msgstr "Uusi henkilöllisyys luotu."
 
-#: views/identity.py:998
+#: views/identity.py:1173
+msgid "Invalid verification session."
+msgstr "Virheellinen varmennusistunto."
+
+#: views/identity.py:1186
+msgid "Identity verification was cancelled."
+msgstr "Henkilöllisyyden varmentaminen peruttiin."
+
+#: views/identity.py:1245
 msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr ""
 "LDAP-haku palautti liian monta tulosta. Ole hyvä ja tarkenna hakuparametrejä."
 
-#: views/identity.py:1113
+#: views/identity.py:1360
 msgid "Too many results, please refine your search parameters."
 msgstr "Liian monta tulosta. Ole hyvä ja tarkenna hakuparametrejä."
 
-#: views/identity.py:1120
+#: views/identity.py:1367
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 "Osittaiset nimet palauttivat liian monta tulosta. Näytetään vain täsmälliset "
 "osumat."
 
-#: views/identity.py:1144
+#: views/identity.py:1391
 msgid "LDAP search failed, could not search existing accounts."
 msgstr "LDAP-haku epäonnistui. Olemassa olevia tilejä ei voitu hakea."
 
-#: views/identity.py:1152
+#: views/identity.py:1399
 msgid "Identifier match found, skipping name search."
 msgstr "Tunnisteella löydettiin osuma. Nimien haku ohitetaan."
 
-#: views/identity.py:1264
+#: views/identity.py:1511
 msgid "Incorrect primary keys."
 msgstr "Virheelliset yksilöivät avaimet."
 
-#: views/identity.py:1270
+#: views/identity.py:1517
 msgid "Identities combined."
 msgstr "Henkilöllisyydet yhdistetty."
 
@@ -3660,9 +3823,3 @@ msgstr "Sähköpostikutsu lähetetty seuraaviin osoitteisiin: {0}"
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Lisätty seuraavat henkilöllisyydet: {0}"
-
-#~ msgid "Cannot deactivate last active identifier."
-#~ msgstr "Et voi poistaa viimeistä aktiivista tunnistetta."
-
-#~ msgid "Search all possible roles here and see their details."
-#~ msgstr "Hae rooleja ja tarkastele niiden tietoja."

@@ -787,12 +787,16 @@ class SuomiFiBackend(LocalBaseBackend):
         Get assurance level for  the login method. Values from the Identity model choices.
         """
         assurance_level = set(fix_meta_encoding(request.META.get(settings.SAML_SUOMIFI_ASSURANCE, "")).split(";"))
-        if set(settings.SUOMIFI_ASSURANCE_HIGH).intersection(assurance_level):
+        if set(settings.SUOMIFI_ASSURANCE_HIGHEST).intersection(assurance_level):
+            return Identity.AssuranceLevel.HIGHEST
+        elif set(settings.SUOMIFI_ASSURANCE_HIGH).intersection(assurance_level):
             return Identity.AssuranceLevel.HIGH
         elif set(settings.SUOMIFI_ASSURANCE_MEDIUM).intersection(assurance_level):
             return Identity.AssuranceLevel.MEDIUM
-        else:
+        elif set(settings.SUOMIFI_ASSURANCE_LOW).intersection(assurance_level):
             return Identity.AssuranceLevel.LOW
+        else:
+            return Identity.AssuranceLevel.NONE
 
     @staticmethod
     def _get_verification_level(request: HttpRequest) -> Identity.VerificationMethod:

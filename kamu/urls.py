@@ -45,9 +45,11 @@ from kamu.views.identity import (
     IdentifierView,
     IdentityCombineView,
     IdentityDetailView,
+    IdentityMeVerifyView,
     IdentityMeView,
     IdentitySearchView,
     IdentityUpdateView,
+    IdentityVerifyView,
     PhoneNumberVerificationView,
 )
 from kamu.views.membership import (
@@ -91,7 +93,9 @@ urlpatterns = [
     path("", FrontPageView.as_view(), name="front-page"),
     path("accessibility/", AccessibilityStatementView.as_view(), name="accessibility"),
     path("identity/me/", IdentityMeView.as_view(), name="identity-me"),
+    path("identity/me/verify/", IdentityMeVerifyView.as_view(), name="identity-me-verify"),
     path("identity/<int:pk>/", IdentityDetailView.as_view(), name="identity-detail"),
+    path("identity/<int:pk>/verify/", IdentityVerifyView.as_view(), name="identity-verify"),
     path(
         "identity/combine/<int:primary_pk>/<int:secondary_pk>/", IdentityCombineView.as_view(), name="identity-combine"
     ),

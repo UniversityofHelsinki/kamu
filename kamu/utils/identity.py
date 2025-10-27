@@ -626,6 +626,9 @@ def check_and_update_identity_attribute(
                 return False
         case "nationality":
             return add_nationality(request, identity, new_value, verification_method)
+        case "gender":
+            if new_value and new_value not in ["M", "F"]:
+                new_value = "O"
         case "fpic":
             if (
                 Identifier.objects.filter(type=Identifier.Type.FPIC, value=new_value)

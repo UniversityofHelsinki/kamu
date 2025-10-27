@@ -691,7 +691,7 @@ class LinkIdentifierTests(BaseTestCase):
         response = self.client.get(url, follow=True, headers=headers)
         self.assertEqual(response.status_code, 200)
         self.identity.refresh_from_db()
-        self.assertEqual(self.identity.assurance_level, Identity.AssuranceLevel.HIGH)
+        self.assertEqual(self.identity.assurance_level, Identity.AssuranceLevel.HIGHEST)
         self.assertEqual(self.identity.given_names, "Suomi")
         self.assertEqual(self.identity.given_names_verification, Identity.VerificationMethod.STRONG)
         self.assertEqual(self.identity.surname, "Mr. Finland")
@@ -714,7 +714,7 @@ class LinkIdentifierTests(BaseTestCase):
                 ),
                 call(
                     20,
-                    "Updated identity assurance level from Suomi.fi/eIDAS verification to 3",
+                    "Updated identity assurance level from Suomi.fi/eIDAS verification to 4",
                     extra=ANY,
                 ),
             ]

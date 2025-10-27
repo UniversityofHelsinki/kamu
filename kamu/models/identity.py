@@ -143,6 +143,7 @@ class Identity(models.Model):
         LOW = (1, _("Low, self-asserted with a verified email-address"))
         MEDIUM = (2, _("Medium, verified with a government issued photo-ID"))
         HIGH = (3, _("High, eIDAS substantial level or similar"))
+        HIGHEST = (4, _("Highest, eIDAS high level or similar"))
 
     class VerificationMethod(models.IntegerChoices):
         UNVERIFIED = (0, _("No verification"))
@@ -248,6 +249,9 @@ class Identity(models.Model):
         default="en",
         verbose_name=_("Preferred language"),
         help_text=_("Preferred service language."),
+    )
+    candour_verification_session_id = models.CharField(
+        max_length=255, blank=True, verbose_name=_("Candour session ID")
     )
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
@@ -586,10 +590,14 @@ class Identifier(models.Model):
         GOOGLE = ("google", _("Google account"))
         MICROSOFT = ("microsoft", _("Microsoft account"))
         KAMU = ("kamu", _("Kamu identifier"))
+        PERSON = ("person", _("Person identifier"))
+        ID = ("id", _("Government issued ID"))
+        OTHER = ("other", _("Other identifier"))
 
     type = models.CharField(max_length=10, choices=Type.choices, verbose_name=_("Identifier type"))
     value = models.CharField(max_length=4000, verbose_name=_("Identifier value"))
     name = models.CharField(max_length=256, blank=True, verbose_name=_("Identifier name"))
+    valid_until = models.DateField(blank=True, null=True, verbose_name=_("Valid until"))
 
     verified = models.DateTimeField(blank=True, null=True, verbose_name=_("Verified at"))
 

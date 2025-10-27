@@ -211,15 +211,19 @@ SAML_SUOMIFI_SSN: str = "shib_nationalIdentificationNumber"
 SAML_SUOMIFI_GIVEN_NAMES: str = "shib_givenName"
 SAML_SUOMIFI_SURNAME: str = "shib_sn"
 SAML_SUOMIFI_ASSURANCE: str = "Shib-AuthnContext-Class"
-SUOMIFI_ASSURANCE_HIGH: list[str] = [
+SUOMIFI_ASSURANCE_HIGHEST: list[str] = [
     "http://ftn.ficora.fi/2017/loa3",
     "http://eidas.europa.eu/LoA/high",
+]
+SUOMIFI_ASSURANCE_HIGH: list[str] = [
     "http://ftn.ficora.fi/2017/loa2",
     "http://eidas.europa.eu/LoA/substantial",
 ]
 SUOMIFI_ASSURANCE_MEDIUM: list[str] = [
+    "urn:oid:1.2.246.517.3002.110.7",
     "http://eidas.europa.eu/LoA/low",
 ]
+SUOMIFI_ASSURANCE_LOW: list[str] = []
 
 SAML_EIDAS_IDENTIFIER: str = "shib_PersonIdentifier"
 SAML_EIDAS_GIVEN_NAMES: str = "shib_FirstName"
