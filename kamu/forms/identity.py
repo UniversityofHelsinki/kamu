@@ -421,13 +421,16 @@ class IdentityForm(forms.ModelForm):
             # Do not show verification fields when user is modifying their own information.
             # Disable fields that are already strongly verified.
             verification_fields = False
+            disable_verify_level = getattr(
+                settings, "ATTRIBUTE_VERIFICATION_LEVEL_UNEDITABLE", Identity.VerificationMethod.PHOTO_ID
+            )
             for field in self.instance.basic_verification_fields() + self.instance.restricted_verification_fields():
-                if self.initial and self.initial[field] >= Identity.VerificationMethod.STRONG:
+                if self.initial and self.initial[field] >= disable_verify_level:
                     self.fields[field.removesuffix("_verification")].disabled = True
                 del self.fields[field]
             if "remove_nationality" in self.fields:
                 self.fields["remove_nationality"].widget.disabled_choices = Nationality.objects.filter(
-                    identity=self.instance, verification_method__gte=Identity.VerificationMethod.STRONG
+                    identity=self.instance, verification_method__gte=disable_verify_level
                 ).values_list("pk", flat=True)
         elif not self.request.user.has_perms(["kamu.change_restricted_information"]):
             # Remove restricted fields if user does not have permission to modify them.
@@ -442,8 +445,11 @@ class IdentityForm(forms.ModelForm):
         """
         remove_nationalities = self.cleaned_data["remove_nationality"]
         if self.instance and self.instance.user == self.request.user:
+            disable_verify_level = getattr(
+                settings, "ATTRIBUTE_VERIFICATION_LEVEL_UNEDITABLE", Identity.VerificationMethod.PHOTO_ID
+            )
             for nationality in remove_nationalities:
-                if nationality.verification_method >= Identity.VerificationMethod.STRONG:
+                if nationality.verification_method >= disable_verify_level:
                     raise ValidationError(_("Cannot remove verified nationality."))
         return remove_nationalities
 

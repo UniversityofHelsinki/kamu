@@ -89,6 +89,12 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
             identity=self.object, expire_date__lt=timezone.now().date()
         ).order_by(*Membership.get_ordering_by_role_name())
         context["identifiers"] = Identifier.objects.filter(identity=self.object, deactivated_at=None)
+        context["assurance_verified_level"] = getattr(
+            settings, "ASSURANCE_LEVEL_DISPLAY_AS_VERIFIED", Identity.AssuranceLevel.MEDIUM
+        )
+        context["attribute_verified_level"] = getattr(
+            settings, "ATTRIBUTE_VERIFICATION_LEVEL_DISPLAY_AS_VERIFIED", Identity.VerificationMethod.PHOTO_ID
+        )
         return context
 
     def get_queryset(self) -> QuerySet[Identity]:

@@ -257,3 +257,11 @@ ACCOUNT_AFFILIATIONS: dict[str, list[str]] = {
 ACCOUNT_TYPES: dict[str, int | str] = {
     "lightaccount": 9,
 }
+
+# Change what level of attribute or assurance is shown as verified in identity view.
+# Check levels from kamu.models.Identity
+# ASSURANCE_LEVEL_DISPLAY_AS_VERIFIED: int = 2
+# ATTRIBUTE_VERIFICATION_LEVEL_DISPLAY_AS_VERIFIED: int = 3
+
+# Change what level of attribute verifications are disabled for manual edit by user.
+# ATTRIBUTE_VERIFICATION_LEVEL_UNEDITABLE: int = 3

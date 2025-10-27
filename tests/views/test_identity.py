@@ -314,6 +314,14 @@ class IdentityEditTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('disabled id="id_given_names"', response.content.decode("utf-8"))
 
+    @override_settings(ATTRIBUTE_VERIFICATION_LEVEL_UNEDITABLE=0)
+    def test_edit_own_information_disabled_fields_all(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('disabled id="id_given_names"', response.content.decode("utf-8"))
+        self.assertIn('disabled id="id_gender"', response.content.decode("utf-8"))
+
     @override_settings(ALLOW_TEST_FPIC=True)
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_edit_own_information(self, mock_logger):
