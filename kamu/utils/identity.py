@@ -2,12 +2,13 @@
 Helper functions for the identity
 """
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Callable
+from datetime import date, datetime
+from typing import TYPE_CHECKING, Any, Callable
 
+import pycountry
 from django.conf import settings
 from django.contrib import messages
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.validators import URLValidator
 from django.db import IntegrityError, transaction
 from django.http import HttpRequest
@@ -20,7 +21,14 @@ from kamu.connectors.email import send_verification_email
 from kamu.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
 from kamu.connectors.sms import SmsConnector
 from kamu.models.contract import Contract
-from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
+from kamu.models.identity import (
+    Country,
+    EmailAddress,
+    Identifier,
+    Identity,
+    Nationality,
+    PhoneNumber,
+)
 from kamu.models.membership import Membership
 from kamu.models.token import TimeLimitError, Token
 from kamu.utils.audit import AuditLog
@@ -537,6 +545,149 @@ def create_or_verify_phone_number(
                 log_to_db=True,
             )
         return phone_object
+
+
+def add_nationality(
+    request: HttpRequest, identity: Identity, code: str, verification_method: Identity.VerificationMethod
+) -> bool:
+    """
+    Add nationality to identity if not already present or update verification method if higher.
+    code: ISO 2-letter or 3-letter country code.
+    """
+    country_code = ""
+    if len(code) == 3:
+        country = pycountry.countries.get(alpha_3=code)
+        if country:
+            country_code = country.alpha_2
+    elif len(code) == 2:
+        country_code = code.upper()
+    try:
+        country_obj = Country.objects.get(code=country_code)
+    except ObjectDoesNotExist:
+        audit_log.warning(
+            f"Could not find nationality {code}",
+            category="identity",
+            action="update",
+            outcome="failure",
+            request=request,
+            objects=[identity],
+        )
+        return False
+    nationality = Nationality.objects.filter(identity=identity, country=country_obj).first()
+    if not nationality:
+        Nationality.objects.create(identity=identity, country=country_obj, verification_method=verification_method)
+        audit_log.info(
+            f"Added nationality {country_code} to identity {identity}",
+            category="identity",
+            action="update",
+            outcome="success",
+            request=request,
+            objects=[identity, nationality],
+        )
+        return True
+    elif nationality.verification_method < verification_method:
+        nationality.verification_method = verification_method
+        nationality.save()
+        audit_log.info(
+            f"Updated nationality {country_code} verification level to identity {identity}",
+            category="identity",
+            action="update",
+            outcome="success",
+            request=request,
+            objects=[identity, nationality],
+        )
+        return True
+    return False
+
+
+def check_and_update_identity_attribute(
+    request: HttpRequest,
+    identity: Identity,
+    attribute: str,
+    new_value: Any,
+    verification_method: Identity.VerificationMethod,
+) -> bool:
+    """
+    Check and update identity attribute if it has changed.
+    """
+    if new_value is None:
+        return False
+    match attribute:
+        case "given_names" | "surname":
+            if new_value.isupper():
+                new_value = new_value.title()
+        case "date_of_birth":
+            if isinstance(new_value, str):
+                try:
+                    new_value = datetime.strptime(new_value, "%Y-%m-%d").date()
+                except ValueError:
+                    return False
+            if not isinstance(new_value, date):
+                return False
+        case "nationality":
+            return add_nationality(request, identity, new_value, verification_method)
+        case "fpic":
+            if (
+                Identifier.objects.filter(type=Identifier.Type.FPIC, value=new_value)
+                .exclude(identity=identity)
+                .exists()
+            ):
+                audit_log.warning(
+                    "FPIC already exists in the database",
+                    category="identity",
+                    action="update",
+                    outcome="failure",
+                    request=request,
+                    objects=[identity],
+                    extra={"sensitive": new_value},
+                )
+                messages.error(
+                    request,
+                    _("Suspected duplicate user. Finnish personal identity code already exists in the database: ")
+                    + new_value,
+                )
+                return False
+    changed = False
+    current_value = getattr(identity, attribute, None)
+    current_verification_method = getattr(identity, f"{attribute}_verification", None)
+    if (
+        new_value
+        and current_value != new_value
+        and (current_verification_method is None or current_verification_method <= verification_method.value)
+    ):
+        setattr(identity, attribute, new_value)
+        changed = True
+    if current_verification_method is not None and current_verification_method < verification_method.value:
+        setattr(identity, f"{attribute}_verification", verification_method)
+        changed = True
+    return changed
+
+
+def update_identity_attributes(
+    request: HttpRequest,
+    identity: Identity,
+    attributes: dict[str, str | date | None],
+    verification_method: Identity.VerificationMethod,
+) -> None:
+    """
+    Update identity attributes if they have changed.
+    Attributes are provided as a list of tuples (attribute_name, new_value).
+    """
+    modified = []
+    for attribute, value in attributes.items():
+        if check_and_update_identity_attribute(request, identity, attribute, value, verification_method):
+            modified.append(attribute)
+    if modified:
+        identity.save()
+        audit_log.info(
+            f"Updated identity attributes: {', '.join(modified)}",
+            category="identity",
+            action="update",
+            outcome="success",
+            request=request,
+            objects=[identity],
+            log_to_db=True,
+        )
 
 
 def add_account_messages(request: HttpRequest, activable_accounts: list[dict[str, str]], identity: Identity) -> None:

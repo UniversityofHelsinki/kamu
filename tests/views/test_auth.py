@@ -673,3 +673,49 @@ class LinkIdentifierTests(BaseTestCase):
         )
         self.identity.refresh_from_db()
         self.assertEqual(self.identity.uid, "oldtest")
+
+    @override_settings(SAML_SUOMIFI_SSN="HTTP_SSN")
+    @override_settings(SAML_SUOMIFI_GIVEN_NAMES="HTTP_GIVEN_NAMES")
+    @override_settings(SAML_SUOMIFI_SURNAME="HTTP_SURNAME")
+    @override_settings(SAML_SUOMIFI_ASSURANCE="HTTP_ASSURANCE")
+    @override_settings(ALLOW_TEST_FPIC=True)
+    @mock.patch("kamu.utils.audit.logger_audit")
+    def test_link_suomifi_update_attributes(self, audit_logger):
+        url = reverse("login-suomifi")
+        headers = {
+            "SSN": "010181-900C",
+            "GIVEN_NAMES": "Suomi",
+            "SURNAME": "Mr. Finland",
+            "ASSURANCE": "http://eidas.europa.eu/LoA/high",
+        }
+        response = self.client.get(url, follow=True, headers=headers)
+        self.assertEqual(response.status_code, 200)
+        self.identity.refresh_from_db()
+        self.assertEqual(self.identity.assurance_level, Identity.AssuranceLevel.HIGH)
+        self.assertEqual(self.identity.given_names, "Suomi")
+        self.assertEqual(self.identity.given_names_verification, Identity.VerificationMethod.STRONG)
+        self.assertEqual(self.identity.surname, "Mr. Finland")
+        self.assertEqual(self.identity.surname_verification, Identity.VerificationMethod.STRONG)
+        self.assertEqual(self.identity.date_of_birth, datetime.date(1981, 1, 1))
+        self.assertEqual(self.identity.date_of_birth_verification, Identity.VerificationMethod.STRONG)
+        self.assertEqual(self.identity.fpic, "010181-900C")
+        self.assertEqual(self.identity.fpic_verification, Identity.VerificationMethod.STRONG)
+        audit_logger.log.assert_has_calls(
+            [
+                call(
+                    20,
+                    "Linked fpic identifier to identity Tester Mc.",
+                    extra=ANY,
+                ),
+                call(
+                    20,
+                    "Updated identity attributes: given_names, surname, date_of_birth, fpic",
+                    extra=ANY,
+                ),
+                call(
+                    20,
+                    "Updated identity assurance level from Suomi.fi/eIDAS verification to 3",
+                    extra=ANY,
+                ),
+            ]
+        )

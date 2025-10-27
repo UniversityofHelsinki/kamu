@@ -5,7 +5,7 @@ Authentication backends
 import ipaddress
 import logging
 import re
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 from uuid import uuid4
 
@@ -31,6 +31,7 @@ from kamu.models.role import Role
 from kamu.models.token import Token
 from kamu.utils.audit import AuditLog, get_client_ip
 from kamu.utils.auth import set_default_permissions
+from kamu.utils.identity import update_identity_attributes
 from kamu.validators.identity import validate_fpic
 
 audit_log = AuditLog()
@@ -849,7 +850,7 @@ class SuomiFiBackend(LocalBaseBackend):
             if not re.match(settings.EIDAS_IDENTIFIER_REGEX, identifier):
                 raise AuthenticationError(self.error_messages["invalid_identifier_format"])
 
-    def _parse_date_from_fpic(self, fpic: str) -> datetime | None:
+    def _parse_date_from_fpic(self, fpic: str) -> date | None:
         if fpic[6] == "+":
             date_string = f"{fpic[:4]}18{fpic[4:6]}"
         elif fpic[6] in "-YXWVU":
@@ -857,7 +858,7 @@ class SuomiFiBackend(LocalBaseBackend):
         else:
             date_string = f"{fpic[:4]}20{fpic[4:6]}"
         try:
-            return datetime.strptime(date_string, "%d%m%Y")
+            return datetime.strptime(date_string, "%d%m%Y").date()
         except ValueError:
             return None
 
@@ -870,22 +871,15 @@ class SuomiFiBackend(LocalBaseBackend):
         if not identity:
             return None
         verification_level = self._get_verification_level(request)
+        given_names, surname, _, _ = self._get_meta_user_info(request)
         identifier_type = self._get_type(request)
         if identifier_type == "suomifi":
             fpic = fix_meta_encoding(request.META.get(settings.SAML_SUOMIFI_SSN, ""))
             try:
                 validate_fpic(fpic)
             except ValidationError:
-                return None
-            identity.date_of_birth = self._parse_date_from_fpic(fpic)
-            identity.date_of_birth_verification = verification_level
-            identity.fpic = fpic
-            identity.fpic_verification = verification_level
-            try:
-                identity.save()
-            except IntegrityError:
                 audit_log.warning(
-                    "FPIC already exists in the database",
+                    "Invalid FPIC format",
                     category="identity",
                     action="update",
                     outcome="failure",
@@ -893,20 +887,32 @@ class SuomiFiBackend(LocalBaseBackend):
                     objects=[identity],
                     extra={"sensitive": fpic},
                 )
-                messages.error(
-                    request,
-                    _("Suspected duplicate user. Finnish personal identity code already exists in the database: ")
-                    + fpic,
-                )
+                return None
+            date_of_birth = self._parse_date_from_fpic(fpic)
+            fields = {
+                "given_names": given_names,
+                "surname": surname,
+                "date_of_birth": date_of_birth,
+                "fpic": fpic,
+            }
+            update_identity_attributes(request, identity, fields, verification_level)
         elif identifier_type == "eidas":
             date_string = fix_meta_encoding(request.META.get(settings.SAML_EIDAS_DATEOFBIRTH, ""))
-            if date_string:
-                try:
-                    identity.date_of_birth = datetime.strptime(date_string, "%Y-%m-%d")
-                    identity.date_of_birth_verification = verification_level
-                    identity.save()
-                except ValueError:
-                    pass
+            fields = {"given_names": given_names, "surname": surname, "date_of_birth": date_string}
+            update_identity_attributes(request, identity, fields, verification_level)
+        assurance_level = self._get_assurance_level(request)
+        if identity.assurance_level < assurance_level:
+            identity.assurance_level = assurance_level
+            identity.save()
+            audit_log.info(
+                f"Updated identity assurance level from Suomi.fi/eIDAS verification to {assurance_level}",
+                category="identity",
+                action="update",
+                outcome="success",
+                request=request,
+                objects=[identity],
+                log_to_db=True,
+            )
         return None
 
 
