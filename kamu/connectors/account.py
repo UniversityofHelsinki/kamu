@@ -6,27 +6,12 @@ import requests
 from django.conf import settings
 from django.utils import timezone
 
+from kamu.connectors import ApiConfigurationError, ApiTemporaryError
 from kamu.models.account import Account
 from kamu.models.identity import Identity
 from kamu.utils.account import get_account_data
 
 logger = logging.getLogger(__name__)
-
-
-class AccountApiConfigurationError(Exception):
-    """
-    Configuration error in either the API or the settings.
-    """
-
-    pass
-
-
-class AccountApiTryAgainError(Exception):
-    """
-    Temporary or configuration error in the API.
-    """
-
-    pass
 
 
 class AccountApiConnector:
@@ -48,7 +33,7 @@ class AccountApiConnector:
         self.cert = (cert_file_path, key_file_path) if cert_file_path and key_file_path else None
         if not self.url or api_key is None or authorization_header is None:
             logger.error("Account API missing parameters.")
-            raise AccountApiConfigurationError("Incorrect account API settings.")
+            raise ApiConfigurationError("Incorrect account API settings.")
         self.headers = {authorization_header: api_key, "Content-Type": "application/json"}
 
     def api_call_get(self, url: str, headers: dict | None = None) -> requests.Response:
@@ -92,37 +77,37 @@ class AccountApiConnector:
                 response = self.api_call_post(url, data, headers)
             else:
                 logger.error("Account API unknown HTTP method.")
-                raise AccountApiConfigurationError
+                raise ApiConfigurationError
         # Handle exceptions
         except OSError as e:
             logger.error(f"Account API OS Error: {e}")
-            raise AccountApiConfigurationError from e
+            raise ApiConfigurationError from e
         except requests.exceptions.SSLError as e:
             logger.error(f"Account API SSL Error: {e}")
-            raise AccountApiConfigurationError from e
+            raise ApiConfigurationError from e
         except requests.exceptions.ConnectionError as e:
             logger.error(f"Account API connection Error: {e}")
-            raise AccountApiTryAgainError from e
+            raise ApiTemporaryError from e
         except requests.exceptions.Timeout as e:
             logger.error(f"Account API timeout: {e}")
-            raise AccountApiTryAgainError from e
+            raise ApiTemporaryError from e
         # Handle response codes
         if response.status_code in getattr(settings, "ACCOUNT_API_SUCCESS_CODES", [200]):
             content = json.loads(response.content)
             return content
         elif response.status_code == 400:
             logger.error(f"Account API status 400: {response.text}")
-            raise AccountApiTryAgainError(f"API error, status {response.status_code}")
+            raise ApiTemporaryError(f"API error, status {response.status_code}")
         elif response.status_code == 403:
             logger.error("Account API status 403: Incorrect settings.")
-            raise AccountApiConfigurationError(f"API error, status {response.status_code}")
+            raise ApiConfigurationError(f"API error, status {response.status_code}")
         elif response.status_code == 404:
             logger.error("Account API status 404: Not found.")
-            raise AccountApiConfigurationError(f"API error, status {response.status_code}")
+            raise ApiConfigurationError(f"API error, status {response.status_code}")
         else:
             error_msg = "Account API Error"
             logger.error(f"Account API status {response.status_code} : {error_msg}")
-            raise AccountApiTryAgainError(f"API error, status {response.status_code}")
+            raise ApiTemporaryError(f"API error, status {response.status_code}")
 
     def create_account(self, identity: Identity, uid: str, password: str, account_type: Account.Type) -> Account:
         """
@@ -135,10 +120,10 @@ class AccountApiConnector:
             path=getattr(settings, "ACCOUNT_API_CREATE_PATH", "create"), http_method="post", data=data
         )
         if not isinstance(response, dict):
-            raise AccountApiConfigurationError
+            raise ApiConfigurationError
         r_uid = response.get("uid")
         if r_uid != uid:
-            raise AccountApiConfigurationError
+            raise ApiConfigurationError
         account = Account._default_manager.create(identity=identity, uid=uid, type=account_type)
         return account
 
@@ -192,5 +177,5 @@ class AccountApiConnector:
             path=getattr(settings, "ACCOUNT_API_UID_CHOICES_PATH", "generateUids"), http_method="get", headers=headers
         )
         if not isinstance(uid_choices, list):
-            raise AccountApiConfigurationError
+            raise ApiConfigurationError
         return uid_choices

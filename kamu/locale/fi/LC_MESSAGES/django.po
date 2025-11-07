@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-31 12:55+0200\n"
+"POT-Creation-Date: 2025-11-07 15:20+0200\n"
 "Language: FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -115,7 +115,7 @@ msgstr "Vahvista salasana"
 msgid "Passwords do not match."
 msgstr "Salasanat eivät täsmää."
 
-#: forms/account.py:47 models/account.py:39
+#: forms/account.py:47 models/account.py:40
 #: templates/account/account_detail.html:10
 #: templates/account/account_detail.html:33
 #: templates/account/account_detail.html:57
@@ -303,7 +303,7 @@ msgstr "Yhdistä"
 msgid "Given name(s)"
 msgstr "Etunimet"
 
-#: forms/identity.py:52 models/account.py:46 models/role.py:253
+#: forms/identity.py:52 models/account.py:47 models/role.py:253
 #: templates/identity/identity_search.html:18
 #: templates/identity/identity_search.html:45
 #: templates/membership/membership_invite.html:40
@@ -440,11 +440,11 @@ msgstr "Rajatut tiedot"
 msgid "Save changes"
 msgstr "Tallenna muutokset"
 
-#: forms/identity.py:444
+#: forms/identity.py:453
 msgid "Cannot remove verified nationality."
 msgstr "Vahvistettua kansalaisuutta ei voida poistaa"
 
-#: forms/identity.py:465
+#: forms/identity.py:474
 msgid "Cannot set strong electrical verification manually."
 msgstr "Vahvaa sähköistä tunnistustasoa ei voi asettaa käsin."
 
@@ -526,28 +526,28 @@ msgstr "Virheellinen arvo: %(part)s"
 msgid "Invalid line: %(line)s"
 msgstr "Virheellinen rivi: %(line)s"
 
-#: models/account.py:28
+#: models/account.py:29
 msgid "Enabled"
 msgstr "Aktiivinen"
 
-#: models/account.py:29 models/membership.py:60
+#: models/account.py:30 models/membership.py:60
 #: templates/identity/identity_detail.html:127
 msgid "Expired"
 msgstr "Päättynyt"
 
-#: models/account.py:30
+#: models/account.py:31
 msgid "Disabled"
 msgstr "Suljettu"
 
-#: models/account.py:33 templates/account/account_detail.html:8
+#: models/account.py:34 templates/account/account_detail.html:8
 msgid "Account"
 msgstr "Tunnus"
 
-#: models/account.py:34
+#: models/account.py:35
 msgid "Light Account"
 msgstr "Kevyttunnus"
 
-#: models/account.py:36 templates/account/account_detail.html:14
+#: models/account.py:37 templates/account/account_detail.html:14
 #: templates/account/account_list.html:18
 #: templates/identity/identity_detail.html:99
 #: templates/membership/membership_approval_list.html:13
@@ -558,15 +558,15 @@ msgstr "Kevyttunnus"
 msgid "Status"
 msgstr "Tila"
 
-#: models/account.py:37
+#: models/account.py:38
 msgid "Account type"
 msgstr "Tunnuksen tyyppi"
 
-#: models/account.py:41 models/identity.py:604
+#: models/account.py:42 models/identity.py:604
 msgid "Deactivated at"
 msgstr "Suljettu"
 
-#: models/account.py:42 models/account.py:141 models/contract.py:55
+#: models/account.py:43 models/account.py:142 models/contract.py:55
 #: models/contract.py:112 models/identity.py:40 models/identity.py:256
 #: models/identity.py:466 models/identity.py:502 models/identity.py:538
 #: models/identity.py:605 models/membership.py:108 models/organisation.py:31
@@ -574,7 +574,7 @@ msgstr "Suljettu"
 msgid "Created at"
 msgstr "Luotu"
 
-#: models/account.py:43 models/account.py:142 models/identity.py:41
+#: models/account.py:44 models/account.py:143 models/identity.py:41
 #: models/identity.py:257 models/identity.py:467 models/identity.py:503
 #: models/identity.py:539 models/identity.py:606 models/membership.py:109
 #: models/organisation.py:32 models/role.py:84 models/role.py:276
@@ -582,19 +582,19 @@ msgstr "Luotu"
 msgid "Updated at"
 msgstr "Päivitetty"
 
-#: models/account.py:47 templates/identity/identity_detail.html:89
+#: models/account.py:48 templates/identity/identity_detail.html:89
 msgid "User accounts"
 msgstr "Käyttäjätunnukset"
 
-#: models/account.py:140
+#: models/account.py:141
 msgid "Number of failures"
 msgstr "Epäonnistumisten määrä"
 
-#: models/account.py:145
+#: models/account.py:146
 msgid "Account synchronisation"
 msgstr "Tunnusten synkronointi"
 
-#: models/account.py:146
+#: models/account.py:147
 msgid "Account synchronisations"
 msgstr "Tunnusten synkronoinnit"
 
@@ -3335,8 +3335,8 @@ msgstr ""
 "Yritit lähettää uuden koodin liian pian. Ole hyvä ja odota yksi minuutti "
 "ennen uutta yritystä."
 
-#: utils/identity.py:418 utils/identity.py:439 views/identity.py:549
-#: views/identity.py:592
+#: utils/identity.py:418 utils/identity.py:439 views/identity.py:586
+#: views/identity.py:629
 msgid "Verification code sent."
 msgstr "Vahvistuskoodi lähetetty."
 
@@ -3344,12 +3344,12 @@ msgstr "Vahvistuskoodi lähetetty."
 msgid "Failed to send verification code."
 msgstr "Vahvistuskoodin lähetys epäonnistui."
 
-#: utils/identity.py:437 views/identity.py:590
+#: utils/identity.py:437 views/identity.py:627
 #, python-format
 msgid "Kamu verification code: %(token)s"
 msgstr "Kamu-vahvistuskoodi: %(token)s"
 
-#: utils/identity.py:442 views/identity.py:595
+#: utils/identity.py:442 views/identity.py:632
 msgid "Could not send an SMS message."
 msgstr "Tekstiviestin lähetys epäonnistui."
 
@@ -3369,16 +3369,16 @@ msgstr ""
 "Mahdollinen duplikaattikäyttäjä. Suomalainen henkilötunnus on jo olemassa "
 "tietokannassa: "
 
-#: utils/identity.py:699
+#: utils/identity.py:703
 #, python-format
 msgid "You can activate a new user account of type \"%(account_type)s\"."
 msgstr "Voit aktivoida uuden käyttäjätunnuksen tyyppiä \"%(account_type)s\"."
 
-#: utils/identity.py:704
+#: utils/identity.py:708
 msgid "Activate account"
 msgstr "Aktivoi tunnus"
 
-#: utils/identity.py:719
+#: utils/identity.py:723
 msgid "Continue to external service to activate account"
 msgstr "Jatka ulkoiseen palveluun tunnuksen aktivoimiseksi"
 
@@ -3560,51 +3560,51 @@ msgstr "Roolihierarkia ei voi olla syvempi kuin maksimisyvyys."
 msgid "Role cannot be in its own hierarchy."
 msgstr "Rooli ei voi olla omassa hierarkiassaan."
 
-#: views/account.py:144
+#: views/account.py:145
 msgid "Could not load user ID choices, please try again later."
 msgstr ""
 "Käyttäjätunnusvaihtoehtojen muodostaminen ei onnistunut. Ole hyvä ja yritä "
 "myöhemmin uudelleen."
 
-#: views/account.py:197
+#: views/account.py:198
 msgid "Account creation failed, please try again later."
 msgstr ""
 "Käyttäjätunnuksen luonti epäonnistui, ole hyvä ja yritä myöhemmin uudelleen."
 
-#: views/account.py:209
+#: views/account.py:210
 msgid "Account created."
 msgstr "Käyttäjätunnus luotu."
 
-#: views/account.py:307 views/account.py:351 views/account.py:435
+#: views/account.py:308 views/account.py:352 views/account.py:436
 msgid "Your permission to this account has expired."
 msgstr "Oikeutesi tähän käyttäjätunnukseen on päättynyt."
 
-#: views/account.py:368
+#: views/account.py:369
 msgid "Account enabling failed, please try again later."
 msgstr ""
 "Käyttäjätunnuksen aktivointi epäonnistui, ole hyvä ja yritä myöhemmin "
 "uudelleen."
 
-#: views/account.py:380
+#: views/account.py:381
 msgid "Account enabled."
 msgstr "Käyttäjätunnus aktivoitu."
 
-#: views/account.py:407
+#: views/account.py:408
 msgid "Account disabling failed, please try again later."
 msgstr ""
 "Käyttäjätunnuksen sulkeminen epäonnistui, ole hyvä ja yritä myöhemmin "
 "uudelleen."
 
-#: views/account.py:419
+#: views/account.py:420
 msgid "Account disabled."
 msgstr "Käyttäjätunnus suljettu."
 
-#: views/account.py:469
+#: views/account.py:470
 msgid "Password reset failed, please try again later."
 msgstr ""
 "Salasanan asettaminen epäonnistui, ole hyvä ja yritä myöhemmin uudelleen."
 
-#: views/account.py:480
+#: views/account.py:481
 msgid "Password reset."
 msgstr "Salasana asetettu."
 
@@ -3653,95 +3653,101 @@ msgid "Memberships are ending soon in roles you have approval rights."
 msgstr ""
 "Jäsenyyksiä päättyy pian rooleissa, joissa sinulla on hyväksymisoikeudet."
 
-#: views/identity.py:174
+#: views/identity.py:181
 msgid "Selected as the target identity for identity combining."
 msgstr "Valittu kohteeksi henkilöllisyyksien yhdistämisessä."
 
-#: views/identity.py:180
+#: views/identity.py:187
 msgid "Selected as the source identity for identity combining."
 msgstr "Valittu lähteeksi henkilöllisyyksien yhdistämisessä."
 
-#: views/identity.py:335
+#: views/identity.py:339
+msgid "Failed to verify Candour ID verification status, please try again."
+msgstr "Candourin ID tunnistuksen tilaa ei pystytä vahvistamaan, yritä myöhemmin uudelleen."
+
+#: views/identity.py:364
 msgid "Your identity has been verified with Candour ID verification."
 msgstr "Henkilöllisyytesi on vahvistettu Candourin ID‑varmennuksella."
 
-#: views/identity.py:353
+#: views/identity.py:382
 msgid "Candour ID verification failed, please try again."
 msgstr "Candourin henkilöllisyyden varmentaminen epäonnistui, yritä uudelleen."
 
-#: views/identity.py:397
-msgid "Could not start Candour ID process, please try again later."
-msgstr ""
-"Candourin henkilöllisyyden varmentamisprosessia ei voitu käynnistää, yritä "
-"myöhemmin uudelleen."
+#: views/identity.py:418
+msgid "Failed to create Candour ID verification session, please try again."
+msgstr "Candourin h, yritä uudelleen."
 
-#: views/identity.py:543 views/identity.py:586
+#: views/identity.py:425
+msgid "Could not start Candour ID process, please try again later."
+msgstr "Candourin ID-prosessia ei voitu aloittaa, yritä myöhemmin uudelleen."
+
+#: views/identity.py:580 views/identity.py:623
 msgid "Tried to send a new code too soon."
 msgstr "Yritit lähettää uuden tunnisteen liian pian."
 
-#: views/identity.py:545
+#: views/identity.py:582
 msgid "Kamu: email address verification"
 msgstr "Kamu: sähköpostiosoitteen vahvistaminen"
 
-#: views/identity.py:546
+#: views/identity.py:583
 #, python-format
 msgid "Your verification code is: %(token)s"
 msgstr "Vahvistuskoodisi on: %(token)s"
 
-#: views/identity.py:920
+#: views/identity.py:957
 msgid "Contract already signed."
 msgstr "Sopimus on jo allekirjoitettu."
 
-#: views/identity.py:926
+#: views/identity.py:963
 msgid "Contract version has changed. Please try again."
 msgstr "Sopimuksen versio on muuttunut. Ole hyvä ja yritä uudelleen."
 
-#: views/identity.py:929
+#: views/identity.py:966
 msgid "Contract signed."
 msgstr "Sopimus allekirjoitettu."
 
-#: views/identity.py:1149
+#: views/identity.py:1186
 msgid "New identity created."
 msgstr "Uusi henkilöllisyys luotu."
 
-#: views/identity.py:1173
+#: views/identity.py:1210
 msgid "Invalid verification session."
 msgstr "Virheellinen varmennusistunto."
 
-#: views/identity.py:1186
+#: views/identity.py:1223
 msgid "Identity verification was cancelled."
 msgstr "Henkilöllisyyden varmentaminen peruttiin."
 
-#: views/identity.py:1245
+#: views/identity.py:1282
 msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr ""
 "LDAP-haku palautti liian monta tulosta. Ole hyvä ja tarkenna hakuparametrejä."
 
-#: views/identity.py:1360
+#: views/identity.py:1397
 msgid "Too many results, please refine your search parameters."
 msgstr "Liian monta tulosta. Ole hyvä ja tarkenna hakuparametrejä."
 
-#: views/identity.py:1367
+#: views/identity.py:1404
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 "Osittaiset nimet palauttivat liian monta tulosta. Näytetään vain täsmälliset "
 "osumat."
 
-#: views/identity.py:1391
+#: views/identity.py:1428
 msgid "LDAP search failed, could not search existing accounts."
 msgstr "LDAP-haku epäonnistui. Olemassa olevia tilejä ei voitu hakea."
 
-#: views/identity.py:1399
+#: views/identity.py:1436
 msgid "Identifier match found, skipping name search."
 msgstr "Tunnisteella löydettiin osuma. Nimien haku ohitetaan."
 
-#: views/identity.py:1511
+#: views/identity.py:1548
 msgid "Incorrect primary keys."
 msgstr "Virheelliset yksilöivät avaimet."
 
-#: views/identity.py:1517
+#: views/identity.py:1554
 msgid "Identities combined."
 msgstr "Henkilöllisyydet yhdistetty."
 

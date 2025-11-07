@@ -37,6 +37,7 @@ from django.views.generic import (
     UpdateView,
 )
 
+from kamu.connectors import ApiError
 from kamu.connectors.candour import CandourApiConnector
 from kamu.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
 from kamu.connectors.sms import SmsConnector
@@ -326,10 +327,18 @@ class IdentityVerifyView(LoginRequiredMixin, DetailView):
         if not self.object.user or self.object.user != user:
             raise PermissionDenied
         if self.object.candour_verification_session_id:
-            candour_connector = CandourApiConnector()
-            response = candour_connector.get_candour_result(
-                verification_session_id=self.object.candour_verification_session_id
-            )
+            try:
+                candour_connector = CandourApiConnector()
+                response = candour_connector.get_candour_result(
+                    verification_session_id=self.object.candour_verification_session_id
+                )
+            except ApiError:
+                messages.add_message(
+                    self.request,
+                    messages.ERROR,
+                    _("Failed to verify Candour ID verification status, please try again."),
+                )
+                return super().get(request, *args, **kwargs)
             status = response.get("status")
             if status in ["pending", "opened", "started"]:
                 self.candour_link = response.get("invitationLink", "")
@@ -397,10 +406,18 @@ class IdentityVerifyView(LoginRequiredMixin, DetailView):
                     verification_methods = ["idWeb", "idApp"]
                 else:
                     verification_methods = ["rfidApp"]
-                candour_connector = CandourApiConnector()
-                response = candour_connector.create_candour_session(
-                    identity=self.object, valid_hours=1, verification_methods=verification_methods
-                )
+                try:
+                    candour_connector = CandourApiConnector()
+                    response = candour_connector.create_candour_session(
+                        identity=self.object, valid_hours=1, verification_methods=verification_methods
+                    )
+                except ApiError:
+                    messages.add_message(
+                        self.request,
+                        messages.ERROR,
+                        _("Failed to create Candour ID verification session, please try again."),
+                    )
+                    return redirect("identity-verify", pk=self.object.pk)
                 redirect_url = response.get("redirectUrl")
                 verification_session_id = response.get("verificationSessionId")
                 if not redirect_url or not verification_session_id:

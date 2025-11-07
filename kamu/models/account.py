@@ -7,6 +7,7 @@ from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from kamu.connectors import ApiError
 from kamu.models.role import Permission
 from kamu.utils.audit import AuditLog
 
@@ -74,10 +75,10 @@ class Account(models.Model):
         )
         if self.type not in account_permissions:
             if self.status == Account.Status.ENABLED:
-                connector = AccountApiConnector()
                 try:
+                    connector = AccountApiConnector()
                     connector.disable_account(self)
-                except Exception as e:
+                except ApiError as e:
                     audit_log.warning(
                         f"Account disabling failed: {e}",
                         category="account",

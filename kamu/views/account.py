@@ -25,6 +25,7 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import DetailView, FormView, ListView
 from django.views.generic.edit import FormMixin
 
+from kamu.connectors import ApiError
 from kamu.connectors.account import AccountApiConnector
 from kamu.forms.account import AccountCreateForm, PasswordResetForm
 from kamu.models.account import Account
@@ -139,7 +140,7 @@ class AccountCreateView(LoginRequiredMixin, FormView):
             )
             self.request.session["uid_choices"] = uid_choices
             return uid_choices
-        except Exception:
+        except ApiError:
             messages.add_message(
                 self.request, messages.ERROR, _("Could not load user ID choices, please try again later.")
             )
@@ -183,7 +184,7 @@ class AccountCreateView(LoginRequiredMixin, FormView):
                 account = connector.create_account(
                     identity=self.identity, uid=uid, password=password, account_type=self.account_type
                 )
-            except Exception as e:
+            except ApiError as e:
                 audit_log.warning(
                     f"Account of type {self.account_type} creation failed: {e}",
                     category="account",
@@ -351,10 +352,10 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
             messages.add_message(self.request, messages.WARNING, _("Your permission to this account has expired."))
             return
         if self.object.status == Account.Status.DISABLED:
-            connector = AccountApiConnector()
             try:
+                connector = AccountApiConnector()
                 connector.enable_account(self.object)
-            except Exception as e:
+            except ApiError as e:
                 audit_log.warning(
                     f"Account enabling failed: {e}",
                     category="account",
@@ -390,10 +391,10 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
         ):
             raise PermissionDenied
         if self.object.status == Account.Status.ENABLED:
-            connector = AccountApiConnector()
             try:
+                connector = AccountApiConnector()
                 connector.disable_account(self.object)
-            except Exception as e:
+            except ApiError as e:
                 audit_log.warning(
                     f"Account disabling failed: {e}",
                     category="account",
@@ -456,7 +457,7 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
         try:
             connector = AccountApiConnector()
             connector.set_account_password(account=self.object, password=password)
-        except Exception as e:
+        except ApiError as e:
             audit_log.warning(
                 f"Password reset failed: {e}",
                 category="account",

@@ -26,6 +26,7 @@ class SmsConnector:
         Send an SMS message.
         """
         if self.url is None or self.api_key is None or self.authorization_header is None:
+            logger.error("SMS API is missing setting parameters.")
             return False
         headers = {self.authorization_header: self.api_key, "Content-Type": "application/json"}
         data = {"mobileNumber": number, "message": message}
@@ -36,4 +37,5 @@ class SmsConnector:
         if response.status_code == 200:
             return True
         else:
+            logger.error(f"SMS API error: {response.status_code}.")
             return False

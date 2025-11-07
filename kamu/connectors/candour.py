@@ -9,25 +9,10 @@ import requests
 from django.conf import settings
 from django.utils import timezone
 
+from kamu.connectors import ApiConfigurationError, ApiTemporaryError
 from kamu.models.identity import Identity
 
 logger = logging.getLogger(__name__)
-
-
-class CandourApiConfigurationError(Exception):
-    """
-    Configuration error in either the API or the settings.
-    """
-
-    pass
-
-
-class CandourApiTryAgainError(Exception):
-    """
-    Temporary or configuration error in the API.
-    """
-
-    pass
 
 
 class CandourApiConnector:
@@ -42,7 +27,7 @@ class CandourApiConnector:
         self.candour_settings = getattr(settings, "CANDOUR_API", None)
         if not self.candour_settings:
             logger.error("Candour API settings not found.")
-            raise CandourApiConfigurationError("Incorrect Candour API settings.")
+            raise ApiConfigurationError("Incorrect Candour API settings.")
         self.url = self.candour_settings.get("URL", "")
         self.public_key = self.candour_settings.get("PUBLIC_KEY", "")
         self.secret_key = self.candour_settings.get("SECRET_KEY", "")
@@ -52,7 +37,7 @@ class CandourApiConnector:
         self.candour_session_timeout = self.candour_settings.get("SESSION_TIMEOUT_HOURS", 24)
         if not self.url or not self.public_key or not self.secret_key:
             logger.error("Candour API missing parameters.")
-            raise CandourApiConfigurationError("Incorrect Candour database API settings.")
+            raise ApiConfigurationError("Incorrect Candour database API settings.")
         self.headers = {"X-AUTH-CLIENT": self.public_key, "Content-Type": "application/json"}
 
     def create_hmac_sha256(self, payload: bytes) -> str:
@@ -177,7 +162,7 @@ class CandourApiConnector:
             return response_data
         except Exception as e:
             logger.error("Error creating Candour session: %s", str(e))
-            raise CandourApiTryAgainError("Failed to create Candour session, please try again later.") from e
+            raise ApiTemporaryError("Failed to create Candour session, please try again later.") from e
 
     def get_candour_result(self, verification_session_id: str) -> dict[str, Any]:
         """
@@ -188,4 +173,4 @@ class CandourApiConnector:
             return response_data
         except Exception as e:
             logger.error("Error creating Candour session: %s", str(e))
-            raise CandourApiTryAgainError("Failed to create Candour session, please try again later.") from e
+            raise ApiTemporaryError("Failed to verify Candour session, please try again later.") from e
