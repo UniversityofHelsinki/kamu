@@ -81,6 +81,16 @@ Contracts
 ~~~~~~~~~
 Contracts, or agreements, can be signed by the identity's owner, and viewed by users with the *view_contracts* permission.
 
+Verifying identity
+------------------
+Identity can be verified using either Suomi.fi or Candour ID identification.
+
+When identity is verified, assurance_level is set and attributes and their verification methods are updated if level
+is higher or equal to existing attribute verification method.
+
+Candour ID verification is activated by defining CANDOUR_API settings, including URL.
+Suomi.fi verification is active when kamu.backends.SuomiFiBackend is included in AUTHENTICATION_BACKENDS.
+
 Combining identities
 --------------------
 Duplicate identities always happen, no matter how you try to avoid them.
