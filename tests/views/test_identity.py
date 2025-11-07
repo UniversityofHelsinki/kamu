@@ -1106,6 +1106,22 @@ class IdentityVerificationTests(BaseTestCase):
         self.assertNotIn("Verify with biometric passport", response.content.decode("utf-8"))
         self.assertNotIn("Verify with lower level", response.content.decode("utf-8"))
 
+    @override_settings(CANDOUR_API={})
+    def test_identity_verify_view_without_candour(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Verify with Suomi.fi", response.content.decode("utf-8"))
+        self.assertNotIn("Verify with biometric passport", response.content.decode("utf-8"))
+        self.assertNotIn("Verify with lower level", response.content.decode("utf-8"))
+
+    @override_settings(AUTHENTICATION_BACKENDS=["django.contrib.auth.backends.ModelBackend"])
+    def test_identity_verify_view_without_suomifi(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Verify with Suomi.fi", response.content.decode("utf-8"))
+        self.assertIn("Verify with biometric passport", response.content.decode("utf-8"))
+        self.assertIn("Verify with lower level", response.content.decode("utf-8"))
+
     @override_settings(SAML_SUOMIFI_SSN="HTTP_SSN")
     @override_settings(ALLOW_TEST_FPIC=True)
     @mock.patch("kamu.utils.audit.logger_audit")

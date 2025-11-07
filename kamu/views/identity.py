@@ -312,6 +312,8 @@ class IdentityVerifyView(LoginRequiredMixin, DetailView):
         Add account information to context data
         """
         context = super().get_context_data(**kwargs)
+        context["suomifi_enabled"] = "kamu.backends.SuomiFiBackend" in settings.AUTHENTICATION_BACKENDS
+        context["candour_enabled"] = getattr(settings, "CANDOUR_API", None) and settings.CANDOUR_API.get("URL", None)
         context["candour_link"] = self.candour_link
         context["assurance_level"] = {level.name: level.value for level in Identity.AssuranceLevel}
         return context
@@ -326,7 +328,11 @@ class IdentityVerifyView(LoginRequiredMixin, DetailView):
         self.object = self.get_object()
         if not self.object.user or self.object.user != user:
             raise PermissionDenied
-        if self.object.candour_verification_session_id:
+        if (
+            getattr(settings, "CANDOUR_API", None)
+            and settings.CANDOUR_API.get("URL", None)
+            and self.object.candour_verification_session_id
+        ):
             try:
                 candour_connector = CandourApiConnector()
                 response = candour_connector.get_candour_result(

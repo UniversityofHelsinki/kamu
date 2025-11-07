@@ -22,14 +22,18 @@
   <form method='POST'>
     {% csrf_token %}
     {% if object.fpic %}
-      <h2>{% trans "Suomi.fi e-identification" %}</h2>
-      <p>{% trans "Verify your identity using Suomi.fi identification" %}</p>
-      <button type="submit" name="link_identifier" value="suomifi" class="btn btn-primary mb-4">{% trans "Verify with Suomi.fi" %}</button>
+      {% if suomifi_enabled %}
+        <h2>{% trans "Suomi.fi e-identification" %}</h2>
+        <p>{% trans "Verify your identity using Suomi.fi identification" %}</p>
+        <button type="submit" name="link_identifier" value="suomifi" class="btn btn-primary mb-4">{% trans "Verify with Suomi.fi" %}</button>
+      {% endif %}
     {% else %}
-      <h2>{% trans "Suomi.fi or eIDAS e-identification" %}</h2>
-      <p>{% trans "Verify your identity using Suomi.fi or eIDAS identification." %}</p>
-      <button type="submit" name="verify_identity" value="suomifi" class="btn btn-primary mb-4">{% trans "Verify with Suomi.fi or eIDAS" %}</button>
-      {% if object.assurance_level < assurance_level.HIGH %}
+      {% if suomifi_enabled %}
+        <h2>{% trans "Suomi.fi or eIDAS e-identification" %}</h2>
+        <p>{% trans "Verify your identity using Suomi.fi or eIDAS identification." %}</p>
+        <button type="submit" name="verify_identity" value="suomifi" class="btn btn-primary mb-4">{% trans "Verify with Suomi.fi or eIDAS" %}</button>
+      {% endif %}
+      {% if candour_enabled and object.assurance_level < assurance_level.HIGH %}
         <h2>{% trans "Candour ID" %}</h2>
         <div class="alert alert-info" role="alert">
           <p>{% trans "To use Candour ID verification, please check that the following information matches your identity document." %}</p>
