@@ -148,8 +148,7 @@ def _move_objects_to_primary_identity(
 
     for obj in cls.objects.filter(identity=secondary_identity):
         try:
-            # the foreign key part here seems to be too hard for static checking
-            obj.identity = primary_identity  # type: ignore[assignment]
+            obj.identity = primary_identity
             obj.save()
             audit_log.info(
                 f"Identity transfer: {log_category} from identity: {secondary_identity.pk}",

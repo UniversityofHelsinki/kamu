@@ -1,13 +1,13 @@
 # Common requirements
-Django==4.2.25
+Django==5.2.8
 djangorestframework==3.16.1
-django-crispy-forms==2.4
-django-filter==25.1
+django-crispy-forms==2.5
+django-filter==25.2
 crispy-bootstrap5==2025.6
-django-stubs-ext==5.2.5
-drf-spectacular==0.28.0
+django-stubs-ext==5.2.7
+drf-spectacular==0.29.0
 mysqlclient==2.2.7
 pycountry==24.6.1
-python-json-logger==3.3.0
-python-ldap==3.4.4
+python-json-logger==4.0.0
+python-ldap==3.4.5
 requests==2.32.5

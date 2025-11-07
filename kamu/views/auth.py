@@ -729,10 +729,13 @@ class FrontPageView(View):
         return render(request, self.template_name)
 
 
+@method_decorator([csrf_protect, never_cache], name="post")
 class LocalLogoutView(LogoutView):
     """
     Custom logout view to redirect to the correct page.
     """
+
+    http_method_names = ["get", "head", "post", "options"]
 
     def _get_backend_logout_url(self) -> str | None:
         """
@@ -750,10 +753,9 @@ class LocalLogoutView(LogoutView):
             "kamu.backends.MicrosoftBackend": getattr(settings, "OIDC_LOGOUT_PATH") + oidc_return_url,
             "kamu.backends.EmailSMSBackend": getattr(settings, "LOGOUT_REDIRECT_URL"),
         }
-        backend = self.request.session.get("_auth_user_backend", None)
+        backend = self.request.session.get("_auth_user_backend", "")
         return logout_url.get(backend, None)
 
-    @method_decorator(csrf_protect)
     @method_decorator(never_cache)
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """
@@ -774,3 +776,10 @@ class LocalLogoutView(LogoutView):
                 return render(request, "auth/logout.html", {"multiple_backends": True})
             self.next_page = self._get_backend_logout_url()
         return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """
+        Redirect get to post. Support to get logouts was removed in Django 5.0, but it is required
+        for Shibboleth front-channel logout notifications.
+        """
+        return super().post(request, *args, **kwargs)
