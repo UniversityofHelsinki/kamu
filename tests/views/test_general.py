@@ -24,7 +24,15 @@ class FrontPageViewTests(BaseTestCase):
     def test_front_page_view(self):
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("register here", response.content.decode("utf-8"))
+        self.assertIn("Manage your own information", response.content.decode("utf-8"))
+        self.assertIn("register for Kamu here", response.content.decode("utf-8"))
+
+    @override_settings(HELP_LINK_USERS="1234")
+    @override_settings(HELP_LINK_BASE="https://example.org/")
+    def test_front_page_help_link(self):
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("https://example.org/en/help/1234", response.content.decode("utf-8"))
 
     def test_front_page_view_logged_in_basic_user_redirected_to_identity_details(self):
         self.create_user()
@@ -39,8 +47,8 @@ class FrontPageViewTests(BaseTestCase):
         set_default_permissions(self.user)
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("manage your own information", response.content.decode("utf-8"))
-        self.assertIn("Role and membership management", response.content.decode("utf-8"))
+        self.assertIn("View and manage your information", response.content.decode("utf-8"))
+        self.assertIn("Membership and role management", response.content.decode("utf-8"))
 
     def test_front_page_view_logged_in_with_messages(self):
         role = self.create_role()
@@ -54,7 +62,7 @@ class FrontPageViewTests(BaseTestCase):
         )
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("You have pending membership approvals", response.content.decode("utf-8"))
+        self.assertIn("You have memberships pending approval", response.content.decode("utf-8"))
         self.assertIn(
             "Memberships are ending soon in roles you have approval rights", response.content.decode("utf-8")
         )

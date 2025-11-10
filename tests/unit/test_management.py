@@ -371,7 +371,7 @@ class MembershipExpireNotifications(TestData, ManagementCommandTestCase):
         self.assertEqual(len(mail.outbox), 0)
         self.call_command("-v 0", "-d 10", "-m")
         self.assertEqual(len(mail.outbox), 1)
-        self.assertIn(f"Role:\n{self.role.name()}", mail.outbox[0].body)
+        self.assertIn(f"Your membership in the role {self.role.name()}", mail.outbox[0].body)
         self.assertIn(f"You were invited by {self.superuser.get_full_name()}", mail.outbox[0].body)
         mail.outbox = []
         self.call_command("-v 0", "-d 6", "-m")

@@ -137,14 +137,14 @@ class Identity(models.Model):
         MALE = ("M", _("Male"))
         FEMALE = ("F", _("Female"))
         OTHER = ("O", _("Other"))
-        UNKNOWN = ("U", _("Unknown"))
+        UNKNOWN = ("U", "")
 
     class AssuranceLevel(models.IntegerChoices):
-        NONE = (0, _("No assurance level"))
-        LOW = (1, _("Low, self-asserted with a verified email-address"))
-        MEDIUM = (2, _("Medium, verified with a government issued photo-ID"))
-        HIGH = (3, _("High, eIDAS substantial level or similar"))
-        HIGHEST = (4, _("Highest, eIDAS high level or similar"))
+        NONE = (0, _("No verification"))
+        LOW = (1, _("Low"))
+        MEDIUM = (2, _("Medium"))
+        HIGH = (3, _("High"))
+        HIGHEST = (4, _("Very high"))
 
     class VerificationMethod(models.IntegerChoices):
         UNVERIFIED = (0, _("No verification"))
@@ -180,7 +180,13 @@ class Identity(models.Model):
         help_text=_("How strongly this user identity is identified."),
     )
     given_names = models.CharField(
-        blank=True, max_length=200, verbose_name=_("Given names"), help_text=_("All official given names.")
+        blank=True,
+        max_length=200,
+        verbose_name=_("Official given names"),
+        help_text=_(
+            "All official given names, as on a passport. Please note that this information is usually not displayed "
+            "in applications."
+        ),
     )
     given_names_verification = models.SmallIntegerField(
         choices=VerificationMethod.choices,
@@ -188,7 +194,13 @@ class Identity(models.Model):
         verbose_name=_("Given names verification method"),
     )
     surname = models.CharField(
-        blank=True, max_length=200, verbose_name=_("Surname"), help_text=_("Official surname(s).")
+        blank=True,
+        max_length=200,
+        verbose_name=_("Surname"),
+        help_text=_(
+            "All official surname(s), as on a passport. Please note that this information is usually not displayed "
+            "in applications."
+        ),
     )
     surname_verification = models.SmallIntegerField(
         choices=VerificationMethod.choices,
@@ -198,14 +210,20 @@ class Identity(models.Model):
     given_name_display = models.CharField(
         blank=True,
         max_length=200,
-        verbose_name=_("Displayed given name"),
-        help_text=_("A given name or nickname part of the user's display name."),
+        verbose_name=_("Preferred given name"),
+        help_text=_(
+            "Preferred name, i.e. one of the official given names or, for a justified reason, another given name. "
+            "Please note that this information is usually displayed in applications."
+        ),
     )
     surname_display = models.CharField(
         blank=True,
         max_length=200,
-        verbose_name=_("Displayed surname"),
-        help_text=_("A surname part of the user's display name."),
+        verbose_name=_("Preferred surname"),
+        help_text=_(
+            "As a rule, the official last name or, for a justified reason, part thereof. Please note that this "
+            "information is usually displayed in applications."
+        ),
     )
     date_of_birth = models.DateField(
         blank=True,
@@ -587,7 +605,7 @@ class Identifier(models.Model):
     class Type(models.TextChoices):
         FPIC = ("fpic", _("Finnish personal identity code"))
         EIDAS = ("eidas", _("eIDAS identifier"))
-        EPPN = ("eppn", _("eduPersonPrincipalName"))
+        EPPN = ("eppn", _("User identifier from organisation"))
         GOOGLE = ("google", _("Google account"))
         MICROSOFT = ("microsoft", _("Microsoft account"))
         KAMU = ("kamu", _("Kamu identifier"))

@@ -4,11 +4,11 @@
 {% load identity_tags %}
 
 {% block content %}
-  <h1>{% trans "Invite to role" %} {{ role.name }}</h1>
+  <h1>{% trans "Invite new member to role of" %} {{ role.name }}</h1>
   <div class="alert alert-success" role="alert">
     <p>{% trans "To invite a new member, first search for the identity with known user information such as email and phone number." %}</p>
     <p>{% trans "If person is already found from the Kamu or the user directory, you can add role directly to the person." %}</p>
-    <p>{% trans "Otherwise you you can invite them by email, by searching with the email address." %}</p>
+    <p>{% trans "Otherwise you can invite them by email, by searching with the email address." %}</p>
     {% if HELP_LINK_MANAGERS %}<p class="text-break">{% blocktrans with link=HELP_LINK_MANAGERS %}Read more about role management from the <a href="{{ link }}">IT Helpdesk</a>.{% endblocktrans %}</p>{% endif %}
   </div>
   {% crispy form form.helper %}
@@ -46,7 +46,7 @@
   {% if email and not email_found %}
     <h3>{% trans "Email invitation" %}</h3>
     <p>{% blocktrans with email=email %}Email address not found in the registry: {{ email }}{% endblocktrans %}</p>
-    <a href="{% url 'role-invite-details-email' role.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Send invitation" %}</a>
+    <a href="{% url 'role-invite-details-email' role.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Go to sending the invitation" %}</a>
   {% endif %}
   {% if ldap_results %}
     <h2 id="ldap-results-list" class="mt-4">{% trans "User directory results" %}</h2>
@@ -66,7 +66,7 @@
             <th scope="row">{{ result.cn }}</th>
             <td>{% if uid and uid == result.uid %}<b>{{ result.uid }}</b>{% else %}{{ result.uid }}{% endif %}</td>
             <td>{% matching_attributes_ldap result=result email=email fpic=fpic as attributes %}{{ attributes|safe }}</td>
-            <td><a href="{% url 'role-invite-ldap' role.pk result.uid %}" class="btn btn-primary mb-3 me-3">{% trans "Add role" %}</a></td>
+            <td><a href="{% url 'role-invite-ldap' role.pk result.uid %}" class="btn btn-primary mb-3 me-3">{% trans "Add to role" %}</a></td>
           </tr>
         {% endfor %}
         </tbody>

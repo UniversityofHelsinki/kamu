@@ -1,3 +1,5 @@
+from textwrap import wrap
+
 from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import QuerySet
@@ -12,6 +14,7 @@ from kamu.models.account import Account
 from kamu.models.identity import Identity
 from kamu.models.membership import Membership
 from kamu.models.role import Role
+from kamu.utils.generic import create_help_link
 
 
 def _send_email(subject: str, message: str, recipient_list: list[str], from_email: str | None = None) -> bool:
@@ -41,6 +44,16 @@ def _get_link_url(request: HttpRequest | None = None, view_name: str = "front-pa
     return None
 
 
+def wrap_message(message: str, width: int = 78) -> str:
+    """
+    Wraps message to 78 characters, preserving long words, like links.
+    """
+    new_message = []
+    for part in message.splitlines():
+        new_message.append("\n".join(wrap(part, width=width, break_long_words=False)))
+    return "\n".join(new_message)
+
+
 def send_add_email(membership: Membership) -> bool:
     """
     Send an email notification of the role membership.
@@ -61,11 +74,12 @@ def send_add_email(membership: Membership) -> bool:
             {
                 "inviter": inviter,
                 "role": membership.role.name(),
+                "service_link": getattr(settings, "SERVICE_LINK_URL", ""),
             },
         )
     finally:
         translation.activate(cur_language)
-    return _send_email(subject, message, recipient_list=[address.address])
+    return _send_email(subject, wrap_message(message), recipient_list=[address.address])
 
 
 def send_notify_approvers_email(membership: Membership, member_list: list[str] | None = None) -> bool:
@@ -97,13 +111,14 @@ def send_notify_approvers_email(membership: Membership, member_list: list[str] |
                 "inviter": inviter,
                 "member": member,
                 "role": membership.role.name(),
+                "service_link": getattr(settings, "SERVICE_LINK_URL", ""),
             },
         )
     except TemplateDoesNotExist:
         return False
     finally:
         translation.activate(cur_language)
-    return _send_email(subject, message, recipient_list=[membership.role.notification_email_address])
+    return _send_email(subject, wrap_message(message), recipient_list=[membership.role.notification_email_address])
 
 
 def create_invite_message(
@@ -146,7 +161,7 @@ def send_invite_email(
     inviter = membership.inviter.get_full_name() if membership.inviter else ""
     role = membership.role
     subject, message = create_invite_message(role, inviter, token, invite_text, lang, request)
-    return _send_email(subject, message, recipient_list=[address])
+    return _send_email(subject, wrap_message(message), recipient_list=[address])
 
 
 def send_verification_email(
@@ -165,7 +180,7 @@ def send_verification_email(
         return False
     finally:
         translation.activate(cur_language)
-    return _send_email(subject, message, recipient_list=[email_address])
+    return _send_email(subject, wrap_message(message), recipient_list=[email_address])
 
 
 def send_expiration_notification_to_member(membership: Membership, email_address: str, lang: str = "en") -> bool:
@@ -192,7 +207,7 @@ def send_expiration_notification_to_member(membership: Membership, email_address
         return False
     finally:
         translation.activate(cur_language)
-    return _send_email(subject, message, recipient_list=[email_address])
+    return _send_email(subject, wrap_message(message), recipient_list=[email_address])
 
 
 def send_expiration_notification_to_role(
@@ -208,13 +223,17 @@ def send_expiration_notification_to_role(
         subject = render_to_string("email/expire_notification_role_subject.txt", {"role": role.name()})
         message = render_to_string(
             "email/expire_notification_role_message.txt",
-            {"role": role.name(), "number_of_memberships": memberships.count()},
+            {
+                "role": role.name(),
+                "number_of_memberships": memberships.count(),
+                "service_link": getattr(settings, "SERVICE_LINK_URL", ""),
+            },
         )
     except TemplateDoesNotExist:
         return False
     finally:
         translation.activate(cur_language)
-    return _send_email(subject, message, recipient_list=[email_address])
+    return _send_email(subject, wrap_message(message), recipient_list=[email_address])
 
 
 def send_approval_notification_to_member(membership: Membership, email_address: str, lang: str = "en") -> bool:
@@ -234,13 +253,14 @@ def send_approval_notification_to_member(membership: Membership, email_address: 
                 "role": membership.role.name(),
                 "approver": approver,
                 "inviter": inviter,
+                "service_link": getattr(settings, "SERVICE_LINK_URL", ""),
             },
         )
     except TemplateDoesNotExist:
         return False
     finally:
         translation.activate(cur_language)
-    return _send_email(subject, message, recipient_list=[email_address])
+    return _send_email(subject, wrap_message(message), recipient_list=[email_address])
 
 
 def send_cancellation_notification_to_member(membership: Membership, email_address: str, lang: str = "en") -> bool:
@@ -253,23 +273,37 @@ def send_cancellation_notification_to_member(membership: Membership, email_addre
     cur_language = translation.get_language()
     try:
         translation.activate(lang)
-        subject = render_to_string("email/membership_cancelled_member_subject.txt")
-        message = render_to_string(
-            "email/membership_cancelled_member_message.txt",
-            {
-                "role": membership.role.name(),
-                "approver": approver,
-                "inviter": inviter,
-            },
-        )
+        if membership.approver:
+            subject = render_to_string("email/membership_cancelled_member_subject.txt")
+            message = render_to_string(
+                "email/membership_cancelled_member_message.txt",
+                {
+                    "role": membership.role.name(),
+                    "approver": approver,
+                    "inviter": inviter,
+                    "contact_email": getattr(settings, "SERVICE_CONTACT_EMAIL", ""),
+                },
+            )
+        else:
+            subject = render_to_string("email/membership_rejected_member_subject.txt")
+            message = render_to_string(
+                "email/membership_rejected_member_message.txt",
+                {
+                    "role": membership.role.name(),
+                    "inviter": inviter,
+                    "contact_email": getattr(settings, "SERVICE_CONTACT_EMAIL", ""),
+                },
+            )
     except TemplateDoesNotExist:
         return False
     finally:
         translation.activate(cur_language)
-    return _send_email(subject, message, recipient_list=[email_address])
+    return _send_email(subject, wrap_message(message), recipient_list=[email_address])
 
 
-def send_primary_email_changed_notification(identity: Identity, email_address: str, actor_self: bool = True) -> bool:
+def send_primary_email_changed_notification(
+    identity: Identity, email_address: str, new_address: str, actor_self: bool = True
+) -> bool:
     """
     Send a notification when user's primary email changes.
     """
@@ -285,13 +319,14 @@ def send_primary_email_changed_notification(identity: Identity, email_address: s
                 {
                     "display_name": identity.display_name(),
                     "actor_self": actor_self,
+                    "new_address": new_address,
                 },
             )
         except TemplateDoesNotExist:
             return False
         finally:
             translation.activate(cur_language)
-        return _send_email(subject, message, recipient_list=[email_address])
+        return _send_email(subject, wrap_message(message), recipient_list=[email_address])
     return False
 
 
@@ -306,23 +341,16 @@ def send_account_creation_notification(account: Account) -> bool:
         cur_language = translation.get_language()
         try:
             translation.activate(lang)
-            subject = render_to_string(
-                "email/account_created_subject.txt",
-                {
-                    "uid": account.uid,
-                },
-            )
+            subject = render_to_string("email/account_created_subject.txt")
             message = render_to_string(
                 "email/account_created_message.txt",
-                {
-                    "uid": account.uid,
-                },
+                {"uid": account.uid, "help_link": create_help_link(getattr(settings, "HELP_LINK_ACCOUNT", ""), lang)},
             )
         except TemplateDoesNotExist:
             return False
         finally:
             translation.activate(cur_language)
-        return _send_email(subject, message, recipient_list=[email_address])
+        return _send_email(subject, wrap_message(message), recipient_list=[email_address])
     return False
 
 
@@ -347,11 +375,12 @@ def send_account_password_reset_notification(account: Account) -> bool:
                 "email/account_password_reset_message.txt",
                 {
                     "uid": account.uid,
+                    "help_link": getattr(settings, "HELP_LINK_BASE", ""),
                 },
             )
         except TemplateDoesNotExist:
             return False
         finally:
             translation.activate(cur_language)
-        return _send_email(subject, message, recipient_list=[email_address])
+        return _send_email(subject, wrap_message(message), recipient_list=[email_address])
     return False

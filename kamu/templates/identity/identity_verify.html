@@ -1,15 +1,17 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block content %}
-  <h1 class="mb-4">{{ object.display_name }} | {% trans "Identity verification" %}</h1>
+  <h1 class="mb-4">{{ object.display_name }} | {% trans "Verification of identity and information" %}</h1>
   {% if object.assurance_level > assurance_level.LOW %}
     <div class="alert alert-success" role="alert">
-      {% trans "Your identity has already been verified." %}
+      {% blocktrans %}Your identity and personal information have already been verified. If you want to update your
+      information, please identify yourself again by using the Suomi.fi or eIDAS e-identification services.
+      {% endblocktrans %}
     </div>
   {% endif %}
   <p>{% trans "Current verification level:" %} {{ object.get_assurance_level_display }}</p>
   <div class="alert alert-info" role="alert">
-    <p>{% trans "Following information will be added or updated to your identity during identify verification, if available." %}</p>
+    <p>{% trans "The following information will be updated or added to your information." %}</p>
     <ul>
       <li>{% trans "Official names" %}</li>
       <li>{% trans "Date of birth" %}</li>
@@ -24,19 +26,34 @@
     {% if object.fpic %}
       {% if suomifi_enabled %}
         <h2>{% trans "Suomi.fi e-identification" %}</h2>
-        <p>{% trans "Verify your identity using Suomi.fi identification" %}</p>
-        <button type="submit" name="verify_identity" value="suomifi" class="btn btn-primary mb-4">{% trans "Verify with Suomi.fi" %}</button>
+        <p>{% blocktrans %}"Verify your identity using Suomi.fi e-identification. Suomi.fi e-identification is a
+          Finnish identification service that allows you to verify your identity and personal information using,
+          for example, bank credentials or a mobile certificate.{% endblocktrans %}</p>
+        <p>{% trans "You can use the service free of charge." %}</p>
+        <button type="submit" name="verify_identity" value="suomifi" class="btn btn-primary mb-4">
+          {% trans "Verify your identity Suomi.fi e-identification" %}</button>
       {% endif %}
     {% else %}
       {% if suomifi_enabled %}
         <h2>{% trans "Suomi.fi or eIDAS e-identification" %}</h2>
-        <p>{% trans "Verify your identity using Suomi.fi or eIDAS identification." %}</p>
-        <button type="submit" name="verify_identity" value="suomifi" class="btn btn-primary mb-4">{% trans "Verify with Suomi.fi or eIDAS" %}</button>
+        <p>{% trans "Verify your identity using Suomi.fi or eIDAS e-identification." %}</p>
+        <p>{% blocktrans %}"Suomi.fi e-identification is a Finnish identification service that allows you to verify
+          your identity and personal information using, for example, bank credentials or a mobile certificate.
+        {% endblocktrans %}</p>
+        <p>{% blocktrans %}"eIDAS is the EU’s strong identification service that enables the use of your own national
+          identification provider to verify your identity. {% endblocktrans %}</p>
+        <p>{% trans "You can use the services free of charge." %}</p>
+        <button type="submit" name="verify_identity" value="suomifi" class="btn btn-primary mb-4">
+          {% trans "Verify your identity Suomi.fi or eIDAS e-identification" %}</button>
       {% endif %}
       {% if candour_enabled and object.assurance_level < assurance_level.HIGH %}
         <h2>{% trans "Candour ID" %}</h2>
         <div class="alert alert-info" role="alert">
-          <p>{% trans "To use Candour ID verification, please check that the following information matches your identity document." %}</p>
+          <p>{% blocktrans %}Persons without eIDAS access can use Candour ID to verify their identity. For this, you
+            will need a passport or identity document and the Candour ID app.{% endblocktrans %}</p>
+            <p>{% blocktrans %}Please check and correct the information below before using Candour ID. The information
+              must be the same as on your passport or ID card. You can correct the information by returning to My
+              information and selecting Personal information.{% endblocktrans %}</p>
           <dl class="row">
             <dt class="col-sm-4">{% trans "Official given names" %}</dt>
             <dd class="col-sm-8">{{ object.given_names|default:"&nbsp;" }}</dd>
@@ -52,11 +69,16 @@
           <p>{% trans "You have unfinished Candour ID identification process." %}</p>
           <a href="{{ candour_link }}" class="btn btn-primary mb-4">{% trans "Continue" %}</a>
         {% else %}
-          <p>{% trans "Verify your identity using passport or identity card and mobile app." %}</p>
-          <button type="submit" name="verify_identity" value="candour" class="btn btn-primary mb-4">{% trans "Verify with biometric passport or identity card" %}</button>
+          <p>{% trans "Verify your identity using passport or ID card and a mobile phone application." %}</p>
+          <button type="submit" name="verify_identity" value="candour" class="btn btn-primary mb-4">
+            {% trans "Verify your identity using a biometric passport or identity document" %}</button>
           {% if object.assurance_level < assurance_level.MEDIUM %}
-            <p>{% trans "If your passport or identity card does not have electronic chip or you do not have NFC capable phone, you may verify your identity with lower level using non-biometric passport or identity card and a mobile app or a web browser with camera." %}</p>
-            <button type="submit" name="verify_identity" value="candour_low" class="btn btn-secondary mb-4">{% trans "Verify with lower level of identification" %}</button>
+            <p>{% blocktrans %}If your passport or ID card does not contain an RFID chip or your phone does not
+              support NFC, you can use a non-biometric passport or ID card to verify your identity at a lower level.
+              You also need a mobile application or web browser and a camera connected to it.
+              {% endblocktrans %}</p>
+            <button type="submit" name="verify_identity" value="candour_low" class="btn btn-secondary mb-4">
+            {% trans "Verify your identity at a lower level of identification" %}</button>
           {% endif %}
         {% endif %}
       {% endif %}

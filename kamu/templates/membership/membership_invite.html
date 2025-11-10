@@ -6,7 +6,7 @@
   <h1 class="mb-5">{% trans "Invite a new member" %}</h1>
   <div class="row">
     <div class="col-xl-6">
-      <h2>{% trans "Role" %}</h2>
+      <h2>{% trans "Role information" %}</h2>
       <dl class="row">
         <dt class="col-sm-4">{% trans "Name" %}</dt>
         <dd class="col-sm-8"><a href="{% url 'role-detail' role.pk %}">{{ role.name }}</a></dd>
@@ -14,14 +14,14 @@
         <dd class="col-sm-8">{{ role.description }}</dd>
         <dt class="col-sm-4">{% trans "Permissions" %}</dt>
         <dd class="col-sm-8">{% for permission in role.get_permissions %}{{ permission }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
-        <dt class="col-sm-4">{% trans "Total cost" %}</dt>
+        <dt class="col-sm-4">{% trans "Annual costs" %}</dt>
         <dd class="col-sm-8">{{ role.get_cost }} €</dd>
         <dt class="col-sm-4">{% trans "Organisation unit" %}</dt>
         <dd class="col-sm-8">{{ role.organisation|default:"&nbsp;" }}{% if role.organisation.code %} ({{ role.organisation.code }}){% endif %}</dd>
         <dt class="col-sm-4">{% trans "Maximum duration" %}</dt>
         <dd class="col-sm-8">{{ role.maximum_duration }} {% trans "days" %}</dd>
         <dt class="col-sm-4">{% trans "SMS verification" %}</dt>
-        <dd class="col-sm-8 mb-5">{{ role.require_sms_verification }}</dd>
+        <dd class="col-sm-8 mb-5">{% if role.require_sms_verification %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</dd>
       </dl>
     </div>
     {% if identity %}<div class="col-xl-6">
@@ -78,7 +78,7 @@
       </ul>
     {% endif %}
   {% endif %}
-  <h2 class="mb-3 mt-4">{% trans "Member information" %}</h2>
+  <h2 class="mb-3 mt-4">{% trans "Membership information" %}</h2>
   <form method="post">
     {% csrf_token %}
     {% crispy form form.helper %}

@@ -1,4 +1,7 @@
-{% load i18n %}{% blocktrans %}Your new user account has been activated in Kamu.
-Account: {{ uid }}.
+{% load i18n %}{% blocktrans %}Hello,
 
-If you did not perform this action, plase contact the IT Helpdesk immediately.{% endblocktrans %}
+A University of Helsinki limited user account has been created for you: {{ uid }}.
+
+From now on, please use this limited user account when logging in to the services of the University of Helsinki.
+
+For more information on how to use the username, please see the IT Helpdesk instructions {{ help_link }}{% endblocktrans %}

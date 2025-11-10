@@ -715,9 +715,15 @@ class FrontPageView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated and request.user.has_perm("kamu.search_roles"):
             if get_memberships_requiring_approval(request.user).exists():
-                link = " | <a href='" + reverse("membership-approval") + "'>" + _("List here") + "</a>"
+                link = (
+                    " | <a href='"
+                    + reverse("membership-approval")
+                    + "'>"
+                    + _("See the pending memberships here.")
+                    + "</a>"
+                )
                 messages.add_message(
-                    request, messages.INFO, _("You have pending membership approvals." + link), extra_tags="safe"
+                    request, messages.INFO, _("You have memberships pending approval.") + link, extra_tags="safe"
                 )
             if get_expiring_memberships(request.user).exists():
                 link = " | <a href='" + reverse("membership-expiring") + "'>" + _("List here") + "</a>"

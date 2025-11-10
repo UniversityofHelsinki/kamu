@@ -72,7 +72,10 @@ class Membership(models.Model):
         max_length=20,
         blank=True,
         verbose_name=_("Verify phone number"),
-        help_text=_("Phone number to send the verification SMS to. In international format, e.g. +358123456789."),
+        help_text=_(
+            "Phone number to which the confirmation SMS will be sent, in the international format, e.g. "
+            "+358123456789."
+        ),
         validators=[validate_phone_number],
     )
 
@@ -80,16 +83,16 @@ class Membership(models.Model):
         max_length=2,
         default="en",
         choices=settings.LANGUAGES,
-        verbose_name=_("Invite language"),
+        verbose_name=_("Possible default email invitation replacement text"),
     )
 
     invite_text = models.TextField(
         blank=True,
         verbose_name=_("Invite text"),
         help_text=_(
-            "This replaces beginning of the default invite message. Lines of the invite text are wrapped to 70 "
-            "characters. Invite code and link will be added to end of the message. Use preview to see the final "
-            "result."
+            "If you wish, you can replace the beginning part of the default email invite with your own text (max. 70 "
+            "characters). The invitation code and link are always added at the end of the message. Preview the "
+            "message to see the finished email."
         ),
     )
 
@@ -100,7 +103,7 @@ class Membership(models.Model):
     inviter = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="membership_inviter", on_delete=models.SET_NULL, null=True, blank=True
     )
-    reason = models.TextField(verbose_name=_("Membership reason"))
+    reason = models.TextField(verbose_name=_("Reasons for membership"))
     start_date = models.DateField(verbose_name=_("Membership start date"))
     expire_date = models.DateField(verbose_name=_("Membership expiry date"))
     cancelled_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Cancelled at"))

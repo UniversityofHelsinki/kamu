@@ -17,7 +17,7 @@ class AccountBaseForm(forms.Form):
     """
 
     password = forms.CharField(label=_("Password"), max_length=255, widget=forms.PasswordInput)
-    confirm_password = forms.CharField(label=_("Confirm password"), max_length=255, widget=forms.PasswordInput)
+    confirm_password = forms.CharField(label=_("Retype the password"), max_length=255, widget=forms.PasswordInput)
 
     def clean_password(self) -> str:
         """
@@ -44,7 +44,13 @@ class AccountCreateForm(AccountBaseForm):
     """
 
     uid = forms.ChoiceField(
-        label=_("User ID"), required=True, help_text=_("Select account name to be used."), widget=forms.RadioSelect
+        label=_("Select username"),
+        required=True,
+        help_text=_(
+            "NB! The username cannot be changed later, so please make your choice carefully. If necessary, "
+            "you can create more options."
+        ),
+        widget=forms.RadioSelect,
     )
     field_order = ["uid", "password", "confirm_password"]
 
@@ -57,7 +63,7 @@ class AccountCreateForm(AccountBaseForm):
         if isinstance(self.uid_choices, list) and hasattr(self.fields["uid"], "choices"):
             self.fields["uid"].choices = [(uid, uid) for uid in self.uid_choices]
         self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", _("Create account")))
+        self.helper.add_input(Submit("submit", _("Create limited user account")))
 
 
 class PasswordResetForm(AccountBaseForm):

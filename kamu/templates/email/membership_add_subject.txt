@@ -1,1 +1,1 @@
-{% load i18n %}{% trans "New role membership in Kamu" %}
+{% load i18n %}{% trans "You’ve been granted a new role" %}

@@ -2,17 +2,19 @@
 {% load i18n %}
 
 {% block content %}
-  <h1 id="members-list" class="mb-4">{% trans "Memberships requiring approval" %}</h1>
-  <p class="text-break">{% trans "List memberships requiring approval." %} {% trans "Includes memberships in roles that you have approve or invite rights." %}</p>
+  <h1 id="members-list" class="mb-4">{% trans "Memberships pending approval" %}</h1>
+  <p class="text-break">{% blocktrans %}Shows a list of memberships pending approval for roles for which you have
+    invite or approval permissions. If the list is empty, all memberships have already been approved. Please note that
+    another approver may have recently approved or rejected the membership.{% endblocktrans %}</p>
   <div class="table-responsive">
     <table class="table" aria-describedby="members-list">
       <thead>
       <tr>
-        <th scope="col">{% trans "Identity" %}</th>
+        <th scope="col">{% trans "Person" %}</th>
         <th scope="col">{% trans "Role" %}</th>
         <th scope="col">{% trans "Status" %}</th>
-        <th scope="col">{% trans "Starts" %}</th>
-        <th scope="col" class="d-none d-xl-block">{% trans "Expires" %}</th>
+        <th scope="col">{% trans "Start date" %}</th>
+        <th scope="col" class="d-none d-xl-block">{% trans "Expiration date" %}</th>
       </tr>
       </thead>
       <tbody>

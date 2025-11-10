@@ -1,7 +1,6 @@
 {% load i18n %}{% blocktrans %}Hi
 
-Your verification code is:
+Your personal verification code is:
 {{ token }}
 
-If you haven't tried to sign in to a Kamu account, you can safely ignore this
-email.{% endblocktrans %}
+If you have not tried to log in to the University of Helsinki’s Kamu register, you can safely ignore this email.{% endblocktrans %}

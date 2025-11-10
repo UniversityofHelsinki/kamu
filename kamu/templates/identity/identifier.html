@@ -35,7 +35,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans "Close" %}"></button>
                       </div>
                       <div class="modal-body">
-                        <p class="text-break">{% blocktrans with type=identifier.get_type_display value=identifier.value %}You are deactivating {{ type }} with value {{ value }}.{% endblocktrans %}</p>
+                        <p class="text-break">{% blocktrans with type=identifier.get_type_display|lower value=identifier.value %}You are deactivating {{ type }} with value {{ value }}.{% endblocktrans %}</p>
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
@@ -77,8 +77,10 @@
       </div>
     {% endif %}
     {% if user == identity.user %}
-      <h2>{% trans "Link a new identifier" %}</h2>
-      <p>{% trans "Link a new identifier to your identity. After linking a new identifier, you can use it to manage your information in Kamu, or when using light accounts." %}</p>
+      <h2>{% trans "Add a new indentifier to your personal information" %}</h2>
+      <p>{% blocktrans %}After adding a new identifier, you can use it to manage your information in Kamu or when using
+        limited user accounts. First, select the identifier you want to add and then log in with the identifier
+        according to the instructions.{% endblocktrans %}</p>
       {% if "local"|enabled_backend %}
         <button type="submit" name="link_identifier" value="hy" class="btn btn-primary me-2 mb-2">{% trans "University of Helsinki account" %}</button>
       {% endif %}

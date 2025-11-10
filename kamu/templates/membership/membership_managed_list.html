@@ -2,27 +2,29 @@
 {% load i18n %}
 
 {% block content %}
-  <h1 id="members-list" class="mb-4">{% trans "Memberships you have invited or approved" %}</h1>
+  <h1 id="members-list" class="mb-4">{% trans "My managed memberships" %}</h1>
   <a href="{% url 'membership-managed' %}" class="btn btn-primary me-2 mb-2{% if not request.GET.limit %} disabled{% endif %}">{% trans "All" %}</a>
-  <a href="{% url 'membership-managed' %}?limit=approver" class="btn btn-primary me-2 mb-2{% if request.GET.limit == 'approver' %} disabled{% endif %}">{% trans "Approver" %}</a>
-  <a href="{% url 'membership-managed' %}?limit=inviter" class="btn btn-primary me-2 mb-2{% if request.GET.limit == 'inviter' %} disabled{% endif %}">{% trans "Inviter" %}</a>
+  <a href="{% url 'membership-managed' %}?limit=approver" class="btn btn-primary me-2 mb-2{% if request.GET.limit == 'approver' %} disabled{% endif %}">{% trans "My approved memberships" %}</a>
+  <a href="{% url 'membership-managed' %}?limit=inviter" class="btn btn-primary me-2 mb-2{% if request.GET.limit == 'inviter' %} disabled{% endif %}">{% trans "My invited members" %}</a>
   <div class="table-responsive">
     <table class="table" aria-describedby="members-list">
       <thead>
       <tr>
-        <th scope="col">{% trans "Identity" %}</th>
+        <th scope="col">{% trans "Person" %}</th>
         <th scope="col">{% trans "Role" %}</th>
         <th scope="col">{% trans "Status" %}</th>
-        <th scope="col">{% trans "Validity" %}</th>
+        <th scope="col" class="d-none d-xl-block">{% trans "Validity" %}</th>
+        <th scope="col">{% trans "Agreement" %}</th>
       </tr>
       </thead>
       <tbody>
       {% for membership in object_list %}
         <tr>
-          <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{% if membership.identity %}{{ membership.identity }}{% else %}{% trans "Invite" %}: {{ membership.invite_email_address }}{% endif %}</a></th>
+          <th scope="row">{% if membership.identity %}{{ membership.identity }}{% else %}{% endif %}</th>
           <td>{{ membership.role }}</td>
           <td>{{ membership.get_status_display }}</td>
-          <td>{{ membership.start_date|date:"SHORT_DATE_FORMAT" }} - {{ membership.expire_date|date:"SHORT_DATE_FORMAT" }}</td>
+          <td class="d-none d-xl-table-cell">{{ membership.start_date|date:"SHORT_DATE_FORMAT" }} - {{ membership.expire_date|date:"SHORT_DATE_FORMAT" }}</td>
+          <td><a class="btn btn-sm btn-primary" href="{% url 'membership-detail' membership.pk %}">{% trans "View agreement" %}</a></td>
         </tr>
       {% endfor %}
       </tbody>

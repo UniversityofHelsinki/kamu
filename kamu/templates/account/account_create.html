@@ -2,8 +2,8 @@
 {% load i18n %}
 {% load crispy_forms_tags %}
 {% block content %}
-  <h1 class="mb-4">{{ identity.display_name }} | {% trans "Create account" %}</h1>
-  <p>{% trans "Account will be created with the following information" %}</p>
+  <h1 class="mb-4">{{ identity.display_name }} | {% trans "Creating a new limited user account" %}</h1>
+  <p>{% trans "The limited user account will be created with the following information:" %}</p>
   <div class="row">
     <div class="col-12 col-lg-6">
       <dl class="row">
@@ -24,7 +24,7 @@
       </dl>
     </div>
   </div>
-  <h2>{% trans "Give password to create an account" %}</h2>
+  <h2>{% trans "Select username and enter password" %}</h2>
   <div class="alert alert-info" role="alert">
     <p>{% trans "Password requirements:" %}</p>
     <ul>
@@ -33,7 +33,7 @@
     </ul>
   </div>
   <form method="post">{% csrf_token %}
-    <button type="submit" name="regenerate_uids" class="btn btn-warning mb-3">{% trans 'Regenerate user IDs' %}</button>
+    <button type="submit" name="regenerate_uids" class="btn btn-warning mb-3">{% trans 'If necessary, create new options' %}</button>
   </form>
   {% crispy form form.helper %}
   <a class="btn btn-secondary" href="{% url 'account-list' pk=identity.pk %}">{% trans "Return" %}</a>

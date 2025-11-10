@@ -229,7 +229,7 @@ class RegistrationEmailAddressVerificationForm(forms.Form):
     Email address verification form for login process
     """
 
-    code = forms.CharField(label=_("Email verification code"), max_length=20, required=False)
+    code = forms.CharField(label=_("Enter the verification code you received by email"), max_length=20, required=False)
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -240,18 +240,26 @@ class RegistrationEmailAddressVerificationForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields["code"].widget.attrs.update(autocomplete="off")
         self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", _("Verify")))
-        self.helper.add_input(Submit("resend_email_code", _("Resend verification code"), css_class="btn-warning"))
+        self.helper.add_input(Submit("submit", _("Verify email address")))
+        self.helper.add_input(Submit("resend_email_code", _("Send new code"), css_class="btn-warning"))
 
     def clean_code(self) -> str:
         """
         Test verification code.
         """
         code = self.cleaned_data["code"]
-        if not code or len(code) < 4:
-            raise ValidationError(_("Invalid verification code."))
-        if not Token.objects.validate_email_address_verification_token(code, self.email_address):
-            raise ValidationError(_("Invalid verification code."))
+        if (
+            not code
+            or len(code) < 4
+            or not Token.objects.validate_email_address_verification_token(code, self.email_address)
+        ):
+            raise ValidationError(
+                _(
+                    "Invalid verification code. Please note that the verification code is different from the "
+                    "invitation code. If you have received more than one verification code, only the most recent one "
+                    "will be valid."
+                )
+            )
         return code
 
 
@@ -261,9 +269,12 @@ class RegistrationPhoneNumberForm(forms.Form):
     """
 
     phone_number = forms.CharField(
-        label=_("Phone number"),
+        label=_("Enter your phone number for SMS verification"),
         max_length=20,
-        help_text=_("Phone number in international format, e.g. +358123456789."),
+        help_text=_(
+            "Enter the phone number in the international format, e.g. +358123456789. Please note that we will not "
+            "forward the phone number."
+        ),
     )
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -278,7 +289,7 @@ class RegistrationPhoneNumberForm(forms.Form):
             self.fields["phone_number"].help_text = _("This phone number is already set by the inviter.")
 
         self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", _("Send verification code")))
+        self.helper.add_input(Submit("submit", _("Send verification code by SMS")))
 
     def clean_phone_number(self) -> str:
         phone_number = self.cleaned_data["phone_number"]
@@ -292,7 +303,7 @@ class RegistrationPhoneNumberVerificationForm(forms.Form):
     Phone number verification form for login process
     """
 
-    code = forms.CharField(label=_("SMS verification code"), max_length=20, required=False)
+    code = forms.CharField(label=_("Enter the verification code you received by SMS"), max_length=20, required=False)
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -303,18 +314,25 @@ class RegistrationPhoneNumberVerificationForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields["code"].widget.attrs.update(autocomplete="off")
         self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", _("Verify")))
-        self.helper.add_input(Submit("resend_phone_code", _("Resend verification code"), css_class="btn-warning"))
+        self.helper.add_input(Submit("submit", _("Verify phone number")))
+        self.helper.add_input(Submit("resend_phone_code", _("Send new code"), css_class="btn-warning"))
 
     def clean_code(self) -> str:
         """
         Test verification code.
         """
         code = self.cleaned_data["code"]
-        if not code or len(code) < 4:
-            raise ValidationError(_("Invalid verification code."))
-        if not Token.objects.validate_phone_number_verification_token(code, self.phone_number):
-            raise ValidationError(_("Invalid verification code."))
+        if (
+            not code
+            or len(code) < 4
+            or not Token.objects.validate_phone_number_verification_token(code, self.phone_number)
+        ):
+            raise ValidationError(
+                _(
+                    "Invalid verification code. If you sent yourself more than one verification code, "
+                    "only the most recent one will be valid."
+                )
+            )
         return code
 
 
@@ -349,7 +367,7 @@ class InviteTokenForm(forms.Form):
     Form to check an invitation token.
     """
 
-    code = forms.CharField(label=_("Invitation code"), max_length=320, required=True)
+    code = forms.CharField(label=_("Personal invitation code"), max_length=320, required=True)
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """

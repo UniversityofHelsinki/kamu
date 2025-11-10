@@ -12,9 +12,9 @@
         <table class="table" aria-describedby="email-list">
           <thead>
           <tr>
-            <th scope="col" class="col-md-6">{% trans "Address" %}</th>
+            <th scope="col" class="col-md-6">{% trans "Email address" %}</th>
             <th scope="col" class="col-md-2">{% trans "Verified" %}</th>
-            <th scope="col" class="col-md-2">{% trans "Priority" %}</th>
+            <th scope="col" class="col-md-2">{% trans "Priority (if multiple)" %}</th>
             <th scope="col" class="col-md-2">{% trans "Remove" %}</th>
           </tr>
           </thead>
@@ -36,6 +36,7 @@
                       </div>
                       <div class="modal-body">
                         <p class="text-break">{% trans "You are removing the email address" %} {{ address.address }}.</p>
+                        <p class="text-break">{% trans "After deletion, you will no longer be able to use this email address to log in. " %}</p>
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
@@ -60,9 +61,9 @@
         <table class="table" aria-describedby="phone-list">
           <thead>
           <tr>
-            <th scope="col" class="col-md-6">{% trans "Number" %}</th>
+            <th scope="col" class="col-md-6">{% trans "Phone number" %}</th>
             <th scope="col" class="col-md-2">{% trans "Verified" %}</th>
-            <th scope="col" class="col-md-2">{% trans "Priority" %}</th>
+            <th scope="col" class="col-md-2">{% trans "Priority (if multiple)" %}</th>
             <th scope="col" class="col-md-2">{% trans "Remove" %}</th>
           </tr>
           </thead>
@@ -84,6 +85,7 @@
                       </div>
                       <div class="modal-body">
                         <p class="text-break">{% trans "You are removing the phone number" %} {{ number.number }}.</p>
+                        <p class="text-break">{% trans "After deletion, you will no longer be able to use this phone number to log in. " %}</p>
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>

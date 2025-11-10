@@ -3,16 +3,19 @@
 
 {% block content %}
   <h1 id="members-list" class="mb-4">{% trans "Expiring memberships" %}</h1>
-  <p class="text-break">{% blocktrans with day_limit=expiring_date_limit %}List memberships expiring in {{ day_limit }} days.{% endblocktrans %} {% trans "Includes memberships in roles that you have approve or invite rights." %}</p>
+  <p class="text-break">{% blocktrans with day_limit=expiring_date_limit %}Shows a list of memberships expiring within
+    {{ day_limit }} days for roles for which you have invite or approval permissions. If the list is empty, there are
+    no expiring memberships at the moment. Please note that another approver may have recently extended or cancelled
+    the membership.{% endblocktrans %}</p>
   <div class="table-responsive">
     <table class="table" aria-describedby="members-list">
       <thead>
       <tr>
-        <th scope="col">{% trans "Identity" %}</th>
+        <th scope="col">{% trans "Person" %}</th>
         <th scope="col">{% trans "Role" %}</th>
         <th scope="col">{% trans "Status" %}</th>
-        <th scope="col" class="d-none d-xl-block">{% trans "Started" %}</th>
-        <th scope="col">{% trans "Expires" %}</th>
+        <th scope="col" class="d-none d-xl-block">{% trans "Start date" %}</th>
+        <th scope="col">{% trans "Expiration date" %}</th>
       </tr>
       </thead>
       <tbody>

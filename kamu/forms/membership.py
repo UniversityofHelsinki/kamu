@@ -81,7 +81,7 @@ class MembershipEditForm(forms.ModelForm[Membership]):
         elif self.membership.role.require_sms_verification:
             self.fields["verify_phone_number"].required = True
         self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", _("Update")))
+        self.helper.add_input(Submit("submit", _("Update membership")))
 
     class Meta:
         model = Membership

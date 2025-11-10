@@ -18,7 +18,7 @@
   {% else %}
     <form method="post">
       {% csrf_token %}
-      <input type="submit" name="resend_phone_code" value="{% trans 'Send verification code' %}" class="btn btn-primary me-2"/>
+      <input type="submit" name="resend_phone_code" value="{% trans 'Send verification code by SMS' %}" class="btn btn-primary me-2"/>
     </form>
   {% endif %}
 {% endblock %}

@@ -225,7 +225,7 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
                 objects=[self.object, self.object.identity, self.object.role],
                 log_to_db=True,
             )
-            messages.add_message(request, messages.INFO, _("Membership approved."))
+            messages.add_message(request, messages.INFO, _("You have approved the membership shown below."))
             if self.object.identity:
                 identity_email = self.object.identity.email_addresses.first()
                 notify_email = identity_email.address if identity_email else self.object.invite_email_address
@@ -257,14 +257,14 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
                 lang=self.object.invite_language,
                 request=self.request,
             ):
-                messages.add_message(request, messages.INFO, _("Invite email sent."))
+                messages.add_message(request, messages.INFO, _("The email invitation has been sent."))
             else:
                 messages.add_message(request, messages.ERROR, _("Could not send invite email."))
         except TimeLimitError:
             messages.add_message(
                 self.request,
                 messages.WARNING,
-                _("Tried to send a new invite too soon. Please try again in one minute."),
+                _("You tried to send a new email invitation too soon. Please wait one minute before trying again."),
             )
 
     def _end_membership(self, request: HttpRequest) -> None:
@@ -744,7 +744,7 @@ class MembershipInviteEmailView(BaseMembershipInviteView):
             lang=invite_language,
             request=self.request,
         )
-        messages.add_message(self.request, messages.INFO, _("Invite email sent."))
+        messages.add_message(self.request, messages.INFO, _("The email invitation has been sent."))
         if form.data.get("notify_approvers"):
             send_notify_approvers_email(form.instance)
         return redirect("membership-detail", pk=membership.pk)
@@ -1022,7 +1022,7 @@ class MembershipMassInviteView(BaseMembershipInviteView):
             messages.add_message(
                 self.request,
                 messages.INFO,
-                _("Invite email sent to following addresses: {0}").format(", ".join(invited_list)),
+                _("The email invitation has been sent to following addresses: {0}").format(", ".join(invited_list)),
             )
         if added_list:
             messages.add_message(

@@ -4,7 +4,7 @@
 
 {% block content %}
   <h1 class="mb-4">{% trans "Role search" %}</h1>
-  <p>{% trans "Search roles with role name or description." %}</p>
+  <p>{% trans "Search for roles by name, description or a part of these. All roles found in the system are included." %}</p>
   {% crispy form form.helper %}
   <h2 id="results-list" class="mt-4">{% trans "Results" %}</h2>
   {% if object_list %}

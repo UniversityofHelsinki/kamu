@@ -411,11 +411,23 @@ def create_email_verification_token(request: HttpRequest, email_address: str) ->
         token = Token.objects.create_email_address_verification_token(email_address)
     except TimeLimitError:
         messages.add_message(
-            request, messages.WARNING, _("Tried to send a new code too soon. Please try again in one minute.")
+            request,
+            messages.WARNING,
+            _(
+                "You tried to send a new code too soon. Please wait one minute before trying again. Please also check "
+                "your spam folder."
+            ),
         )
         return False
     if send_verification_email(token, email_address=email_address, lang=get_language()):
-        messages.add_message(request, messages.INFO, _("Verification code sent."))
+        messages.add_message(
+            request,
+            messages.INFO,
+            _(
+                "The verification code has now been sent and should arrive in your email in a few minutes. If you do "
+                "not receive a verification code, please check your spam folder."
+            ),
+        )
         return True
     else:
         messages.add_message(request, messages.ERROR, _("Failed to send verification code."))
@@ -435,11 +447,17 @@ def create_phone_verification_token(request: HttpRequest, phone_number: str) -> 
         return False
     try:
         sms_connector = SmsConnector()
-        sms_connector.send_sms(phone_number, _("Kamu verification code: %(token)s") % {"token": token})
+        sms_connector.send_sms(
+            phone_number, _("Your personal Kamu verification code is: %(token)s") % {"token": token}
+        )
     except ApiError:
         messages.add_message(request, messages.ERROR, _("Could not send an SMS message."))
         return False
-    messages.add_message(request, messages.INFO, _("Verification code sent."))
+    messages.add_message(
+        request,
+        messages.INFO,
+        _("The verification code has now been sent and should arrive in your phone in a few minutes."),
+    )
     return True
 
 

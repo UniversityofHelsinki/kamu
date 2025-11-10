@@ -1,11 +1,11 @@
 {% extends "role/role_list.html" %}
 {% load i18n %}
 {% block role_list_description %}
-  <h1 id="roles-list" class="mb-4">{% trans "Roles you have inviter permission for" %}</h1>
+  <h1 id="roles-list" class="mb-4">{% trans "Member invitation" %}</h1>
     <div class="alert alert-success" role="alert">
-      <p>{% blocktrans %}Invite a person to become a member of the university community by first selecting the role
-        that best describes the person’s relationship with the university, then clicking the Invite button in the
-        role details.{% endblocktrans %}</p>
-      <p>{% trans "The list shows only those roles for which you are authorized to invite members." %}</p>
+      <p>{% blocktrans %}Invite a person to become a member of the University community by first selecting the role
+        that best describes the person’s relationship to the University, then clicking the Invite button in the
+        role details. The list only shows the roles to which you have permission to invite members.
+        {% endblocktrans %}</p>
   </div>
 {% endblock %}

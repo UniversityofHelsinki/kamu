@@ -371,7 +371,10 @@ class IdentityVerifyView(LoginRequiredMixin, DetailView):
                     messages.add_message(
                         self.request,
                         messages.INFO,
-                        _("Your identity has been verified with Candour ID verification."),
+                        _(
+                            "Your identity has been verified and personal information updated with Candour ID "
+                            "identification service."
+                        ),
                     )
                     self.object.candour_verification_session_id = ""
                     self.object.save()
@@ -587,13 +590,27 @@ class EmailAddressVerificationView(BaseVerificationView):
         try:
             token = Token.objects.create_email_object_verification_token(self.object)
         except TimeLimitError:
-            messages.add_message(self.request, messages.WARNING, _("Tried to send a new code too soon."))
+            messages.add_message(
+                self.request,
+                messages.WARNING,
+                _(
+                    "You tried to send a new code too soon. Please wait one minute before trying again. Please also "
+                    "check your spam folder."
+                ),
+            )
             return False
         subject = _("Kamu: email address verification")
         message = _("Your verification code is: %(token)s") % {"token": token}
         from_email = getattr(settings, "TOKEN_FROM_EMAIL", None)
         send_mail(subject, message, from_email, [self.object.address])
-        messages.add_message(self.request, messages.INFO, _("Verification code sent."))
+        messages.add_message(
+            self.request,
+            messages.INFO,
+            _(
+                "The verification code has now been sent and should arrive in your email in a few minutes. If you do "
+                "not receive a verification code, please check your spam folder."
+            ),
+        )
         return True
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
@@ -630,15 +647,25 @@ class PhoneNumberVerificationView(BaseVerificationView):
         try:
             token = Token.objects.create_phone_object_verification_token(self.object)
         except TimeLimitError:
-            messages.add_message(self.request, messages.WARNING, _("Tried to send a new code too soon."))
+            messages.add_message(
+                self.request,
+                messages.WARNING,
+                _("You tried to send a new code too soon. Please wait one minute before trying again."),
+            )
             return False
         try:
             sms_connector = SmsConnector()
-            sms_connector.send_sms(self.object.number, _("Kamu verification code: %(token)s") % {"token": token})
+            sms_connector.send_sms(
+                self.object.number, _("Your personal Kamu verification code is: %(token)s") % {"token": token}
+            )
         except ApiError:
             messages.add_message(self.request, messages.ERROR, _("Could not send an SMS message."))
             return False
-        messages.add_message(self.request, messages.INFO, _("Verification code sent."))
+        messages.add_message(
+            self.request,
+            messages.INFO,
+            _("The verification code has now been sent and should arrive in your phone in a few minutes."),
+        )
         return True
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
@@ -830,7 +857,7 @@ class ContactView(LoginRequiredMixin, FormView):
             self._change_contact_priority(PhoneNumber, pk, "down")
             changed = True
         if changed:
-            new_primary_email_address = self.identity.email_address()
+            new_primary_email_address = self.identity.email_address() or ""
             if primary_email_address and primary_email_address != new_primary_email_address:
                 audit_log.info(
                     f"Changed primary email address to {new_primary_email_address}",
@@ -842,7 +869,10 @@ class ContactView(LoginRequiredMixin, FormView):
                     log_to_db=True,
                 )
                 send_primary_email_changed_notification(
-                    self.identity, primary_email_address, actor_self=self.identity.user == self.request.user
+                    self.identity,
+                    primary_email_address,
+                    new_primary_email_address,
+                    actor_self=self.identity.user == self.request.user,
                 )
             return redirect("contact-change", pk=self.identity.pk)
         return super().post(request, *args, **kwargs)
@@ -1269,7 +1299,7 @@ class IdentityMeVerifyView(LoginRequiredMixin, View):
             )
             raise PermissionDenied
         if status in ["cancelled", "cancelledUnsupportedDevice", "cancelledUnsupportedId"]:
-            messages.add_message(request, messages.WARNING, _("Identity verification was cancelled."))
+            messages.add_message(request, messages.WARNING, _("Identity verification has been cancelled."))
         return redirect("identity-verify", pk=identity.pk)
 
 

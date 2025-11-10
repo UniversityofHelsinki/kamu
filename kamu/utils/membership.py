@@ -99,12 +99,12 @@ def add_missing_requirement_messages(
             messages.add_message(
                 request,
                 messages.ERROR,
-                _("Role requires a contract you cannot currently sign."),
+                _("The membership requires a contract you cannot currently sign."),
             )
         else:
-            message = _('Role requires a signed contract: "%(name)s".') % {"name": template.name()}
+            message = _('The membership requires a signed contract: "%(name)s".') % {"name": template.name()}
             if requirement.level:
-                message = _('Role requires a signed contract "%(name)s", version %(version)d or higher.') % {
+                message = _('The membership requires a signed contract "%(name)s", version %(version)d or higher.') % {
                     "name": template.name(),
                     "version": requirement.level,
                 }
@@ -123,14 +123,14 @@ def add_missing_requirement_messages(
         """
         message: StrOrPromise = ""
         if requirement.value == "email_address":
-            message = _("Role requires a verified email address.")
+            message = _("The membership requires a verified email address.")
             if request.user == identity.user:
                 link = _get_link("contact-change", _("Add and verify email address"), {"pk": identity.pk})
                 message = f'<p class="fw-bold">{message}</p>{link}'
             messages.add_message(request, messages.WARNING, message, extra_tags="safe")
             return
         if requirement.value == "phone_number":
-            message = _("Role requires a verified phone number.")
+            message = _("The membership requires a verified phone number.")
             if request.user == identity.user:
                 link = _get_link("contact-change", _("Add and verify phone number"), {"pk": identity.pk})
                 message = f'<p class="fw-bold">{message}</p>{link}'
@@ -144,14 +144,15 @@ def add_missing_requirement_messages(
         if requirement.level:
             level_text = Identity.get_verification_level_display_by_value(requirement.level)
             message = _(
-                'Role requires an attribute "%(name)s" of at least verification level: %(level)d (%(level_text)s).'
+                'The membership requires an attribute "%(name)s" of at least verification level: %(level)d '
+                "(%(level_text)s)."
             ) % {
                 "name": name,
                 "level": requirement.level,
                 "level_text": level_text,
             }
         else:
-            message = _('Role requires an attribute "%(name)s".') % {"name": name}
+            message = _('The membership requires an attribute "%(name)s".') % {"name": name}
         if request.user == identity.user or request.user.has_perm("kamu.change_restricted_information"):
             link = _get_link("identity-change", _("Add %(name)s") % {"name": name}, {"pk": identity.pk})
             message = f'<p class="fw-bold">{message}</p>{link}'
@@ -163,7 +164,13 @@ def add_missing_requirement_messages(
             messages.add_message(
                 request,
                 messages.WARNING,
-                _("Role requires higher assurance level: " + str(requirement.level) + " (" + level_text + ")."),
+                _(
+                    "The membership requires higher assurance level: "
+                    + str(requirement.level)
+                    + " ("
+                    + level_text
+                    + ")."
+                ),
             )
         elif requirement.type == Requirement.Type.CONTRACT:
             _add_contract_message()
@@ -173,7 +180,7 @@ def add_missing_requirement_messages(
             messages.add_message(
                 request,
                 messages.ERROR,
-                _("Role requires a requirement you cannot currently fulfill: %(name)s.")
+                _("The membership requires a requirement you cannot currently fulfill: %(name)s.")
                 % {"name": requirement.name()},
             )
 
@@ -253,7 +260,7 @@ def claim_membership(request: HttpRequest, identity: Identity) -> int:
         messages.add_message(request, messages.WARNING, _("Invalid invitation token."))
         raise PermissionDenied
     membership.identity = identity
-    messages.add_message(request, messages.INFO, _("Membership created."))
+    messages.add_message(request, messages.INFO, _("The membership information has now been created."))
     membership.save()
     _remove_session_parameters(request)
     audit_log.info(

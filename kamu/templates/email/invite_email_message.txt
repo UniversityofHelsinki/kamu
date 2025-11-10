@@ -1,11 +1,11 @@
 {% load i18n %}{% if invite_text %}{{ invite_text|wordwrap:70 }}
-{% else %}{% trans "Hi" %}
+{% else %}{% trans "Hello," %}
 
-{% if inviter %}{% blocktrans %}{{ inviter }} has invited you to join the role:{% endblocktrans %}{% else %}{% trans "You have been invited to join the role:" %}{% endif %}
-{{ role }}
+{% if inviter %}{% blocktrans %}{{ inviter }} has invited you to join the University of Helsinki in the role of {% endblocktrans %}{% else %}{% trans "You have been invited to join the University of Helsinki in the role of " %}{% endif %}{{ role }}.{% endif %}
+
+{% if link_url %}{% blocktrans %}Register as a member using the personal link below. After registration, you will receive the services related to your membership, such as your username.{% endblocktrans %}
+
+{{ link_url }}?token={{ token|urlencode }}
 {% endif %}
-{% trans "Your invite code is:" %}
-{{ token }}{% if link_url %}
-
-{% trans "Click the following link to accept the invitation:" %}
-{{ link_url }}?token={{ token|urlencode }}{% endif %}
+{% trans "Your personal invitation code is:" %}
+{{ token }}

@@ -31,10 +31,10 @@
               <li class="nav-item dropdown ms-3">
                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">{% trans "Memberships" %}</a>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{% url 'membership-approval' %}">{% trans "Requiring approval" %}</a></li>
-                  <li><a class="dropdown-item" href="{% url 'membership-expiring' %}">{% trans "Expiring" %}</a></li>
-                  <li><a class="dropdown-item" href="{% url 'membership-managed' %}">{% trans "Managed" %}</a></li>
-                  <li><a class="dropdown-item" href="{% url 'identity-search' %}">{% trans "Search identities" %}</a></li>
+                  <li><a class="dropdown-item" href="{% url 'membership-approval' %}">{% trans "Pending approval" %}</a></li>
+                  <li><a class="dropdown-item" href="{% url 'membership-expiring' %}">{% trans "Expiring memberships" %}</a></li>
+                  <li><a class="dropdown-item" href="{% url 'membership-managed' %}">{% trans "My edits" %}</a></li>
+                  <li><a class="dropdown-item" href="{% url 'identity-search' %}">{% trans "Search for persons" %}</a></li>
                 </ul>
               </li>
             {% endif %}
@@ -42,10 +42,10 @@
               <li class="nav-item dropdown ms-3">
                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">{% trans "Roles" %}</a>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{% url 'role-list-inviter' %}">{% trans "Inviter" %}</a></li>
-                  <li><a class="dropdown-item" href="{% url 'role-list-approver' %}">{% trans "Approver" %}</a></li>
-                  <li><a class="dropdown-item" href="{% url 'role-list-owner' %}">{% trans "Owner" %}</a></li>
-                  <li><a class="dropdown-item" href="{% url 'role-search' %}">{% trans "Search" %}</a></li>
+                  <li><a class="dropdown-item" href="{% url 'role-list-inviter' %}">{% trans "Invite members" %}</a></li>
+                  <li><a class="dropdown-item" href="{% url 'role-list-approver' %}">{% trans "Pending roles" %}</a></li>
+                  <li><a class="dropdown-item" href="{% url 'role-list-owner' %}">{% trans "Roles I own" %}</a></li>
+                  <li><a class="dropdown-item" href="{% url 'role-search' %}">{% trans "Search for roles" %}</a></li>
                 </ul>
               </li>
             {% endif %}
@@ -105,7 +105,7 @@
   <div class="container-fluid border-top">
     <ul class="nav justify-content-end">
       <li class="nav-item"><a href="{% url 'accessibility' %}" class="nav-link px-2 text-body-secondary footer-item">{% trans "Accessibility" %}</a></li>
-      <li class="nav-item"><a href="{% trans 'https://helpdesk.it.helsinki.fi/en' %}" target="_blank" class="nav-link px-2 text-body-secondary footer-item">{% trans "Helpdesk" %}</a></li>
+      {% if HELP_LINK_USERS %}<li class="nav-item"><a href="{{ HELP_LINK_USERS }}" target="_blank" class="nav-link px-2 text-body-secondary footer-item">{% trans "See the user instructions" %}</a></li>{% endif %}
     </ul>
   </div>
 </footer>

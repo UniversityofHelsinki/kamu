@@ -1,1 +1,1 @@
-{% load i18n %}{% blocktrans %}New user account activated: {{ uid }} – Kamu{% endblocktrans %}
+{% load i18n %}{% blocktrans %}Your limited user account is ready{% endblocktrans %}

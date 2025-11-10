@@ -1,5 +1,6 @@
 {% load i18n %}{% blocktrans %}Hi
 
-Your membership in the role {{ role }} at the University of Helsinki has been cancelled.
+Your membership in the role {{ role }} at the University of Helsinki has been rejected.
+
 
 For more information, please contact {{ contact_email }}.{% endblocktrans %}

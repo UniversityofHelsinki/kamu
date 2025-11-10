@@ -3,10 +3,10 @@
 
 {% block content %}
   <h1 class="mb-3">{% trans "Kamu" %}</h1>
-  <p>{% trans "University of Helsinki registry for external identities." %}</p>
+  <p>{% trans "Membership register of the University of Helsinki community." %}</p>
   {% if user.is_authenticated %}
     {% if perms.kamu.search_roles %}
-      <h2 class="mb-4 mt-4">{% trans "Role and membership management" %}<button type="button" class="btn btn-info btn-sm info-button" data-bs-toggle="modal" data-bs-target="#infoModal">{% trans "info" %}</button></h2>
+      <h2 class="mb-4 mt-4">{% trans "Membership and role management" %}<button type="button" class="btn btn-info btn-sm info-button" data-bs-toggle="modal" data-bs-target="#infoModal">{% trans "info" %}</button></h2>
       <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -31,41 +31,45 @@
       </div>
       <div class="row">
         <div class="col-lg-4 col-md-6 mb-3">
-          <h3>{% trans "Requiring approval" %}</h3>
-          <p>{% blocktrans %}List memberships requiring approval.{% endblocktrans %}</p>
-          <a href="{% url 'membership-approval' %}" class="btn btn-primary mb-3">{% trans "Requiring approval" %}</a>
+          <h3>{% trans "Memberships pending approval" %}</h3>
+          <p>{% blocktrans %}Shows memberships pending approval for roles for which you have invitation or approval
+            permissions. {% endblocktrans %}</p>
+          <a href="{% url 'membership-approval' %}" class="btn btn-primary mb-3">{% trans "Pending approval" %}</a>
         </div>
         <div class="col-lg-4 col-md-6 mb-3">
-          <h3>{% trans "Expiring" %}</h3>
-          <p>{% blocktrans %}List memberships expiring soon.{% endblocktrans %}</p>
-          <a href="{% url 'membership-expiring' %}" class="btn btn-primary mb-3">{% trans "Expiring" %}</a>
+          <h3>{% trans "Expiring memberships" %}</h3>
+          <p>{% blocktrans %}Shows memberships expiring within a month for roles for which you have invitation or
+            approval permissions. {% endblocktrans %}</p>
+          <a href="{% url 'membership-expiring' %}" class="btn btn-primary mb-3">{% trans "Expiring memberships" %}</a>
         </div>
         <div class="col-lg-4 col-md-6 mb-3">
-          <h3>{% trans "Managed" %}</h3>
-          <p>{% blocktrans %}List memberships where you are inviter or approver.{% endblocktrans %}</p>
-          <a href="{% url 'membership-managed' %}" class="btn btn-primary mb-3">{% trans "Managed" %}</a>
+          <h3>{% trans "My managed memberships" %}</h3>
+          <p>{% blocktrans %}Shows which invitations and/or approvals you have made yourself.{% endblocktrans %}</p>
+          <a href="{% url 'membership-managed' %}" class="btn btn-primary mb-3">{% trans "My edits" %}</a>
         </div>
         <div class="col-lg-4 col-md-6 mb-3">
-          <h3>{% trans "Inviter" %}</h3>
-          <p>{% blocktrans %}Show roles which you have the right to invite others to.{% endblocktrans %}</p>
-          <a href="{% url 'role-list-inviter' %}" class="btn btn-primary mb-3">{% trans "Inviter" %}</a>
+          <h3>{% trans "Member invitation" %}</h3>
+          <p>{% blocktrans %}Shows the roles to which you can invite new members. You can also start the invitation
+            process for these roles. {% endblocktrans %}</p>
+          <a href="{% url 'role-list-inviter' %}" class="btn btn-primary mb-3">{% trans "Invite members" %}</a>
         </div>
         <div class="col-lg-4 col-md-6 mb-3">
-          <h3>{% trans "Approver" %}</h3>
-          <p>{% blocktrans %}Show roles that you have the approval rights to.{% endblocktrans %}</p>
-          <a href="{% url 'role-list-approver' %}" class="btn btn-primary mb-3">{% trans "Approver" %}</a>
+          <h3>{% trans "Roles you can approve" %}</h3>
+          <p>{% blocktrans %}Shows the roles for which you can approve members. You can also start the invitation
+            process for these roles. {% endblocktrans %}</p>
+          <a href="{% url 'role-list-approver' %}" class="btn btn-primary mb-3">{% trans "Pending roles" %}</a>
         </div>
         <div class="col-lg-4 col-md-6 mb-3">
-          <h3>{% trans "Owner" %}</h3>
-          <p>{% blocktrans %}Show roles that you have the owner rights to.{% endblocktrans %}</p>
-          <a href="{% url 'role-list-owner' %}" class="btn btn-primary mb-3">{% trans "Owner" %}</a>
+          <h3>{% trans "Roles I own" %}</h3>
+          <p>{% blocktrans %}Shows the roles of which you are the owner. {% endblocktrans %}</p>
+          <a href="{% url 'role-list-owner' %}" class="btn btn-primary mb-3">{% trans "Roles I own" %}</a>
         </div>
       </div>
     {% endif %}
     <div class="row">
       <div class="col-lg-4 col-md-6 mb-3">
         <h2 class="mt-4">{% trans "My information" %}</h2>
-        <p>{% trans "Show and manage your own information. This includes your role memberships and basic information such as names, contacts and contracts." %}</p>
+        <p>{% trans "View and manage your information. This includes name and contact information, linked identifiers and any agreements." %}</p>
         <a href="{% url 'identity-me' %}" class="btn btn-primary mb-3">{% trans "My information" %}</a>
       </div>
     </div>
@@ -84,12 +88,12 @@
     <div class="row">
       <div class="col-md-6">
         <h2>{% trans "Login" %}</h2>
-        <p>{% trans "Manage your information or roles." %}</p>
+        <p>{% trans "Manage your own information and memberships or invite new users." %}</p>
         <a href="{% url 'login' %}" class="btn btn-primary mb-3">{% trans "Login" %}</a>
       </div>
       <div class="col-md-6">
         <h2>{% trans "Register" %}</h2>
-        <p>{% trans "If you have an invite code, register here." %}</p>
+        <p>{% trans "If you have received a personal invitation code, register for Kamu here." %}</p>
         <a href="{% url 'login-invite' %}" class="btn btn-primary mb-3">{% trans "Register" %}</a>
       </div>
     </div>

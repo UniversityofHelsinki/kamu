@@ -38,8 +38,8 @@ class AccountTests(BaseTestCase):
     def test_view_account_list(self):
         response = self.client.get(f"/identity/{self.identity.pk}/account/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("You do not have any accounts", response.content.decode("utf-8"))
-        self.assertIn("Light Account", response.content.decode("utf-8"))
+        self.assertIn("You do not have any user accounts", response.content.decode("utf-8"))
+        self.assertIn("Limited user account", response.content.decode("utf-8"))
 
     def test_view_account_list_with_account(self):
         self.create_account()
@@ -57,7 +57,9 @@ class AccountTests(BaseTestCase):
     def test_view_account_create_view(self):
         response = self.client.get(f"/identity/{self.identity.pk}/account/lightaccount/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Account will be created with the following information", response.content.decode("utf-8"))
+        self.assertIn(
+            "The limited user account will be created with the following information", response.content.decode("utf-8")
+        )
         self.assertIn("Service 1", response.content.decode("utf-8"))
 
     @mock.patch("kamu.connectors.account.AccountApiConnector.get_uid_choices")
@@ -104,7 +106,7 @@ class AccountTests(BaseTestCase):
                 call(20, "Account created: 1k234567", extra=ANY),
             ]
         )
-        self.assertIn("New user account activated: 1k234567", mail.outbox[0].subject)
+        self.assertIn("Your limited user account is ready", mail.outbox[0].subject)
 
     @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_get")
     @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_post")
@@ -120,7 +122,7 @@ class AccountTests(BaseTestCase):
         }
         response = self.client.post(f"/identity/{self.identity.pk}/account/lightaccount/", data, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Account creation failed, please try again later", response.content.decode("utf-8"))
+        self.assertIn("Creation of limited user account failed", response.content.decode("utf-8"))
         self.assertFalse(Account.objects.filter(identity=self.identity).exists())
         mock_logger.log.assert_has_calls(
             [
@@ -133,8 +135,8 @@ class AccountTests(BaseTestCase):
         account = self.create_account()
         response = self.client.get(f"/account/{account.pk}/", follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Account details", response.content.decode("utf-8"))
-        self.assertIn("Reset account password", response.content.decode("utf-8"))
+        self.assertIn("User account details", response.content.decode("utf-8"))
+        self.assertIn("Reset user account password", response.content.decode("utf-8"))
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Read account information", extra=ANY),
@@ -152,7 +154,7 @@ class AccountTests(BaseTestCase):
         AccountSynchronization.objects.all().delete()
         response = self.client.get(f"/account/{account.pk}/", follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Account details", response.content.decode("utf-8"))
+        self.assertIn("User account details", response.content.decode("utf-8"))
         self.assertIn("Your permission to this account has expired", response.content.decode("utf-8"))
         self.assertEqual(AccountSynchronization.objects.count(), 1)
         mock_logger.log.assert_has_calls(
@@ -228,7 +230,7 @@ class AccountTests(BaseTestCase):
                 call(20, "Read account information", extra=ANY),
             ]
         )
-        self.assertIn("Password reset: 1k234567", mail.outbox[0].subject)
+        self.assertIn("Password changed: 1k234567", mail.outbox[0].subject)
 
     def test_view_add_account_sync_on_identity_save(self):
         account = self.create_account()

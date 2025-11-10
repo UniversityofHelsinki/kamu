@@ -390,7 +390,7 @@ class RegistrationViewTests(BaseTestCase):
     def test_invite_view_without_login(self):
         url = reverse("login-invite")
         response = self.client.get(url)
-        self.assertIn("Register identity", response.content.decode("utf-8"))
+        self.assertIn("Register as a new user", response.content.decode("utf-8"))
 
     def test_invite_view_with_login(self):
         url = reverse("login-invite")
@@ -499,7 +499,7 @@ class RegistrationViewTests(BaseTestCase):
         url = reverse("login-google")
         response = self.client.get(url, follow=True, headers={"SUB": "1234567890", "EMAIL": "test@example.com"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Membership created", response.content.decode("utf-8"))
+        self.assertIn("The membership information has now been created", response.content.decode("utf-8"))
         self.assertTrue(Identifier.objects.filter(value="1234567890", name="test@example.com").exists())
 
     @override_settings(OIDC_MICROSOFT_ISSUER="HTTP_ISSUER")
@@ -514,7 +514,7 @@ class RegistrationViewTests(BaseTestCase):
         url = reverse("login-google") + "?next=" + reverse("identity-me")
         response = self.client.get(url, follow=True, headers={"SUB": "1234567890"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Membership created", response.content.decode("utf-8"))
+        self.assertIn("The membership information has now been created", response.content.decode("utf-8"))
         self.assertTrue(Identifier.objects.filter(value="1234567890").exists())
         self.membership.refresh_from_db()
         self.assertEqual(self.membership.identity, Identity.objects.get(identifiers__value="1234567890"))
@@ -524,7 +524,7 @@ class RegistrationViewTests(BaseTestCase):
         url = reverse("login-haka")
         response = self.client.get(url, follow=True, headers={"EPPN": "haka@example.com"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Membership created", response.content.decode("utf-8"))
+        self.assertIn("The membership information has now been created", response.content.decode("utf-8"))
         identity = Identity.objects.get(identifiers__value="haka@example.com")
         self.assertEqual(identity.user.username, "haka@example.com")
         self.membership.refresh_from_db()

@@ -1,5 +1,5 @@
 {% load i18n %}{% blocktrans %}Hi
 
-Role: {{ role }}
+Log in to Kamu {{ service_link }} to check expiring memberships for the role {{ role }} and extend them if necessary. You can find it under Expiring memberships. If there are no memberships on the list, someone else has already processed them.
 
 Number of memberships expiring soon: {{ number_of_memberships }}{% endblocktrans %}

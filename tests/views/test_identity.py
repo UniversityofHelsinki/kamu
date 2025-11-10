@@ -110,7 +110,7 @@ class IdentityViewTests(BaseTestCase):
         )
         response = self.client.get(f"{self.url}{self.identity.pk}/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Role memberships", response.content.decode("utf-8"))
+        self.assertIn("Current and upcoming memberships", response.content.decode("utf-8"))
         self.assertNotIn("Expired memberships", response.content.decode("utf-8"))
         self.assertIn(role.name(), response.content.decode("utf-8"))
 
@@ -576,7 +576,7 @@ class IdentifierTests(BaseTestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            "You are deactivating eduPersonPrincipalName with value identifier@example.com",
+            "You are deactivating user identifier from organisation with value identifier@example.com.",
             response.content.decode("utf-8"),
         )
         # Hide deactivations for local EPPN and FPIC identifiers
@@ -647,7 +647,7 @@ class VerificationTests(BaseTestCase):
     def test_view_verification_page(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Verification code sent", response.content.decode("utf-8"))
+        self.assertIn("The verification code has now been sent", response.content.decode("utf-8"))
 
     def _verify_address(self):
         self.client.get(self.url)
@@ -1119,34 +1119,34 @@ class IdentityVerificationTests(BaseTestCase):
     def test_identity_verify_view(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Verify with Suomi.fi", response.content.decode("utf-8"))
-        self.assertIn("Verify with biometric passport", response.content.decode("utf-8"))
-        self.assertIn("Verify with lower level", response.content.decode("utf-8"))
+        self.assertIn("Verify your identity Suomi.fi or eIDAS", response.content.decode("utf-8"))
+        self.assertIn("Verify your identity using a biometric passport", response.content.decode("utf-8"))
+        self.assertIn("Verify your identity at a lower level", response.content.decode("utf-8"))
 
     def test_identity_verify_view_already_verified(self):
         self.identity.assurance_level = Identity.AssuranceLevel.HIGH
         self.identity.save()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Verify with Suomi.fi", response.content.decode("utf-8"))
-        self.assertNotIn("Verify with biometric passport", response.content.decode("utf-8"))
-        self.assertNotIn("Verify with lower level", response.content.decode("utf-8"))
+        self.assertIn("Verify your identity Suomi.fi or eIDAS", response.content.decode("utf-8"))
+        self.assertNotIn("Verify your identity using a biometric passport", response.content.decode("utf-8"))
+        self.assertNotIn("Verify your identity at a lower level", response.content.decode("utf-8"))
 
     @override_settings(CANDOUR_API={})
     def test_identity_verify_view_without_candour(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Verify with Suomi.fi", response.content.decode("utf-8"))
-        self.assertNotIn("Verify with biometric passport", response.content.decode("utf-8"))
-        self.assertNotIn("Verify with lower level", response.content.decode("utf-8"))
+        self.assertIn("Verify your identity Suomi.fi or eIDAS", response.content.decode("utf-8"))
+        self.assertNotIn("Verify your identity using a biometric passport", response.content.decode("utf-8"))
+        self.assertNotIn("Verify your identity at a lower level", response.content.decode("utf-8"))
 
     @override_settings(AUTHENTICATION_BACKENDS=["django.contrib.auth.backends.ModelBackend"])
     def test_identity_verify_view_without_suomifi(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Verify with Suomi.fi", response.content.decode("utf-8"))
-        self.assertIn("Verify with biometric passport", response.content.decode("utf-8"))
-        self.assertIn("Verify with lower level", response.content.decode("utf-8"))
+        self.assertNotIn("Verify your identity Suomi.fi or eIDAS", response.content.decode("utf-8"))
+        self.assertIn("Verify your identity using a biometric passport", response.content.decode("utf-8"))
+        self.assertIn("Verify your identity at a lower level", response.content.decode("utf-8"))
 
     @override_settings(SAML_SUOMIFI_SSN="HTTP_SSN")
     @override_settings(SAML_SUOMIFI_ASSURANCE="HTTP_ASSURANCE")
@@ -1163,7 +1163,7 @@ class IdentityVerificationTests(BaseTestCase):
         self.identity.refresh_from_db()
         self.assertEqual(self.identity.fpic, "010181-900C")
         self.assertEqual(self.identity.assurance_level, Identity.AssuranceLevel.HIGHEST)
-        self.assertIn("Current verification level: Highest", response.content.decode("utf-8"))
+        self.assertIn("Current verification level: Very high", response.content.decode("utf-8"))
         audit_logger.log.assert_has_calls(
             [
                 call(
@@ -1235,7 +1235,7 @@ class IdentityVerificationTests(BaseTestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Candour ID verification failed, please try again", response.content.decode("utf-8"))
-        self.assertIn("Verify with biometric passport", response.content.decode("utf-8"))
+        self.assertIn("Verify your identity using a biometric passport", response.content.decode("utf-8"))
         self.identity.refresh_from_db()
         self.assertIn(self.identity.candour_verification_session_id, "")
 

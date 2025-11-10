@@ -1,1 +1,1 @@
-{% load i18n %}{% trans "Kamu role invite" %}
+{% load i18n %}{% trans "The University of Helsinki welcomes you" %}

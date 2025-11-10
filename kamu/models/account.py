@@ -32,7 +32,7 @@ class Account(models.Model):
 
     class Type(models.TextChoices):
         ACCOUNT = ("account", _("Account"))
-        LIGHT = ("lightaccount", _("Light Account"))
+        LIGHT = ("lightaccount", _("Limited user account"))
 
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.ENABLED, verbose_name=_("Status"))
     type = models.CharField(max_length=15, choices=Type.choices, default=Type.LIGHT, verbose_name=_("Account type"))

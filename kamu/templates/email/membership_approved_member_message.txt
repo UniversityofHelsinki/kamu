@@ -1,9 +1,5 @@
 {% load i18n %}{% blocktrans %}Hi
 
-Your role membership at the University of Helsinki has been approved.
+Your membership in the role {{ role }} at the University of Helsinki has been approved.
 
-Role:
-{{ role }}
-{% endblocktrans %}{% if inviter %}
-{% blocktrans %}You were invited by {{ inviter }}.{% endblocktrans %}{% if inviter != approver and approver %}
-{% blocktrans %}Your membership was approved by {{ approver }}.{% endblocktrans %}{% endif %}{% endif %}
+You can view your information and the services granted to you in the University of Helsinki’s Kamu register {{ service_link }}.{% endblocktrans %}

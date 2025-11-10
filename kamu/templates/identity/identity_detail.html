@@ -5,9 +5,9 @@
   <div class="row">
     <div class="col-12 col-lg-6">
       <dl class="row">
-        <dt class="col-sm-4">{% trans "Given names" %}</dt>
+        <dt class="col-sm-4">{% trans "Official given names" %}</dt>
         <dd class="col-sm-8">{{ object.given_names|default:"&nbsp;" }}{% if object.given_names_verification >= attribute_verified_level %}<span class="text-success"> *</span>{% endif %}</dd>
-        <dt class="col-sm-4">{% trans "Surname" %}</dt>
+        <dt class="col-sm-4">{% trans "Official surname(s)" %}</dt>
         <dd class="col-sm-8">{{ object.surname|default:"&nbsp;" }}{% if object.surname_verification >= attribute_verified_level %}<span class="text-success"> *</span>{% endif %}</dd>
         <dt class="col-sm-4">{% trans "Display name" %}</dt>
         <dd class="col-sm-8">{{ object.display_name|default:"&nbsp;" }}</dd>
@@ -24,14 +24,34 @@
           <dd class="col-sm-8">{% for nationality in object.nationalities.all %}{{ nationality.country.name }}{% if nationality.verification_method >= attribute_verified_level %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
           <dt class="col-sm-4">{% trans "Finnish personal identity code" %}</dt>
           <dd class="col-sm-8">{{ object.fpic|default:"&nbsp;" }}{% if object.fpic_verification >= attribute_verified_level %}<span class="text-success"> *</span>{% endif %}</dd>
-          <dt class="col-sm-4">{% trans "Assurance level" %}</dt>
-          <dd class="col-sm-8">{{ object.get_assurance_level_display|default:"&nbsp;" }}{% if object.assurance_level >= assurance_verified_level %}<span class="text-success"> *</span>{% endif %}</dd>
+          <dt class="col-sm-4">{% trans "Verification level" %}</dt>
+          <dd class="col-sm-8">{{ object.get_assurance_level_display|default:"&nbsp;" }}{% if object.assurance_level >= assurance_verified_level %}<span class="text-success"> *</span>{% endif %}<button type="button" class="btn btn-info btn-sm info-button" data-bs-toggle="modal" data-bs-target="#assuranceModal">{% trans "info" %}</button></dd>
         {% endif %}
       </dl>
     </div>
+    <div class="modal fade" id="assuranceModal" tabindex="-1" aria-labelledby="assuranceModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="assuranceModalLabel">{% trans "Verifiation levels" %}</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+          </div>
+          <div class="modal-body">
+            <p class="text-break">{% blocktrans %}Low - Self-asserted identity, confirmed via a verified email address or similar low-friction method.{% endblocktrans %}</p>
+            <p class="text-break">{% blocktrans %}Medium - Identity verified against an official ID document by a university official or another trusted organization. Alternatively, it is verified via a semi-automated process using a non-electronic passport or ID card.{% endblocktrans %}</p>
+            <p class="text-break">{% blocktrans %}High - Identity verified electronically via Suomi.fi or eIDAS using bank-based or mobile strong identification, or via a government-issued biometric passport or electronic ID card using a semi-automated verification process.{% endblocktrans %}</p>
+            <p class="text-break">{% blocktrans %}Very high - Identity verified electronically using Suomi.fi or eIDAS e-identification at the highest level of assurance.{% endblocktrans %}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Close" %}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="col-12 col-lg-6">
       <dl>
-        <dt class="col-sm-4">{% trans "Accounts" %}</dt>
+        <dt class="col-sm-4">{% trans "User accounts" %}</dt>
         <dd class="col-sm-8">{% for account in object.useraccount.all %}{{ account.uid }} ({{ account.get_type_display | lower }}, {{ account.get_status_display | lower }}){% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
         {% if user == object.user or perms.kamu.view_contacts %}
           <dt class="col-sm-4">{% trans "Email addresses" %}</dt>
@@ -40,15 +60,15 @@
           <dd class="col-sm-8">{% for number in object.phone_numbers.all %}{{ number.number }}{% if number.verified %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
         {% endif %}
         {% if user == object.user or perms.kamu.view_identifiers %}
-          <dt class="col-sm-4">{% trans "External identifiers" %}</dt>
+          <dt class="col-sm-4">{% trans "Identifiers" %}</dt>
           <dd class="col-sm-8">{% for identifier in identifiers %}{{ identifier.get_type_display }}{% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
         {% endif %}
       </dl>
     </div>
   </div>
-  <p><span class="text-success"> *</span> {% trans "verified" %}</p>
+  <p>{% trans 'Information marked with an asterisk <span class="text-success">*</span> has been confirmed.' %}</p>
   {% if user == object.user or perms.kamu.change_basic_information or perms.kamu.change_contacts or perms.kamu.change_identifiers or perms.kamu.view_contracts or perms.kamu.view_accounts %}
-    <h2>{% trans "View details and update" %}<button type="button" class="btn btn-info btn-sm info-button" data-bs-toggle="modal" data-bs-target="#infoModal">{% trans "info" %}</button></h2>
+    <h2>{% trans "Other information and updating information" %}<button type="button" class="btn btn-info btn-sm info-button" data-bs-toggle="modal" data-bs-target="#infoModal">{% trans "info" %}</button></h2>
     <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -57,10 +77,21 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
           </div>
           <div class="modal-body">
-            <p class="text-break">{% trans "Basic information includes personal details such as names, preferred language, date of birth, and nationality." %}</p>
-            <p class="text-break">{% trans "Contact information includes external email addresses and phone numbers." %}</p>
-            <p class="text-break">{% trans "Identifiers include external login methods such as Google and Microsoft accounts or accounts from other universities." %}</p>
-            <p class="text-break">{% trans "The Contracts section allows you to sign agreements required for certain roles, such as the Acceptable Use Policy and NDA." %}</p>
+            <p class="text-break">{% blocktrans %}In this section, you can view and edit your own information. Some
+              information is mandatory and some is voluntary.{% endblocktrans %}</p>
+            <p class="text-break">{% blocktrans %}In the Personal information section, you will find your personal
+              information, such as names, preferred service language, date of birth and nationality.{% endblocktrans %}</p>
+            <p class="text-break">{% blocktrans %}The Contact information section contains email addresses and phone
+              numbers. You can add more than one of each piece of contact information.{% endblocktrans %}</p>
+            <p class="text-break">{% blocktrans %}The Identifiers section contains external login methods, such as
+              Google and Microsoft accounts or usernames of other higher education institutions. If you attach several
+              identifiers to your information, you can use them when logging in to Kamu.{% endblocktrans %}</p>
+            <p class="text-break">{% blocktrans %}The Agreements section allows you to approve agreements that are
+              mandatory for certain roles, such as information system terms of use or non-disclosure agreements. You
+              can also view the agreements you have previously approved.{% endblocktrans %}</p>
+            <p class="text-break">{% blocktrans %}In the Verify your identity section, you can verify your identity
+              using Suomi.fi/eIDAS identification, or with mobile phone and passport or ID card. Some roles may require
+              verified identity.{% endblocktrans %}</p>
             {% if HELP_LINK_USERS %}<p class="text-break">{% blocktrans with link=HELP_LINK_USERS %}Read more about role management from the <a href="{{ link }}">IT Helpdesk</a>.{% endblocktrans %}</p>{% endif %}
           </div>
           <div class="modal-footer">
@@ -70,7 +101,7 @@
       </div>
     </div>
     {% if user == object.user or perms.kamu.change_basic_information %}
-      <a href="{% url 'identity-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Basic information" %}</a>
+      <a href="{% url 'identity-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Personal information" %}</a>
     {% endif %}
     {% if user == object.user or perms.kamu.change_contacts %}
       <a href="{% url 'contact-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Contact information" %}</a>
@@ -87,9 +118,9 @@
   {% endif %}
   {% if user == object.user or perms.kamu.view_accounts %}
     <h2 class="mt-4">{% trans "User accounts" %}</h2>
-    <a href="{% url 'account-list' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Manage user accounts" %}</a>
+    <a href="{% url 'account-list' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Create and manage user accounts" %}</a>
   {% endif %}
-  <h2 id="roles-list" class="mt-4">{% trans "Role memberships" %}</h2>
+  <h2 id="roles-list" class="mt-4">{% trans "Current and upcoming memberships" %}</h2>
   {% if memberships %}
     <div class="table-responsive">
       <table class="table" aria-describedby="roles-list">
@@ -97,8 +128,8 @@
         <tr>
           <th scope="col">{% trans "Role" %}</th>
           <th scope="col">{% trans "Status" %}</th>
-          <th scope="col" class="d-none d-lg-block">{% trans "Started" %}</th>
-          <th scope="col">{% trans "Expires" %}</th>
+          <th scope="col" class="d-none d-lg-block">{% trans "Start date" %}</th>
+          <th scope="col">{% trans "Expiration date" %}</th>
         </tr>
         </thead>
         <tbody>
@@ -123,8 +154,8 @@
         <thead>
         <tr>
           <th scope="col">{% trans "Role" %}</th>
-          <th scope="col">{% trans "Started" %}</th>
-          <th scope="col">{% trans "Expired" %}</th>
+          <th scope="col">{% trans "Start date" %}</th>
+          <th scope="col">{% trans "Expiration date" %}</th>
         </tr>
         </thead>
         <tbody>

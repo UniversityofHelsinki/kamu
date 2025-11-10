@@ -44,7 +44,7 @@ class MembershipViewTests(BaseTestCase):
     def test_show_membership_in_identity_details(self):
         response = self.client.get(f"/identity/{self.identity.pk}/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Role memberships", response.content.decode("utf-8"))
+        self.assertIn("Current and upcoming memberships", response.content.decode("utf-8"))
         self.assertIn(self.role.name(), response.content.decode("utf-8"))
         self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
         self.assertNotIn("invited_user@example.org", response.content.decode("utf-8"))
@@ -66,17 +66,17 @@ class MembershipViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Membership details", response.content.decode("utf-8"))
         self.assertIn("invited_user@example.org", response.content.decode("utf-8"))
-        self.assertIn("Resend invite email", response.content.decode("utf-8"))
+        self.assertIn("Resend email invitation", response.content.decode("utf-8"))
 
     def test_resend_membership_invite(self):
         self.membership.identity = None
         self.membership.save()
         response = self.client.post(self.url, {"resend_invite": "resend"}, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Invite email sent", response.content.decode("utf-8"))
-        self.assertIn("Your invite code is", mail.outbox[0].body)
+        self.assertIn("The email invitation has been sent.", response.content.decode("utf-8"))
+        self.assertIn("Your personal invitation code is", mail.outbox[0].body)
         response = self.client.post(self.url, {"resend_invite": "resend"}, follow=True)
-        self.assertIn("Tried to send a new invite too soon", response.content.decode("utf-8"))
+        self.assertIn("You tried to send a new email invitation too soon", response.content.decode("utf-8"))
 
     def test_resend_membership_invite_custom(self):
         self.membership.identity = None
@@ -85,7 +85,7 @@ class MembershipViewTests(BaseTestCase):
         self.membership.save()
         response = self.client.post(self.url, {"resend_invite": "resend"}, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Your invite code is", mail.outbox[0].body)
+        self.assertIn("Your personal invitation code is", mail.outbox[0].body)
         self.assertIn("Custom invite text", mail.outbox[0].body)
 
     def test_show_membership_approver_actions(self):
@@ -93,8 +93,8 @@ class MembershipViewTests(BaseTestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Approve", response.content.decode("utf-8"))
-        self.assertIn("Update membership", response.content.decode("utf-8"))
-        self.assertIn("Cancel membership", response.content.decode("utf-8"))
+        self.assertIn("Continue and edit membership", response.content.decode("utf-8"))
+        self.assertIn("Reject membership", response.content.decode("utf-8"))
         self.assertIn("End membership", response.content.decode("utf-8"))
 
     @patch("kamu.utils.audit.logger_audit")
@@ -115,7 +115,7 @@ class MembershipViewTests(BaseTestCase):
             ]
         )
         self.assertIn("invited_user@example.org", mail.outbox[0].to)
-        self.assertIn("Your membership was approved by Tester Mc.", mail.outbox[0].body)
+        self.assertIn("has been approved", mail.outbox[0].body)
 
     @patch("kamu.utils.audit.logger_audit")
     def test_approve_membership_without_identity(self, mock_logger):
@@ -255,7 +255,7 @@ class MembershipViewTests(BaseTestCase):
             },
             follow=True,
         )
-        self.assertIn("Verification SMS will be sent to +123456789.", response.content.decode("utf-8"))
+        self.assertIn("An SMS confirmation will be sent to +123456789.", response.content.decode("utf-8"))
 
     @patch("kamu.utils.audit.logger_audit")
     def test_end_membership(self, mock_logger):
@@ -279,7 +279,7 @@ class MembershipViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 403)
 
     @patch("kamu.utils.audit.logger_audit")
-    def test_cancel_membership(self, mock_logger):
+    def test_reject_membership(self, mock_logger):
         self.role.approvers.add(self.group)
         response = self.client.post(self.url, {"cancel_membership": "cancel"}, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -297,7 +297,16 @@ class MembershipViewTests(BaseTestCase):
             ]
         )
         self.assertIn("invited_user@example.org", mail.outbox[0].to)
-        self.assertIn("Your membership has been cancelled", mail.outbox[0].subject)
+        self.assertIn("Your role membership has been rejected", mail.outbox[0].subject)
+
+    @patch("kamu.utils.audit.logger_audit")
+    def test_cancel_membership(self, mock_logger):
+        self.membership.approver = self.user
+        self.membership.save()
+        self.role.approvers.add(self.group)
+        response = self.client.post(self.url, {"cancel_membership": "cancel"}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Your role membership has been cancelled", mail.outbox[0].subject)
 
     def test_end_membership_without_access(self):
         self.membership.identity = self.superidentity
@@ -334,7 +343,7 @@ class MembershipJoinTests(BaseTestCase):
         self.role.approvers.add(group)
         response = self._test_join_role(expire_date_delta=7)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Role membership", response.content.decode("utf-8"))
+        self.assertIn("Agreement on membership of the University community", response.content.decode("utf-8"))
         self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
         mock_logger.log.assert_has_calls(
             [
@@ -478,9 +487,7 @@ class MembershipInviteTests(BaseTestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Membership.objects.filter(role=self.role, identity=self.identity).exists())
-        self.assertIn(
-            f"{self.identity.display_name()} has added you a new role membership in Kamu", mail.outbox[0].body
-        )
+        self.assertIn(f"{self.identity.display_name()} has invited you to join", mail.outbox[0].body)
 
     @mock.patch("kamu.connectors.ldap._get_connection")
     @mock.patch("kamu.utils.audit.logger_audit")
@@ -516,10 +523,8 @@ class MembershipInviteTests(BaseTestCase):
                 call(20, f"Membership to {self.role.name()} added to identity: Ldap User", extra=ANY),
             ]
         )
-        self.assertIn(
-            f"{self.identity.display_name()} has added you a new role membership in Kamu", mail.outbox[0].body
-        )
-        self.assertIn("A membership requiring approval has been created", mail.outbox[1].body)
+        self.assertIn(f"{self.identity.display_name()} has invited you to join", mail.outbox[0].body)
+        self.assertIn("to approve or reject a new membership", mail.outbox[1].body)
 
     @mock.patch("kamu.connectors.ldap._get_connection")
     @override_settings(ALLOW_TEST_FPIC=True)
@@ -551,7 +556,7 @@ class MembershipInviteTests(BaseTestCase):
         self.session.save()
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Membership reason", response.content.decode("utf-8"))
+        self.assertIn("Reasons for membership", response.content.decode("utf-8"))
         self.assertIn("Notify approvers", response.content.decode("utf-8"))
 
     def test_email_invite_form_approver_permissions(self):
@@ -609,9 +614,9 @@ class MembershipInviteTests(BaseTestCase):
         membership = Membership.objects.get(role=self.role, identity=None, invite_email_address="invite@example.org")
         self.assertEqual(membership.inviter, self.user)
         self.assertIsNone(membership.approver)
-        self.assertIn("Your invite code is", mail.outbox[0].body)
+        self.assertIn("Your personal invitation code is", mail.outbox[0].body)
         self.assertIn("Test text", mail.outbox[0].body)
-        self.assertIn("A membership requiring approval has been created", mail.outbox[1].body)
+        self.assertIn("Person invited to the role: invite@example.org", mail.outbox[1].body)
         mock_logger.log.assert_has_calls(
             [
                 call(20, f"Invited invite@example.org to role {self.role.name()}", extra=ANY),
@@ -635,7 +640,7 @@ class MembershipInviteTests(BaseTestCase):
         self.role.require_sms_verification = True
         self.role.save()
         response = self._test_join_role_send_email_invite(verify_phone_number="+1234567890")
-        self.assertIn("Verification SMS will be sent to +1234567890.", response.content.decode("utf-8"))
+        self.assertIn("An SMS confirmation will be sent to +1234567890.", response.content.decode("utf-8"))
         Membership.objects.get(
             role=self.role, identity=None, invite_email_address="invite@example.org", verify_phone_number="+1234567890"
         )
@@ -720,7 +725,8 @@ class MembershipMassInviteViewTests(BaseTestCase):
         self.assertIn("Role details", response.content.decode("utf-8"))
         self.assertIn("Added following identities: Tester Mc., Dr. User", response.content.decode("utf-8"))
         self.assertIn(
-            "Invite email sent to following addresses: invited@example.org", response.content.decode("utf-8")
+            "The email invitation has been sent to following addresses: invited@example.org",
+            response.content.decode("utf-8"),
         )
         mock_logger.log.assert_has_calls(
             [
@@ -736,9 +742,9 @@ class MembershipMassInviteViewTests(BaseTestCase):
                 call(20, "List role memberships", extra=ANY),
             ]
         )
-        self.assertIn("Tester Mc. has added you a new role membership in Kamu", mail.outbox[0].body)
-        self.assertIn("Tester Mc. has invited you to join the role", mail.outbox[1].body)
-        self.assertIn("Member: 3 new members", mail.outbox[2].body)
+        self.assertIn("Tester Mc. has invited you to join", mail.outbox[0].body)
+        self.assertIn("Tester Mc. has invited you to join the University of Helsinki in the role", mail.outbox[1].body)
+        self.assertIn("invited to the role: 3 new members", mail.outbox[2].body)
 
     @override_settings(MASS_INVITE_PERMISSION_GROUPS={"group": 1})
     def test_mass_invite_too_many_lines(self):
@@ -829,10 +835,10 @@ class MembershipClaimViewTests(BaseTestCase):
         self.membership.save()
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Send verification code", response.content.decode("utf-8"))
+        self.assertIn("Send verification code by SMS", response.content.decode("utf-8"))
         response = self.client.post(self.url, {"resend_phone_code": True}, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Resend verification code", response.content.decode("utf-8"))
+        self.assertIn("Send new code", response.content.decode("utf-8"))
         code = mock_connector.return_value.send_sms.call_args.args[1].split(" ")[-1]
         response = self.client.post(self.url, {"code": code}, follow=True)
         self.assertEqual(response.status_code, 200)

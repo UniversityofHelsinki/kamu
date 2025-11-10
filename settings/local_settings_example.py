@@ -62,6 +62,9 @@ TOKEN_FROM_EMAIL: str = "noreply@example.org"
 # Email address for accessibility contact
 ACCESSIBILITY_CONTACT_EMAIL: str = "accessibility@example.org"
 
+# Email address for the generic service help
+SERVICE_CONTACT_EMAIL: str = "helpdesk@example.org"
+
 # Maximum number of contacts allowed for user, per type (email address, phone number)
 CONTACT_LIMIT: int = 3
 
@@ -158,8 +161,12 @@ SKIP_NAME_SEARCH_IF_IDENTIFIER_MATCHES: bool = True
 # When searching identities, do not show LDAP search results which are also found from Kamu.
 FILTER_KAMU_RESULTS_FROM_LDAP_RESULTS: bool = True
 
+# Generic Helpdesk link and base for numeric links, including trailing /
+HELP_LINK_BASE: str = "https://helpdesk.it.helsinki.fi/"
+# Give HY IT Helpdesk link numbers to get localised URLs. Otherwise, give full URLs.
 HELP_LINK_MANAGERS: str = "https://helpdesk.it.helsinki.fi/"
 HELP_LINK_USERS: str = "https://helpdesk.it.helsinki.fi/"
+HELP_LINK_ACCOUNTS: str = "10626"
 
 # Services that are allowed to each light account. List of identifiers.
 LIGHT_ACCOUNT_DEFAULT_SERVICES: list[str] = ["https://attributetest.it.helsinki.fi/sp"]

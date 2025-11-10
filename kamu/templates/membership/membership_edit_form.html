@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-  <h1 class="mb-4">{% trans "Edit membership" %}</h1>
+  <h1 class="mb-4">{% trans "Continue and edit membership" %}</h1>
   {% if object.cancelled_at %}
     <div class="alert alert-warning" role="alert">
       <h2>{% trans "Membership has been cancelled" %}</h2>
@@ -14,6 +14,6 @@
   <form method="post">
     {% csrf_token %}
     {% crispy form form.helper %}
-    <a href="{% url 'membership-detail' object.pk %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+    <a href="{% url 'membership-detail' object.pk %}" class="btn btn-secondary">{% trans "Back" %}</a>
   </form>
 {% endblock %}

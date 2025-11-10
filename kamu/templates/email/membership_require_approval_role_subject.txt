@@ -1,1 +1,1 @@
-{% load i18n %}{% blocktrans %}Membership requiring approval for {{ role }}{% endblocktrans %}
+{% load i18n %}{% blocktrans %}New Kamu membership awaits approval{% endblocktrans %}

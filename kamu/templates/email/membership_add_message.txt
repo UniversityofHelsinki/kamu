@@ -1,4 +1,5 @@
 {% load i18n %}{% trans "Hi" %}
 
-{% if inviter %}{% blocktrans %}{{ inviter }} has added you a new role membership in Kamu:{% endblocktrans %}{% else %}{% trans "You have a new role membership in Kamu:" %}{% endif %}
-{{ role }}
+{% if inviter %}{% blocktrans %}{{ inviter }} has invited you to join the University of Helsinki in the role of {{ role }}.{% endblocktrans %}{% else %}{% trans "You have been added to the role of {{ role }} at the University of Helsinki." %}{% endif %}
+
+{% blocktrans %}You can view your information and the services granted to you in the University of Helsinki’s Kamu register {{ service_link }}."{% endblocktrans %}

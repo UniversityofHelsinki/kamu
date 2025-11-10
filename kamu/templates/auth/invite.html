@@ -3,8 +3,8 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-  <h1 class="mb-3">{% trans "Claim invite" %}</h1>
-  <p>{% trans "You have received an invite to a new role at the University of Helsinki." %}</p>
+  <h1 class="mb-3">{% trans "Accept invite and update information" %}</h1>
+  <p>{% trans "You have received a personal invitation to become a member of the University of Helsinki University community." %}</p>
   <form method="post">
     {% crispy form %}
     <div class="row">
@@ -16,14 +16,14 @@
       {% else %}
         <div class="col-md-6">
           <h2 class="mt-3">{% trans "Login" %}</h2>
-          <p>{% trans "If you already have a University of Helsinki account or a Kamu registered identity, please log in." %}</p>
+          <p>{% trans "If you already have a University of Helsinki user account or have previously registered for Kamu, log in here." %}</p>
           <input type="submit" name="login" value="{% trans 'Login' %}" class="btn btn-primary" id="submit-id-submit"/>
         </div>
         <div class="col-md-6">
-          <h2 class="mt-3">{% trans "Register identity" %}</h2>
-          <p>{% blocktrans %}If you don't have a user account or a Kamu identity yet, please register here. You will
-            need to register in order to gain University of Helsinki user account and other permissions.{% endblocktrans %}</p>
-          <input type="submit" name="register" value="{% trans 'Register identity' %}" class="btn btn-primary" id="submit-id-submit"/>
+          <h2 class="mt-3">{% trans "Register as a new user" %}</h2>
+          <p>{% blocktrans %}If you are a new user, please register here. Registration is required for a University of
+            Helsinki user account and other access rights.{% endblocktrans %}</p>
+          <input type="submit" name="register" value="{% trans 'Register as a new user' %}" class="btn btn-primary" id="submit-id-submit"/>
         </div>
       {% endif %}
     </div>

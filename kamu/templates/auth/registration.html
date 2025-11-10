@@ -5,9 +5,10 @@
 {% load auth_backend %}
 
 {% block content %}
-  <h1 class="mb-5">{% trans "Registration" %}</h1>
-  <p>{% trans "Welcome to Kamu registration. We recommend using an external identity but you can also register with an email address or an SMS-capable phone number." %}</p>
-  <h2 class="mb-5">{% trans "Register with an external identity" %}</h2>
+  <h1 class="mb-5">{% trans "Welcome to register with the University community" %}</h1>
+  <p>{% blocktrans %}"We recommend that you use the existing authentication methods, which will also allow you to
+    continue accessing Kamu. However, if you wish, you can register by way of email and SMS confirmation{% endblocktrans %}</p>
+  <h2 class="mb-5">{% trans "Register with an existing identifier" %}</h2>
   <div class="row">
     {% if "suomifi"|enabled_backend %}
       <div class="col-md-6 col-12 mb-3">
@@ -18,13 +19,13 @@
     {% if "haka"|enabled_backend %}
       <div class="col-md-6 col-12 mb-3">
         <a href="{% url 'login-haka' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/haka-signin-logo.svg" %}" height="40" alt="{% trans 'Haka sign-in' %}"></a>
-        <p>{% trans "Register with a Haka federation account. Finnish universities, polytechnics and research institutions accounts." %}</p>
+        <p>{% trans "Register through the Haka trust network. User accounts of Finnish higher education institutions and research organisations." %}</p>
       </div>
     {% endif %}
     {% if "edugain"|enabled_backend %}
       <div class="col-md-6 col-12 mb-3">
         <a href="{% url 'login-edugain' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"><img class="mb-3" src="{% static "images/edugain-signin-logo.png" %}" height="40" alt="{% trans 'eduGAIN sign-in' %}"></a>
-        <p>{% trans "Register with an eduGAIN federation account. Global research and education institution accounts." %}</p>
+        <p>{% trans "Register via the eduGAIN trust network. User accounts of international research and educational organisations." %}</p>
       </div>
     {% endif %}
     {% if "microsoft"|enabled_backend %}
@@ -43,6 +44,6 @@
   {% if "emailsms"|enabled_backend %}
     <h2 class="mb-3">{% trans "Register with email and SMS verification" %}</h2>
     {% crispy form %}
-    <p>{% trans "Registration with an email account and an SMS-capable phone number is possible but we recommend using external identities." %}</p>
+    <p>{% trans "It is possible to register with an email address and a phone number with SMS capability, but we strongly recommend the use of other authentication methods." %}</p>
   {% endif %}
 {% endblock %}

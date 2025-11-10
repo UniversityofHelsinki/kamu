@@ -199,7 +199,12 @@ class AccountCreateView(LoginRequiredMixin, FormView):
                     log_to_db=False,
                 )
                 messages.add_message(
-                    self.request, messages.ERROR, _("Account creation failed, please try again later.")
+                    self.request,
+                    messages.ERROR,
+                    _(
+                        "Creation of limited user account failed, please try again later. If the problem persists for "
+                        "several days, please contact IT-Helpdesk."
+                    ),
                 )
                 return self.form_invalid(form)
             audit_log.info(

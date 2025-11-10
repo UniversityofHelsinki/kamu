@@ -1,8 +1,5 @@
 {% load i18n %}{% blocktrans %}Hi
 
-A membership requiring approval has been created:
+Log in to Kamu {{ service_link }} to approve or reject a new membership for the role {{ role }}. You can find it under Memberships pending approval. If there are no memberships on the list, someone else has already processed it.
 
-Role: {{ role }}
-Member: {{ member }}
-Invited by: {{ inviter }}
-{% endblocktrans %}
+Person invited to the role: {{ member }}{% endblocktrans %}

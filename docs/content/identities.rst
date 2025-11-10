@@ -14,7 +14,7 @@ Basic information can be edited by the identity's owner, or users with the *chan
 to users with the *view_basic_information* permission.
 
 - Given names and Surname
-    - Official first names and surname(s). Used for identifying user from the official documents.
+    - Official given names and surname(s). Used for identifying user from the official documents.
     - Verification level is saved separately, based on the information source.
 - Displayed given name and Displayed surname
     - A name user wishes to be called by. Used to create user accounts, email addresses etc.

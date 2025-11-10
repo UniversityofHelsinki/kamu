@@ -72,8 +72,8 @@ class Migration(migrations.Migration):
                 ("updated_at", models.DateTimeField(auto_now=True, verbose_name="Updated at")),
             ],
             options={
-                "verbose_name": "E-mail address",
-                "verbose_name_plural": "E-mail addresses",
+                "verbose_name": "Email address",
+                "verbose_name_plural": "Email addresses",
                 "ordering": ["identity", "verified", "priority"],
             },
         ),
@@ -469,11 +469,11 @@ class Migration(migrations.Migration):
                     "token_type",
                     models.CharField(
                         choices=[
-                            ("emaillogin", "E-mail login token"),
+                            ("emaillogin", "Email login token"),
                             ("phonelogin", "SMS login token"),
-                            ("emailobjectverif", "E-mail object verification token"),
+                            ("emailobjectverif", "Email object verification token"),
                             ("phoneobjectverif", "Phone object verification token"),
-                            ("emailaddrverif", "E-mail address verification token"),
+                            ("emailaddrverif", "Email address verification token"),
                             ("phonenumberverif", "Phone number verification token"),
                             ("invite", "Invite token"),
                         ],

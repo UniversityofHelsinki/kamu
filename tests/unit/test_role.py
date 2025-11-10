@@ -199,12 +199,11 @@ class RequirementsTests(BaseRoleTestCase):
         missing = self.membership.get_missing_requirements()
         add_missing_requirement_messages(request, missing, self.identity)
         self.assertEqual(
-            f"Role requires higher assurance level: {Identity.AssuranceLevel.HIGH} "
-            "(High, eIDAS substantial level or similar).",
+            f"The membership requires higher assurance level: {Identity.AssuranceLevel.HIGH} (High).",
             messages._queued_messages[0].message,
         )
         self.assertEqual(
-            'Role requires an attribute "date of birth" of at least verification level: '
+            'The membership requires an attribute "date of birth" of at least verification level: '
             f"{Identity.VerificationMethod.EXTERNAL} (External source).",
             messages._queued_messages[1].message,
         )
@@ -213,11 +212,11 @@ class RequirementsTests(BaseRoleTestCase):
             messages._queued_messages[1].message,
         )
         self.assertIn(
-            "Role requires a verified email address.",
+            "The membership requires a verified email address.",
             messages._queued_messages[2].message,
         )
         self.assertEqual(
-            "Role requires a contract you cannot currently sign.",
+            "The membership requires a contract you cannot currently sign.",
             messages._queued_messages[3].message,
         )
 
@@ -241,7 +240,7 @@ class RequirementsTests(BaseRoleTestCase):
             messages._queued_messages[2].message,
         )
         self.assertIn(
-            'Role requires a signed contract "NDA", version 2 or higher.',
+            'The membership requires a signed contract "NDA", version 2 or higher.',
             messages._queued_messages[3].message,
         )
 
