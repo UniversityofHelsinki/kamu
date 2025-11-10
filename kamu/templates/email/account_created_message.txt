@@ -1,0 +1,4 @@
+{% load i18n %}{% blocktrans %}Your new user account has been activated in Kamu.
+Account: {{ uid }}.
+
+If you did not perform this action, plase contact the IT Helpdesk immediately.{% endblocktrans %}

@@ -506,6 +506,26 @@ class ContactTests(BaseTestCase):
             ]
         )
 
+    def test_primary_email_change(self):
+        new_number = EmailAddress.objects.create(
+            identity=self.identity, address="new_address@examp.eorg", priority=1, verified=timezone.now()
+        )
+        data = {"email_up": new_number.pk}
+        self.client.post(self.url, data, follow=True)
+        self.assertIn("Primary email address changed", mail.outbox[0].subject)
+        self.assertIn("If you did not make this change", mail.outbox[0].body)
+
+    def test_primary_email_removed_by_superuser(self):
+        superuser = self.create_superuser()
+        self.client.force_login(superuser)
+        EmailAddress.objects.create(
+            identity=self.identity, address="new_address@examp.eorg", priority=1, verified=timezone.now()
+        )
+        data = {"email_remove": self.email_address.pk}
+        self.client.post(self.url, data, follow=True)
+        self.assertIn("Primary email address changed", mail.outbox[0].subject)
+        self.assertIn("If you did not request this change", mail.outbox[0].body)
+
 
 class IdentifierTests(BaseTestCase):
     def setUp(self):

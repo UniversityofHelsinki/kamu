@@ -8,6 +8,8 @@ from django.urls import reverse
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 
+from kamu.models.account import Account
+from kamu.models.identity import Identity
 from kamu.models.membership import Membership
 from kamu.models.role import Role
 
@@ -265,3 +267,91 @@ def send_cancellation_notification_to_member(membership: Membership, email_addre
     finally:
         translation.activate(cur_language)
     return _send_email(subject, message, recipient_list=[email_address])
+
+
+def send_primary_email_changed_notification(identity: Identity, email_address: str, actor_self: bool = True) -> bool:
+    """
+    Send a notification when user's primary email changes.
+    """
+
+    lang = identity.preferred_language
+    if email_address:
+        cur_language = translation.get_language()
+        try:
+            translation.activate(lang)
+            subject = render_to_string("email/primary_email_changed_subject.txt")
+            message = render_to_string(
+                "email/primary_email_changed_message.txt",
+                {
+                    "display_name": identity.display_name(),
+                    "actor_self": actor_self,
+                },
+            )
+        except TemplateDoesNotExist:
+            return False
+        finally:
+            translation.activate(cur_language)
+        return _send_email(subject, message, recipient_list=[email_address])
+    return False
+
+
+def send_account_creation_notification(account: Account) -> bool:
+    """
+    Send a notification about a created user account to identity.
+    """
+
+    lang = account.identity.preferred_language
+    email_address = account.identity.email_address()
+    if email_address:
+        cur_language = translation.get_language()
+        try:
+            translation.activate(lang)
+            subject = render_to_string(
+                "email/account_created_subject.txt",
+                {
+                    "uid": account.uid,
+                },
+            )
+            message = render_to_string(
+                "email/account_created_message.txt",
+                {
+                    "uid": account.uid,
+                },
+            )
+        except TemplateDoesNotExist:
+            return False
+        finally:
+            translation.activate(cur_language)
+        return _send_email(subject, message, recipient_list=[email_address])
+    return False
+
+
+def send_account_password_reset_notification(account: Account) -> bool:
+    """
+    Send a notification about a reset password for user account's Identity.
+    """
+
+    lang = account.identity.preferred_language
+    email_address = account.identity.email_address()
+    if email_address:
+        cur_language = translation.get_language()
+        try:
+            translation.activate(lang)
+            subject = render_to_string(
+                "email/account_password_reset_subject.txt",
+                {
+                    "uid": account.uid,
+                },
+            )
+            message = render_to_string(
+                "email/account_password_reset_message.txt",
+                {
+                    "uid": account.uid,
+                },
+            )
+        except TemplateDoesNotExist:
+            return False
+        finally:
+            translation.activate(cur_language)
+        return _send_email(subject, message, recipient_list=[email_address])
+    return False

@@ -39,6 +39,7 @@ from django.views.generic import (
 
 from kamu.connectors import ApiError
 from kamu.connectors.candour import CandourApiConnector
+from kamu.connectors.email import send_primary_email_changed_notification
 from kamu.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
 from kamu.connectors.sms import SmsConnector
 from kamu.forms.identity import (
@@ -774,6 +775,8 @@ class ContactView(LoginRequiredMixin, FormView):
         Check for contact removal and priority changes before normal form handling.
         """
         data = self.request.POST
+        changed = False
+        primary_email_address = self.identity.email_address()
         if "phone_remove" in data:
             pk = int(data["phone_remove"])
             try:
@@ -790,8 +793,8 @@ class ContactView(LoginRequiredMixin, FormView):
                 phone_number.delete()
             except PhoneNumber.DoesNotExist:
                 pass
-            return redirect("contact-change", pk=self.identity.pk)
-        if "email_remove" in data:
+            changed = True
+        elif "email_remove" in data:
             pk = int(data["email_remove"])
             try:
                 email_address = EmailAddress.objects.filter(pk=pk, identity=self.identity)
@@ -807,22 +810,38 @@ class ContactView(LoginRequiredMixin, FormView):
                 email_address.delete()
             except EmailAddress.DoesNotExist:
                 pass
-            return redirect("contact-change", pk=self.identity.pk)
-        if "email_up" in data:
+            changed = True
+        elif "email_up" in data:
             pk = int(data["email_up"])
             self._change_contact_priority(EmailAddress, pk, "up")
-            return redirect("contact-change", pk=self.identity.pk)
-        if "email_down" in data:
+            changed = True
+        elif "email_down" in data:
             pk = int(data["email_down"])
             self._change_contact_priority(EmailAddress, pk, "down")
-            return redirect("contact-change", pk=self.identity.pk)
-        if "phone_up" in data:
+            changed = True
+        elif "phone_up" in data:
             pk = int(data["phone_up"])
             self._change_contact_priority(PhoneNumber, pk, "up")
-            return redirect("contact-change", pk=self.identity.pk)
-        if "phone_down" in data:
+            changed = True
+        elif "phone_down" in data:
             pk = int(data["phone_down"])
             self._change_contact_priority(PhoneNumber, pk, "down")
+            changed = True
+        if changed:
+            new_primary_email_address = self.identity.email_address()
+            if primary_email_address and primary_email_address != new_primary_email_address:
+                audit_log.info(
+                    f"Changed primary email address to {new_primary_email_address}",
+                    category="email_address",
+                    action="update",
+                    outcome="success",
+                    request=self.request,
+                    objects=[self.identity],
+                    log_to_db=True,
+                )
+                send_primary_email_changed_notification(
+                    self.identity, primary_email_address, actor_self=self.identity.user == self.request.user
+                )
             return redirect("contact-change", pk=self.identity.pk)
         return super().post(request, *args, **kwargs)
 

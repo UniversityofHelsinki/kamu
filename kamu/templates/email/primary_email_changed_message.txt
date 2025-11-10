@@ -1,0 +1,8 @@
+{% load i18n %}{% blocktrans %}Your primary email address for Kamu has been changed.
+
+Future security notifications (e.g., password resets) will be sent to your
+new primary email address.{% endblocktrans %}
+
+{% if actor_self %}{% blocktrans %}If you did not make this change, please restore your email address back in
+Kamu and contact the IT Helpdesk.{% endblocktrans %}{% else %}{% blocktrans %}If you did not request this change, please restore your email address back in
+Kamu and contact the IT Helpdesk.{% endblocktrans %}{% endif %}

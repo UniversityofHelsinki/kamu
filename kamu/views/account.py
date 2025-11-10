@@ -27,6 +27,10 @@ from django.views.generic.edit import FormMixin
 
 from kamu.connectors import ApiError
 from kamu.connectors.account import AccountApiConnector
+from kamu.connectors.email import (
+    send_account_creation_notification,
+    send_account_password_reset_notification,
+)
 from kamu.forms.account import AccountCreateForm, PasswordResetForm
 from kamu.models.account import Account
 from kamu.models.identity import Identity
@@ -208,6 +212,7 @@ class AccountCreateView(LoginRequiredMixin, FormView):
                 log_to_db=True,
             )
             messages.add_message(self.request, messages.INFO, _("Account created."))
+            send_account_creation_notification(account)
             del self.request.session["uid_choices"]
             self.success_url = reverse("identity-detail", kwargs={"pk": self.identity.pk})
             return super().form_valid(form)
@@ -479,5 +484,6 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
             log_to_db=True,
         )
         messages.add_message(self.request, messages.INFO, _("Password reset."))
+        send_account_password_reset_notification(self.object)
         self.success_url = reverse("account-detail", kwargs={"pk": self.object.pk})
         return super().form_valid(form)

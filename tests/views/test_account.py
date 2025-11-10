@@ -7,6 +7,7 @@ import string
 from unittest import mock
 from unittest.mock import ANY, call
 
+from django.core import mail
 from django.test import Client, override_settings
 
 from kamu.models.account import Account, AccountSynchronization
@@ -103,6 +104,7 @@ class AccountTests(BaseTestCase):
                 call(20, "Account created: 1k234567", extra=ANY),
             ]
         )
+        self.assertIn("New user account activated: 1k234567", mail.outbox[0].subject)
 
     @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_get")
     @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_post")
@@ -226,6 +228,7 @@ class AccountTests(BaseTestCase):
                 call(20, "Read account information", extra=ANY),
             ]
         )
+        self.assertIn("Password reset: 1k234567", mail.outbox[0].subject)
 
     def test_view_add_account_sync_on_identity_save(self):
         account = self.create_account()
