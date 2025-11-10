@@ -89,11 +89,17 @@ class LoginViewTests(BaseTestCase):
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
+    @override_settings(SAML_ATTR_PREFERRED_LANGUAGE="HTTP_PREFERRED_LANGUAGE")
     def test_shibboleth_local_login_create_user(self):
         url = reverse("login-shibboleth")
-        response = self.client.get(url, follow=True, headers={"EPPN": "newuser@example.org"})
+        response = self.client.get(
+            url, follow=True, headers={"EPPN": "newuser@example.org", "PREFERRED_LANGUAGE": "fi"}
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(UserModel.objects.filter(username="newuser@example.org").count(), 1)
+        self.assertEqual(
+            Identity.objects.filter(user__username="newuser@example.org", preferred_language="fi").count(), 1
+        )
 
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
     def test_shibboleth_remote_login_no_user(self):

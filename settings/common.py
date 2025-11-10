@@ -194,6 +194,7 @@ SAML_ATTR_SURNAME: str = "shib_sn"
 SAML_ATTR_EMAIL: str = "shib_mail"
 SAML_ATTR_ASSURANCE: str = "shib_eduPersonAssurance"
 SAML_ATTR_GROUPS: str = "shib_hyGroupCn"
+SAML_ATTR_PREFERRED_LANGUAGE: str = "shib_preferredLanguage"
 
 OIDC_CLAIM_SUB: str = "OIDC_CLAIM_sub"
 OIDC_CLAIM_GIVEN_NAME: str = "OIDC_CLAIM_given_name"

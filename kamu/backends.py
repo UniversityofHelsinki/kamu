@@ -24,6 +24,7 @@ from django.core.exceptions import (
 from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
 from django.http import Http404, HttpRequest
+from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
 from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
@@ -183,6 +184,12 @@ class LocalBaseBackend(ModelBackend):
         preferred_username = fix_meta_encoding(request.META.get("preferred_username", ""))
         return given_names, surname, email, preferred_username
 
+    def _get_preferred_language(self, request: HttpRequest) -> str:
+        """
+        Get preferred language for the user. Use current UI language by default.
+        """
+        return get_language() if get_language() in dict(Identity.LANG_CHOICES) else "en"
+
     def _create_identity(self, request: HttpRequest, user: UserType) -> Identity:
         """
         Create a new identity for user.
@@ -196,6 +203,7 @@ class LocalBaseBackend(ModelBackend):
             given_names_verification=verification_level,
             surname=user.last_name,
             surname_verification=verification_level,
+            preferred_language=self._get_preferred_language(request),
         )
         audit_log.info(
             f"Identity created for {user}",
@@ -659,6 +667,15 @@ class ShibbolethBaseBackend(LocalBaseBackend):
         email = fix_meta_encoding(request.META.get(settings.SAML_ATTR_EMAIL, ""))
         preferred_username = fix_meta_encoding(request.META.get(settings.SAML_ATTR_EPPN, ""))
         return given_names, surname, email, preferred_username
+
+    def _get_preferred_language(self, request: HttpRequest) -> str:
+        """
+        Get preferred language for the request. Use current UI language if missing.
+        """
+        preferred_language = fix_meta_encoding(request.META.get(settings.SAML_ATTR_PREFERRED_LANGUAGE, ""))
+        if preferred_language and preferred_language in dict(Identity.LANG_CHOICES):
+            return preferred_language
+        return super()._get_preferred_language(request)
 
     def _identifier_validation(self, request: HttpRequest, identifier: str) -> None:
         """
