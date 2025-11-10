@@ -20,6 +20,7 @@ from django_stubs_ext import StrOrPromise
 
 from kamu.models.membership import Membership
 from kamu.models.role import Permission, Requirement, Role
+from kamu.models.shared import Char32UUIDField
 from kamu.validators.identity import (
     validate_eidas_identifier,
     validate_fpic,
@@ -153,7 +154,7 @@ class Identity(models.Model):
         STRONG = (4, _("Strong electrical verification"))
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
-    kamu_id = models.UUIDField(
+    kamu_id = Char32UUIDField(
         unique=True,
         default=uuid4,
         verbose_name=_("Kamu ID"),

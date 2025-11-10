@@ -18,6 +18,7 @@ from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
 from kamu.models.role import Requirement, Role
+from kamu.models.shared import Char32UUIDField
 from kamu.validators.identity import validate_phone_number
 from kamu.validators.membership import validate_membership
 
@@ -60,7 +61,7 @@ class Membership(models.Model):
         EXPIRED = ("expired", _("Expired"))
         CANCELLED = ("cancelled", _("Cancelled"))
 
-    identifier = models.UUIDField(
+    identifier = Char32UUIDField(
         unique=True,
         default=uuid4,
         verbose_name=_("Membership ID"),
