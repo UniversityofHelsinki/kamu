@@ -338,6 +338,18 @@ class LocalBaseBackend(ModelBackend):
             username = f"{unique_identifier}{suffix}"
         return username
 
+    def _parse_date_from_fpic(self, fpic: str) -> date | None:
+        if fpic[6] == "+":
+            date_string = f"{fpic[:4]}18{fpic[4:6]}"
+        elif fpic[6] in "-YXWVU":
+            date_string = f"{fpic[:4]}19{fpic[4:6]}"
+        else:
+            date_string = f"{fpic[:4]}20{fpic[4:6]}"
+        try:
+            return datetime.strptime(date_string, "%d%m%Y").date()
+        except ValueError:
+            return None
+
     def _validate_issuer(self, request: HttpRequest) -> bool:
         """
         Validates authentication data issuer.
@@ -729,7 +741,79 @@ class ShibbolethBaseBackend(LocalBaseBackend):
                     )
 
 
-class ShibbolethLocalBackend(ShibbolethBaseBackend):
+class ShibbolethHakaBackend(ShibbolethBaseBackend):
+    """
+    Backend for Haka Shibboleth authentication.
+    """
+
+    @staticmethod
+    def _get_verification_level(request: HttpRequest) -> Identity.VerificationMethod:
+        """
+        Use external verification method for local login.
+        """
+        return Identity.VerificationMethod.EXTERNAL
+
+    def post_authentication_tasks(self, request: HttpRequest, user: UserType) -> None:
+        """
+        Update fpic and date of birth if available.
+        Skip update if invalid data is received.
+        """
+        super().post_authentication_tasks(request, user)
+        identity = user.identity if hasattr(user, "identity") else None
+        if not identity:
+            return None
+        verification_level = self._get_verification_level(request)
+        fields: dict[str, Any] = {}
+        fpic = request.META.get(settings.SAML_ATTR_FPIC, None)
+        if fpic:
+            try:
+                validate_fpic(fpic)
+            except ValidationError:
+                audit_log.warning(
+                    "Invalid FPIC format",
+                    category="identity",
+                    action="update",
+                    outcome="failure",
+                    request=request,
+                    objects=[identity],
+                    extra={"sensitive": fpic},
+                )
+                return None
+            fields["fpic"] = fpic
+            fields["date_of_birth"] = self._parse_date_from_fpic(fpic)
+        date_of_birth = request.META.get(settings.SAML_ATTR_DATE_OF_BIRTH, None)
+        if date_of_birth:
+            try:
+                parsed_date = datetime.strptime(date_of_birth, "%Y%m%d").date()
+            except ValueError:
+                audit_log.warning(
+                    "Invalid date of birth format",
+                    category="identity",
+                    action="update",
+                    outcome="failure",
+                    request=request,
+                    objects=[identity],
+                    extra={"sensitive": date_of_birth},
+                )
+                return None
+            if not fields.get("date_of_birth"):
+                fields["date_of_birth"] = parsed_date
+            elif fields["date_of_birth"] != parsed_date:
+                audit_log.warning(
+                    "Dates from FPIC and date_of_birth attribute do not match",
+                    category="identity",
+                    action="update",
+                    outcome="failure",
+                    request=request,
+                    objects=[identity],
+                    extra={"sensitive": f"FPIC: {fpic}, date of birth: {date_of_birth}"},
+                )
+                return None
+        update_identity_attributes(request, identity, fields, verification_level)
+        return None
+
+
+class ShibbolethLocalBackend(ShibbolethHakaBackend):
     """
     Backend for local Shibboleth authentication.
     """
@@ -749,21 +833,13 @@ class ShibbolethLocalBackend(ShibbolethBaseBackend):
 
     def post_authentication_tasks(self, request: HttpRequest, user: UserType) -> None:
         """
-        Set groups if user is using local authentication.
+        Set uid in addition to other attributes from Haka authentication.
         """
         super().post_authentication_tasks(request, user)
         self._set_uid(request, user, self._get_meta_unique_identifier(request))
 
 
-class ShibbolethHakaBackend(ShibbolethBaseBackend):
-    """
-    Backend for Haka Shibboleth authentication.
-    """
-
-    pass
-
-
-class ShibbolethEdugainBackend(ShibbolethBaseBackend):
+class ShibbolethEdugainBackend(ShibbolethHakaBackend):
     """
     Backend for eduGAIN Shibboleth authentication.
     """
@@ -870,18 +946,6 @@ class SuomiFiBackend(LocalBaseBackend):
         else:
             if not re.match(settings.EIDAS_IDENTIFIER_REGEX, identifier):
                 raise AuthenticationError(self.error_messages["invalid_identifier_format"])
-
-    def _parse_date_from_fpic(self, fpic: str) -> date | None:
-        if fpic[6] == "+":
-            date_string = f"{fpic[:4]}18{fpic[4:6]}"
-        elif fpic[6] in "-YXWVU":
-            date_string = f"{fpic[:4]}19{fpic[4:6]}"
-        else:
-            date_string = f"{fpic[:4]}20{fpic[4:6]}"
-        try:
-            return datetime.strptime(date_string, "%d%m%Y").date()
-        except ValueError:
-            return None
 
     def post_authentication_tasks(self, request: HttpRequest, user: UserType) -> None:
         """

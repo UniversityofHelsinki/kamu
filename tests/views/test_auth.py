@@ -65,14 +65,19 @@ class LoginViewTests(BaseTestCase):
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
+    @override_settings(SAML_ATTR_DATE_OF_BIRTH="HTTP_DATE_OF_BIRTH")
     def test_shibboleth_local_login(self):
         Identifier.objects.create(type=Identifier.Type.EPPN, value="testuser@example.org", identity=self.identity)
         url = reverse("login-shibboleth")
-        response = self.client.get(url, follow=True, headers={"EPPN": "testuser@example.org"})
+        response = self.client.get(
+            url, follow=True, headers={"EPPN": "testuser@example.org", "DATE_OF_BIRTH": "19900101"}
+        )
         self.assertEqual(response.status_code, 200)
         self.assertTrue(self.user.is_authenticated)
         self.assertEqual(self.user.user_permissions.count(), 0)
         self.assertEqual(self.client.session.get("login_backends"), "kamu.backends.ShibbolethLocalBackend;")
+        self.identity.refresh_from_db()
+        self.assertEqual(self.identity.date_of_birth, datetime.date(1990, 1, 1))
 
     @override_settings(AUTHENTICATION_BACKENDS=["kamu.backends.ShibbolethLocalBackend"])
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
@@ -110,12 +115,19 @@ class LoginViewTests(BaseTestCase):
         self.assertFalse(Identifier.objects.filter(value="newuser@example.org").exists())
 
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
+    @override_settings(SAML_ATTR_FPIC="HTTP_FPIC")
+    @override_settings(ALLOW_TEST_FPIC=True)
     def test_shibboleth_remote_login(self):
         url = reverse("login-edugain")
         Identifier.objects.create(type=Identifier.Type.EPPN, value="newuser@example.org", identity=self.identity)
-        response = self.client.get(f"{url}?next=/identity/me", follow=True, headers={"EPPN": "newuser@example.org"})
+        response = self.client.get(
+            f"{url}?next=/identity/me", follow=True, headers={"EPPN": "newuser@example.org", "FPIC": "010181-900C"}
+        )
         self.assertEqual(response.status_code, 200)
         self.assertIn(f"{self.identity.display_name()} |", response.content.decode("utf-8"))
+        self.identity.refresh_from_db()
+        self.assertEqual(self.identity.date_of_birth, datetime.date(1981, 1, 1))
+        self.assertEqual(self.identity.fpic, "010181-900C")
 
     @override_settings(OIDC_CLAIM_SUB="HTTP_SUB")
     def test_google_login(self):
