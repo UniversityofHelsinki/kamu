@@ -22,7 +22,7 @@ from kamu.models.identity import (
     PhoneNumber,
 )
 from kamu.models.token import Token
-from kamu.validators.identity import validate_fpic, validate_phone_number
+from kamu.validators.identity import validate_phone_number
 
 
 class IdentityCombineForm(forms.Form):
@@ -49,15 +49,15 @@ class IdentitySearchForm(forms.Form):
 
     given_names = forms.CharField(label=_("Given name(s)"), max_length=255, required=False)
     surname = forms.CharField(label=_("Surname"), max_length=255, required=False)
-    uid = forms.CharField(label=_("User account"), max_length=255, required=False)
-    email = forms.CharField(label=_("Email address"), max_length=255, required=False)
-    phone = forms.CharField(
-        label=_("Phone number"),
-        max_length=20,
+    identifier = forms.CharField(
+        label=_("Identifier"),
+        max_length=320,
         required=False,
-        help_text=_("Use international format, e.g. +358401234567, including only numbers and + sign."),
+        help_text=_(
+            "Email address, phone number in international format, e.g. +358401234567, "
+            "Finnish personal identity code or user account name"
+        ),
     )
-    fpic = forms.CharField(label=_("Finnish personal identity code"), max_length=11, required=False)
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -72,12 +72,27 @@ class IdentitySearchForm(forms.Form):
 
         if use_ldap:
             name_search_text = _(
-                "Name search returns partial matches from Kamu and names starting with the search parameters "
-                "in the user directory."
+                "Searches both Kamu and the user directory. "
+                "Returns partial matches in Kamu and names that start with your search terms in the user directory."
             )
         else:
-            name_search_text = _("Name search returns partial matches from Kamu.")
+            name_search_text = _("Returns partial matches in Kamu.")
+        identifier_search_text = _("Matches only exact identifiers.")
+        if getattr(settings, "SKIP_NAME_SEARCH_IF_IDENTIFIER_MATCHES", True):
+            both_search_text = _("If you provide an identifier and a match is found, the name search is skipped.")
+        else:
+            both_search_text = _(
+                "If you provide both an identifier and a name, the results from both searches are combined into a "
+                "single list."
+            )
         self.helper.layout = Layout(
+            HTML("<p>" + both_search_text + "</p>"),
+            HTML("<h2 class='mb-3'>" + _("Identifier search") + "</h2>"),
+            HTML("<p>" + identifier_search_text + "</p>"),
+            Div(
+                Div("identifier", css_class="col-md-12"),
+                css_class="row mb-3",
+            ),
             HTML("<h2 class='mb-3'>" + _("Name search") + "</h2>"),
             HTML("<p>" + name_search_text + "</p>"),
             Div(
@@ -85,54 +100,7 @@ class IdentitySearchForm(forms.Form):
                 Div("surname", css_class="col-md-6"),
                 css_class="row mb-3",
             ),
-            HTML("<h2 class='mb-3'>" + _("Identifiers") + "</h2>"),
-            HTML(
-                "<p>"
-                + _(
-                    "Identifier search matches only exact identifiers. Each identifier is searched separately "
-                    "and the results are added to the final search results."
-                )
-                + "</p>"
-            ),
-            Div(
-                Div("uid", css_class="col-md-6"),
-                Div("email", css_class="col-md-6"),
-                Div("phone", css_class="col-md-6"),
-                Div("fpic", css_class="col-md-6"),
-                css_class="row mb-3",
-            ),
         )
-
-    def clean_phone(self) -> str | None:
-        """
-        Only allow valid phone numbers in search field.
-        """
-        phone = self.cleaned_data["phone"]
-        if not phone:
-            return None
-        phone = phone.strip().replace(" ", "")
-        validate_phone_number(phone)
-        return phone
-
-    def clean_email(self) -> str | None:
-        """
-        Only allow valid emails in search field.
-        """
-        email = self.cleaned_data["email"]
-        if not email:
-            return None
-        validate_email(email)
-        return email
-
-    def clean_fpic(self) -> str | None:
-        """
-        Only allow valid personal codes in search field.
-        """
-        fpic = self.cleaned_data["fpic"]
-        if not fpic:
-            return None
-        validate_fpic(fpic)
-        return fpic
 
 
 class ContactForm(forms.Form):

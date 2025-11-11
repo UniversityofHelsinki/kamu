@@ -2,6 +2,7 @@
 Identity views for the UI.
 """
 
+import string
 from datetime import datetime
 from typing import Any
 from urllib.parse import quote_plus
@@ -11,8 +12,9 @@ from django.contrib import messages
 from django.contrib.admin.utils import construct_change_message
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.core.mail import send_mail
+from django.core.validators import validate_email
 from django.db import IntegrityError
 from django.db.models import OuterRef, Q, QuerySet, Subquery
 from django.forms import BaseForm
@@ -66,6 +68,7 @@ from kamu.utils.identity import (
     update_identity_attributes,
 )
 from kamu.utils.membership import add_missing_requirement_messages
+from kamu.validators.identity import validate_fpic, validate_phone_number
 from settings.common import LdapSearchAttributeType
 
 audit_log = AuditLog()
@@ -1288,7 +1291,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
             ldap_name = str(conf.get("attribute"))
             wildcard = conf.get("wildcard", False)
             value_prefix = conf.get("value_prefix", "")
-            value = self.request.POST.get(param)
+            value = self.parse_search_attribute(param)
             if not value:
                 continue
             if wildcard:
@@ -1356,7 +1359,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         """
         search_terms = {}
         for term in ["given_names", "surname", "email", "phone", "uid", "fpic"]:
-            value = self.request.POST.get(term)
+            value = self.parse_search_attribute(term)
             if value:
                 search_terms[term] = value
         audit_log.info(
@@ -1430,18 +1433,60 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
                 )
         return queryset
 
+    def parse_search_attribute(self, attribute_type: str) -> str:
+        """
+        Parses attribute value from URL parameters.
+
+        Returns identifiers only if identifier value is valid for attribute_type.
+        """
+        if attribute_type == "given_names":
+            return self.request.POST.get("given_names", "").strip()
+        if attribute_type == "surname":
+            return self.request.POST.get("surname", "").strip()
+        identifier = self.request.POST.get("identifier", "")
+        if not identifier:
+            return ""
+        match attribute_type:
+            case "phone":
+                try:
+                    phone = identifier.strip().replace(" ", "")
+                    validate_phone_number(phone)
+                    return phone
+                except ValidationError:
+                    return ""
+            case "email":
+                try:
+                    email = identifier.strip()
+                    validate_email(email)
+                    return email
+                except ValidationError:
+                    return ""
+            case "fpic":
+                try:
+                    fpic = identifier.strip()
+                    validate_fpic(fpic)
+                    return fpic
+                except ValidationError:
+                    return ""
+            case "uid":
+                uid_characters = set(string.ascii_lowercase + string.digits + "_")
+                uid = identifier.strip().lower()
+                if set(uid).issubset(uid_characters):
+                    return uid
+        return ""
+
     def search_results(self) -> dict[str, Any]:
         """
         Search Kamu and user directory based on URL parameters.
 
         Limit search results to identifier matches if exact_match_skip is True and exact match is found.
         """
-        given_names = self.request.POST.get("given_names", "")
-        surname = self.request.POST.get("surname", "")
-        email = self.request.POST.get("email", "")
-        phone = self.request.POST.get("phone", "")
-        uid = self.request.POST.get("uid", "")
-        fpic = self.request.POST.get("fpic", "")
+        given_names = self.parse_search_attribute("given_names")
+        surname = self.parse_search_attribute("surname")
+        fpic = self.parse_search_attribute("fpic")
+        uid = self.parse_search_attribute("uid")
+        email = self.parse_search_attribute("email")
+        phone = self.parse_search_attribute("phone")
         queryset = self.build_queryset_identifiers(fpic=fpic, uid=uid, email=email, phone=phone)
         if queryset.exists():
             self.exact_match_found = True
@@ -1473,10 +1518,10 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         if "reset_form" in self.request.POST:
             context["form"] = IdentitySearchForm(use_ldap=self.search_ldap())
             return context
-        context["phone"] = self.request.POST.get("phone", "").replace(" ", "")
-        context["email"] = self.request.POST.get("email")
-        context["fpic"] = self.request.POST.get("fpic")
-        context["uid"] = self.request.POST.get("uid")
+        context["phone"] = self.parse_search_attribute("phone")
+        context["email"] = self.parse_search_attribute("email")
+        context["fpic"] = self.parse_search_attribute("fpic")
+        context["uid"] = self.parse_search_attribute("uid")
         context["form"] = IdentitySearchForm(self.request.POST, use_ldap=self.search_ldap())
         if (
             self.request.method == "POST"

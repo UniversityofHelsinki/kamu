@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-14 09:01+0200\n"
+"POT-Creation-Date: 2025-11-14 11:22+0200\n"
 "Language: EN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -123,14 +123,14 @@ msgstr ""
 msgid "Reset password"
 msgstr ""
 
-#: forms/auth.py:36 forms/auth.py:186 forms/identity.py:53
-#: models/identity.py:499 models/identity.py:509 models/token.py:296
+#: forms/auth.py:36 forms/auth.py:186 models/identity.py:499
+#: models/identity.py:509 models/token.py:296
 #: templates/account/account_create.html:16
 msgid "Email address"
 msgstr ""
 
-#: forms/auth.py:38 forms/auth.py:261 forms/identity.py:55
-#: models/identity.py:535 models/identity.py:545 models/token.py:293
+#: forms/auth.py:38 forms/auth.py:261 models/identity.py:535
+#: models/identity.py:545 models/token.py:293
 msgid "Phone number"
 msgstr ""
 
@@ -158,11 +158,11 @@ msgid ""
 "Tried to send new login tokens too soon. Please try again in one minute."
 msgstr ""
 
-#: forms/auth.py:93 forms/auth.py:229 forms/identity.py:208
+#: forms/auth.py:93 forms/auth.py:229 forms/identity.py:176
 msgid "Email verification code"
 msgstr ""
 
-#: forms/auth.py:94 forms/auth.py:292 forms/identity.py:244
+#: forms/auth.py:94 forms/auth.py:292 forms/identity.py:212
 msgid "SMS verification code"
 msgstr ""
 
@@ -182,8 +182,8 @@ msgstr ""
 
 #: forms/auth.py:120 forms/auth.py:128 forms/auth.py:137 forms/auth.py:145
 #: forms/auth.py:249 forms/auth.py:251 forms/auth.py:312 forms/auth.py:314
-#: forms/identity.py:227 forms/identity.py:229 forms/identity.py:263
-#: forms/identity.py:265
+#: forms/identity.py:195 forms/identity.py:197 forms/identity.py:231
+#: forms/identity.py:233
 msgid "Invalid verification code."
 msgstr ""
 
@@ -289,27 +289,14 @@ msgstr ""
 msgid "Given name(s)"
 msgstr ""
 
-#: forms/identity.py:52 models/account.py:47 models/role.py:253
-#: templates/identity/identity_search.html:18
-#: templates/identity/identity_search.html:45
-#: templates/membership/membership_invite.html:40
-#: templates/membership/membership_invite_identity.html:24
-#: templates/membership/membership_invite_identity.html:58
-msgid "User account"
+#: forms/identity.py:53 models/identity.py:612
+msgid "Identifier"
 msgstr ""
 
-#: forms/identity.py:58
+#: forms/identity.py:57
 msgid ""
-"Use international format, e.g. +358401234567, including only numbers and + "
-"sign."
-msgstr ""
-
-#: forms/identity.py:60 models/identity.py:238 models/identity.py:588
-#: templates/identity/identity_combine.html:15
-#: templates/identity/identity_combine.html:112
-#: templates/identity/identity_detail.html:25
-#: templates/identity/identity_verify.html:18
-msgid "Finnish personal identity code"
+"Email address, phone number in international format, e.g. +358401234567, "
+"Finnish personal identity code or user account name"
 msgstr ""
 
 #: forms/identity.py:71
@@ -318,44 +305,53 @@ msgstr ""
 
 #: forms/identity.py:75
 msgid ""
-"Name search returns partial matches from Kamu and names starting with the "
-"search parameters in the user directory."
+"Searches both Kamu and the user directory. Returns partial matches in Kamu "
+"and names that start with your search terms in the user directory."
 msgstr ""
 
 #: forms/identity.py:79
-msgid "Name search returns partial matches from Kamu."
+msgid "Returns partial matches in Kamu."
 msgstr ""
 
-#: forms/identity.py:81
+#: forms/identity.py:80
+msgid "Matches only exact identifiers."
+msgstr ""
+
+#: forms/identity.py:82
+msgid ""
+"If you provide an identifier and a match is found, the name search is "
+"skipped."
+msgstr ""
+
+#: forms/identity.py:85
+msgid ""
+"If you provide both an identifier and a name, the results from both searches "
+"are combined into a single list."
+msgstr ""
+
+#: forms/identity.py:90
+msgid "Identifier search"
+msgstr ""
+
+#: forms/identity.py:96
 msgid "Name search"
 msgstr ""
 
-#: forms/identity.py:88 models/identity.py:613
-#: templates/identity/identity_detail.html:79
-msgid "Identifiers"
-msgstr ""
-
-#: forms/identity.py:92
-msgid ""
-"Identifier search matches only exact identifiers. Each identifier is "
-"searched separately and the results are added to the final search results."
-msgstr ""
-
-#: forms/identity.py:144
+#: forms/identity.py:112
 msgid "Email address or phone number"
 msgstr ""
 
-#: forms/identity.py:146
+#: forms/identity.py:114
 msgid ""
 "Phone number in international format, e.g. +358123456789. Values containing "
 "@ are treated as email addresses."
 msgstr ""
 
-#: forms/identity.py:163
+#: forms/identity.py:131
 msgid "Add"
 msgstr ""
 
-#: forms/identity.py:168 forms/identity.py:379
+#: forms/identity.py:136 forms/identity.py:347
 #: templates/account/account_create.html:39
 #: templates/account/account_detail.html:82
 #: templates/account/account_list.html:61
@@ -367,63 +363,63 @@ msgstr ""
 msgid "Return"
 msgstr ""
 
-#: forms/identity.py:183
+#: forms/identity.py:151
 msgid "Email address or phone number is required."
 msgstr ""
 
-#: forms/identity.py:189
+#: forms/identity.py:157
 msgid "Email address already exists."
 msgstr ""
 
-#: forms/identity.py:191
+#: forms/identity.py:159
 msgid "Maximum number of email addresses reached."
 msgstr ""
 
-#: forms/identity.py:197
+#: forms/identity.py:165
 msgid "Phone number already exists."
 msgstr ""
 
-#: forms/identity.py:199
+#: forms/identity.py:167
 msgid "Maximum number of phone numbers reached."
 msgstr ""
 
-#: forms/identity.py:218 forms/identity.py:254
+#: forms/identity.py:186 forms/identity.py:222
 msgid "Save"
 msgstr ""
 
-#: forms/identity.py:219 forms/identity.py:255
+#: forms/identity.py:187 forms/identity.py:223
 msgid "Resend a code"
 msgstr ""
 
-#: forms/identity.py:296
+#: forms/identity.py:264
 msgid "Add nationality"
 msgstr ""
 
-#: forms/identity.py:299
+#: forms/identity.py:267
 msgid "Nationality verification method"
 msgstr ""
 
-#: forms/identity.py:305
+#: forms/identity.py:273
 msgid "Remove nationality"
 msgstr ""
 
-#: forms/identity.py:316 templates/identity/identity_detail.html:73
+#: forms/identity.py:284 templates/identity/identity_detail.html:73
 msgid "Basic information"
 msgstr ""
 
-#: forms/identity.py:344
+#: forms/identity.py:312
 msgid "Restricted information"
 msgstr ""
 
-#: forms/identity.py:374
+#: forms/identity.py:342
 msgid "Save changes"
 msgstr ""
 
-#: forms/identity.py:453
+#: forms/identity.py:421
 msgid "Cannot remove verified nationality."
 msgstr ""
 
-#: forms/identity.py:474
+#: forms/identity.py:442
 msgid "Cannot set strong electrical verification manually."
 msgstr ""
 
@@ -551,6 +547,15 @@ msgstr ""
 #: models/organisation.py:32 models/role.py:84 models/role.py:276
 #: models/role.py:372
 msgid "Updated at"
+msgstr ""
+
+#: models/account.py:47 models/role.py:253
+#: templates/identity/identity_search.html:18
+#: templates/identity/identity_search.html:45
+#: templates/membership/membership_invite.html:40
+#: templates/membership/membership_invite_identity.html:24
+#: templates/membership/membership_invite_identity.html:58
+msgid "User account"
 msgstr ""
 
 #: models/account.py:48 templates/identity/identity_detail.html:89
@@ -802,6 +807,14 @@ msgstr ""
 msgid "Gender verification method"
 msgstr ""
 
+#: models/identity.py:238 models/identity.py:588
+#: templates/identity/identity_combine.html:15
+#: templates/identity/identity_combine.html:112
+#: templates/identity/identity_detail.html:25
+#: templates/identity/identity_verify.html:18
+msgid "Finnish personal identity code"
+msgstr ""
+
 #: models/identity.py:240
 msgid "Used for the strong electrical identification."
 msgstr ""
@@ -923,8 +936,8 @@ msgstr ""
 msgid "Valid until"
 msgstr ""
 
-#: models/identity.py:612
-msgid "Identifier"
+#: models/identity.py:613 templates/identity/identity_detail.html:79
+msgid "Identifiers"
 msgstr ""
 
 #: models/identity.py:630
@@ -3199,8 +3212,8 @@ msgstr ""
 msgid "Tried to send a new code too soon. Please try again in one minute."
 msgstr ""
 
-#: utils/identity.py:417 utils/identity.py:438 views/identity.py:593
-#: views/identity.py:636
+#: utils/identity.py:417 utils/identity.py:438 views/identity.py:596
+#: views/identity.py:639
 msgid "Verification code sent."
 msgstr ""
 
@@ -3208,12 +3221,12 @@ msgstr ""
 msgid "Failed to send verification code."
 msgstr ""
 
-#: utils/identity.py:436 views/identity.py:634
+#: utils/identity.py:436 views/identity.py:637
 #, python-format
 msgid "Kamu verification code: %(token)s"
 msgstr ""
 
-#: utils/identity.py:441 views/identity.py:639
+#: utils/identity.py:441 views/identity.py:642
 msgid "Could not send an SMS message."
 msgstr ""
 
@@ -3496,98 +3509,98 @@ msgstr ""
 msgid "Memberships are ending soon in roles you have approval rights."
 msgstr ""
 
-#: views/identity.py:182
+#: views/identity.py:185
 msgid "Selected as the target identity for identity combining."
 msgstr ""
 
-#: views/identity.py:188
+#: views/identity.py:191
 msgid "Selected as the source identity for identity combining."
 msgstr ""
 
-#: views/identity.py:346
+#: views/identity.py:349
 msgid "Failed to verify Candour ID verification status, please try again."
 msgstr ""
 
-#: views/identity.py:371
+#: views/identity.py:374
 msgid "Your identity has been verified with Candour ID verification."
 msgstr ""
 
-#: views/identity.py:389
+#: views/identity.py:392
 msgid "Candour ID verification failed, please try again."
 msgstr ""
 
-#: views/identity.py:425
+#: views/identity.py:428
 msgid "Failed to create Candour ID verification session, please try again."
 msgstr ""
 
-#: views/identity.py:432
+#: views/identity.py:435
 msgid "Could not start Candour ID process, please try again later."
 msgstr ""
 
-#: views/identity.py:587 views/identity.py:630
+#: views/identity.py:590 views/identity.py:633
 msgid "Tried to send a new code too soon."
 msgstr ""
 
-#: views/identity.py:589
+#: views/identity.py:592
 msgid "Kamu: email address verification"
 msgstr ""
 
-#: views/identity.py:590
+#: views/identity.py:593
 #, python-format
 msgid "Your verification code is: %(token)s"
 msgstr ""
 
-#: views/identity.py:982
+#: views/identity.py:985
 msgid "Contract already signed."
 msgstr ""
 
-#: views/identity.py:988
+#: views/identity.py:991
 msgid "Contract version has changed. Please try again."
 msgstr ""
 
-#: views/identity.py:991
+#: views/identity.py:994
 msgid "Contract signed."
 msgstr ""
 
-#: views/identity.py:1211
+#: views/identity.py:1214
 msgid "New identity created."
 msgstr ""
 
-#: views/identity.py:1235
+#: views/identity.py:1238
 msgid "Invalid verification session."
 msgstr ""
 
-#: views/identity.py:1248
+#: views/identity.py:1251
 msgid "Identity verification was cancelled."
 msgstr ""
 
-#: views/identity.py:1307
+#: views/identity.py:1310
 msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr ""
 
-#: views/identity.py:1422
+#: views/identity.py:1425
 msgid "Too many results, please refine your search parameters."
 msgstr ""
 
-#: views/identity.py:1429
+#: views/identity.py:1432
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 
-#: views/identity.py:1453
+#: views/identity.py:1498
 msgid "LDAP search failed, could not search existing accounts."
 msgstr ""
 
-#: views/identity.py:1461
+#: views/identity.py:1506
 msgid "Identifier match found, skipping name search."
 msgstr ""
 
-#: views/identity.py:1573
+#: views/identity.py:1618
 msgid "Incorrect primary keys."
 msgstr ""
 
-#: views/identity.py:1579
+#: views/identity.py:1624
 msgid "Identities combined."
 msgstr ""
 

@@ -143,11 +143,12 @@ class IdentitySearchTests(BaseTestCase):
     def test_search_identity(self, mock_logger):
         self.create_identity(email=True)
         self.create_superidentity(email=True)
-        data = {"given_names": "test", "email": "super_test@example.org"}
+        data = {"given_names": "test", "identifier": "super_test@example.org"}
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
         self.assertIn(self.superidentity.display_name(), response.content.decode("utf-8"))
+        self.assertIn("combined into a single list", response.content.decode("utf-8"))
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Searched identities", extra=ANY),
@@ -161,11 +162,12 @@ class IdentitySearchTests(BaseTestCase):
     def test_search_identity_skip_name_search_if_match_found(self):
         self.create_identity(email=True)
         self.create_superidentity(email=True)
-        data = {"given_names": "test", "email": "super_test@example.org"}
+        data = {"given_names": "test", "identifier": "super_test@example.org"}
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(self.identity.display_name(), response.content.decode("utf-8"))
         self.assertIn(self.superidentity.display_name(), response.content.decode("utf-8"))
+        self.assertIn("name search is skipped", response.content.decode("utf-8"))
 
     @override_settings(KAMU_IDENTITY_SEARCH_LIMIT=1)
     def test_search_identity_partial_limit(self):
@@ -203,7 +205,7 @@ class IdentitySearchTests(BaseTestCase):
 
     def test_search_identity_phone(self):
         self.create_identity(phone=True)
-        data = {"phone": "+1234567890"}
+        data = {"identifier": "+1234567890"}
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
@@ -214,16 +216,13 @@ class IdentitySearchTests(BaseTestCase):
         self.create_identity()
         self.identity.fpic = fpic
         self.identity.save()
-        data = {"fpic": fpic}
+        data = {"identifier": fpic}
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
-        data = {"fpic": "010181-9234"}
+        data = {"identifier": "010181-9234"}
         response = self.client.post(self.url, data)
         self.assertNotIn(self.identity.display_name(), response.content.decode("utf-8"))
-        data = {"fpic": "010181-900D"}
-        response = self.client.post(self.url, data)
-        self.assertIn("Incorrect checksum", response.content.decode("utf-8"))
 
     @override_settings(ALLOW_TEST_FPIC=True)
     @override_settings(SKIP_NAME_SEARCH_IF_IDENTIFIER_MATCHES=False)
@@ -238,27 +237,33 @@ class IdentitySearchTests(BaseTestCase):
         superuid = "superuseruid"
         self.superidentity.uid = superuid
         self.superidentity.save()
-        data = {
-            "fpic": fpic,
-            "email": self.email_address.address,
+        attributes = {
             "phone": self.phone_number.number,
+            "email": self.email_address.address,
+            "fpic": fpic,
             "uid": uid,
-            "surname": "user",
         }
-        response = self.client.post(self.url, data)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(f"<b>{self.email_address.address}</b>", response.content.decode("utf-8"))
-        self.assertIn(f"<b>{self.phone_number.number}</b>", response.content.decode("utf-8"))
-        self.assertIn(f"<b>{fpic}</b>", response.content.decode("utf-8"))
-        self.assertIn(f"<b>{uid}</b>", response.content.decode("utf-8"))
-        self.assertIn(superuid, response.content.decode("utf-8"))
-        self.assertNotIn(f"<b>{superuid}</b>", response.content.decode("utf-8"))
+        for attribute in attributes:
+            data = {"identifier": attributes[attribute], "surname": "user"}
+            response = self.client.post(self.url, data)
+            self.assertEqual(response.status_code, 200)
+            match attribute:
+                case "email":
+                    self.assertIn(f"<b>{self.email_address.address}</b>", response.content.decode("utf-8"))
+                case "phone":
+                    self.assertIn(f"<b>{self.phone_number.number}</b>", response.content.decode("utf-8"))
+                case "fpic":
+                    self.assertIn(f"<b>{fpic}</b>", response.content.decode("utf-8"))
+                case "uid":
+                    self.assertIn(f"<b>{uid}</b>", response.content.decode("utf-8"))
+                    self.assertIn(superuid, response.content.decode("utf-8"))
+                    self.assertNotIn(f"<b>{superuid}</b>", response.content.decode("utf-8"))
 
     def test_search_form_help_text(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            "Name search returns partial matches from Kamu.",
+            "Returns partial matches in Kamu.",
             response.content.decode("utf-8"),
         )
         self.assertNotIn(
@@ -268,7 +273,7 @@ class IdentitySearchTests(BaseTestCase):
 
     def test_search_form_reset(self):
         self.create_identity(phone=True)
-        data = {"phone": "+1234567890"}
+        data = {"identifier": "+1234567890"}
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertIn("+1234567890", response.content.decode("utf-8"))

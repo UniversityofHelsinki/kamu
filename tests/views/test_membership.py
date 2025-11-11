@@ -389,7 +389,7 @@ class MembershipInviteTests(BaseTestCase):
     @mock.patch("kamu.connectors.ldap.logger")
     def test_search_ldap_fail(self, mock_logger):
         data = {
-            "uid": "testuser",
+            "identifier": "testuser",
         }
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
@@ -402,7 +402,7 @@ class MembershipInviteTests(BaseTestCase):
         mock_ldap.return_value = MockLdapConn(limited_fields=True)
         data = {
             "given_names": "test",
-            "uid": "testuser",
+            "identifier": "testuser",
         }
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
@@ -414,7 +414,7 @@ class MembershipInviteTests(BaseTestCase):
     def test_search_ldap_fpic(self, mock_ldap):
         mock_ldap.return_value = MockLdapConn(limited_fields=True)
         data = {
-            "fpic": "010181-900C",
+            "identifier": "010181-900C",
         }
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
@@ -425,7 +425,7 @@ class MembershipInviteTests(BaseTestCase):
         mock_ldap.return_value = MockLdapConn(limited_fields=True, size_exceeded=True)
         data = {
             "given_names": "test",
-            "uid": "testuser",
+            "identifier": "testuser",
         }
         response = self.client.post(self.url, data)
         self.assertIn("search returned too many results", response.content.decode("utf-8"))
@@ -444,7 +444,7 @@ class MembershipInviteTests(BaseTestCase):
     @mock.patch("kamu.views.identity.ldap_search")
     def test_search_not_found_email(self, mock_ldap):
         mock_ldap.return_value = []
-        data = {"email": "nonexisting@example.org"}
+        data = {"identifier": "nonexisting@example.org"}
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Email address not found", response.content.decode("utf-8"))
@@ -452,7 +452,7 @@ class MembershipInviteTests(BaseTestCase):
     @mock.patch("kamu.views.identity.ldap_search")
     def test_search_email_found_kamu(self, mock_ldap):
         mock_ldap.return_value = []
-        data = {"email": self.email_address.address}
+        data = {"identifier": self.email_address.address}
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Email address not found", response.content.decode("utf-8"))
@@ -460,7 +460,7 @@ class MembershipInviteTests(BaseTestCase):
     @mock.patch("kamu.connectors.ldap._get_connection")
     def test_search_email_found_ldap(self, mock_ldap):
         mock_ldap.return_value = MockLdapConn()
-        data = {"email": "ldap.user@example.org"}
+        data = {"identifier": "ldap.user@example.org"}
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Email address not found", response.content.decode("utf-8"))
@@ -644,8 +644,7 @@ class MembershipInviteTests(BaseTestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            "Name search returns partial matches from Kamu and names starting with the search parameters in "
-            "the user directory.",
+            "Returns partial matches in Kamu and names that start with your search terms in the user directory.",
             response.content.decode("utf-8"),
         )
 
