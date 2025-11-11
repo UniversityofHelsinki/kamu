@@ -33,7 +33,8 @@
     </ul>
   </div>
   <form method="post">{% csrf_token %}
-    <button type="submit" name="regenerate_uids" class="btn btn-danger">{% trans 'Regenerate user IDs' %}</button>
+    <button type="submit" name="regenerate_uids" class="btn btn-warning mb-3">{% trans 'Regenerate user IDs' %}</button>
   </form>
   {% crispy form form.helper %}
+  <a class="btn btn-secondary" href="{% url 'account-list' pk=identity.pk %}">{% trans "Return" %}</a>
 {% endblock %}
