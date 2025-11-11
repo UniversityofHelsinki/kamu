@@ -374,6 +374,7 @@ msgid "Add"
 msgstr "Lägg till"
 
 #: forms/identity.py:168 forms/identity.py:379
+#: templates/account/account_create.html:39
 #: templates/account/account_detail.html:82
 #: templates/account/account_list.html:61
 #: templates/contract/contract_detail.html:26
@@ -1178,7 +1179,6 @@ msgstr "Anstånd från medlemskapets utgång till rensning (dagar)"
 #: templates/membership/membership_invite.html:9
 #: templates/membership/membership_managed_list.html:14
 #: templates/membership/verification_form.html:9
-#: templates/role/role_list.html:12 templates/role/role_search.html:14
 msgid "Role"
 msgstr "Roll"
 
@@ -1911,8 +1911,7 @@ msgid "Approver"
 msgstr "Godkännare"
 
 #: templates/base.html:47 templates/front.html:59 templates/front.html:61
-#: templates/role/role_detail.html:28 templates/role/role_list.html:14
-#: templates/role/role_search.html:16
+#: templates/role/role_detail.html:28
 msgid "Owner"
 msgstr "Ägare"
 
@@ -2885,7 +2884,7 @@ msgstr "Attribut"
 
 #: templates/identity/identity_search.html:34
 #: templates/membership/membership_invite_identity.html:42
-#: templates/role/role_search.html:31
+#: templates/role/role_search.html:29
 msgid "No results with the provided search parameters."
 msgstr "Inga resultat med de angivna sökparametrarna."
 
@@ -3036,7 +3035,8 @@ msgstr "Godkänn"
 
 #: templates/membership/membership_detail.html:20
 #: templates/membership/membership_invite.html:13
-#: templates/role/role_detail.html:10
+#: templates/role/role_detail.html:10 templates/role/role_list.html:13
+#: templates/role/role_search.html:15
 msgid "Description"
 msgstr "Rollbeskrivning"
 
@@ -3293,8 +3293,7 @@ msgstr "Verifieringsnummer"
 msgid "Role details"
 msgstr "Uppgifter om rollen"
 
-#: templates/role/role_detail.html:25 templates/role/role_list.html:13
-#: templates/role/role_search.html:15
+#: templates/role/role_detail.html:25
 msgid "Parent"
 msgstr "Överordnad"
 
@@ -3319,7 +3318,11 @@ msgstr "Medlemmar"
 msgid "Role list"
 msgstr "Rollista"
 
-#: templates/role/role_list.html:29
+#: templates/role/role_list.html:12 templates/role/role_search.html:14
+msgid "Role name"
+msgstr "Rollnamn"
+
+#: templates/role/role_list.html:27
 msgid "No roles."
 msgstr "Inga roller."
 
@@ -3330,6 +3333,26 @@ msgstr "Roller som du har godkännarrätt för"
 #: templates/role/role_list_inviter.html:4
 msgid "Roles you have inviter permission for"
 msgstr "Roller som du har inbjudningsrätt för"
+
+#: templates/role/role_list_inviter.html:6
+msgid ""
+"Invite a person to become a member of the university community by first "
+"selecting the role\n"
+"        that best describes the person’s relationship with the university, "
+"then clicking the Invite button in the\n"
+"        role details."
+msgstr ""
+"Bjud in en person att bli medlem i universitetsgemenskapen genom att först "
+"välja den roll som bäst beskriver personens relation till universitetet "
+"och sedan klicka på knappen Bjud in i rollinformationen."
+
+#: templates/role/role_list_inviter.html:9
+msgid ""
+"The list shows only those roles for which you are authorized to invite "
+"members."
+msgstr ""
+"Listan visar endast de roller som du har behörighet att bjuda in "
+"medlemmar till."
 
 #: templates/role/role_list_owner.html:4
 msgid "Roles you own"
@@ -3347,7 +3370,7 @@ msgstr "Sök roller med rollens namn eller beskrivning."
 msgid "Results"
 msgstr "Resultat"
 
-#: templates/role/role_search.html:33
+#: templates/role/role_search.html:31
 msgid "Submit a search to get results."
 msgstr "Gör en sökning för att få resultat."
 

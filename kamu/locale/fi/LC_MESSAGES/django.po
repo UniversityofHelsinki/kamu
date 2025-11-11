@@ -378,6 +378,7 @@ msgid "Add"
 msgstr "Lisää"
 
 #: forms/identity.py:168 forms/identity.py:379
+#: templates/account/account_create.html:39
 #: templates/account/account_detail.html:82
 #: templates/account/account_list.html:61
 #: templates/contract/contract_detail.html:26
@@ -1183,7 +1184,6 @@ msgstr "Aika jäsenyyden päättymisestä jäsenyystietojen poistoon (päivissä
 #: templates/membership/membership_invite.html:9
 #: templates/membership/membership_managed_list.html:14
 #: templates/membership/verification_form.html:9
-#: templates/role/role_list.html:12 templates/role/role_search.html:14
 msgid "Role"
 msgstr "Rooli"
 
@@ -1915,8 +1915,7 @@ msgid "Approver"
 msgstr "Hyväksyjä"
 
 #: templates/base.html:47 templates/front.html:59 templates/front.html:61
-#: templates/role/role_detail.html:28 templates/role/role_list.html:14
-#: templates/role/role_search.html:16
+#: templates/role/role_detail.html:28
 msgid "Owner"
 msgstr "Omistaja"
 
@@ -2892,7 +2891,7 @@ msgstr "Tiedot"
 
 #: templates/identity/identity_search.html:34
 #: templates/membership/membership_invite_identity.html:42
-#: templates/role/role_search.html:31
+#: templates/role/role_search.html:29
 msgid "No results with the provided search parameters."
 msgstr "Ei tuloksia annetuilla hakuehdoilla."
 
@@ -3045,7 +3044,8 @@ msgstr "Hyväksy"
 
 #: templates/membership/membership_detail.html:20
 #: templates/membership/membership_invite.html:13
-#: templates/role/role_detail.html:10
+#: templates/role/role_detail.html:10 templates/role/role_list.html:13
+#: templates/role/role_search.html:15
 msgid "Description"
 msgstr "Roolin kuvaus"
 
@@ -3305,8 +3305,7 @@ msgstr "Vahvistuksen puhelinnumero."
 msgid "Role details"
 msgstr "Roolin tiedot"
 
-#: templates/role/role_detail.html:25 templates/role/role_list.html:13
-#: templates/role/role_search.html:15
+#: templates/role/role_detail.html:25
 msgid "Parent"
 msgstr "Päärooli"
 
@@ -3331,7 +3330,11 @@ msgstr "Jäsenet"
 msgid "Role list"
 msgstr "Roolit"
 
-#: templates/role/role_list.html:29
+#: templates/role/role_list.html:12 templates/role/role_search.html:14
+msgid "Role name"
+msgstr "Roolin nimi"
+
+#: templates/role/role_list.html:27
 msgid "No roles."
 msgstr "Ei rooleja."
 
@@ -3342,6 +3345,26 @@ msgstr "Roolit, joissa sinulla on hyväksymisoikeudet"
 #: templates/role/role_list_inviter.html:4
 msgid "Roles you have inviter permission for"
 msgstr "Rooleja, joihin sinulla on kutsuoikeudet"
+
+#: templates/role/role_list_inviter.html:6
+msgid ""
+"Invite a person to become a member of the university community by first "
+"selecting the role\n"
+"        that best describes the person’s relationship with the university, "
+"then clicking the Invite button in the\n"
+"        role details."
+msgstr ""
+"Kutsu henkilö yliopistoyhteisön jäseneksi valitsemalla ensin rooli, joka "
+"parhaiten kuvaa henkilön suhdetta yliopistoon, ja napsauttamalla sitten "
+"roolitietojen kohdalla Kutsu-painiketta."
+
+#: templates/role/role_list_inviter.html:9
+msgid ""
+"The list shows only those roles for which you are authorized to invite "
+"members."
+msgstr ""
+"Listassa näytetään vain ne roolit, joihin sinulla on valtuudet kutsua "
+"jäseniä."
 
 #: templates/role/role_list_owner.html:4
 msgid "Roles you own"
@@ -3359,7 +3382,7 @@ msgstr "Etsi rooleja roolin nimellä tai kuvauksella."
 msgid "Results"
 msgstr "Tulokset"
 
-#: templates/role/role_search.html:33
+#: templates/role/role_search.html:31
 msgid "Submit a search to get results."
 msgstr "Suorita haku saadaksesi tuloksia."
 

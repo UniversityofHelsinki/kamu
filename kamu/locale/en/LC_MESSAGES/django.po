@@ -356,6 +356,7 @@ msgid "Add"
 msgstr ""
 
 #: forms/identity.py:168 forms/identity.py:379
+#: templates/account/account_create.html:39
 #: templates/account/account_detail.html:82
 #: templates/account/account_list.html:61
 #: templates/contract/contract_detail.html:26
@@ -1146,7 +1147,6 @@ msgstr ""
 #: templates/membership/membership_invite.html:9
 #: templates/membership/membership_managed_list.html:14
 #: templates/membership/verification_form.html:9
-#: templates/role/role_list.html:12 templates/role/role_search.html:14
 msgid "Role"
 msgstr ""
 
@@ -1830,8 +1830,7 @@ msgid "Approver"
 msgstr ""
 
 #: templates/base.html:47 templates/front.html:59 templates/front.html:61
-#: templates/role/role_detail.html:28 templates/role/role_list.html:14
-#: templates/role/role_search.html:16
+#: templates/role/role_detail.html:28
 msgid "Owner"
 msgstr ""
 
@@ -2698,7 +2697,7 @@ msgstr ""
 
 #: templates/identity/identity_search.html:34
 #: templates/membership/membership_invite_identity.html:42
-#: templates/role/role_search.html:31
+#: templates/role/role_search.html:29
 msgid "No results with the provided search parameters."
 msgstr ""
 
@@ -2839,7 +2838,8 @@ msgstr ""
 
 #: templates/membership/membership_detail.html:20
 #: templates/membership/membership_invite.html:13
-#: templates/role/role_detail.html:10
+#: templates/role/role_detail.html:10 templates/role/role_list.html:13
+#: templates/role/role_search.html:15
 msgid "Description"
 msgstr ""
 
@@ -3086,8 +3086,7 @@ msgstr ""
 msgid "Role details"
 msgstr ""
 
-#: templates/role/role_detail.html:25 templates/role/role_list.html:13
-#: templates/role/role_search.html:15
+#: templates/role/role_detail.html:25
 msgid "Parent"
 msgstr ""
 
@@ -3112,7 +3111,11 @@ msgstr ""
 msgid "Role list"
 msgstr ""
 
-#: templates/role/role_list.html:29
+#: templates/role/role_list.html:12 templates/role/role_search.html:14
+msgid "Role name"
+msgstr ""
+
+#: templates/role/role_list.html:27
 msgid "No roles."
 msgstr ""
 
@@ -3122,6 +3125,21 @@ msgstr ""
 
 #: templates/role/role_list_inviter.html:4
 msgid "Roles you have inviter permission for"
+msgstr ""
+
+#: templates/role/role_list_inviter.html:6
+msgid ""
+"Invite a person to become a member of the university community by first "
+"selecting the role\n"
+"        that best describes the person’s relationship with the university, "
+"then clicking the Invite button in the\n"
+"        role details."
+msgstr ""
+
+#: templates/role/role_list_inviter.html:9
+msgid ""
+"The list shows only those roles for which you are authorized to invite "
+"members."
 msgstr ""
 
 #: templates/role/role_list_owner.html:4
@@ -3140,7 +3158,7 @@ msgstr ""
 msgid "Results"
 msgstr ""
 
-#: templates/role/role_search.html:33
+#: templates/role/role_search.html:31
 msgid "Submit a search to get results."
 msgstr ""
 
