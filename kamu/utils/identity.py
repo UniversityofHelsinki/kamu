@@ -680,7 +680,19 @@ def update_identity_attributes(
         if check_and_update_identity_attribute(request, identity, attribute, value, verification_method):
             modified.append(attribute)
     if modified:
-        identity.save()
+        try:
+            identity.save()
+        except IntegrityError as e:
+            audit_log.warning(
+                "FPIC already exists in the database",
+                category="identity",
+                action="update",
+                outcome="failure",
+                request=request,
+                objects=[identity],
+                extra={"sensitive": str(e)},
+            )
+            return
         audit_log.info(
             f"Updated identity attributes: {', '.join(modified)}",
             category="identity",
