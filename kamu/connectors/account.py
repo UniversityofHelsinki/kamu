@@ -1,12 +1,8 @@
-import json
 import logging
-from urllib.parse import urljoin
 
-import requests
-from django.conf import settings
 from django.utils import timezone
 
-from kamu.connectors import ApiConfigurationError, ApiTemporaryError
+from kamu.connectors import ApiConfigurationError, ApiConnector
 from kamu.models.account import Account
 from kamu.models.identity import Identity
 from kamu.utils.account import get_account_data
@@ -14,100 +10,13 @@ from kamu.utils.account import get_account_data
 logger = logging.getLogger(__name__)
 
 
-class AccountApiConnector:
+class AccountApiConnector(ApiConnector):
     """
     Connector for managing user accounts.
     """
 
-    def __init__(self) -> None:
-        """
-        Initialize connection and set setting values.
-        """
-        self.url = getattr(settings, "ACCOUNT_API_URL", "")
-        authorization_header = getattr(settings, "ACCOUNT_AUTH_HEADER", "apikey")
-        api_key = getattr(settings, "ACCOUNT_API_KEY", None)
-        self.timeout = getattr(settings, "ACCOUNT_API_TIMEOUT", 3)
-        self.verify_ssl = getattr(settings, "ACCOUNT_API_VERIFY_SSL", True)
-        cert_file_path = getattr(settings, "ACCOUNT_API_CERT_FILE_PATH", None)
-        key_file_path = getattr(settings, "ACCOUNT_API_KEY_FILE_PATH", None)
-        self.cert = (cert_file_path, key_file_path) if cert_file_path and key_file_path else None
-        if not self.url or api_key is None or authorization_header is None:
-            logger.error("Account API missing parameters.")
-            raise ApiConfigurationError("Incorrect account API settings.")
-        self.headers = {authorization_header: api_key, "Content-Type": "application/json"}
-
-    def api_call_get(self, url: str, headers: dict | None = None) -> requests.Response:
-        """
-        Makes a GET request to the API.
-        """
-        headers = self.headers if headers is None else self.headers | headers
-        return requests.get(
-            url,
-            headers=headers,
-            timeout=self.timeout,
-            cert=self.cert,
-            verify=self.verify_ssl,
-        )
-
-    def api_call_post(self, url: str, data: dict | None = None, headers: dict | None = None) -> requests.Response:
-        """
-        Makes a POST request to the API.
-        """
-        headers = self.headers if headers is None else self.headers | headers
-        return requests.post(
-            url,
-            headers=headers,
-            timeout=self.timeout,
-            cert=self.cert,
-            verify=self.verify_ssl,
-            data=json.dumps(data),
-        )
-
-    def api_call(
-        self, http_method: str, path: str, data: dict | None = None, headers: dict | None = None
-    ) -> dict | list:
-        """
-        Makes a call to the API and returns either response content or raises an exception.
-        """
-        url = urljoin(self.url, path)
-        try:
-            if http_method == "get":
-                response = self.api_call_get(url, headers)
-            elif http_method == "post":
-                response = self.api_call_post(url, data, headers)
-            else:
-                logger.error("Account API unknown HTTP method.")
-                raise ApiConfigurationError
-        # Handle exceptions
-        except OSError as e:
-            logger.error(f"Account API OS Error: {e}")
-            raise ApiConfigurationError from e
-        except requests.exceptions.SSLError as e:
-            logger.error(f"Account API SSL Error: {e}")
-            raise ApiConfigurationError from e
-        except requests.exceptions.ConnectionError as e:
-            logger.error(f"Account API connection Error: {e}")
-            raise ApiTemporaryError from e
-        except requests.exceptions.Timeout as e:
-            logger.error(f"Account API timeout: {e}")
-            raise ApiTemporaryError from e
-        # Handle response codes
-        if response.status_code in getattr(settings, "ACCOUNT_API_SUCCESS_CODES", [200]):
-            content = json.loads(response.content)
-            return content
-        elif response.status_code == 400:
-            logger.error(f"Account API status 400: {response.text}")
-            raise ApiTemporaryError(f"API error, status {response.status_code}")
-        elif response.status_code == 403:
-            logger.error("Account API status 403: Incorrect settings.")
-            raise ApiConfigurationError(f"API error, status {response.status_code}")
-        elif response.status_code == 404:
-            logger.error("Account API status 404: Not found.")
-            raise ApiConfigurationError(f"API error, status {response.status_code}")
-        else:
-            error_msg = "Account API Error"
-            logger.error(f"Account API status {response.status_code} : {error_msg}")
-            raise ApiTemporaryError(f"API error, status {response.status_code}")
+    api_name: str = "Account API"
+    settings_dict_name: str = "ACCOUNT_API"
 
     def create_account(self, identity: Identity, uid: str, password: str, account_type: Account.Type) -> Account:
         """
@@ -117,7 +26,9 @@ class AccountApiConnector:
         data["uid"] = uid
         data["userPassword"] = password
         response = self.api_call(
-            path=getattr(settings, "ACCOUNT_API_CREATE_PATH", "create"), http_method="post", data=data
+            path=self._self_get_path("CREATE_PATH", "create"),
+            http_method="post",
+            data=data,
         )
         if not isinstance(response, dict):
             raise ApiConfigurationError
@@ -134,7 +45,7 @@ class AccountApiConnector:
         Set account status to DISABLED if it was ENABLED. This leaves EXPIRED accounts as they are.
         """
         data = {"uid": account.uid}
-        self.api_call(path=getattr(settings, "ACCOUNT_API_DISABLE_PATH", "disable"), http_method="post", data=data)
+        self.api_call(path=self._self_get_path("DISABLE_PATH", "disable"), http_method="post", data=data)
         if account.status == Account.Status.ENABLED:
             account.deactivated_at = timezone.now()
             account.status = Account.Status.DISABLED
@@ -145,7 +56,7 @@ class AccountApiConnector:
         Enables the account.
         """
         data = {"uid": account.uid}
-        self.api_call(path=getattr(settings, "ACCOUNT_API_ENABLE_PATH", "enable"), http_method="post", data=data)
+        self.api_call(path=self._self_get_path("ENABLE_PATH", "enable"), http_method="post", data=data)
         account.status = Account.Status.ENABLED
         account.deactivated_at = None
         account.save()
@@ -156,7 +67,7 @@ class AccountApiConnector:
         """
         data = {"userPassword": password, "uid": account.uid}
         self.api_call(
-            path=getattr(settings, "ACCOUNT_API_CHANGE_PASSWORD_PATH", "changePassword"), http_method="post", data=data
+            path=self._self_get_path("CHANGE_PASSWORD_PATH", "changePassword"), http_method="post", data=data
         )
 
     def update_account(self, account: Account) -> None:
@@ -165,7 +76,7 @@ class AccountApiConnector:
         """
         data = get_account_data(account.identity, account_type=Account.Type(account.type))
         data["uid"] = account.uid
-        self.api_call(path=getattr(settings, "ACCOUNT_API_UPDATE_PATH", "update"), http_method="post", data=data)
+        self.api_call(path=self._self_get_path("UPDATE_PATH", "update"), http_method="post", data=data)
         account.save()
 
     def get_uid_choices(self, number: int = 5, exclude_chars: str = "", exclude_string: str = "") -> list:
@@ -174,7 +85,7 @@ class AccountApiConnector:
         """
         headers = {"amount": str(number), "exclude": exclude_chars, "ssnExclude": exclude_string}
         uid_choices = self.api_call(
-            path=getattr(settings, "ACCOUNT_API_UID_CHOICES_PATH", "generateUids"), http_method="get", headers=headers
+            path=self._self_get_path("UID_CHOICES_PATH", "generateUids"), http_method="get", headers=headers
         )
         if not isinstance(uid_choices, list):
             raise ApiConfigurationError

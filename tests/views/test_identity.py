@@ -3,6 +3,7 @@ View tests for identities.
 """
 
 import datetime
+import json
 from unittest import mock
 from unittest.mock import ANY, call
 
@@ -13,6 +14,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.test import Client, override_settings
 from django.utils import timezone
+from requests import Response
 
 from kamu.models.contract import Contract, ContractTemplate
 from kamu.models.identity import (
@@ -703,7 +705,6 @@ class VerificationTests(BaseTestCase):
         self.assertIn("Invalid verification code", response.content.decode("utf-8"))
 
     def _verify_sms(self, mock_connector, number):
-        mock_connector.return_value.send_sms.return_value = True
         url = f"/phone/{number.pk}/verify/"
         self.client.get(url)
         code = mock_connector.return_value.send_sms.call_args.args[1].split(" ")[-1]
@@ -1168,13 +1169,22 @@ class IdentityVerificationTests(BaseTestCase):
             ]
         )
 
+    def create_candour_response(self, status_code=200, json_data=None):
+        response = Response()
+        response.status_code = status_code
+        if json_data is not None:
+            response._content = json.dumps(json_data).encode("utf-8")
+        return response
+
     @mock.patch("kamu.utils.audit.logger_audit")
     @mock.patch("requests.post", return_value=mock.MagicMock())
     def test_identity_verify_candour_start_view(self, mock_candour, audit_logger):
-        mock_candour.return_value.json.return_value = {
-            "verificationSessionId": "12345",
-            "redirectUrl": "https://example.com/redirect",
-        }
+        mock_candour.return_value = self.create_candour_response(
+            json_data={
+                "verificationSessionId": "12345",
+                "redirectUrl": "https://example.com/redirect",
+            }
+        )
         response = self.client.post(self.url, data={"verify_identity": "candour"})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, "https://example.com/redirect")
@@ -1193,10 +1203,12 @@ class IdentityVerificationTests(BaseTestCase):
     @mock.patch("kamu.utils.audit.logger_audit")
     @mock.patch("requests.get", return_value=mock.MagicMock())
     def test_identity_verify_candour_verification_unfinished(self, mock_candour, audit_logger):
-        mock_candour.return_value.json.return_value = {
-            "status": "pending",
-            "invitationLink": "https://example.com/redirect",
-        }
+        mock_candour.return_value = self.create_candour_response(
+            json_data={
+                "status": "pending",
+                "invitationLink": "https://example.com/redirect",
+            }
+        )
         self.identity.candour_verification_session_id = "12345"
         self.identity.save()
         response = self.client.get(self.url)
@@ -1207,10 +1219,12 @@ class IdentityVerificationTests(BaseTestCase):
     @mock.patch("kamu.utils.audit.logger_audit")
     @mock.patch("requests.get", return_value=mock.MagicMock())
     def test_identity_verify_candour_verification_cancelled(self, mock_candour, audit_logger):
-        mock_candour.return_value.json.return_value = {
-            "status": "cancelled",
-            "invitationLink": "https://example.com/redirect",
-        }
+        mock_candour.return_value = self.create_candour_response(
+            json_data={
+                "status": "cancelled",
+                "invitationLink": "https://example.com/redirect",
+            }
+        )
         self.identity.candour_verification_session_id = "12345"
         self.identity.save()
         response = self.client.get(self.url)
@@ -1223,19 +1237,21 @@ class IdentityVerificationTests(BaseTestCase):
     @mock.patch("kamu.utils.audit.logger_audit")
     @mock.patch("requests.get", return_value=mock.MagicMock())
     def test_identity_verify_candour_verification_high(self, mock_candour, audit_logger):
-        mock_candour.return_value.json.return_value = {
-            "idDocumentType": "P<",
-            "idNumber": "AB1234567",
-            "idExpiration": "2030-12-31",
-            "status": "finished",
-            "identityVerified": True,
-            "verificationMethod": "rfidApp",
-            "firstName": "MICK ANDREW",
-            "lastName": "O'REILLY",
-            "dateOfBirth": "2001-01-01",
-            "nationality": "SWE",
-            "sex": "F",
-        }
+        mock_candour.return_value = self.create_candour_response(
+            json_data={
+                "idDocumentType": "P<",
+                "idNumber": "AB1234567",
+                "idExpiration": "2030-12-31",
+                "status": "finished",
+                "identityVerified": True,
+                "verificationMethod": "rfidApp",
+                "firstName": "MICK ANDREW",
+                "lastName": "O'REILLY",
+                "dateOfBirth": "2001-01-01",
+                "nationality": "SWE",
+                "sex": "F",
+            }
+        )
         self.create_country(code="SE")
         self.identity.candour_verification_session_id = "12345"
         self.identity.save()
@@ -1289,15 +1305,17 @@ class IdentityVerificationTests(BaseTestCase):
     @mock.patch("kamu.utils.audit.logger_audit")
     @mock.patch("requests.get", return_value=mock.MagicMock())
     def test_identity_verify_candour_verification_invalid_document_info(self, mock_candour, audit_logger):
-        mock_candour.return_value.json.return_value = {
-            "idNumber": "AB1234567",
-            "idExpiration": "2030-12-31",
-            "status": "finished",
-            "identityVerified": True,
-            "verificationMethod": "rfidApp",
-            "dateOfBirth": "2001-01-01",
-            "nationality": "SWE",
-        }
+        mock_candour.return_value = self.create_candour_response(
+            json_data={
+                "idNumber": "AB1234567",
+                "idExpiration": "2030-12-31",
+                "status": "finished",
+                "identityVerified": True,
+                "verificationMethod": "rfidApp",
+                "dateOfBirth": "2001-01-01",
+                "nationality": "SWE",
+            }
+        )
         self.create_country(code="SE")
         self.identity.candour_verification_session_id = "12345"
         self.identity.save()

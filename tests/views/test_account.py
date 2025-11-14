@@ -124,7 +124,7 @@ class AccountTests(BaseTestCase):
         self.assertFalse(Account.objects.filter(identity=self.identity).exists())
         mock_logger.log.assert_has_calls(
             [
-                call(30, "Account of type lightaccount creation failed: API error, status 500", extra=ANY),
+                call(30, "Account of type lightaccount creation failed: Account API error, status: 500", extra=ANY),
             ]
         )
 

@@ -632,15 +632,14 @@ class PhoneNumberVerificationView(BaseVerificationView):
         except TimeLimitError:
             messages.add_message(self.request, messages.WARNING, _("Tried to send a new code too soon."))
             return False
-        sms_connector = SmsConnector()
-
-        success = sms_connector.send_sms(self.object.number, _("Kamu verification code: %(token)s") % {"token": token})
-        if success:
-            messages.add_message(self.request, messages.INFO, _("Verification code sent."))
-            return True
-        else:
+        try:
+            sms_connector = SmsConnector()
+            sms_connector.send_sms(self.object.number, _("Kamu verification code: %(token)s") % {"token": token})
+        except ApiError:
             messages.add_message(self.request, messages.ERROR, _("Could not send an SMS message."))
             return False
+        messages.add_message(self.request, messages.INFO, _("Verification code sent."))
+        return True
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """

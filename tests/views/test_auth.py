@@ -454,7 +454,6 @@ class RegistrationViewTests(BaseTestCase):
 
     @mock.patch("kamu.utils.identity.SmsConnector")
     def test_registration_phone_number(self, mock_connector):
-        mock_connector.return_value.send_sms.return_value = True
         url = reverse("login-register-phone")
         self.session["verified_email_address"] = "tester@example.org"
         self.session.save()
@@ -482,7 +481,6 @@ class RegistrationViewTests(BaseTestCase):
 
     @mock.patch("kamu.utils.identity.SmsConnector")
     def test_verify_phone_number_resend_code(self, mock_connector):
-        mock_connector.return_value.send_sms.return_value = True
         url = reverse("login-register-phone-verify")
         phone_number = "+123456789"
         self.session["verified_email_address"] = "tester@example.org"

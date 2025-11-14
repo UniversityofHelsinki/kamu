@@ -17,6 +17,7 @@ from django.utils import timezone
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
+from kamu.connectors import ApiError
 from kamu.connectors.email import send_verification_email
 from kamu.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
 from kamu.connectors.sms import SmsConnector
@@ -432,14 +433,14 @@ def create_phone_verification_token(request: HttpRequest, phone_number: str) -> 
             request, messages.WARNING, _("Tried to send a new code too soon. Please try again in one minute.")
         )
         return False
-    sms_connector = SmsConnector()
-    success = sms_connector.send_sms(phone_number, _("Kamu verification code: %(token)s") % {"token": token})
-    if success:
-        messages.add_message(request, messages.INFO, _("Verification code sent."))
-        return True
-    else:
+    try:
+        sms_connector = SmsConnector()
+        sms_connector.send_sms(phone_number, _("Kamu verification code: %(token)s") % {"token": token})
+    except ApiError:
         messages.add_message(request, messages.ERROR, _("Could not send an SMS message."))
         return False
+    messages.add_message(request, messages.INFO, _("Verification code sent."))
+    return True
 
 
 def create_or_verify_email_address(

@@ -138,7 +138,7 @@ class AccountCreateView(LoginRequiredMixin, FormView):
         try:
             connector = AccountApiConnector()
             uid_choices = connector.get_uid_choices(
-                number=getattr(settings, "ACCOUNT_UID_CHOICES_NUMBER", 5),
+                number=settings.ACCOUNT_API.get("UID_CHOICES_NUMBER", 5),
                 exclude_chars=exclude_chars,
                 exclude_string=exclude_string,
             )

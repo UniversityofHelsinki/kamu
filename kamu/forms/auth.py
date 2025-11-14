@@ -20,6 +20,7 @@ from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 
 from kamu.backends import AuthenticationError, EmailSMSBackend
+from kamu.connectors import ApiError
 from kamu.connectors.email import send_verification_email
 from kamu.connectors.sms import SmsConnector
 from kamu.models.identity import EmailAddress, PhoneNumber
@@ -81,6 +82,8 @@ class LoginEmailPhoneForm(forms.Form):
                 SmsConnector().send_sms(phone_obj.number, phone_token)
             except TimeLimitError:
                 raise ValidationError(_("Tried to send new login tokens too soon. Please try again in one minute."))
+            except ApiError:
+                raise ValidationError(_("Could not send SMS, please try again later."))
             return self.cleaned_data
         raise ValidationError(_("Invalid email address or phone number."))
 

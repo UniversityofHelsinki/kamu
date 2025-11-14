@@ -5,39 +5,41 @@ import logging
 from datetime import timedelta
 from typing import Any
 
-import requests
 from django.conf import settings
 from django.utils import timezone
 
-from kamu.connectors import ApiConfigurationError, ApiTemporaryError
+from kamu.connectors import ApiConfigurationError, ApiConnector, ApiTemporaryError
 from kamu.models.identity import Identity
 
 logger = logging.getLogger(__name__)
 
 
-class CandourApiConnector:
+class CandourApiConnector(ApiConnector):
     """
     Connector for a person database.
     """
 
+    api_name: str = "Candour API"
+    settings_dict_name: str = "CANDOUR_API"
+
     def __init__(self) -> None:
         """
-        Initialize connection and set setting values.
+        Add API specific settings.
         """
-        self.candour_settings = getattr(settings, "CANDOUR_API", None)
+
+        super().__init__()
+        self.candour_settings = getattr(settings, self.settings_dict_name, None)
         if not self.candour_settings:
-            logger.error("Candour API settings not found.")
-            raise ApiConfigurationError("Incorrect Candour API settings.")
-        self.url = self.candour_settings.get("URL", "")
-        self.public_key = self.candour_settings.get("PUBLIC_KEY", "")
-        self.secret_key = self.candour_settings.get("SECRET_KEY", "")
+            logger.error(f"{self.api_name} settings not found.")
+            raise ApiConfigurationError(f"Incorrect {self.api_name} API settings.")
+        self.secret_key = self.candour_settings.get("API_KEY", "")
+        self.public_key = self.candour_settings.get("API_PUBLIC_KEY", "")
         self.timeout = self.candour_settings.get("TIMEOUT", 15)
-        self.verify_ssl = self.candour_settings.get("VERIFY_SSL", True)
         self.callback_url = self.candour_settings.get("CALLBACK_URL", "")
         self.candour_session_timeout = self.candour_settings.get("SESSION_TIMEOUT_HOURS", 24)
         if not self.url or not self.public_key or not self.secret_key:
-            logger.error("Candour API missing parameters.")
-            raise ApiConfigurationError("Incorrect Candour database API settings.")
+            logger.error(f"{self.api_name} missing parameters.")
+            raise ApiConfigurationError(f"Incorrect {self.api_name} API settings.")
         self.headers = {"X-AUTH-CLIENT": self.public_key, "Content-Type": "application/json"}
 
     def create_hmac_sha256(self, payload: bytes) -> str:
@@ -54,31 +56,16 @@ class CandourApiConnector:
         """
         data = json.dumps(payload, sort_keys=False, separators=(",", ":"))
         hmac_signature = self.create_hmac_sha256(data.encode("utf-8"))
-        self.headers["X-HMAC-SIGNATURE"] = hmac_signature
-        response = requests.post(
-            self.url,
-            headers=self.headers,
-            timeout=self.timeout,
-            verify=self.verify_ssl,
-            data=data,
-        )
-        response.raise_for_status()
-        return response.json()
+        headers = self.headers | {"X-HMAC-SIGNATURE": hmac_signature}
+        return self.api_call(http_method="post", path="", data=data, headers=headers)
 
     def _get_candour_result(self, invitation_id: str) -> dict[str, Any]:
         """
         GET request to get the result of a Candour session.
         """
         hmac_signature = self.create_hmac_sha256(invitation_id.encode("utf-8"))
-        self.headers["X-HMAC-SIGNATURE"] = hmac_signature
-        response = requests.get(
-            self.url + "/" + invitation_id,
-            headers=self.headers,
-            timeout=self.timeout,
-            verify=self.verify_ssl,
-        )
-        response.raise_for_status()
-        return response.json()
+        headers = self.headers | {"X-HMAC-SIGNATURE": hmac_signature}
+        return self.api_call(http_method="get", path=invitation_id, headers=headers)
 
     def _get_result_properties(self) -> dict[str, bool]:
         return {

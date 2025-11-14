@@ -824,7 +824,6 @@ class MembershipClaimViewTests(BaseTestCase):
 
     @mock.patch("kamu.utils.identity.SmsConnector")
     def test_claim_membership_with_sms_verification(self, mock_connector):
-        mock_connector.return_value.send_sms.return_value = True
         self.client.force_login(self.user)
         self.membership.verify_phone_number = "+1234567890"
         self.membership.save()

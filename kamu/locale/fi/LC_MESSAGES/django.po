@@ -7,94 +7,94 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-14 11:22+0200\n"
+"POT-Creation-Date: 2025-11-17 12:45+0200\n"
 "Language: FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: backends.py:109
+#: backends.py:110
 msgid "Identifier not found."
 msgstr "Tunnistetta ei löytynyt."
 
-#: backends.py:110
+#: backends.py:111
 msgid "Valid identifier not found. This is probably a configuration error."
 msgstr ""
 "Hyväksyttävää tunnistetta ei löytynyt. Kyseessä on todennäköisesti "
 "määritysvirhe."
 
-#: backends.py:111
+#: backends.py:112
 msgid "Identifier is already linked to another user."
 msgstr "Tunniste on jo linkitetty toiseen käyttäjään."
 
-#: backends.py:112
+#: backends.py:113
 msgid "Invalid identifier format."
 msgstr "Virheellinen tunnisteen muoto."
 
-#: backends.py:113
+#: backends.py:114
 msgid "Could not authenticate. Please try again."
 msgstr "Tunnistautuminen ei onnistunut. Ole hyvä ja yritä uudelleen."
 
-#: backends.py:114
+#: backends.py:115
 msgid "Identity provider is not authorised."
 msgstr "Tunnistustietojen tarjoajaa ei ole hyväksytty."
 
-#: backends.py:115
+#: backends.py:116
 msgid "Unexpected error."
 msgstr "Odottamaton virhe."
 
-#: backends.py:116
+#: backends.py:117
 msgid "Missing required parameters. Please try again with an another browser."
 msgstr ""
 "Vaadittuja tietoja puuttuu. Ole hyvä ja yritä uudelleen toisella selaimella."
 
-#: backends.py:117 forms/auth.py:44 forms/auth.py:85
+#: backends.py:118 forms/auth.py:45 forms/auth.py:88
 msgid "Invalid email address or phone number."
 msgstr "Virheellinen sähköpostiosoite tai puhelinnumero."
 
-#: backends.py:118 views/auth.py:126
+#: backends.py:119 views/auth.py:127
 msgid "You are already logged in."
 msgstr "Olet jo kirjautunut sisään."
 
-#: backends.py:119
+#: backends.py:120
 msgid "User must be authenticated to link identifier."
 msgstr "Käyttäjän on tunnistauduttava tunnisteen linkittämiseksi."
 
-#: backends.py:120
+#: backends.py:121
 msgid ""
 "Staff and Superuser access is not allowed with this authentication method."
 msgstr ""
 "Henkilökunnan ja ylläpitäjän ei ole sallittua tunnistautua tällä "
 "tunnistautumismenetelmällä."
 
-#: backends.py:121
+#: backends.py:122
 msgid "Role owner access is not allowed with this authentication method."
 msgstr ""
 "Roolin omistajan ei ole sallittua tunnistautua tällä "
 "tunnistautumismenetelmällä."
 
-#: backends.py:122
+#: backends.py:123
 msgid "Staff and Superuser access is not allowed from this IP address."
 msgstr ""
 "Henkilökunnan ja ylläpitäjän ei ole sallittua tunnistautua tästä IP-"
 "osoitteesta."
 
-#: backends.py:123
+#: backends.py:124
 msgid "You belong to a group that is not allowed from this IP address."
 msgstr ""
 "Kuulut ryhmään, jonka tunnistautuminen ei ole sallittua tästä IP-osoitteesta."
 
-#: backends.py:124
+#: backends.py:125
 msgid "Configuration error, service administrators have been notified."
 msgstr "Määritysvirhe palvelussa, asiasta ilmoitettu palvelun ylläpitäjille."
 
-#: backends.py:697
+#: backends.py:726
 msgid "Suspected duplicate user. Username already exists in the database: "
 msgstr ""
 "Mahdollinen duplikaattikäyttäjä. Käyttäjänimi on jo olemassa tietokannassa: "
 
-#: backends.py:711
+#: backends.py:740
 msgid "Suspected duplicate user. Identity already has a different username: "
 msgstr "Mahdollinen duplikaattikäyttäjä. Tunnisteella on jo eri käyttäjänimi: "
 
@@ -135,100 +135,104 @@ msgstr "Luo tunnus"
 msgid "Reset password"
 msgstr "Palauta salasana"
 
-#: forms/auth.py:36 forms/auth.py:186 models/identity.py:499
+#: forms/auth.py:37 forms/auth.py:189 models/identity.py:499
 #: models/identity.py:509 models/token.py:296
 #: templates/account/account_create.html:16
 msgid "Email address"
 msgstr "Sähköpostiosoite"
 
-#: forms/auth.py:38 forms/auth.py:261 models/identity.py:535
+#: forms/auth.py:39 forms/auth.py:264 models/identity.py:535
 #: models/identity.py:545 models/token.py:293
 msgid "Phone number"
 msgstr "Puhelinnumero"
 
-#: forms/auth.py:40 forms/auth.py:263
+#: forms/auth.py:41 forms/auth.py:266
 msgid "Phone number in international format, e.g. +358123456789."
 msgstr "Puhelinnumero kansainvälisessä muodossa, esim. +358123456789."
 
-#: forms/auth.py:45 views/auth.py:457
+#: forms/auth.py:46 views/auth.py:458
 msgid "This account is inactive."
 msgstr "Tämä tunnus ei ole käytössä."
 
-#: forms/auth.py:54 forms/auth.py:329 templates/auth/invite.html:18
+#: forms/auth.py:55 forms/auth.py:332 templates/auth/invite.html:18
 #: templates/auth/invite.html:20 templates/auth/login.html:7
 #: templates/auth/login_email.html:5 templates/auth/login_local.html:5
 #: templates/base.html:74 templates/front.html:86 templates/front.html:88
 msgid "Login"
 msgstr "Kirjaudu sisään"
 
-#: forms/auth.py:75
+#: forms/auth.py:76
 msgid "This contact information cannot be used to login."
 msgstr "Tätä yhteystietoa ei voida käyttää sisäänkirjautumiseen."
 
-#: forms/auth.py:83
+#: forms/auth.py:84
 msgid ""
 "Tried to send new login tokens too soon. Please try again in one minute."
 msgstr ""
 "Uusi kirjautumistunniste pyydetty liian pian. Ole hyvä ja odota yksi "
 "minuutti ennen uutta yritystä."
 
-#: forms/auth.py:93 forms/auth.py:229 forms/identity.py:176
+#: forms/auth.py:86
+msgid "Could not send SMS, please try again later."
+msgstr "Tekstiviestin lähettäminen epäonnistui, yritä myöhemmin uudelleen."
+
+#: forms/auth.py:96 forms/auth.py:232 forms/identity.py:176
 msgid "Email verification code"
 msgstr "Sähköpostivahvistuskoodi"
 
-#: forms/auth.py:94 forms/auth.py:292 forms/identity.py:212
+#: forms/auth.py:97 forms/auth.py:295 forms/identity.py:212
 msgid "SMS verification code"
 msgstr "Tekstiviestivahvistuskoodi"
 
-#: forms/auth.py:110 forms/auth.py:240 forms/auth.py:303
+#: forms/auth.py:113 forms/auth.py:243 forms/auth.py:306
 #: templates/identity/contact_address.html:25
 #: templates/identity/contact_address.html:73
 msgid "Verify"
 msgstr "Vahvista"
 
-#: forms/auth.py:111
+#: forms/auth.py:114
 msgid "Resend email code"
 msgstr "Lähetä sähköpostikoodi uudelleen"
 
-#: forms/auth.py:112
+#: forms/auth.py:115
 msgid "Resend phone code"
 msgstr "Lähetä tekstiviestikoodi uudelleen"
 
-#: forms/auth.py:120 forms/auth.py:128 forms/auth.py:137 forms/auth.py:145
-#: forms/auth.py:249 forms/auth.py:251 forms/auth.py:312 forms/auth.py:314
+#: forms/auth.py:123 forms/auth.py:131 forms/auth.py:140 forms/auth.py:148
+#: forms/auth.py:252 forms/auth.py:254 forms/auth.py:315 forms/auth.py:317
 #: forms/identity.py:195 forms/identity.py:197 forms/identity.py:231
 #: forms/identity.py:233
 msgid "Invalid verification code."
 msgstr "Virheellinen vahvistuskoodi."
 
-#: forms/auth.py:124 forms/auth.py:126
+#: forms/auth.py:127 forms/auth.py:129
 msgid "This email address cannot be used to login."
 msgstr "Tätä sähköpostiosoitetta ei voida käyttää kirjautumiseen."
 
-#: forms/auth.py:141 forms/auth.py:143
+#: forms/auth.py:144 forms/auth.py:146
 msgid "This phone number cannot be used to login."
 msgstr "Tätä puhelinnumeroa ei voida käyttää kirjautumiseen."
 
-#: forms/auth.py:155 forms/auth.py:166 forms/auth.py:168
+#: forms/auth.py:158 forms/auth.py:169 forms/auth.py:171
 msgid "Error when logging in, please try again."
 msgstr "Virhe kirjautumisessa. Ole hyvä ja yritä uudelleen."
 
-#: forms/auth.py:170
+#: forms/auth.py:173
 msgid "This account is disabled."
 msgstr "Tämä käyttäjätili on suljettu."
 
-#: forms/auth.py:183 models/identity.py:183
+#: forms/auth.py:186 models/identity.py:183
 #: templates/identity/identity_combine.html:12
 #: templates/identity/identity_combine.html:69
 #: templates/identity/identity_detail.html:8
 msgid "Given names"
 msgstr "Etunimet"
 
-#: forms/auth.py:183 models/identity.py:183
+#: forms/auth.py:186 models/identity.py:183
 msgid "All official given names."
 msgstr "Kaikki viralliset etunimet."
 
-#: forms/auth.py:185 forms/identity.py:51 models/identity.py:191
+#: forms/auth.py:188 forms/identity.py:51 models/identity.py:191
 #: templates/account/account_create.html:12
 #: templates/identity/identity_combine.html:13
 #: templates/identity/identity_combine.html:75
@@ -236,45 +240,45 @@ msgstr "Kaikki viralliset etunimet."
 msgid "Surname"
 msgstr "Sukunimi"
 
-#: forms/auth.py:185 models/identity.py:191
+#: forms/auth.py:188 models/identity.py:191
 msgid "Official surname(s)."
 msgstr "Kaikki viralliset sukunimet."
 
-#: forms/auth.py:197
+#: forms/auth.py:200
 msgid "This email address is already set by the inviter."
 msgstr "Sähköpostiosoite on jo asetettu kutsujan toimesta."
 
-#: forms/auth.py:199 forms/auth.py:278
+#: forms/auth.py:202 forms/auth.py:281
 #: templates/membership/verification_form.html:21
 msgid "Send verification code"
 msgstr "Lähetä vahvistuskoodi"
 
-#: forms/auth.py:207
+#: forms/auth.py:210
 msgid "This email address is already linked to an account."
 msgstr "Sähköpostiosoite on jo liitetty käyttäjätiliin."
 
-#: forms/auth.py:216
+#: forms/auth.py:219
 msgid "Invalid form data."
 msgstr "Virhe lomakkeen tiedoissa."
 
-#: forms/auth.py:220
+#: forms/auth.py:223
 msgid "Either given names or surname must be filled in."
 msgstr "Joko etunimet tai sukunimi on annettava."
 
-#: forms/auth.py:241 forms/auth.py:304
+#: forms/auth.py:244 forms/auth.py:307
 msgid "Resend verification code"
 msgstr "Lähetä vahvistuskoodi uudelleen"
 
-#: forms/auth.py:275
+#: forms/auth.py:278
 msgid "This phone number is already set by the inviter."
 msgstr "Puhelinnumero on jo asetettu kutsujan toimesta."
 
-#: forms/auth.py:349
+#: forms/auth.py:352
 msgid "Invitation code"
 msgstr "Kutsukoodi"
 
-#: forms/auth.py:372 forms/auth.py:378 forms/auth.py:382 forms/auth.py:384
-#: views/auth.py:132 views/auth.py:153 views/auth.py:239
+#: forms/auth.py:375 forms/auth.py:381 forms/auth.py:385 forms/auth.py:387
+#: views/auth.py:133 views/auth.py:154 views/auth.py:240
 #: views/membership.py:790
 msgid "Invalid invitation code."
 msgstr "Virheellinen kutsukoodi."
@@ -339,8 +343,7 @@ msgstr "Hakee tunnisteita vain tarkalla hakuparametrilla."
 msgid ""
 "If you provide an identifier and a match is found, the name search is "
 "skipped."
-msgstr ""
-"Jos annat tunnisteen ja se löytyy, nimihaku ohitetaan."
+msgstr "Jos annat tunnisteen ja se löytyy, nimihaku ohitetaan."
 
 #: forms/identity.py:85
 msgid ""
@@ -3404,16 +3407,16 @@ msgstr "Suorita haku saadaksesi tuloksia."
 msgid "Manage account"
 msgstr "Hallinnoi tunnusta"
 
-#: utils/identity.py:52
+#: utils/identity.py:53
 msgid "Cannot combine identity with itself."
 msgstr "Et voi yhdistää henkilöllisyyttä siihen itseensä."
 
-#: utils/identity.py:59
+#: utils/identity.py:60
 msgid "Source identity cannot have higher assurance level than target."
 msgstr ""
 "Lähdehenkilöllisyydellä ei voi olla korkeampaa varmuustasoa kuin kohteella."
 
-#: utils/identity.py:66
+#: utils/identity.py:67
 msgid ""
 "Cannot combine two identities with uid. Please remove uid from the source "
 "first."
@@ -3421,7 +3424,7 @@ msgstr ""
 "Et voi yhdistää kahta henkilöllisyyttä UID:n kanssa. Poista UID ensin "
 "lähteestä."
 
-#: utils/identity.py:74
+#: utils/identity.py:75
 msgid ""
 "Cannot combine two identities with Finnish personal identity code. Please "
 "remove FPIC from the source first."
@@ -3429,49 +3432,49 @@ msgstr ""
 "Et voi yhdistää kahta henkilöllisyyttä suomalaisella henkilötunnuksella. "
 "Poista henkilötunnus ensin lähteestä."
 
-#: utils/identity.py:83
+#: utils/identity.py:84
 msgid "Source identity is linked to user and target identity is not."
 msgstr ""
 "Lähdehenkilöllisyys on liitetty käyttäjään ja kohdehenkilöllisyyttä ei ole."
 
-#: utils/identity.py:94
+#: utils/identity.py:95
 msgid "Current user's identity cannot be the source identity."
 msgstr "Nykyisen käyttäjän henkilöllisyys ei voi olla lähdehenkilöllisyys."
 
-#: utils/identity.py:413 utils/identity.py:432 views/auth.py:636
-#: views/auth.py:655
+#: utils/identity.py:414 utils/identity.py:433 views/auth.py:637
+#: views/auth.py:656
 msgid "Tried to send a new code too soon. Please try again in one minute."
 msgstr ""
 "Yritit lähettää uuden koodin liian pian. Ole hyvä ja odota yksi minuutti "
 "ennen uutta yritystä."
 
-#: utils/identity.py:417 utils/identity.py:438 views/identity.py:596
-#: views/identity.py:639
+#: utils/identity.py:418 utils/identity.py:442 views/identity.py:596
+#: views/identity.py:641
 msgid "Verification code sent."
 msgstr "Vahvistuskoodi lähetetty."
 
-#: utils/identity.py:420
+#: utils/identity.py:421
 msgid "Failed to send verification code."
 msgstr "Vahvistuskoodin lähetys epäonnistui."
 
-#: utils/identity.py:436 views/identity.py:637
+#: utils/identity.py:438 views/identity.py:637
 #, python-format
 msgid "Kamu verification code: %(token)s"
 msgstr "Kamu-vahvistuskoodi: %(token)s"
 
-#: utils/identity.py:441 views/identity.py:642
+#: utils/identity.py:440 views/auth.py:659 views/identity.py:639
 msgid "Could not send an SMS message."
 msgstr "Tekstiviestin lähetys epäonnistui."
 
-#: utils/identity.py:480
+#: utils/identity.py:481
 msgid "Email address is required."
 msgstr "Sähköpostiosoite vaaditaan."
 
-#: utils/identity.py:531
+#: utils/identity.py:532
 msgid "Phone number is required."
 msgstr "Puhelinnumero vaaditaan."
 
-#: utils/identity.py:648
+#: utils/identity.py:649
 msgid ""
 "Suspected duplicate user. Finnish personal identity code already exists in "
 "the database: "
@@ -3479,16 +3482,16 @@ msgstr ""
 "Mahdollinen duplikaattikäyttäjä. Suomalainen henkilötunnus on jo olemassa "
 "tietokannassa: "
 
-#: utils/identity.py:702
+#: utils/identity.py:715
 #, python-format
 msgid "You can activate a new user account of type \"%(account_type)s\"."
 msgstr "Voit aktivoida uuden käyttäjätunnuksen tyyppiä \"%(account_type)s\"."
 
-#: utils/identity.py:707
+#: utils/identity.py:720
 msgid "Activate account"
 msgstr "Aktivoi tunnus"
 
-#: utils/identity.py:722
+#: utils/identity.py:735
 msgid "Continue to external service to activate account"
 msgstr "Jatka ulkoiseen palveluun tunnuksen aktivoimiseksi"
 
@@ -3718,31 +3721,31 @@ msgstr ""
 msgid "Password reset."
 msgstr "Salasana asetettu."
 
-#: views/auth.py:370
+#: views/auth.py:371
 msgid "Link identifier not found."
 msgstr "Liitostunnistetta ei löytynyt."
 
-#: views/auth.py:375
+#: views/auth.py:376
 msgid "Link identifier time not valid."
 msgstr "Virheellinen liitostunniste."
 
-#: views/auth.py:377
+#: views/auth.py:378
 msgid "Link identifier expired."
 msgstr "Liitostunniste vanhentunut."
 
-#: views/auth.py:437
+#: views/auth.py:438
 msgid "Identifier linking failed: "
 msgstr "Tunnisteen liittäminen epäonnistui:"
 
-#: views/auth.py:443
+#: views/auth.py:444
 msgid "Invitation claiming failed: "
 msgstr "Kutsun lunastaminen epäonnistui: "
 
-#: views/auth.py:446
+#: views/auth.py:447
 msgid "Login failed: "
 msgstr "Kirjautumien epäonnistui: "
 
-#: views/auth.py:461
+#: views/auth.py:462
 msgid ""
 "Redirection loop for authenticated user detected. Please contact service "
 "admins."
@@ -3750,15 +3753,15 @@ msgstr ""
 "Havaittu uudelleenohjaussilmukka todennetulle käyttäjälle. Ota yhteyttä "
 "palvelun ylläpitäjiin."
 
-#: views/auth.py:715 views/auth.py:720
+#: views/auth.py:718 views/auth.py:723
 msgid "List here"
 msgstr "Lista"
 
-#: views/auth.py:717
+#: views/auth.py:720
 msgid "You have pending membership approvals."
 msgstr "Sinulla on hyväksyntää odottavia jäsenyyksiä."
 
-#: views/auth.py:724
+#: views/auth.py:727
 msgid "Memberships are ending soon in roles you have approval rights."
 msgstr ""
 "Jäsenyyksiä päättyy pian rooleissa, joissa sinulla on hyväksymisoikeudet."
@@ -3806,60 +3809,60 @@ msgstr "Kamu: sähköpostiosoitteen vahvistaminen"
 msgid "Your verification code is: %(token)s"
 msgstr "Vahvistuskoodisi on: %(token)s"
 
-#: views/identity.py:985
+#: views/identity.py:984
 msgid "Contract already signed."
 msgstr "Sopimus on jo allekirjoitettu."
 
-#: views/identity.py:991
+#: views/identity.py:990
 msgid "Contract version has changed. Please try again."
 msgstr "Sopimuksen versio on muuttunut. Ole hyvä ja yritä uudelleen."
 
-#: views/identity.py:994
+#: views/identity.py:993
 msgid "Contract signed."
 msgstr "Sopimus allekirjoitettu."
 
-#: views/identity.py:1214
+#: views/identity.py:1213
 msgid "New identity created."
 msgstr "Uusi henkilöllisyys luotu."
 
-#: views/identity.py:1238
+#: views/identity.py:1237
 msgid "Invalid verification session."
 msgstr "Virheellinen varmennusistunto."
 
-#: views/identity.py:1251
+#: views/identity.py:1250
 msgid "Identity verification was cancelled."
 msgstr "Henkilöllisyyden varmentaminen peruttiin."
 
-#: views/identity.py:1310
+#: views/identity.py:1309
 msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr ""
 "LDAP-haku palautti liian monta tulosta. Ole hyvä ja tarkenna hakuparametrejä."
 
-#: views/identity.py:1425
+#: views/identity.py:1424
 msgid "Too many results, please refine your search parameters."
 msgstr "Liian monta tulosta. Ole hyvä ja tarkenna hakuparametrejä."
 
-#: views/identity.py:1432
+#: views/identity.py:1431
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 "Osittaiset nimet palauttivat liian monta tulosta. Näytetään vain täsmälliset "
 "osumat."
 
-#: views/identity.py:1498
+#: views/identity.py:1497
 msgid "LDAP search failed, could not search existing accounts."
 msgstr "LDAP-haku epäonnistui. Olemassa olevia tilejä ei voitu hakea."
 
-#: views/identity.py:1506
+#: views/identity.py:1505
 msgid "Identifier match found, skipping name search."
 msgstr "Tunnisteella löydettiin osuma. Nimien haku ohitetaan."
 
-#: views/identity.py:1618
+#: views/identity.py:1617
 msgid "Incorrect primary keys."
 msgstr "Virheelliset yksilöivät avaimet."
 
-#: views/identity.py:1624
+#: views/identity.py:1623
 msgid "Identities combined."
 msgstr "Henkilöllisyydet yhdistetty."
 

@@ -103,32 +103,6 @@ LINK_IDENTIFIER_TIME_LIMIT: int = 5 * 60  # 5 minutes
 # Memberships are flagged as expiring soon this many days in advance
 EXPIRING_LIMIT_DAYS: int = 30  # 30 days
 
-SMS_API_URL: str = "https://api-gateway.example.org/sms/send"
-SMS_AUTH_HEADER: str = "X-Api-Key"
-SMS_API_KEY: str = ""
-SMS_API_TIMEOUT: int = 3
-# SMS messages will be logged instead of sent to API if SMS_DEBUG is True.
-SMS_DEBUG: bool = False
-
-LDAP_SEARCH_FOR_INVITES: bool = True  # Defaults to True
-LDAP_SEARCH_FOR_IDENTITIES: bool = False  # Defaults to False
-
-LDAP_SETTINGS: dict[str, Any] = {
-    "HOST": "127.0.0.1",
-    "PORT": 389,
-    "USER": "ou=ldapuser,dc=example,dc=org",
-    "PASSWORD": "ldapuser_password",
-    "TIMEOUT_SECONDS": 5,
-    "USE_LDAPS": True,
-    "CACERTFILE": "/path/to/cacert.pem",  # set None to use system default
-    "IGNORE_TLS_CHECK": False,
-    "SEARCH_BASE": "ou=users,dc=example,dc=org",
-}
-# If LDAP search would return more results, ask users to refine search.
-LDAP_SEARCH_LIMIT: int = 50
-# If Identity search would return more results, ask users to refine search.
-KAMU_IDENTITY_SEARCH_LIMIT: int = 50
-
 # If OIDC_LOGOUT_PATH are given and login-view is in OIDC_VIEWS,
 # redirect user to logout url + redirect url, just before linking identifier.
 # This is required if using mod_auth_openidc and multiple OIDC providers, as
@@ -190,57 +164,97 @@ HELP_LINK_USERS: str = "https://helpdesk.it.helsinki.fi/"
 # Services that are allowed to each light account. List of identifiers.
 LIGHT_ACCOUNT_DEFAULT_SERVICES: list[str] = ["https://attributetest.it.helsinki.fi/sp"]
 
+# If LDAP search would return more results, ask users to refine search.
+LDAP_SEARCH_LIMIT: int = 50
+# If Identity search would return more results, ask users to refine search.
+KAMU_IDENTITY_SEARCH_LIMIT: int = 50
+
+LDAP_SEARCH_FOR_INVITES: bool = True  # Defaults to True
+LDAP_SEARCH_FOR_IDENTITIES: bool = False  # Defaults to False
+
+LDAP_SETTINGS: dict[str, Any] = {
+    "HOST": "127.0.0.1",
+    "PORT": 389,
+    "USER": "ou=ldapuser,dc=example,dc=org",
+    "PASSWORD": "ldapuser_password",
+    "SEARCH_BASE": "ou=users,dc=example,dc=org",
+    # "TIMEOUT_SECONDS": 5,
+    # "USE_LDAPS": True,
+    # "CACERTFILE": "/path/to/cacert.pem",  # Not set or None to use system default
+    # "IGNORE_TLS_CHECK": False,
+}
+
+ACCOUNT_API: dict[str, Any] = {
+    "URL": "https://localhost/accountapi/v1/",
+    "API_KEY": "change-api-key",
+    "AUTH_HEADER": "apikey",
+    # "TIMEOUT": 3,
+    # "VERIFY_SSL": True
+    # "CERT_FILE_PATH": "/path/to/cert.pem",
+    # "KEY_FILE_PATH": "/path/to/key.pem",
+    # "SUCCESS_CODES": [200, 201, 204],
+    # "CONFIGURATION_ERROR_CODES": [400, 403, 500],
+    # "CREATE_PATH": "create",
+    # "DISABLE_PATH": "disable",
+    # "ENABLE_PATH": "enable",
+    # "UPDATE_PATH": "update",
+    # "CHANGE_PASSWORD_PATH", "changePassword",
+    # "UID_CHOICES_PATH": "generateUids",
+    # "UID_CHOICES_NUMBER": 5,
+}
+
+
 CANDOUR_API = {
-    "URL": "https://rest-test.candour.fi/v1",
-    "PUBLIC_KEY": "public-key",
-    "SECRET_KEY": "secret-key",
-    "CALLBACK_URL": "http://localhost:8000/identity/me/verify/",
+    "URL": "https://rest-test.candour.fi/v1/",
+    "API_KEY": "change-api-key",
+    "AUTH_HEADER": "X-Api-Key",
+    "API_PUBLIC_KEY": "public-key",
     "TIMEOUT": 15,
+    "CALLBACK_URL": "http://localhost:8000/identity/me/verify/",
     "SESSION_TIMEOUT_HOURS": 24,
     "REQUIRED_NAME_SCORE": 90,
     "TRIES": 5,
+    # "VERIFY_SSL": True
+    # "CERT_FILE_PATH": "/path/to/cert.pem",
+    # "KEY_FILE_PATH": "/path/to/key.pem",
+    # "SUCCESS_CODES": [200, 201, 204],
+    # "CONFIGURATION_ERROR_CODES": [400, 403, 500],
 }
 
-# Account API URL, path is appended to this URL with urllib.parse.urljoin, so it should end with a slash.
-ACCOUNT_API_URL: str = "https://localhost/accountapi/v1/"
-ACCOUNT_API_KEY: str = "change-api-key"
-# ACCOUNT_AUTH_HEADER: str = "apikey"
-# ACCOUNT_API_TIMEOUT: int = 3
-# ACCOUNT_API_VERIFY_SSL: bool = True
-# ACCOUNT_API_CERT_FILE_PATH: str | None = "/path/to/cert.pem"
-# ACCOUNT_API_KEY_FILE_PATH: str | None = "/path/to/key.pem"
-# ACCOUNT_API_SUCCESS_CODES: list[int] = [200, 201, 204]
+ORGANISATION_API: dict[str, Any] = {
+    "URL": "https://localhost/organisation/info/v2",
+    "API_KEY": "change-api-key",
+    "AUTH_HEADER": "X-Api-Key",
+    # "TIMEOUT": 3,
+    # "VERIFY_SSL": True
+    # "CERT_FILE_PATH": "/path/to/cert.pem",
+    # "KEY_FILE_PATH": "/path/to/key.pem",
+    # "SUCCESS_CODES": [200, 201, 204],
+    # "CONFIGURATION_ERROR_CODES": [400, 403, 500],
+    # "STRUCTURE_PATH": "financeUnits",
+    # "ABBREVIATION_PATH": "officialUnits",
+    # "IDENTIFIER_KEY": "uniqueId",
+    # "NAME_EN_KEY": "nameEn",
+    # "NAME_FI_KEY": "nameFi",
+    # "NAME_SV_KEY": "nameSv",
+    # "CODE_KEY", "code",
+    # "ABBREVIATION_KEY": "abbreviation",
+}
 
-# Change API default paths. These are appended to ACCOUNT_API_URL with urllib.parse.urljoin.
-# ACCOUNT_API_CREATE_PATH: str = "create"
-# ACCOUNT_API_DISABLE_PATH: str =  "disable"
-# ACCOUNT_API_ENABLE_PATH: str = "enable"
-# ACCOUNT_API_CHANGE_PASSWORD_PATH: str = "changePassword"
-# ACCOUNT_API_UPDATE_PATH: str = "update"
-# ACCOUNT_API_UID_CHOICES_PATH: str = "generateUids"
+SMS_API: dict[str, Any] = {
+    "URL": "https://api-gateway.example.org/sms/send",
+    "API_KEY": "change-api-key",
+    "AUTH_HEADER": "X-Api-Key",
+    # "TIMEOUT": 3,
+    # "VERIFY_SSL": True
+    # "CERT_FILE_PATH": "/path/to/cert.pem",
+    # "KEY_FILE_PATH": "/path/to/key.pem",
+    # "SUCCESS_CODES": [200, 201, 204],
+    # "CONFIGURATION_ERROR_CODES": [400, 403, 500],
+}
 
-ORGANISATION_API_URL: str = "https://localhost/organisation/info/v2"
-ORGANISATION_API_KEY: str = "change-api-key"
-# ORGANISATION_AUTH_HEADER: str = "X-Api-Key"
-# ORGANISATION_API_TIMEOUT: int = 3
-# ORGANISATION_API_VERIFY_SSL: bool = True
-# ORGANISATION_API_CERT_FILE_PATH: str | None = "/path/to/cert.pem"
-# ORGANISATION_API_KEY_FILE_PATH: str | None = "/path/to/key.pem"
-
-# Change API default paths. These are appended to ACCOUNT_API_URL with urllib.parse.urljoin.
-# ORGANISATION_API_STRUCTURE_PATH: str = "financeUnits"
-# ORGANISATION_API_ABBREVIATION_PATH: str = "officialUnits"
-
-# Change API object default keys.
-# ORGANISATION_API_IDENTIFIER_KEY: str = uniqueId"
-# ORGANISATION_API_NAME_EN_KEY: str = nameEn"
-# ORGANISATION_API_NAME_FI_KEY: str = nameFi"
-# ORGANISATION_API_NAME_SV_KEY: str = nameSv"
-# ORGANISATION_API_CODE_KEY: str = code"
-# ORGANISATION_API_ABBREVIATION_KEY: str = abbreviation"
-
-# How many uid choices are given when creating a new account.
-# ACCOUNT_UID_CHOICES_NUMBER: int = 5
+# SMS messages will be logged instead of sent to API if SMS_DEBUG is True.
+SMS_DEBUG: bool = False
 
 # Actions to perform for external accounts. If value is create, create it through Accounts API.
 # If value is URL, redirect user to that URL.

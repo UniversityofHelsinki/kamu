@@ -44,6 +44,7 @@ from kamu.backends import (
     auth_login,
     get_login_backends,
 )
+from kamu.connectors import ApiError
 from kamu.connectors.email import send_verification_email
 from kamu.connectors.sms import SmsConnector
 from kamu.forms.auth import (
@@ -654,6 +655,8 @@ class LoginEmailPhoneVerificationView(LoginView):
                     messages.WARNING,
                     _("Tried to send a new code too soon. Please try again in one minute."),
                 )
+            except ApiError:
+                messages.add_message(request, messages.ERROR, _("Could not send an SMS message."))
             return self.redirect_to_self()
         return super().post(request, *args, **kwargs)
 
