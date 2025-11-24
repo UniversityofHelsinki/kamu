@@ -56,7 +56,7 @@ from kamu.models.account import Account
 from kamu.models.contract import Contract, ContractTemplate
 from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
 from kamu.models.membership import Membership
-from kamu.models.role import Permission
+from kamu.models.role import Permission, Requirement
 from kamu.models.token import TimeLimitError, Token
 from kamu.utils.audit import AuditLog
 from kamu.utils.identity import (
@@ -887,20 +887,42 @@ class ContractListView(LoginRequiredMixin, ListView[Contract]):
         )
         return get
 
+    def get_missing_contracts(self, identity: Identity) -> QuerySet[ContractTemplate]:
+        """
+        Return a list of required contract types that the identity has not signed yet.
+        """
+        missing_requirements = identity.get_missing_requirements()
+        missing_contracts = ContractTemplate.objects.none()
+        for requirement in missing_requirements:
+            if requirement.type == Requirement.Type.CONTRACT:
+                missing_contract = (
+                    ContractTemplate.objects.filter(type=requirement.value, version__gte=requirement.level)
+                    .order_by("-version")
+                    .first()
+                )
+                if missing_contract:
+                    missing_contracts |= ContractTemplate.objects.filter(pk=missing_contract.pk)
+        return missing_contracts
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add identity and the list of signable contracts to context.
 
-        Signable contracts are the latest version of each public contract type, that the user has not signed.
+        Signable contracts are the latest version of each public contract type and each required contract type, that
+        the user has not signed.
         """
         context = super().get_context_data(**kwargs)
-        context["identity"] = Identity.objects.get(pk=self.kwargs.get("pk"))
-        type_query = ContractTemplate.objects.filter(public=True, type=OuterRef("type")).order_by("-version")
+        identity = Identity.objects.get(pk=self.kwargs.get("pk"))
+        context["identity"] = identity
+        latest_for_type = ContractTemplate.objects.filter(type=OuterRef("type")).order_by("-version")
         context["signable_list"] = (
-            ContractTemplate.objects.filter(pk=Subquery(type_query.values("pk")[:1]))
+            ContractTemplate.objects.filter(
+                pk=Subquery(latest_for_type.values("pk")[:1]),
+                public=True,
+            )
             .exclude(pk__in=context["contract_list"].values_list("template__pk"))
             .order_by("type")
-        )
+        ) | self.get_missing_contracts(identity=identity)
         return context
 
     def get_queryset(self) -> QuerySet[Contract]:
