@@ -1149,16 +1149,21 @@ class IdentityVerificationTests(BaseTestCase):
         self.assertIn("Verify with lower level", response.content.decode("utf-8"))
 
     @override_settings(SAML_SUOMIFI_SSN="HTTP_SSN")
+    @override_settings(SAML_SUOMIFI_ASSURANCE="HTTP_ASSURANCE")
     @override_settings(ALLOW_TEST_FPIC=True)
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_identity_verify_suomifi(self, audit_logger):
         response = self.client.post(
-            self.url, data={"verify_identity": "suomifi"}, follow=True, headers={"SSN": "010181-900C"}
+            self.url,
+            data={"verify_identity": "suomifi"},
+            follow=True,
+            headers={"SSN": "010181-900C", "ASSURANCE": "http://ftn.ficora.fi/2017/loa3"},
         )
         self.assertEqual(response.status_code, 200)
         self.identity.refresh_from_db()
         self.assertEqual(self.identity.fpic, "010181-900C")
-        # self.assertEqual(self.identity.assurance_level, Identity.AssuranceLevel.HIGH)
+        self.assertEqual(self.identity.assurance_level, Identity.AssuranceLevel.HIGHEST)
+        self.assertIn("Current verification level: Highest", response.content.decode("utf-8"))
         audit_logger.log.assert_has_calls(
             [
                 call(

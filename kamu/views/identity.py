@@ -408,7 +408,7 @@ class IdentityVerifyView(LoginRequiredMixin, DetailView):
                 self.request.session["link_identifier"] = True
                 self.request.session["link_identifier_time"] = timezone.now().isoformat()
                 linking_url = (
-                    reverse("login-suomifi") + "?next=" + reverse("identity-detail", kwargs={"pk": self.object.pk})
+                    reverse("login-suomifi") + "?next=" + reverse("identity-verify", kwargs={"pk": self.object.pk})
                 )
                 return HttpResponseRedirect(linking_url)
             if verify_type == "candour" or verify_type == "candour_low":
