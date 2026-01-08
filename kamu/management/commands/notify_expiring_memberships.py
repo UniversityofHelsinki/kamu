@@ -50,6 +50,14 @@ class Command(BaseCommand):
             "date.",
         )
         parser.add_argument(
+            "-e",
+            "--notify-role-exact-date",
+            default=False,
+            action="store_true",
+            dest="notify_role_exact_date",
+            help="Send notification to role notification address if there are expiring memberships at the set date.",
+        )
+        parser.add_argument(
             "--dry-run",
             default=False,
             action="store_true",
@@ -75,23 +83,37 @@ class Command(BaseCommand):
                         membership=membership, email_address=email.address, lang=membership.identity.preferred_language
                     )
 
-    def notify_roles(self, expire_period_end_date: date, verbosity: int, dry_run: bool = False) -> None:
+    def notify_roles(
+        self, expire_period_end_date: date, verbosity: int, dry_run: bool = False, exact_date: bool = False
+    ) -> None:
         """
         Send notification emails to roles with expiring memberships.
 
         Email is sent if the role has a notification email address and there are expiring memberships within
         the expiration period.
+
+        If exact_date is True, only memberships expiring exactly on expire_period_end_date are considered.
         """
         roles = Role.objects.exclude(notification_email_address=None)
         for role in roles:
-            expiring_memberships = (
-                Membership.objects.filter(
-                    Q(expire_date__lte=expire_period_end_date) & Q(expire_date__gte=timezone.now().date()),
-                    role=role,
+            if exact_date:
+                expiring_memberships = (
+                    Membership.objects.filter(
+                        expire_date=expire_period_end_date,
+                        role=role,
+                    )
+                    .exclude(identity=None)
+                    .distinct()
                 )
-                .exclude(identity=None)
-                .distinct()
-            )
+            else:
+                expiring_memberships = (
+                    Membership.objects.filter(
+                        Q(expire_date__lte=expire_period_end_date) & Q(expire_date__gte=timezone.now().date()),
+                        role=role,
+                    )
+                    .exclude(identity=None)
+                    .distinct()
+                )
             names = []
             if expiring_memberships.count() > 0:
                 if not dry_run and role.notification_email_address:
@@ -114,6 +136,10 @@ class Command(BaseCommand):
     def handle(self, **options: Any) -> None:
         notify_member = options["notify_member"]
         notify_role = options["notify_role"]
+        notify_role_exact_date = options["notify_role_exact_date"]
+        if notify_role and notify_role_exact_date:
+            self.stderr.write("Cannot use --notify-role and --notify-role-exact-date together.")
+            return
         notification_days = options["notification_days"]
         dry_run = options["dry_run"]
         expire_day = timezone.now().date() + timedelta(days=notification_days)
@@ -123,3 +149,5 @@ class Command(BaseCommand):
             self.notify_members(expire_day, options["verbosity"], dry_run=dry_run)
         if notify_role:
             self.notify_roles(expire_day, options["verbosity"], dry_run=dry_run)
+        if notify_role_exact_date:
+            self.notify_roles(expire_day, options["verbosity"], dry_run=dry_run, exact_date=True)

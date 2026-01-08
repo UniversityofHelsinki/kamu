@@ -391,6 +391,13 @@ class MembershipExpireNotifications(TestData, ManagementCommandTestCase):
         self.call_command("-v 0", "-d 4", "-r")
         self.assertEqual(len(mail.outbox), 0)
 
+    def test_role_notifications_exact_date(self):
+        self.call_command("-v 0", "-d 9", "-e")
+        self.assertEqual(len(mail.outbox), 0)
+        self.call_command("-v 0", "-d 10", "-e")
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Number of memberships expiring soon: 1", mail.outbox[0].body)
+
 
 class AccountSynchronizationTests(TestData, ManagementCommandTestCase):
     command = "account_synchronization"
