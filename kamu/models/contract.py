@@ -178,6 +178,6 @@ class ContractTemplate(models.Model):
         """
         return {
             "contract_template_id": self.pk,
-            "contract_template_version": self.type,
+            "contract_template_version": self.version,
             "contract_template_type": self.type,
         }
