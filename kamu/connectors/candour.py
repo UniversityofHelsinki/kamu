@@ -40,7 +40,7 @@ class CandourApiConnector(ApiConnector):
         if not self.url or not self.public_key or not self.secret_key:
             logger.error(f"{self.api_name} missing parameters.")
             raise ApiConfigurationError(f"Incorrect {self.api_name} API settings.")
-        self.headers = {"X-AUTH-CLIENT": self.public_key, "Content-Type": "application/json"}
+        self.headers = {"X-AUTH-CLIENT": self.public_key, "Content-Type": "application/json; charset=utf-8"}
 
     def create_hmac_sha256(self, payload: bytes) -> str:
         """
@@ -54,10 +54,11 @@ class CandourApiConnector(ApiConnector):
         """
         Sends a POST request to create a Candour session.
         """
-        data = json.dumps(payload, sort_keys=False, separators=(",", ":"))
-        hmac_signature = self.create_hmac_sha256(data.encode("utf-8"))
+        data = json.dumps(payload, sort_keys=False, separators=(",", ":"), ensure_ascii=False)
+        data_bytes = data.encode("utf-8")
+        hmac_signature = self.create_hmac_sha256(data_bytes)
         headers = self.headers | {"X-HMAC-SIGNATURE": hmac_signature}
-        return self.api_call(http_method="post", path="", data=data, headers=headers)
+        return self.api_call(http_method="post", path="", data=data_bytes, headers=headers)
 
     def _get_candour_result(self, invitation_id: str) -> dict[str, Any]:
         """

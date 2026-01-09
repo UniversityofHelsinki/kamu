@@ -42,7 +42,7 @@ class CandourConnectorTests(TestCase):
         connector.create_candour_session(self.identity)
         call_kwargs = mock_post.call_args.kwargs
         self.assertIn("X-HMAC-SIGNATURE", call_kwargs["headers"])
-        self.assertIn('"dateOfBirth":"1999-01-01"', call_kwargs["data"])
+        self.assertIn('"dateOfBirth":"1999-01-01"', call_kwargs["data"].decode("utf-8"))
 
     @mock.patch("requests.get", return_value=mock.MagicMock(status_code=200))
     def test_get_candour_result(self, mock_get):
