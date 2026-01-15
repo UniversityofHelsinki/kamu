@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.contrib.admin.models import LogEntry
 from django.contrib.admin.options import ModelAdmin
 from django.contrib.admin.views.main import ChangeList
@@ -30,6 +32,43 @@ class OrderByNameMixin(ModelAdmin):
             return [field]
         except FieldDoesNotExist:
             return super().get_ordering(request)
+
+
+class CopyAsTemplateMixin(ModelAdmin):
+    """
+    A mixin for Django ModelAdmin that allows copying an existing object as a template for a new object.
+
+    Requires overriding change_form_object_tools template to provide a link to copy from an existing object.
+    """
+
+    def get_changeform_initial_data(self, request: HttpRequest) -> dict[str, Any]:
+        """
+        When creating a new Role in the admin, allow pre-filling fields based on an existing Role.
+        This is done by passing a "based_on" GET parameter with the ID of the Role to copy from.
+        """
+        initial = super().get_changeform_initial_data(request)
+        based_on_object_id = request.GET.get("based_on")
+        if not based_on_object_id:
+            return initial
+        try:
+            based_on_object = self.model.objects.get(pk=based_on_object_id)
+        except self.model.DoesNotExist:
+            return initial
+        for field in self.model._meta.get_fields():
+            # Skip fields that link from other models.
+            if not field.concrete:
+                continue
+            # Skip auto-generated and unique fields.
+            if field.name in ["id", "identifier", "created_at", "updated_at"]:
+                continue
+            if not field.many_to_many:
+                initial_value = getattr(based_on_object, field.name)
+                if initial_value is not None:
+                    initial[field.name] = initial_value
+            else:
+                initial_values = getattr(based_on_object, field.name).all()
+                initial[field.name] = initial_values
+        return initial
 
 
 class AuditModelAdmin(ModelAdmin):

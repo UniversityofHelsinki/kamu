@@ -2,10 +2,14 @@
 Django admin site configuration for the role models.
 """
 
-from kamu.admin.customization import AuditModelAdmin, OrderByNameMixin
+from kamu.admin.customization import (
+    AuditModelAdmin,
+    CopyAsTemplateMixin,
+    OrderByNameMixin,
+)
 
 
-class PermissionAdmin(OrderByNameMixin, AuditModelAdmin):
+class PermissionAdmin(OrderByNameMixin, CopyAsTemplateMixin, AuditModelAdmin):
     list_display = ["name", "cost"]
     search_fields = ["identifier", "name_en", "name_fi", "name_sv"]
     filter_horizontal = ("requirements",)
@@ -18,7 +22,7 @@ class RequirementAdmin(OrderByNameMixin, AuditModelAdmin):
     readonly_fields = ["created_at", "updated_at"]
 
 
-class RoleAdmin(OrderByNameMixin, AuditModelAdmin):
+class RoleAdmin(OrderByNameMixin, CopyAsTemplateMixin, AuditModelAdmin):
     list_display = ["name", "parent", "owner"]
     search_fields = ["identifier", "name_en", "name_fi", "name_sv"]
     autocomplete_fields = ["parent", "owner", "organisation"]

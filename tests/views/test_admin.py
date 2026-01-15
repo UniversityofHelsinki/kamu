@@ -277,3 +277,20 @@ class AdminSiteTests(BaseTestCase):
         response = self.client.post(url, organisation_data)
         self.assertIn("Organisation hierarchy cannot be deeper than maximum depth", response.content.decode("utf-8"))
         self.assertFalse(Organisation.objects.filter(identifier=ORGANISATIONS["research"]["identifier"]).exists())
+
+    def test_add_based_on_this_role(self):
+        role = self.create_role()
+        group = Group.objects.create(name="Approvers")
+        role.approvers.add(group)
+        url = f"{self.url}role/add/?based_on={role.pk}"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(f'value="{role.name()}"', response.content.decode("utf-8"))
+        self.assertIn("selected>{}</option>".format(group.name), response.content.decode("utf-8"))
+
+    def test_add_based_on_this_role_button(self):
+        role = self.create_role()
+        url = f"{self.url}role/{role.pk}/change/"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(f'href="{self.url}role/add/?based_on={role.pk}"', response.content.decode("utf-8"))
