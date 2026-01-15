@@ -36,6 +36,8 @@ class Organisation(models.Model):
         verbose_name_plural = _("Organisations")
 
     def __str__(self) -> str:
+        if self.code:
+            return f"{self.name()} ({self.code})"
         return self.name()
 
     def name(self, lang: str | None = None) -> str:
