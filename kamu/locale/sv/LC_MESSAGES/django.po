@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-05 09:02+0200\n"
+"POT-Creation-Date: 2026-01-26 16:33+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -19,81 +19,81 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.8\n"
 
-#: backends.py:110
+#: backends.py:145
 msgid "Identifier not found."
 msgstr "Identifieraren hittades inte."
 
-#: backends.py:111
+#: backends.py:146
 msgid "Valid identifier not found. This is probably a configuration error."
 msgstr ""
 "Giltig identifierare hittades inte. Detta är troligen ett konfigurationsfel."
 
-#: backends.py:112
+#: backends.py:147
 msgid "Identifier is already linked to another user."
 msgstr "Identifieraren är redan länkad till en annan användare."
 
-#: backends.py:113
+#: backends.py:148
 msgid "Invalid identifier format."
 msgstr "Ogiltigt identifieringsformat."
 
-#: backends.py:114
+#: backends.py:149
 msgid "Could not authenticate. Please try again."
 msgstr "Autentisering misslyckades. Vänligen försök igen."
 
-#: backends.py:115
+#: backends.py:150
 msgid "Identity provider is not authorised."
 msgstr "Identitetsleverantören är inte auktoriserad."
 
-#: backends.py:116
+#: backends.py:151
 msgid "Unexpected error."
 msgstr "Oväntat fel."
 
-#: backends.py:117
+#: backends.py:152
 msgid "Missing required parameters. Please try again with an another browser."
 msgstr "Obligatoriska parametrar saknas. Försök igen med en annan webbläsare."
 
-#: backends.py:118 forms/auth.py:45 forms/auth.py:88
+#: backends.py:153 forms/auth.py:41 forms/auth.py:106 forms/auth.py:130
 msgid "Invalid email address or phone number."
 msgstr "Ogiltig e-postadress eller ogiltigt telefonnummer."
 
-#: backends.py:119 views/auth.py:127
+#: backends.py:154 views/auth.py:127
 msgid "You are already logged in."
 msgstr "Du är redan inloggad."
 
-#: backends.py:120
+#: backends.py:155
 msgid "User must be authenticated to link identifier."
 msgstr "Användaren måste vara autentiserad för att länka identifierare."
 
-#: backends.py:121
+#: backends.py:156
 msgid ""
 "Staff and Superuser access is not allowed with this authentication method."
 msgstr ""
 "Åtkomst för personal och superanvändare är inte tillåten med denna "
 "autentiseringsmetod."
 
-#: backends.py:122
+#: backends.py:157
 msgid "Role owner access is not allowed with this authentication method."
 msgstr "Åtkomst för rollägare är inte tillåten med denna autentiseringsmetod."
 
-#: backends.py:123
+#: backends.py:158
 msgid "Staff and Superuser access is not allowed from this IP address."
 msgstr ""
 "Åtkomst för personal och superanvändare är inte tillåten från denna IP-"
 "adress."
 
-#: backends.py:124
+#: backends.py:159
 msgid "You belong to a group that is not allowed from this IP address."
 msgstr "Du tillhör en grupp som inte är tillåten från denna IP-adress."
 
-#: backends.py:125
+#: backends.py:160
 msgid "Configuration error, service administrators have been notified."
 msgstr "Konfigurationsfel, tjänstens administratörer har meddelats."
 
-#: backends.py:726
+#: backends.py:761
 msgid "Suspected duplicate user. Username already exists in the database: "
 msgstr "Misstänkt dubbel användare. Användarnamnet finns redan i databasen: "
 
-#: backends.py:740
+#: backends.py:775
 msgid "Suspected duplicate user. Identity already has a different username: "
 msgstr ""
 "Misstänkt dubbel användare. Identiteten har redan ett annat användarnamn: "
@@ -135,142 +135,150 @@ msgstr "Skapa begränsat användarkonto"
 msgid "Reset password"
 msgstr "Återställ lösenord"
 
-#: forms/auth.py:37 forms/auth.py:189 models/identity.py:517
-#: models/identity.py:527 models/token.py:296
+#: forms/auth.py:33 forms/auth.py:240 models/identity.py:569
+#: models/identity.py:581 models/token.py:304
 #: templates/account/account_create.html:16
 #: templates/identity/contact_address.html:15
 msgid "Email address"
 msgstr "E-postadress"
 
-#: forms/auth.py:39 models/identity.py:553 models/identity.py:563
-#: models/token.py:293 templates/identity/contact_address.html:64
+#: forms/auth.py:35 models/identity.py:643 models/identity.py:655
+#: models/token.py:301 templates/identity/contact_address.html:64
 msgid "Phone number"
 msgstr "Telefonnummer"
 
-#: forms/auth.py:41
+#: forms/auth.py:37
 msgid "Phone number in international format, e.g. +358123456789."
 msgstr "Telefonnummer i internationellt format, t.ex. +358123456789."
 
-#: forms/auth.py:46 views/auth.py:458
+#: forms/auth.py:42 views/auth.py:458
 msgid "This account is inactive."
 msgstr "Detta konto är inaktivt."
 
-#: forms/auth.py:55 forms/auth.py:350 templates/auth/invite.html:18
+#: forms/auth.py:51 forms/auth.py:401 templates/auth/invite.html:18
 #: templates/auth/invite.html:20 templates/auth/login.html:7
 #: templates/auth/login_email.html:5 templates/auth/login_local.html:5
 #: templates/base.html:74 templates/front.html:90 templates/front.html:92
 msgid "Login"
 msgstr "Logga in"
 
-#: forms/auth.py:76
-msgid "This contact information cannot be used to login."
-msgstr "Dessa kontaktuppgifter kan inte användas för inloggning."
+#: forms/auth.py:69
+msgid "Email address is required to send login verification code."
+msgstr "E-postadress krävs för att skicka verifieringskoden för inloggning."
 
-#: forms/auth.py:84
+#: forms/auth.py:71
+msgid "Phone number is required to send login verification code."
+msgstr "Telefonnummer krävs för att skicka verifieringskoden för inloggning."
+
+#: forms/auth.py:86
 msgid ""
 "Tried to send new login tokens too soon. Please try again in one minute."
 msgstr ""
 "Du försökte skicka nya inloggningstokens för tidigt. Försök igen om en minut."
 
-#: forms/auth.py:86
+#: forms/auth.py:90
 msgid "Could not send SMS, please try again later."
 msgstr "Textmeddelandet kunde inte skickas, försök igen senare."
 
-#: forms/auth.py:96
+#: forms/auth.py:111 forms/auth.py:171
+msgid "This email address cannot be used to login."
+msgstr "E-postadressen kan inte användas för inloggning."
+
+#: forms/auth.py:116 forms/auth.py:192
+msgid "This phone number cannot be used to login."
+msgstr "Telefonnumret kan inte användas för inloggning."
+
+#: forms/auth.py:123 forms/auth.py:127
+msgid "This contact information cannot be used to login."
+msgstr "Dessa kontaktuppgifter kan inte användas för inloggning."
+
+#: forms/auth.py:139
 msgid "Email verification code"
 msgstr "E-postbekräftelsekod"
 
-#: forms/auth.py:97
+#: forms/auth.py:140
 msgid "SMS verification code"
 msgstr "SMS-bekräftelsekod"
 
-#: forms/auth.py:113 templates/identity/contact_address.html:25
+#: forms/auth.py:156 templates/identity/contact_address.html:25
 #: templates/identity/contact_address.html:74
 msgid "Verify"
 msgstr "Verifiera"
 
-#: forms/auth.py:114
+#: forms/auth.py:157
 msgid "Resend email code"
 msgstr "Skicka e-postkod igen"
 
-#: forms/auth.py:115
+#: forms/auth.py:158
 msgid "Resend phone code"
 msgstr "Skicka telefonkod igen"
 
-#: forms/auth.py:123 forms/auth.py:131 forms/auth.py:140 forms/auth.py:148
+#: forms/auth.py:167 forms/auth.py:179 forms/auth.py:188 forms/auth.py:200
 msgid "Invalid verification code."
 msgstr "Felaktig bekräftelsekod."
 
-#: forms/auth.py:127 forms/auth.py:129
-msgid "This email address cannot be used to login."
-msgstr "E-postadressen kan inte användas för inloggning."
-
-#: forms/auth.py:144 forms/auth.py:146
-msgid "This phone number cannot be used to login."
-msgstr "Telefonnumret kan inte användas för inloggning."
-
-#: forms/auth.py:158 forms/auth.py:169 forms/auth.py:171
+#: forms/auth.py:209 forms/auth.py:220 forms/auth.py:222
 msgid "Error when logging in, please try again."
 msgstr "Fel vid inloggning, försök igen."
 
-#: forms/auth.py:173
+#: forms/auth.py:224
 msgid "This account is disabled."
 msgstr "Detta konto är inaktiverat."
 
-#: forms/auth.py:186 templates/identity/identity_combine.html:12
+#: forms/auth.py:237 templates/identity/identity_combine.html:12
 #: templates/identity/identity_combine.html:69
 msgid "Given names"
 msgstr "Förnamn"
 
-#: forms/auth.py:186
+#: forms/auth.py:237
 msgid "All official given names."
 msgstr "Alla officiella förnamn."
 
-#: forms/auth.py:188 forms/identity.py:51 models/identity.py:199
+#: forms/auth.py:239 forms/identity.py:51 models/identity.py:206
 #: templates/account/account_create.html:12
 #: templates/identity/identity_combine.html:13
 #: templates/identity/identity_combine.html:75
 msgid "Surname"
 msgstr "Efternamn"
 
-#: forms/auth.py:188
+#: forms/auth.py:239
 msgid "Official surname(s)."
 msgstr "Officiellt efternamn."
 
-#: forms/auth.py:200
+#: forms/auth.py:251
 msgid "This email address is already set by the inviter."
 msgstr "Den här e-postadressen är redan angiven av inbjudaren."
 
-#: forms/auth.py:202
+#: forms/auth.py:253
 msgid "Send verification code"
 msgstr "Skicka bekräftelsekod"
 
-#: forms/auth.py:210
+#: forms/auth.py:261
 msgid "This email address is already linked to an account."
 msgstr "E-postadressen är redan länkad till ett konto."
 
-#: forms/auth.py:219
+#: forms/auth.py:270
 msgid "Invalid form data."
 msgstr "Ogiltiga uppgifter i formuläret."
 
-#: forms/auth.py:223
+#: forms/auth.py:274
 msgid "Either given names or surname must be filled in."
 msgstr "Antingen förnamn eller efternamn måste anges."
 
-#: forms/auth.py:232 forms/identity.py:176
+#: forms/auth.py:283 forms/identity.py:176
 msgid "Enter the verification code you received by email"
 msgstr "Ange bekräftelsekoden som du har fått via e-post"
 
-#: forms/auth.py:243
+#: forms/auth.py:294
 msgid "Verify email address"
 msgstr "Bekräfta e-postadress"
 
-#: forms/auth.py:244 forms/auth.py:318 forms/identity.py:187
+#: forms/auth.py:295 forms/auth.py:369 forms/identity.py:187
 #: forms/identity.py:227
 msgid "Send new code"
 msgstr "Skicka ny kod"
 
-#: forms/auth.py:258 forms/identity.py:197
+#: forms/auth.py:309 forms/identity.py:197
 msgid ""
 "Invalid verification code. Please note that the verification code is "
 "different from the invitation code. If you have received more than one "
@@ -280,11 +288,11 @@ msgstr ""
 "inbjudningskoden. Om du har skickat flera bekräftelsekoder gäller endast den "
 "senaste."
 
-#: forms/auth.py:272
+#: forms/auth.py:323
 msgid "Enter your phone number for SMS verification"
 msgstr "Ange ditt telefonnummer för bekräftelse via textmeddelande"
 
-#: forms/auth.py:275
+#: forms/auth.py:326
 msgid ""
 "Enter the phone number in the international format, e.g. +358123456789. "
 "Please note that we will not forward the phone number."
@@ -292,23 +300,23 @@ msgstr ""
 "Ange telefonnumret i internationellt format, t.ex. +358123456789. Obs! Vi "
 "vidarebefordrar inte telefonnumret."
 
-#: forms/auth.py:289
+#: forms/auth.py:340
 msgid "This phone number is already set by the inviter."
 msgstr "Det här telefonnumret är redan angivet av inbjudaren."
 
-#: forms/auth.py:292 templates/membership/verification_form.html:21
+#: forms/auth.py:343 templates/membership/verification_form.html:21
 msgid "Send verification code by SMS"
 msgstr "Skicka bekräftelsekod via textmeddelande"
 
-#: forms/auth.py:306 forms/identity.py:216
+#: forms/auth.py:357 forms/identity.py:216
 msgid "Enter the verification code you received by SMS"
 msgstr "Ange bekräftelsekoden som du har fått via textmeddelande"
 
-#: forms/auth.py:317 models/membership.py:74
+#: forms/auth.py:368 models/membership.py:74
 msgid "Verify phone number"
 msgstr "Bekräfta telefonnummer"
 
-#: forms/auth.py:332 forms/identity.py:237
+#: forms/auth.py:383 forms/identity.py:237
 msgid ""
 "Invalid verification code. If you sent yourself more than one verification "
 "code, only the most recent one will be valid."
@@ -316,11 +324,11 @@ msgstr ""
 "Felaktig bekräftelsekod. Om du har skickat flera bekräftelsekoder gäller "
 "endast den senaste."
 
-#: forms/auth.py:370
+#: forms/auth.py:421
 msgid "Personal invitation code"
 msgstr "Personlig inbjudningskod"
 
-#: forms/auth.py:393 forms/auth.py:399 forms/auth.py:403 forms/auth.py:405
+#: forms/auth.py:444 forms/auth.py:450 forms/auth.py:454 forms/auth.py:456
 #: views/auth.py:133 views/auth.py:154 views/auth.py:240
 #: views/membership.py:790
 msgid "Invalid invitation code."
@@ -350,7 +358,7 @@ msgstr "Kombinera"
 msgid "Given name(s)"
 msgstr "Förnamn"
 
-#: forms/identity.py:53 models/identity.py:630
+#: forms/identity.py:53 models/identity.py:722
 msgid "Identifier"
 msgstr "Identifierare"
 
@@ -612,21 +620,21 @@ msgstr "Typ av konto"
 msgid "User ID"
 msgstr "Användar-ID"
 
-#: models/account.py:42 models/identity.py:623
+#: models/account.py:42 models/identity.py:715
 msgid "Deactivated at"
 msgstr "Deaktiverat den"
 
 #: models/account.py:43 models/account.py:142 models/contract.py:55
-#: models/contract.py:112 models/identity.py:41 models/identity.py:275
-#: models/identity.py:485 models/identity.py:521 models/identity.py:557
-#: models/identity.py:624 models/membership.py:112 models/organisation.py:31
-#: models/role.py:83 models/role.py:275 models/role.py:371 models/token.py:313
+#: models/contract.py:112 models/identity.py:48 models/identity.py:288
+#: models/identity.py:502 models/identity.py:573 models/identity.py:647
+#: models/identity.py:716 models/membership.py:112 models/organisation.py:31
+#: models/role.py:83 models/role.py:275 models/role.py:371 models/token.py:321
 msgid "Created at"
 msgstr "Skapat den"
 
-#: models/account.py:44 models/account.py:143 models/identity.py:42
-#: models/identity.py:276 models/identity.py:486 models/identity.py:522
-#: models/identity.py:558 models/identity.py:625 models/membership.py:113
+#: models/account.py:44 models/account.py:143 models/identity.py:49
+#: models/identity.py:289 models/identity.py:503 models/identity.py:574
+#: models/identity.py:648 models/identity.py:717 models/membership.py:113
 #: models/organisation.py:32 models/role.py:84 models/role.py:276
 #: models/role.py:372
 msgid "Updated at"
@@ -722,124 +730,124 @@ msgstr "Avtalsmall"
 msgid "Contract templates"
 msgstr "Avtalsmallar"
 
-#: models/identity.py:36
+#: models/identity.py:43
 msgid "Country code"
 msgstr "Landskod"
 
-#: models/identity.py:37
+#: models/identity.py:44
 msgid "Country name (fi)"
 msgstr "Landsnamn (fi)"
 
-#: models/identity.py:38
+#: models/identity.py:45
 msgid "Country name (en)"
 msgstr "Landsnamn (en)"
 
-#: models/identity.py:39
+#: models/identity.py:46
 msgid "Country name (sv)"
 msgstr "Landsnamn (sv)"
 
-#: models/identity.py:45
+#: models/identity.py:52
 msgid "Country"
 msgstr "Land"
 
-#: models/identity.py:46
+#: models/identity.py:53
 msgid "Countries"
 msgstr "Länder"
 
-#: models/identity.py:131 models/role.py:33
+#: models/identity.py:138 models/role.py:33
 msgid "English"
 msgstr "Engelska"
 
-#: models/identity.py:132 models/role.py:34
+#: models/identity.py:139 models/role.py:34
 msgid "Finnish"
 msgstr "Finska"
 
-#: models/identity.py:133 models/role.py:35
+#: models/identity.py:140 models/role.py:35
 msgid "Swedish"
 msgstr "Svenska"
 
-#: models/identity.py:137
+#: models/identity.py:144
 msgid "Male"
 msgstr "Man"
 
-#: models/identity.py:138
+#: models/identity.py:145
 msgid "Female"
 msgstr "Kvinna"
 
-#: models/identity.py:139
+#: models/identity.py:146
 msgid "Other"
 msgstr "Annat"
 
-#: models/identity.py:143 models/identity.py:150
+#: models/identity.py:150 models/identity.py:157
 msgid "No verification"
 msgstr "Ingen verifiering"
 
-#: models/identity.py:144
+#: models/identity.py:151
 msgid "Low"
 msgstr "Låg"
 
-#: models/identity.py:145
+#: models/identity.py:152
 msgid "Medium"
 msgstr "Medel"
 
-#: models/identity.py:146
+#: models/identity.py:153
 msgid "High"
 msgstr "Hög"
 
-#: models/identity.py:147
+#: models/identity.py:154
 msgid "Very high"
 msgstr "Högsta"
 
-#: models/identity.py:151
+#: models/identity.py:158
 msgid "Self assurance"
 msgstr "Självangiven verifiering"
 
-#: models/identity.py:152
+#: models/identity.py:159
 msgid "External source"
 msgstr "Extern källa"
 
-#: models/identity.py:153
+#: models/identity.py:160
 msgid "Verified with a government issued photo-ID"
 msgstr "Verifierad med statligt utfärdad fotolegitimation"
 
-#: models/identity.py:154
+#: models/identity.py:161
 msgid "Strong electrical verification"
 msgstr "Stark elektrisk verifiering"
 
-#: models/identity.py:160
+#: models/identity.py:167
 msgid "Kamu ID"
 msgstr "Kamu-ID"
 
-#: models/identity.py:161
+#: models/identity.py:168
 msgid "Unique identifier for this identity."
 msgstr "Unik identifierare för denna identitet."
 
-#: models/identity.py:169
+#: models/identity.py:176
 msgid "User identifier"
 msgstr "Användaridentifierare"
 
-#: models/identity.py:173 templates/identity/identity_combine.html:57
+#: models/identity.py:180 templates/identity/identity_combine.html:57
 msgid "External identity"
 msgstr "Extern identitet"
 
-#: models/identity.py:174
+#: models/identity.py:181
 msgid "This identity is managed in another registry."
 msgstr "Denna identitet hanteras i ett annat register."
 
-#: models/identity.py:179 templates/identity/identity_combine.html:63
+#: models/identity.py:186 templates/identity/identity_combine.html:63
 msgid "Assurance level"
 msgstr "Säkerhetsnivå"
 
-#: models/identity.py:180
+#: models/identity.py:187
 msgid "How strongly this user identity is identified."
 msgstr "Hur starkt denna användaridentitet är identifierad."
 
-#: models/identity.py:185 templates/identity/identity_detail.html:8
+#: models/identity.py:192 templates/identity/identity_detail.html:8
 #: templates/identity/identity_verify.html:58
 msgid "Official given names"
 msgstr "Officiella förnamn"
 
-#: models/identity.py:187
+#: models/identity.py:194
 msgid ""
 "All official given names, as on a passport. Please note that this "
 "information is usually not displayed in applications."
@@ -847,11 +855,11 @@ msgstr ""
 "Alla officiella förnamn som i passet. Obs! Denna information visas "
 "vanligtvis inte i appar."
 
-#: models/identity.py:194
+#: models/identity.py:201
 msgid "Given names verification method"
 msgstr "Metod för verifiering av förnamn"
 
-#: models/identity.py:201
+#: models/identity.py:208
 msgid ""
 "All official surname(s), as on a passport. Please note that this information "
 "is usually not displayed in applications."
@@ -859,15 +867,15 @@ msgstr ""
 "Alla officiella efternamn som i passet. Obs! Denna information visas "
 "vanligtvis inte i appar."
 
-#: models/identity.py:208
+#: models/identity.py:215
 msgid "Surname verification method"
 msgstr "Metod för verifiering av efternamn"
 
-#: models/identity.py:213
+#: models/identity.py:220
 msgid "Preferred given name"
 msgstr "Tilltalsnamn"
 
-#: models/identity.py:215
+#: models/identity.py:222
 msgid ""
 "Preferred name, i.e. one of the official given names or, for a justified "
 "reason, another given name. Please note that this information is usually "
@@ -877,11 +885,11 @@ msgstr ""
 "motiverade skäl något annat förnamn. Obs! Denna information visas vanligen i "
 "appar."
 
-#: models/identity.py:222
+#: models/identity.py:229
 msgid "Preferred surname"
 msgstr "Föredraget efternamn"
 
-#: models/identity.py:224
+#: models/identity.py:231
 msgid ""
 "As a rule, the official last name or, for a justified reason, part thereof. "
 "Please note that this information is usually displayed in applications."
@@ -889,33 +897,33 @@ msgstr ""
 "I princip det officiella efternamnet eller av motiverade skäl en del av det. "
 "Obs! Denna information visas vanligen i appar."
 
-#: models/identity.py:231 templates/identity/identity_combine.html:94
+#: models/identity.py:238 templates/identity/identity_combine.html:94
 #: templates/identity/identity_detail.html:17
 #: templates/identity/identity_verify.html:17
 #: templates/identity/identity_verify.html:63
 msgid "Date of birth"
 msgstr "Födelsedatum"
 
-#: models/identity.py:232 models/identity.py:244
+#: models/identity.py:239 models/identity.py:251
 msgid ""
 "Required for the user identification from the official identity documents."
 msgstr "Krävs för användaridentifiering med officiella identitetsbevis."
 
-#: models/identity.py:237
+#: models/identity.py:244
 msgid "Date of birth verification method"
 msgstr "Metod för verifiering av födelsedatum"
 
-#: models/identity.py:243 templates/identity/identity_combine.html:100
+#: models/identity.py:250 templates/identity/identity_combine.html:100
 #: templates/identity/identity_detail.html:20
 #: templates/identity/identity_verify.html:19
 msgid "Gender"
 msgstr "Kön"
 
-#: models/identity.py:249
+#: models/identity.py:256
 msgid "Gender verification method"
 msgstr "Metod för verifiering av kön"
 
-#: models/identity.py:256 models/identity.py:606
+#: models/identity.py:263 models/identity.py:698
 #: templates/identity/identity_combine.html:15
 #: templates/identity/identity_combine.html:112
 #: templates/identity/identity_detail.html:25
@@ -923,124 +931,132 @@ msgstr "Metod för verifiering av kön"
 msgid "Finnish personal identity code"
 msgstr "Personbeteckning"
 
-#: models/identity.py:258
+#: models/identity.py:265
 msgid "Used for the strong electrical identification."
 msgstr "Används för stark elektronisk identifiering."
 
-#: models/identity.py:263
+#: models/identity.py:270
 msgid "FPIC verification method"
 msgstr "FPIC-verifieringsmetod"
 
-#: models/identity.py:269 templates/identity/identity_combine.html:106
+#: models/identity.py:276 templates/identity/identity_combine.html:106
 #: templates/identity/identity_detail.html:14
 #: templates/membership/membership_detail.html:43
 #: templates/membership/membership_invite.html:32
 msgid "Preferred language"
 msgstr "Föredraget språk"
 
-#: models/identity.py:270
+#: models/identity.py:277
 msgid "Preferred service language."
 msgstr "Föredraget kontaktspråk."
 
-#: models/identity.py:273
+#: models/identity.py:280
 msgid "Candour session ID"
 msgstr "ID för Candour-sessionen"
 
-#: models/identity.py:294 templates/membership/membership_invite.html:28
+#: models/identity.py:283
+msgid "Allow login with unverified contact"
+msgstr "Tillåt inloggning med overifierad kontakt"
+
+#: models/identity.py:286
+msgid "Allow login with single contact"
+msgstr "Tillåt inloggning med en enda kontakt"
+
+#: models/identity.py:311 templates/membership/membership_invite.html:28
 #: templates/membership/membership_invite.html:36
 msgid "Identity"
 msgstr "Identitet"
 
-#: models/identity.py:295
+#: models/identity.py:312
 msgid "Identities"
 msgstr "Identiteter"
 
-#: models/identity.py:482
+#: models/identity.py:499
 msgid "Verification method"
 msgstr "Verifieringsmetod"
 
-#: models/identity.py:490 templates/identity/identity_combine.html:118
+#: models/identity.py:507 templates/identity/identity_combine.html:118
 #: templates/identity/identity_detail.html:23
 #: templates/identity/identity_verify.html:18
 msgid "Nationality"
 msgstr "Nationalitet"
 
-#: models/identity.py:491
+#: models/identity.py:508
 msgid "Nationalities"
 msgstr "Nationaliteter"
 
-#: models/identity.py:518 models/identity.py:554
+#: models/identity.py:570 models/identity.py:644
 msgid "Priority"
 msgstr "Prioritet"
 
-#: models/identity.py:519 models/identity.py:555 models/identity.py:621
+#: models/identity.py:571 models/identity.py:645 models/identity.py:713
 msgid "Verified at"
 msgstr "Verifierad den"
 
-#: models/identity.py:528 templates/identity/contact_address.html:9
+#: models/identity.py:582 templates/identity/contact_address.html:9
 #: templates/identity/identity_detail.html:57
 msgid "Email addresses"
 msgstr "E-postadresser"
 
-#: models/identity.py:564 templates/identity/contact_address.html:58
+#: models/identity.py:656 templates/identity/contact_address.html:58
 #: templates/identity/identity_detail.html:59
 msgid "Phone numbers"
 msgstr "Telefonnummer"
 
-#: models/identity.py:607
+#: models/identity.py:699
 msgid "eIDAS identifier"
 msgstr "eIDAS-identifierare"
 
-#: models/identity.py:608
+#: models/identity.py:700
 msgid "User identifier from organisation"
 msgstr "Användaridentifierare från organisation"
 
-#: models/identity.py:609
+#: models/identity.py:701
 msgid "Google account"
 msgstr "Google-konto"
 
-#: models/identity.py:610
+#: models/identity.py:702
 msgid "Microsoft account"
 msgstr "Microsoft-konto"
 
-#: models/identity.py:611 templates/identity/identity_combine.html:45
+#: models/identity.py:703 templates/identity/identity_combine.html:45
 msgid "Kamu identifier"
 msgstr "Kamu-identifierare"
 
-#: models/identity.py:612
+#: models/identity.py:704
 msgid "Person identifier"
 msgstr "Personidentifierare"
 
-#: models/identity.py:613
+#: models/identity.py:705
 msgid "Government issued ID"
 msgstr "Identitetskort utfärdats av en myndighet"
 
-#: models/identity.py:614
+#: models/identity.py:706
 msgid "Other identifier"
 msgstr "Annan identifierare"
 
-#: models/identity.py:616
+#: models/identity.py:708
 msgid "Identifier type"
 msgstr "Typ av identifierare"
 
-#: models/identity.py:617
+#: models/identity.py:709
 msgid "Identifier value"
 msgstr "Identifierarens värde"
 
-#: models/identity.py:618
+#: models/identity.py:710
 msgid "Identifier name"
 msgstr "Identifierarens namn"
 
-#: models/identity.py:619
+#: models/identity.py:711
 msgid "Valid until"
 msgstr "Giltig till"
 
-#: models/identity.py:631 templates/identity/identity_detail.html:63
+#: models/identity.py:723 templates/identity/identity_detail.html:63
 #: templates/identity/identity_detail.html:110
 msgid "Identifiers"
 msgstr "Identifierare"
 
-#: models/identity.py:648
+#: models/identity.py:740
 msgid "Invalid eduPersonPrincipalName format."
 msgstr "Ogiltigt format för eduPersonPrincipalName."
 
@@ -1413,51 +1429,51 @@ msgstr "Attributet har ingen verifieringsnivå."
 msgid "Allowed levels are from %(min) to %(max)."
 msgstr "Tillåtna nivåer är från %(min) till %(max)."
 
-#: models/token.py:300
+#: models/token.py:308
 msgid "Email login token"
 msgstr "Token för inloggning via e-postadress"
 
-#: models/token.py:301
+#: models/token.py:309
 msgid "SMS login token"
 msgstr "Token för inloggning via SMS"
 
-#: models/token.py:302
+#: models/token.py:310
 msgid "Email object verification token"
 msgstr "Verifieringstoken för e-post"
 
-#: models/token.py:303
+#: models/token.py:311
 msgid "Phone object verification token"
 msgstr "Verifieringstoken för telefon"
 
-#: models/token.py:304
+#: models/token.py:312
 msgid "Email address verification token"
 msgstr "Token för verifiering med e-postadress"
 
-#: models/token.py:305
+#: models/token.py:313
 msgid "Phone number verification token"
 msgstr "Token för verifiering med telefonnummer"
 
-#: models/token.py:306
+#: models/token.py:314
 msgid "Invite token"
 msgstr "Inbjudningstoken"
 
-#: models/token.py:308
+#: models/token.py:316
 msgid "Token type"
 msgstr "Typ av token"
 
-#: models/token.py:310
+#: models/token.py:318
 msgid "Salt and a hashed token"
 msgstr "Salt och en hashad token"
 
-#: models/token.py:311
+#: models/token.py:319
 msgid "Number of tries left"
 msgstr "Antal återstående försök"
 
-#: models/token.py:317
+#: models/token.py:325
 msgid "Login token"
 msgstr "Inloggningstoken"
 
-#: models/token.py:318
+#: models/token.py:326
 msgid "Login tokens"
 msgstr "Inloggningstokens"
 
@@ -3872,7 +3888,7 @@ msgstr ""
 msgid "Failed to send verification code."
 msgstr "Det gick inte att skicka bekräftelsekoden."
 
-#: utils/identity.py:445 views/auth.py:637 views/auth.py:656
+#: utils/identity.py:445 views/auth.py:638 views/auth.py:661
 msgid "Tried to send a new code too soon. Please try again in one minute."
 msgstr ""
 "Försökte skicka en ny kod för tidigt. Vänligen försök igen om en minut."
@@ -3882,7 +3898,7 @@ msgstr ""
 msgid "Your personal Kamu verification code is: %(token)s"
 msgstr "Din personliga Kamu-bekräftelsekod är: %(token)s"
 
-#: utils/identity.py:454 views/auth.py:659 views/identity.py:662
+#: utils/identity.py:454 views/auth.py:664 views/identity.py:662
 msgid "Could not send an SMS message."
 msgstr "Det gick inte att skicka SMS."
 
@@ -4180,19 +4196,23 @@ msgstr ""
 "Omdirigeringsslinga för autentiserad användare upptäckt. Kontakta tjänstens "
 "administratörer."
 
-#: views/auth.py:722
+#: views/auth.py:633
+msgid "Could not send verification email."
+msgstr "Kunde inte skicka verifieringsmejlet."
+
+#: views/auth.py:737
 msgid "See the pending memberships here."
 msgstr "Se de väntande medlemskapen här."
 
-#: views/auth.py:726
+#: views/auth.py:741
 msgid "You have memberships pending approval."
 msgstr "Du har medlemskap som väntar på godkännande."
 
-#: views/auth.py:729
+#: views/auth.py:744
 msgid "List here"
 msgstr "Lista här"
 
-#: views/auth.py:733
+#: views/auth.py:748
 msgid "Memberships are ending soon in roles you have approval rights."
 msgstr ""
 "Medlemskap upphör snart för roller som du har godkännanderättigheter för."

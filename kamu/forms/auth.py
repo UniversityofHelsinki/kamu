@@ -10,11 +10,7 @@ from django import forms
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User as UserType
-from django.core.exceptions import (
-    MultipleObjectsReturned,
-    ObjectDoesNotExist,
-    ValidationError,
-)
+from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
@@ -60,32 +56,79 @@ class LoginEmailPhoneForm(forms.Form):
         validate_phone_number(number)
         return number
 
+    def create_verification_tokens(
+        self, email_obj: EmailAddress | None, email_address: str, phone_obj: PhoneNumber | None, phone_number: str
+    ) -> None:
+        """
+        Create and send verification tokens for email and phone number.
+
+        Creates either object based login verification tokens or number based verification tokens, based on the given
+        information.
+        """
+        if not email_obj and not email_address:
+            raise ValidationError(_("Email address is required to send login verification code."))
+        if not phone_obj and not phone_number:
+            raise ValidationError(_("Phone number is required to send login verification code."))
+        try:
+            if email_obj:
+                email_token = Token.objects.create_email_login_token(email_obj)
+                address = email_obj.address
+            else:
+                email_token = Token.objects.create_email_address_verification_token(email_address)
+                address = email_address
+            if phone_obj:
+                phone_token = Token.objects.create_phone_login_token(phone_obj)
+                number = phone_obj.number
+            else:
+                phone_token = Token.objects.create_phone_number_verification_token(phone_number)
+                number = phone_number
+        except TimeLimitError:
+            raise ValidationError(_("Tried to send new login tokens too soon. Please try again in one minute."))
+        try:
+            SmsConnector().send_sms(number, phone_token)
+        except ApiError:
+            raise ValidationError(_("Could not send SMS, please try again later."))
+        send_verification_email(email_token, address, template="login_verification_email")
+
     def clean(self) -> dict[str, Any]:
         """
-        Validate that there is only one verified instance of email address and phone number, and
-        they are for the same identity.
+        Validates email address and phone number and sends verification tokens.
 
-        Create and send verification tokens if possible.
+        Allows only verified contact objects unless unverified are allowed to identity.
+
+        Requires both objects unless identity is allowed to log in with single token. In that case, creates
+        address or number based verification to other contact.
         """
         email_address = self.cleaned_data.get("email_address")
         phone_number = self.cleaned_data.get("phone_number")
+
+        if not email_address or not phone_number:
+            raise ValidationError(_("Invalid email address or phone number."))
+
         try:
-            email_obj = EmailAddress.objects.get(address=email_address, verified__isnull=False)
-            phone_obj = PhoneNumber.objects.get(number=phone_number, verified__isnull=False)
-        except (MultipleObjectsReturned, ObjectDoesNotExist):
-            raise ValidationError(_("This contact information cannot be used to login."))
-        if email_obj.identity.user and email_obj.identity.user == phone_obj.identity.user:
-            try:
-                email_token = Token.objects.create_email_object_verification_token(email_obj)
-                phone_token = Token.objects.create_phone_object_verification_token(phone_obj)
-                send_verification_email(email_token, email_obj.address, template="login_verification_email")
-                SmsConnector().send_sms(phone_obj.number, phone_token)
-            except TimeLimitError:
-                raise ValidationError(_("Tried to send new login tokens too soon. Please try again in one minute."))
-            except ApiError:
-                raise ValidationError(_("Could not send SMS, please try again later."))
-            return self.cleaned_data
-        raise ValidationError(_("Invalid email address or phone number."))
+            email_obj = EmailAddress.objects.get_email_for_authentication(email_address)
+        except EmailAddress.MultipleObjectsReturned:
+            raise ValidationError(_("This email address cannot be used to login."))
+
+        try:
+            phone_obj = PhoneNumber.objects.get_phone_for_authentication(phone_number)
+        except PhoneNumber.MultipleObjectsReturned:
+            raise ValidationError(_("This phone number cannot be used to login."))
+
+        # Creates either object or number/address based verification tokens.
+        if email_obj and phone_obj and email_obj.identity == phone_obj.identity:
+            self.create_verification_tokens(email_obj, "", phone_obj, "")
+        elif email_obj and not phone_obj:
+            if not email_obj.identity.allow_auth_with_single_contact:
+                raise ValidationError(_("This contact information cannot be used to login."))
+            self.create_verification_tokens(email_obj, "", None, phone_number)
+        elif phone_obj and not email_obj:
+            if not phone_obj.identity.allow_auth_with_single_contact:
+                raise ValidationError(_("This contact information cannot be used to login."))
+            self.create_verification_tokens(None, email_address, phone_obj, "")
+        else:
+            raise ValidationError(_("Invalid email address or phone number."))
+        return self.cleaned_data
 
 
 class LoginEmailPhoneVerificationForm(AuthenticationForm):
@@ -116,37 +159,45 @@ class LoginEmailPhoneVerificationForm(AuthenticationForm):
 
     def clean_email_verification_token(self) -> str:
         """
-        Check that there is only one verified email address and that token is valid for that address.
+        Checks if user is allowed to log in with unverified or missing email address and validates the verification
+        token.
         """
         token = self.cleaned_data["email_verification_token"]
-        if not token or len(token) < 4:
+        if not token or len(token) < 4 or not self.email_address:
             raise ValidationError(_("Invalid verification code."))
         try:
-            email_address = EmailAddress.objects.get(address=self.email_address, verified__isnull=False)
-        except EmailAddress.DoesNotExist:
-            raise ValidationError(_("This email address cannot be used to login."))
+            email_obj = EmailAddress.objects.get_email_for_authentication(self.email_address)
         except EmailAddress.MultipleObjectsReturned:
             raise ValidationError(_("This email address cannot be used to login."))
-        if not Token.objects.validate_email_object_verification_token(token, email_address, remove_token=False):
-            raise ValidationError(_("Invalid verification code."))
-        return token
+        if (
+            email_obj
+            and Token.objects.validate_email_login_token(token, email_obj, remove_token=False)
+            or not email_obj
+            and Token.objects.validate_email_address_verification_token(token, self.email_address, remove_token=False)
+        ):
+            return token
+        raise ValidationError(_("Invalid verification code."))
 
     def clean_phone_verification_token(self) -> str:
         """
-        Check that there is only one verified phone number and that token is valid for that number.
+        Checks if user is allowed to log in with unverified or missing phone number and validates the verification
+        token.
         """
         token = self.cleaned_data["phone_verification_token"]
         if not token or len(token) < 4:
             raise ValidationError(_("Invalid verification code."))
         try:
-            phone_number = PhoneNumber.objects.get(number=self.phone_number, verified__isnull=False)
-        except PhoneNumber.DoesNotExist:
-            raise ValidationError(_("This phone number cannot be used to login."))
+            phone_obj = PhoneNumber.objects.get_phone_for_authentication(self.phone_number)
         except PhoneNumber.MultipleObjectsReturned:
             raise ValidationError(_("This phone number cannot be used to login."))
-        if not Token.objects.validate_phone_object_verification_token(token, phone_number, remove_token=False):
-            raise ValidationError(_("Invalid verification code."))
-        return token
+        if (
+            phone_obj
+            and Token.objects.validate_phone_login_token(token, phone_obj, remove_token=False)
+            or not phone_obj
+            and Token.objects.validate_phone_number_verification_token(token, self.phone_number, remove_token=False)
+        ):
+            return token
+        raise ValidationError(_("Invalid verification code."))
 
     def clean(self) -> dict[str, Any]:
         """

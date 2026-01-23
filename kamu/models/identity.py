@@ -3,13 +3,18 @@ Identity models.
 """
 
 import datetime
+import logging
 from typing import Any, Sequence
 from uuid import uuid4
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User as UserType
-from django.core.exceptions import ValidationError
+from django.core.exceptions import (
+    MultipleObjectsReturned,
+    ObjectDoesNotExist,
+    ValidationError,
+)
 from django.core.validators import validate_email
 from django.db import models
 from django.db.models import Q, QuerySet
@@ -26,6 +31,8 @@ from kamu.validators.identity import (
     validate_fpic,
     validate_phone_number,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class Country(models.Model):
@@ -272,6 +279,12 @@ class Identity(models.Model):
     candour_verification_session_id = models.CharField(
         max_length=255, blank=True, verbose_name=_("Candour session ID")
     )
+    allow_auth_with_unverified_contact = models.BooleanField(
+        default=False, verbose_name=_("Allow login with unverified contact")
+    )
+    allow_auth_with_single_contact = models.BooleanField(
+        default=False, verbose_name=_("Allow login with single contact")
+    )
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
@@ -290,6 +303,10 @@ class Identity(models.Model):
             ("change_identifiers", "Can change identifiers"),
             ("search_identities", "Can search identities"),
             ("combine_identities", "Can combine identities"),
+            ("view_authentication_settings", "Can view authentication settings"),
+            ("change_assurance_level", "Can change assurance level for identity"),
+            ("change_single_contact_auth", "Can change single contact authentication for identity"),
+            ("change_unverified_contact_auth", "Can change unverified contact authentication for identity"),
         ]
         verbose_name = _("Identity")
         verbose_name_plural = _("Identities")
@@ -504,6 +521,41 @@ class Nationality(models.Model):
         }
 
 
+class EmailAddressManager(models.Manager["EmailAddress"]):
+    """
+    Manager methods for :class:`kamu.models.identity.EmailAddress`.
+    """
+
+    def get_email_for_authentication(self, email_address: str) -> "EmailAddress | None":
+        """
+        Returns an email address object for authentication.
+
+        Return unverified address only if:
+         - identity is allowed to log in with unverified contact.
+         - no verified email address exists with the same address.
+         - only one unverified email address exists with the same address.
+
+        Raises MultipleObjectsReturned if multiple verified addresses are found.
+        """
+        email_objects = self.filter(address=email_address)
+        email_address_count = email_objects.count()
+        if email_address_count == 0:
+            return None
+        elif email_address_count == 1:
+            address = email_objects[0]
+            if address.verified is not None or address.identity.allow_auth_with_unverified_contact:
+                return address
+            return None
+        else:
+            try:
+                return email_objects.get(verified__isnull=False)
+            except ObjectDoesNotExist:
+                return None
+            except MultipleObjectsReturned as e:
+                logger.error("Multiple verified email addresses found: %s", email_address)
+                raise e
+
+
 class EmailAddress(models.Model):
     """
     Stores an email address, related to :class:`kamu.models.identity.Identity`.
@@ -520,6 +572,8 @@ class EmailAddress(models.Model):
 
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
+
+    objects = EmailAddressManager()
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["identity", "address"], name="unique_email_address")]
@@ -540,6 +594,42 @@ class EmailAddress(models.Model):
         }
 
 
+class PhoneNumberManager(models.Manager["PhoneNumber"]):
+    """
+    Manager methods for :class:`kamu.models.identity.PhoneNumber`.
+    """
+
+    def get_phone_for_authentication(self, phone_number: str) -> "PhoneNumber | None":
+        """
+        Returns a phone number object for authentication.
+
+        Return unverified number only if:
+         - identity is allowed to log in with unverified contact.
+         - no verified phone number exists with the same number.
+         - only one unverified phone number exists with the same number.
+
+        Raises MultipleObjectsReturned if multiple verified numbers are found.
+        """
+
+        phone_objects = self.filter(number=phone_number)
+        phone_number_count = phone_objects.count()
+        if phone_number_count == 0:
+            return None
+        elif phone_number_count == 1:
+            number = phone_objects[0]
+            if number.verified is not None or number.identity.allow_auth_with_unverified_contact:
+                return number
+            return None
+        else:
+            try:
+                return phone_objects.get(verified__isnull=False)
+            except ObjectDoesNotExist:
+                return None
+            except MultipleObjectsReturned as e:
+                logger.error("Multiple verified phone numbers found: %s", phone_number)
+                raise e
+
+
 class PhoneNumber(models.Model):
     """
     Stores a phone number, related to :class:`kamu.models.identity.Identity`.
@@ -556,6 +646,8 @@ class PhoneNumber(models.Model):
 
     created_at = models.DateTimeField(default=timezone.now, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
+
+    objects = PhoneNumberManager()
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["identity", "number"], name="unique_phone_number")]

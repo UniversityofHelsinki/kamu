@@ -18,12 +18,12 @@ from django.contrib.auth.models import User as UserType
 from django.core.exceptions import (
     ImproperlyConfigured,
     MultipleObjectsReturned,
-    ObjectDoesNotExist,
     ValidationError,
 )
 from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
 from django.http import Http404, HttpRequest
+from django.utils import timezone
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
@@ -32,7 +32,11 @@ from kamu.models.role import Role
 from kamu.models.token import Token
 from kamu.utils.audit import AuditLog, get_client_ip
 from kamu.utils.auth import set_default_permissions
-from kamu.utils.identity import update_identity_attributes
+from kamu.utils.identity import (
+    create_or_verify_email_address,
+    create_or_verify_phone_number,
+    update_identity_attributes,
+)
 from kamu.validators.identity import validate_fpic
 
 audit_log = AuditLog()
@@ -53,12 +57,43 @@ def post_login_tasks(request: HttpRequest) -> None:
     Tasks to do after user has logged in.
 
     Give user default permissions if user owns at least one role, remove them otherwise.
+
+    Remove temporary authentication allowances from identity.
     """
     if request.user and request.user.is_authenticated:
         if Role.objects.filter(owner=request.user).exists():
             set_default_permissions(request.user)
         else:
             set_default_permissions(request.user, remove=True)
+    if hasattr(request.user, "identity"):
+        identity = request.user.identity
+        changed = False
+        if identity.allow_auth_with_unverified_contact and getattr(
+            settings, "RESET_UNVERIFIED_CONTACT_AUTH_ALLOWED", True
+        ):
+            identity.allow_auth_with_unverified_contact = False
+            changed = True
+            audit_log.info(
+                "Removed unverified contact authentication after successful login",
+                category="authentication",
+                action="update",
+                outcome="success",
+                request=request,
+                objects=[request.user],
+            )
+        if identity.allow_auth_with_single_contact and getattr(settings, "RESET_SINGLE_CONTACT_AUTH_ALLOWED", True):
+            identity.allow_auth_with_single_contact = False
+            changed = True
+            audit_log.info(
+                "Removed single contact authentication after successful login",
+                category="authentication",
+                action="update",
+                outcome="success",
+                request=request,
+                objects=[request.user],
+            )
+        if changed:
+            identity.save()
 
 
 def auth_login(request: HttpRequest, user: UserType | None, backend: str | None) -> None:
@@ -1110,6 +1145,105 @@ class EmailSMSBackend(LocalBaseBackend):
     username and password fields are not used, but are included because superclass requires them.
     """
 
+    def _link_identity_to_new_user(self, request: HttpRequest, identity: Identity, unique_identifier: str) -> None:
+        """
+        If identity exists but is not yet linked to user, create new user and link identity to it.
+
+        Custom version to use identity as base for new user instead of external authentication META attributes.
+        """
+        if identity.user:
+            return
+        user = self._create_user(
+            username=unique_identifier,
+            email=identity.email_address(),
+            given_names=identity.given_names,
+            surname=identity.surname,
+        )
+        identity.user = user
+        identity.save()
+        audit_log.info(
+            f"Linked identity {identity} to user {user}",
+            category="identity",
+            action="update",
+            outcome="success",
+            request=request,
+            objects=[identity, user],
+            log_to_db=True,
+        )
+
+    def update_contacts_verified(
+        self, request: HttpRequest, email_obj: EmailAddress | None, phone_obj: PhoneNumber | None
+    ) -> None:
+        """
+        Sets email address and phone number as verified if they are not already verified.
+        """
+        if email_obj and not email_obj.verified:
+            email_obj.verified = timezone.now()
+            email_obj.save()
+            audit_log.info(
+                "Verified email address during authentication",
+                category="email_address",
+                action="update",
+                outcome="success",
+                request=request,
+                objects=[email_obj.identity, email_obj],
+                log_to_db=True,
+            )
+        if phone_obj and not phone_obj.verified:
+            phone_obj.verified = timezone.now()
+            phone_obj.save()
+            audit_log.info(
+                "Verified phone number during authentication",
+                category="phone_number",
+                action="update",
+                outcome="success",
+                request=request,
+                objects=[phone_obj.identity, phone_obj],
+                log_to_db=True,
+            )
+
+    def validate_email_and_phone_tokens(
+        self, request: HttpRequest, email_address: str, email_token: str, phone_number: str, phone_token: str
+    ) -> Identity | None:
+        """
+        Validates email and phone tokens.
+
+        If user logins with single contact, adds another contact to the identity.
+        """
+        try:
+            email_obj = EmailAddress.objects.get_email_for_authentication(email_address)
+            phone_obj = PhoneNumber.objects.get_phone_for_authentication(phone_number)
+        except MultipleObjectsReturned as e:
+            raise AuthenticationError(self.error_messages["invalid_email_or_phone"]) from e
+        identity: Identity | None = None
+        # Only email object exits. Phone is validated as number token and added to identity.
+        if email_obj and not phone_obj:
+            if not email_obj.identity.allow_auth_with_single_contact:
+                raise AuthenticationError(self.error_messages["invalid_email_or_phone"])
+            if Token.objects.validate_email_login_token(
+                email_token, email_obj
+            ) and Token.objects.validate_phone_number_verification_token(phone_token, phone_number):
+                identity = email_obj.identity
+                create_or_verify_phone_number(request, identity, phone_number)
+        # Only phone object exits. Email is validated as address token and added to identity.
+        elif phone_obj and not email_obj:
+            if not phone_obj.identity.allow_auth_with_single_contact:
+                raise AuthenticationError(self.error_messages["invalid_email_or_phone"])
+            if Token.objects.validate_phone_login_token(
+                phone_token, phone_obj
+            ) and Token.objects.validate_email_address_verification_token(email_token, email_address):
+                identity = phone_obj.identity
+                create_or_verify_email_address(request, identity, email_address)
+        # Both contact objects exist and belong to the same identity
+        elif phone_obj and email_obj and email_obj.identity == phone_obj.identity:
+            if Token.objects.validate_email_login_token(
+                email_token, email_obj
+            ) and Token.objects.validate_phone_login_token(phone_token, phone_obj):
+                identity = email_obj.identity
+        if identity:
+            self.update_contacts_verified(request, email_obj, phone_obj)
+        return identity
+
     def authenticate(
         self,
         request: HttpRequest | None,
@@ -1123,21 +1257,21 @@ class EmailSMSBackend(LocalBaseBackend):
         phone_token: str | None = None,
         **kwargs: Any,
     ) -> UserType:
+        """
+        Authenticate user with email address and phone number tokens.
+        """
         if not request:
             raise AuthenticationError(self.error_messages["unexpected"])
         self.check_enabled()
         if not email_address or not email_token or not phone_number or not phone_token:
             raise AuthenticationError(self.error_messages["invalid_parameters"])
-        try:
-            email_obj = EmailAddress.objects.get(address=email_address, verified__isnull=False)
-            phone_obj = PhoneNumber.objects.get(number=phone_number, verified__isnull=False)
-        except (ObjectDoesNotExist, MultipleObjectsReturned) as e:
-            raise AuthenticationError(self.error_messages["invalid_email_or_phone"]) from e
-        if email_obj.identity.user and email_obj.identity.user == phone_obj.identity.user:
-            if Token.objects.validate_email_object_verification_token(
-                email_token, email_obj
-            ) and Token.objects.validate_phone_object_verification_token(phone_token, phone_obj):
-                user = email_obj.identity.user
+        identity = self.validate_email_and_phone_tokens(request, email_address, email_token, phone_number, phone_token)
+        if identity:
+            if not identity.user:
+                self._link_identity_to_new_user(request, identity, unique_identifier=str(uuid4()))
+                identity.refresh_from_db()
+            if identity.user:
+                user = identity.user
                 self.validate_access(request, user)
                 return user
         raise AuthenticationError(self.error_messages["invalid_email_or_phone"])

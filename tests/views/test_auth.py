@@ -14,7 +14,7 @@ from django.test import Client, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
-from kamu.models.identity import Identifier, Identity, PhoneNumber
+from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
 from kamu.models.membership import Membership
 from kamu.models.token import Token
 from tests.data import USERS
@@ -178,15 +178,48 @@ class LoginViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(f"{self.identity.display_name()} |", response.content.decode("utf-8"))
 
+    @override_settings(AUTHENTICATION_BACKENDS=["django.contrib.auth.backends.ModelBackend"])
+    def test_disabled_local_shibboleth_login(self):
+        url = reverse("login-shibboleth")
+        response = self.client.get(url, follow=True, headers={"EPPN": "testuser@example.org"})
+        self.assertEqual(response.status_code, 404)
+
+    @override_settings(AUTHENTICATION_BACKENDS=["kamu.backends.ShibbolethLocalBackend"])
+    def test_disabled_password_login(self):
+        url = reverse("login-local")
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 404)
+
+
+class LoginEmailSMSViewTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.create_identity(user=True, email=False, phone=False)
+
+    def _create_email_phone(
+        self,
+        email=True,
+        phone=True,
+        email_verified: datetime.datetime | None = timezone.now(),
+        phone_verified: datetime.datetime | None = timezone.now(),
+    ):
+        if email:
+            self.email_address = EmailAddress.objects.create(
+                identity=self.identity, address="test@example.org", verified=email_verified
+            )
+        if phone:
+            self.phone_number = PhoneNumber.objects.create(
+                identity=self.identity, number="+1234567890", verified=phone_verified
+            )
+
     @override_settings(SMS_DEBUG=True)
     @mock.patch("kamu.connectors.sms.logger")
     def test_email_login(self, mock_logger):
-        phone_number = PhoneNumber.objects.create(identity=self.identity, number="+123456789", verified=timezone.now())
-
+        self._create_email_phone()
         url = reverse("login-email") + "?next=/identity/me/"
         response = self.client.post(
             url,
-            {"email_address": self.email_address.address, "phone_number": phone_number.number},
+            {"email_address": self.email_address.address, "phone_number": self.phone_number.number},
             follow=True,
         )
         self.assertEqual(response.status_code, 200)
@@ -195,8 +228,7 @@ class LoginViewTests(BaseTestCase):
         mock_logger.debug.assert_called_once()
 
     def test_email_login_non_verified_number(self):
-        self.phone_number.verified = None
-        self.phone_number.save()
+        self._create_email_phone(phone_verified=None)
         url = reverse("login-email") + "?next=/identity/me/"
         response = self.client.post(
             url,
@@ -205,18 +237,108 @@ class LoginViewTests(BaseTestCase):
         )
         self.assertIn("This contact information cannot be used to login", response.content.decode("utf-8"))
 
-    def _test_email_login_verification(self):
+    @override_settings(SMS_DEBUG=True)
+    def test_email_login_without_phone_number(self):
+        self._create_email_phone(phone=False)
+        url = reverse("login-email") + "?next=/identity/me/"
+        response = self.client.post(
+            url,
+            {"email_address": self.email_address.address, "phone_number": "+123456789"},
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("This contact information cannot be used to login", response.content.decode("utf-8"))
+        self.assertEqual(len(mail.outbox), 0)
+
+    @override_settings(SMS_DEBUG=True)
+    @mock.patch("kamu.connectors.sms.logger")
+    def test_email_login_with_single_contact_allowed(self, mock_logger):
+        self._create_email_phone(phone=False)
+        self.identity.allow_auth_with_single_contact = True
+        self.identity.save()
+        url = reverse("login-email") + "?next=/identity/me/"
+        response = self.client.post(
+            url,
+            {"email_address": self.email_address.address, "phone_number": "+123456789"},
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Login verification", response.content.decode("utf-8"))
+        self.assertEqual("Kamu login verification", mail.outbox[0].subject)
+        mock_logger.debug.assert_called_once()
+
+    @override_settings(SMS_DEBUG=True)
+    @mock.patch("kamu.connectors.sms.logger")
+    def test_email_login_with_unverified_contacts_allowed(self, mock_logger):
+        self._create_email_phone(email_verified=None, phone_verified=None)
+        self.identity.allow_auth_with_unverified_contact = True
+        self.identity.save()
+        url = reverse("login-email") + "?next=/identity/me/"
+        response = self.client.post(
+            url,
+            {"email_address": self.email_address.address, "phone_number": self.phone_number.number},
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Login verification", response.content.decode("utf-8"))
+        self.assertEqual("Kamu login verification", mail.outbox[0].subject)
+        mock_logger.debug.assert_called_once()
+
+    @override_settings(SMS_DEBUG=True)
+    @mock.patch("kamu.connectors.sms.logger")
+    def test_email_login_with_multiple_contacts_found_one_verified(self, mock_logger):
+        self._create_email_phone()
+        super_identity = self.create_superidentity()
+        PhoneNumber.objects.create(identity=super_identity, number=self.phone_number.number, verified=None)
+        self.identity.allow_auth_with_unverified_contact = True
+        self.identity.save()
+        url = reverse("login-email") + "?next=/identity/me/"
+        response = self.client.post(
+            url,
+            {"email_address": self.email_address.address, "phone_number": self.phone_number.number},
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Login verification", response.content.decode("utf-8"))
+        self.assertEqual("Kamu login verification", mail.outbox[0].subject)
+        mock_logger.debug.assert_called_once()
+
+    @override_settings(SMS_DEBUG=True)
+    def test_email_login_with_unverified_contacts_allowed_multiple_unverified_found(self):
+        self._create_email_phone(phone_verified=None)
+        super_identity = self.create_superidentity()
+        PhoneNumber.objects.create(identity=super_identity, number=self.phone_number.number, verified=None)
+        self.identity.allow_auth_with_unverified_contact = True
+        self.identity.save()
+        url = reverse("login-email") + "?next=/identity/me/"
+        response = self.client.post(
+            url,
+            {"email_address": self.email_address.address, "phone_number": self.phone_number.number},
+            follow=True,
+        )
+        self.assertIn("This contact information cannot be used to login", response.content.decode("utf-8"))
+
+    def _test_create_tokens_and_session_for_email_sms_login(
+        self, email_address: str | None = None, phone_number: str | None = None
+    ):
         self.url = reverse("login-email-verify") + "?next=/identity/me/"
         self.session = self.client.session
-        self.session["login_email_address"] = self.email_address.address
-        self.session["login_phone_number"] = self.phone_number.number
+        if email_address:
+            self.session["login_email_address"] = email_address
+            email_secret = Token.objects.create_email_address_verification_token(email_address)
+        else:
+            self.session["login_email_address"] = self.email_address.address
+            email_secret = Token.objects.create_email_login_token(self.email_address)
+        if phone_number:
+            self.session["login_phone_number"] = phone_number
+            phone_secret = Token.objects.create_phone_number_verification_token(phone_number)
+        else:
+            self.session["login_phone_number"] = self.phone_number.number
+            phone_secret = Token.objects.create_phone_login_token(self.phone_number)
         self.session.save()
-        email_secret = Token.objects.create_email_object_verification_token(self.email_address)
-        phone_secret = Token.objects.create_phone_object_verification_token(self.phone_number)
         return email_secret, phone_secret
 
-    def test_email_login_verification(self):
-        email_secret, phone_secret = self._test_email_login_verification()
+    def _test_successful_email_sms_login(self, email_secret: str, phone_secret: str):
         response = self.client.post(
             self.url,
             {"email_verification_token": email_secret, "phone_verification_token": phone_secret},
@@ -225,8 +347,130 @@ class LoginViewTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(f"{self.identity.display_name()} |", response.content.decode("utf-8"))
 
+    def test_email_login_verification(self):
+        self._create_email_phone()
+        email_secret, phone_secret = self._test_create_tokens_and_session_for_email_sms_login()
+        self._test_successful_email_sms_login(email_secret, phone_secret)
+
+    def test_email_login_verification_unverified_contact(self):
+        self._create_email_phone(email_verified=None)
+        email_secret, phone_secret = self._test_create_tokens_and_session_for_email_sms_login()
+        response = self.client.post(
+            self.url,
+            {"email_verification_token": email_secret, "phone_verification_token": phone_secret},
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Invalid verification code.", response.content.decode("utf-8"))
+
+    @mock.patch("kamu.utils.audit.logger_audit")
+    def test_email_login_verification_with_unverified_contacts_allowed(self, audit_logger):
+        self._create_email_phone(email_verified=None, phone_verified=None)
+        self.identity.allow_auth_with_unverified_contact = True
+        self.identity.save()
+        email_secret, phone_secret = self._test_create_tokens_and_session_for_email_sms_login()
+        self._test_successful_email_sms_login(email_secret, phone_secret)
+        self.email_address.refresh_from_db()
+        self.phone_number.refresh_from_db()
+        self.assertIsNotNone(self.email_address.verified)
+        self.assertIsNotNone(self.phone_number.verified)
+        self.identity.refresh_from_db()
+        audit_logger.log.assert_has_calls(
+            [
+                call(
+                    20,
+                    "Verified email address during authentication",
+                    extra=ANY,
+                ),
+                call(
+                    20,
+                    "Verified phone number during authentication",
+                    extra=ANY,
+                ),
+                call(
+                    20,
+                    "User user logged in with kamu.backends.EmailSMSBackend",
+                    extra=ANY,
+                ),
+            ]
+        )
+
+    @mock.patch("kamu.utils.audit.logger_audit")
+    def test_email_login_verification_with_single_contact_allowed_email(self, audit_logger):
+        self._create_email_phone(phone=False)
+        self.identity.allow_auth_with_single_contact = True
+        self.identity.save()
+        email_secret, phone_secret = self._test_create_tokens_and_session_for_email_sms_login(
+            phone_number="+123000000"
+        )
+        self._test_successful_email_sms_login(email_secret, phone_secret)
+        self.identity.refresh_from_db()
+        audit_logger.log.assert_has_calls(
+            [
+                call(
+                    20,
+                    "Verified phone number added to identity Tester Mc.",
+                    extra=ANY,
+                ),
+                call(
+                    20,
+                    "User user logged in with kamu.backends.EmailSMSBackend",
+                    extra=ANY,
+                ),
+            ]
+        )
+
+    def test_reset_authentication_settings_after_successful_auth(self):
+        self._create_email_phone(email_verified=None, phone_verified=None)
+        self.identity.allow_auth_with_unverified_contact = True
+        self.identity.allow_auth_with_single_contact = True
+        self.identity.save()
+        email_secret, phone_secret = self._test_create_tokens_and_session_for_email_sms_login()
+        self._test_successful_email_sms_login(email_secret, phone_secret)
+        self.identity.refresh_from_db()
+        self.assertFalse(self.identity.allow_auth_with_unverified_contact)
+        self.assertFalse(self.identity.allow_auth_with_single_contact)
+
+    @override_settings(RESET_UNVERIFIED_CONTACT_AUTH_ALLOWED=False)
+    @override_settings(RESET_SINGLE_CONTACT_AUTH_ALLOWED=False)
+    def test_ignore_reset_authentication_settings_after_successful_auth(self):
+        self._create_email_phone(email_verified=None, phone_verified=None)
+        self.identity.allow_auth_with_unverified_contact = True
+        self.identity.allow_auth_with_single_contact = True
+        self.identity.save()
+        email_secret, phone_secret = self._test_create_tokens_and_session_for_email_sms_login()
+        self._test_successful_email_sms_login(email_secret, phone_secret)
+        self.identity.refresh_from_db()
+        self.assertTrue(self.identity.allow_auth_with_unverified_contact)
+        self.assertTrue(self.identity.allow_auth_with_single_contact)
+
+    @mock.patch("kamu.utils.audit.logger_audit")
+    def test_email_login_verification_with_single_contact_allowed_phone(self, audit_logger):
+        self._create_email_phone(email=False)
+        self.identity.allow_auth_with_single_contact = True
+        self.identity.save()
+        email_secret, phone_secret = self._test_create_tokens_and_session_for_email_sms_login(
+            email_address="new_address@example.org"
+        )
+        self._test_successful_email_sms_login(email_secret, phone_secret)
+        audit_logger.log.assert_has_calls(
+            [
+                call(
+                    20,
+                    "Verified email address added to identity Tester Mc.",
+                    extra=ANY,
+                ),
+                call(
+                    20,
+                    "User user logged in with kamu.backends.EmailSMSBackend",
+                    extra=ANY,
+                ),
+            ]
+        )
+
     def test_email_login_verification_incorrect_token(self):
-        email_secret, phone_secret = self._test_email_login_verification()
+        self._create_email_phone()
+        email_secret, phone_secret = self._test_create_tokens_and_session_for_email_sms_login()
         response = self.client.post(
             self.url,
             {"email_verification_token": email_secret, "phone_verification_token": phone_secret + "a"},
@@ -235,8 +479,9 @@ class LoginViewTests(BaseTestCase):
         self.assertIn("Invalid verification code", response.content.decode("utf-8"))
 
     def test_email_login_verification_incorrect_user(self):
+        self._create_email_phone()
         self.create_superidentity()
-        email_secret, phone_secret = self._test_email_login_verification()
+        email_secret, phone_secret = self._test_create_tokens_and_session_for_email_sms_login()
         self.email_address.identity = self.superidentity
         self.email_address.save()
         response = self.client.post(
@@ -250,7 +495,8 @@ class LoginViewTests(BaseTestCase):
     @override_settings(SMS_DEBUG=True)
     @mock.patch("kamu.connectors.sms.logger")
     def test_email_login_resend_phone_token(self, mock_logger):
-        self._test_email_login_verification()
+        self._create_email_phone()
+        self._test_create_tokens_and_session_for_email_sms_login()
         self.client.post(
             self.url,
             {"resend_phone_code": True},
@@ -260,7 +506,8 @@ class LoginViewTests(BaseTestCase):
 
     @override_settings(TOKEN_TIME_LIMIT_NEW=0)
     def test_email_login_resend_email_token(self):
-        self._test_email_login_verification()
+        self._create_email_phone()
+        self._test_create_tokens_and_session_for_email_sms_login()
         self.client.post(
             self.url,
             {"resend_email_code": True},
@@ -270,7 +517,8 @@ class LoginViewTests(BaseTestCase):
 
     @override_settings(TOKEN_TIME_LIMIT_NEW=60)
     def test_email_login_resend_email_token_time_limit(self):
-        self._test_email_login_verification()
+        self._create_email_phone()
+        self._test_create_tokens_and_session_for_email_sms_login()
         response = self.client.post(
             self.url,
             {"resend_email_code": True},
@@ -278,18 +526,6 @@ class LoginViewTests(BaseTestCase):
         )
         self.assertIn("Tried to send a new code too soon", response.content.decode("utf-8"))
         self.assertEqual(0, len(mail.outbox))
-
-    @override_settings(AUTHENTICATION_BACKENDS=["django.contrib.auth.backends.ModelBackend"])
-    def test_disabled_local_shibboleth_login(self):
-        url = reverse("login-shibboleth")
-        response = self.client.get(url, follow=True, headers={"EPPN": "testuser@example.org"})
-        self.assertEqual(response.status_code, 404)
-
-    @override_settings(AUTHENTICATION_BACKENDS=["kamu.backends.ShibbolethLocalBackend"])
-    def test_disabled_password_login(self):
-        url = reverse("login-local")
-        response = self.client.get(url, follow=True)
-        self.assertEqual(response.status_code, 404)
 
 
 class LogoutViewTests(BaseTestCase):

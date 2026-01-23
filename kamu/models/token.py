@@ -249,29 +249,37 @@ class TokenManager(models.Manager["Token"]):
             secret, Token.Type.PHONE_OBJECT_VERIFICATION, phone_object=phone, remove_token=remove_token
         )
 
-    def validate_email_login_token(self, secret: str, email: EmailAddress) -> bool:
+    def validate_email_login_token(self, secret: str, email: EmailAddress, remove_token: bool = True) -> bool:
         """
         Validates a email login token.
         """
-        return self._validate_token(secret, Token.Type.EMAIL_LOGIN, email_object=email)
+        return self._validate_token(secret, Token.Type.EMAIL_LOGIN, email_object=email, remove_token=remove_token)
 
-    def validate_phone_login_token(self, secret: str, phone: PhoneNumber) -> bool:
+    def validate_phone_login_token(self, secret: str, phone: PhoneNumber, remove_token: bool = True) -> bool:
         """
         Validates an SMS login token.
         """
-        return self._validate_token(secret, Token.Type.PHONE_LOGIN, phone_object=phone)
+        return self._validate_token(secret, Token.Type.PHONE_LOGIN, phone_object=phone, remove_token=remove_token)
 
-    def validate_email_address_verification_token(self, secret: str, email_address: str) -> bool:
+    def validate_email_address_verification_token(
+        self, secret: str, email_address: str, remove_token: bool = True
+    ) -> bool:
         """
         Validates an email address verification token.
         """
-        return self._validate_token(secret, Token.Type.EMAIL_ADDRESS_VERIFICATION, email_address=email_address)
+        return self._validate_token(
+            secret, Token.Type.EMAIL_ADDRESS_VERIFICATION, email_address=email_address, remove_token=remove_token
+        )
 
-    def validate_phone_number_verification_token(self, secret: str, phone_number: str) -> bool:
+    def validate_phone_number_verification_token(
+        self, secret: str, phone_number: str, remove_token: bool = True
+    ) -> bool:
         """
         Validates a phone number verification token.
         """
-        return self._validate_token(secret, Token.Type.PHONE_NUMBER_VERIFICATION, phone_number=phone_number)
+        return self._validate_token(
+            secret, Token.Type.PHONE_NUMBER_VERIFICATION, phone_number=phone_number, remove_token=remove_token
+        )
 
     def validate_invite_token(self, secret: str, membership: Membership, remove_token: bool = True) -> bool:
         """

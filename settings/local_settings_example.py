@@ -131,6 +131,10 @@ AUTHENTICATION_BACKENDS: Sequence[str] = (
     # "kamu.backends.EmailSMSBackend",
 )
 
+# Reset unverified or single contact authentication option after successful authentication.
+# RESET_UNVERIFIED_CONTACT_AUTH_ALLOWED: bool = True
+# RESET_SINGLE_CONTACT_AUTH_ALLOWED: bool = True
+
 # List of group prefixes that are synced for each backend.
 BACKEND_GROUP_PREFIXES: dict[str, list[str]] = {
     "kamu.backends.ShibbolethLocalBackend": ["grp-", "hy-", "sys-"],

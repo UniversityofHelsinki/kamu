@@ -614,49 +614,64 @@ class LoginEmailPhoneVerificationView(LoginView):
             response["Location"] += "?next=" + self.request.GET.get("next", "/")
         return response
 
+    def resend_email_token(self, email_address: str) -> None:
+        """
+        Creates a new email token and sends it by email.
+
+        Adds possible errors to messages framework.
+        """
+        try:
+            email_obj = EmailAddress.objects.get_email_for_authentication(email_address)
+        except EmailAddress.MultipleObjectsReturned:
+            return
+        try:
+            if email_obj:
+                email_token = Token.objects.create_email_login_token(email_obj)
+            else:
+                email_token = Token.objects.create_email_address_verification_token(email_address)
+            if not send_verification_email(email_token, email_address, template="login_verification_email"):
+                messages.add_message(self.request, messages.ERROR, _("Could not send verification email."))
+        except TimeLimitError:
+            messages.add_message(
+                self.request,
+                messages.WARNING,
+                _("Tried to send a new code too soon. Please try again in one minute."),
+            )
+
+    def resend_phone_token(self, phone_number: str) -> None:
+        """
+        Creates a new phone token and sends it by email.
+
+        Adds possible errors to messages framework.
+        """
+        try:
+            phone_obj = PhoneNumber.objects.get_phone_for_authentication(phone_number)
+        except PhoneNumber.MultipleObjectsReturned:
+            return
+        try:
+            if phone_obj:
+                phone_token = Token.objects.create_phone_login_token(phone_obj)
+            else:
+                phone_token = Token.objects.create_phone_number_verification_token(phone_number)
+            SmsConnector().send_sms(phone_number, phone_token)
+        except TimeLimitError:
+            messages.add_message(
+                self.request,
+                messages.WARNING,
+                _("Tried to send a new code too soon. Please try again in one minute."),
+            )
+        except ApiError:
+            messages.add_message(self.request, messages.ERROR, _("Could not send an SMS message."))
+
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """
         Check for resend button.
         """
         if "resend_email_code" in self.request.POST:
-            try:
-                email_address = EmailAddress.objects.get(
-                    address=self.request.session["login_email_address"], verified__isnull=False
-                )
-            except EmailAddress.DoesNotExist:
-                return self.redirect_to_self()
-            except EmailAddress.MultipleObjectsReturned:
-                return self.redirect_to_self()
-            try:
-                email_token = Token.objects.create_email_object_verification_token(email_address)
-                send_verification_email(email_token, email_address.address, template="login_verification_email")
-            except TimeLimitError:
-                messages.add_message(
-                    self.request,
-                    messages.WARNING,
-                    _("Tried to send a new code too soon. Please try again in one minute."),
-                )
+            self.resend_email_token(self.request.session["login_email_address"])
             return self.redirect_to_self()
         if "resend_phone_code" in self.request.POST:
-            try:
-                phone_number = PhoneNumber.objects.get(
-                    number=self.request.session["login_phone_number"], verified__isnull=False
-                )
-            except PhoneNumber.DoesNotExist:
-                return self.redirect_to_self()
-            except PhoneNumber.MultipleObjectsReturned:
-                return self.redirect_to_self()
-            try:
-                phone_token = Token.objects.create_phone_object_verification_token(phone_number)
-                SmsConnector().send_sms(phone_number.number, phone_token)
-            except TimeLimitError:
-                messages.add_message(
-                    self.request,
-                    messages.WARNING,
-                    _("Tried to send a new code too soon. Please try again in one minute."),
-                )
-            except ApiError:
-                messages.add_message(request, messages.ERROR, _("Could not send an SMS message."))
+            self.resend_phone_token(self.request.session["login_phone_number"])
             return self.redirect_to_self()
         return super().post(request, *args, **kwargs)
 
