@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-26 16:33+0200\n"
+"POT-Creation-Date: 2026-01-27 10:58+0200\n"
 "Language: EN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -398,7 +398,7 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: forms/identity.py:136 forms/identity.py:354
+#: forms/identity.py:136 forms/identity.py:372
 #: templates/account/account_create.html:39
 #: templates/account/account_detail.html:82
 #: templates/account/account_list.html:61
@@ -457,16 +457,35 @@ msgstr ""
 msgid "Restricted information"
 msgstr ""
 
-#: forms/identity.py:349
+#: forms/identity.py:345
+msgid "Authentication"
+msgstr ""
+
+#: forms/identity.py:367
 msgid "Save changes"
 msgstr ""
 
-#: forms/identity.py:428
+#: forms/identity.py:463
 msgid "Cannot remove verified nationality."
 msgstr ""
 
-#: forms/identity.py:449
+#: forms/identity.py:475
+msgid "Cannot set this high assurance level manually."
+msgstr ""
+
+#: forms/identity.py:496
 msgid "Cannot set strong electrical verification manually."
+msgstr ""
+
+#: forms/identity.py:504
+msgid ""
+"Cannot allow authentication with unverified contact at this high assurance "
+"level."
+msgstr ""
+
+#: forms/identity.py:512
+msgid ""
+"Cannot allow authentication with single contact at this high assurance level."
 msgstr ""
 
 #: forms/membership.py:27 forms/membership.py:130 forms/membership.py:223
@@ -3531,13 +3550,13 @@ msgstr ""
 msgid "Current user's identity cannot be the source identity."
 msgstr ""
 
-#: utils/identity.py:417 views/identity.py:597
+#: utils/identity.py:417 views/identity.py:685
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again. Please also check your spam folder."
 msgstr ""
 
-#: utils/identity.py:427 views/identity.py:610
+#: utils/identity.py:427 views/identity.py:698
 msgid ""
 "The verification code has now been sent and should arrive in your email in a "
 "few minutes. If you do not receive a verification code, please check your "
@@ -3552,16 +3571,16 @@ msgstr ""
 msgid "Tried to send a new code too soon. Please try again in one minute."
 msgstr ""
 
-#: utils/identity.py:451 views/identity.py:659
+#: utils/identity.py:451 views/identity.py:747
 #, python-format
 msgid "Your personal Kamu verification code is: %(token)s"
 msgstr ""
 
-#: utils/identity.py:454 views/auth.py:664 views/identity.py:662
+#: utils/identity.py:454 views/auth.py:664 views/identity.py:750
 msgid "Could not send an SMS message."
 msgstr ""
 
-#: utils/identity.py:459 views/identity.py:667
+#: utils/identity.py:459 views/identity.py:755
 msgid ""
 "The verification code has now been sent and should arrive in your phone in a "
 "few minutes."
@@ -3888,72 +3907,90 @@ msgstr ""
 msgid "Could not start Candour ID process, please try again later."
 msgstr ""
 
-#: views/identity.py:602
+#: views/identity.py:491
+msgid "Authentication with single contact has been disabled."
+msgstr ""
+
+#: views/identity.py:509
+msgid ""
+"Authentication with a single contact has been enabled. User can authenticate "
+"with a code sent to either an email address or a phone number."
+msgstr ""
+
+#: views/identity.py:528
+msgid "Authentication with unverified contact has been enabled."
+msgstr ""
+
+#: views/identity.py:545
+msgid "Authentication with unverified contact has been disabled."
+msgstr ""
+
+#: views/identity.py:690
 msgid "Kamu: email address verification"
 msgstr ""
 
-#: views/identity.py:603
+#: views/identity.py:691
 #, python-format
 msgid "Your verification code is: %(token)s"
 msgstr ""
 
-#: views/identity.py:653
+#: views/identity.py:741
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again."
 msgstr ""
 
-#: views/identity.py:1036
+#: views/identity.py:1124
 msgid "Contract already signed."
 msgstr ""
 
-#: views/identity.py:1042
+#: views/identity.py:1130
 msgid "Contract version has changed. Please try again."
 msgstr ""
 
-#: views/identity.py:1045
+#: views/identity.py:1133
 msgid "Contract signed."
 msgstr ""
 
-#: views/identity.py:1265
+#: views/identity.py:1353
 msgid "New identity created."
 msgstr ""
 
-#: views/identity.py:1289
+#: views/identity.py:1377
 msgid "Invalid verification session."
 msgstr ""
 
-#: views/identity.py:1302
+#: views/identity.py:1390
 msgid "Identity verification has been cancelled."
 msgstr ""
 
-#: views/identity.py:1361
+#: views/identity.py:1449
 msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr ""
 
-#: views/identity.py:1476
+#: views/identity.py:1564
 msgid "Too many results, please refine your search parameters."
 msgstr ""
 
-#: views/identity.py:1483
+#: views/identity.py:1571
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 
-#: views/identity.py:1549
+#: views/identity.py:1637
 msgid "LDAP search failed, could not search existing accounts."
 msgstr ""
 
-#: views/identity.py:1557
+#: views/identity.py:1645
 msgid "Identifier match found, skipping name search."
 msgstr ""
 
-#: views/identity.py:1669
+#: views/identity.py:1757
 msgid "Incorrect primary keys."
 msgstr ""
 
-#: views/identity.py:1675
+#: views/identity.py:1763
 msgid "Identities combined."
 msgstr ""
 

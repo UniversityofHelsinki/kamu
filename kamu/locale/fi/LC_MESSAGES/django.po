@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-26 16:33+0200\n"
+"POT-Creation-Date: 2026-01-27 10:58+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -434,7 +434,7 @@ msgstr ""
 msgid "Add"
 msgstr "Lisää"
 
-#: forms/identity.py:136 forms/identity.py:354
+#: forms/identity.py:136 forms/identity.py:372
 #: templates/account/account_create.html:39
 #: templates/account/account_detail.html:82
 #: templates/account/account_list.html:61
@@ -493,17 +493,40 @@ msgstr "Perustiedot"
 msgid "Restricted information"
 msgstr "Rajatut tiedot"
 
-#: forms/identity.py:349
+#: forms/identity.py:345
+msgid "Authentication"
+msgstr "Käyttäjätunnistus"
+
+#: forms/identity.py:367
 msgid "Save changes"
 msgstr "Tallenna muutokset"
 
-#: forms/identity.py:428
+#: forms/identity.py:463
 msgid "Cannot remove verified nationality."
 msgstr "Vahvistettua kansalaisuutta ei voi poistaa."
 
-#: forms/identity.py:449
+#: forms/identity.py:475
+msgid "Cannot set this high assurance level manually."
+msgstr "Et voi asettaa näin korkeaa tunnistustasoa."
+
+#: forms/identity.py:496
 msgid "Cannot set strong electrical verification manually."
 msgstr "Vahvaa sähköistä tunnistustasoa ei voi asettaa käsin."
+
+#: forms/identity.py:504
+msgid ""
+"Cannot allow authentication with unverified contact at this high assurance "
+"level."
+msgstr ""
+"Et voi sallia vahvistamattomalla yhteystiedolla kirjautumista näin korkealla "
+"tunnistustasolla."
+
+#: forms/identity.py:512
+msgid ""
+"Cannot allow authentication with single contact at this high assurance level."
+msgstr ""
+"Et voi sallia kirjautumista yhdellä yhteystiedolla näin korkealla "
+"tunnistustasolla."
 
 #: forms/membership.py:27 forms/membership.py:130 forms/membership.py:223
 msgid "Notify approvers"
@@ -3861,7 +3884,7 @@ msgstr ""
 msgid "Current user's identity cannot be the source identity."
 msgstr "Nykyisen käyttäjän henkilöllisyys ei voi olla lähdehenkilöllisyys."
 
-#: utils/identity.py:417 views/identity.py:597
+#: utils/identity.py:417 views/identity.py:685
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again. Please also check your spam folder."
@@ -3869,7 +3892,7 @@ msgstr ""
 "Yritit lähettää uuden koodin liian pian. Ole hyvä ja odota yksi minuutti "
 "ennen uutta yritystä. Tarkista myös sähköpostisi roskapostikansio."
 
-#: utils/identity.py:427 views/identity.py:610
+#: utils/identity.py:427 views/identity.py:698
 msgid ""
 "The verification code has now been sent and should arrive in your email in a "
 "few minutes. If you do not receive a verification code, please check your "
@@ -3889,16 +3912,16 @@ msgstr ""
 "Yritit lähettää uuden koodin liian pian. Ole hyvä ja odota yksi minuutti "
 "ennen uutta yritystä."
 
-#: utils/identity.py:451 views/identity.py:659
+#: utils/identity.py:451 views/identity.py:747
 #, python-format
 msgid "Your personal Kamu verification code is: %(token)s"
 msgstr "Henkilökohtainen Kamu-vahvistuskoodisi on: %(token)s"
 
-#: utils/identity.py:454 views/auth.py:664 views/identity.py:662
+#: utils/identity.py:454 views/auth.py:664 views/identity.py:750
 msgid "Could not send an SMS message."
 msgstr "Tekstiviestin lähetys epäonnistui."
 
-#: utils/identity.py:459 views/identity.py:667
+#: utils/identity.py:459 views/identity.py:755
 msgid ""
 "The verification code has now been sent and should arrive in your phone in a "
 "few minutes."
@@ -4258,16 +4281,37 @@ msgstr "Candourin h, yritä uudelleen."
 msgid "Could not start Candour ID process, please try again later."
 msgstr "Candourin ID-prosessia ei voitu aloittaa, yritä myöhemmin uudelleen."
 
-#: views/identity.py:602
+#: views/identity.py:491
+msgid "Authentication with single contact has been disabled."
+msgstr "Kirjautuminen vain yhdellä yhteystiedolla on estetty."
+
+#: views/identity.py:509
+msgid ""
+"Authentication with a single contact has been enabled. User can authenticate "
+"with a code sent to either an email address or a phone number."
+msgstr ""
+"Kirjautuminen vain yhdellä yhteystiedolla on sallittu. Käyttäjä voi "
+"kirjautua koodilla, joka on lähetetty joko sähköpostiosoitteeseen tai "
+"puhelinnumeroon."
+
+#: views/identity.py:528
+msgid "Authentication with unverified contact has been enabled."
+msgstr "Kirjautuminen vahvistamattomalla yhteystiedolla on sallittu."
+
+#: views/identity.py:545
+msgid "Authentication with unverified contact has been disabled."
+msgstr "Kirjautuminen vahvistamattomalla yhteystiedolla on estetty."
+
+#: views/identity.py:690
 msgid "Kamu: email address verification"
 msgstr "Kamu: sähköpostiosoitteen vahvistaminen"
 
-#: views/identity.py:603
+#: views/identity.py:691
 #, python-format
 msgid "Your verification code is: %(token)s"
 msgstr "Vahvistuskoodisi on: %(token)s"
 
-#: views/identity.py:653
+#: views/identity.py:741
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again."
@@ -4275,60 +4319,60 @@ msgstr ""
 "Yritit lähettää uuden koodin liian pian. Odota yksi minuutti ennen uutta "
 "yritystä."
 
-#: views/identity.py:1036
+#: views/identity.py:1124
 msgid "Contract already signed."
 msgstr "Sopimus on jo allekirjoitettu."
 
-#: views/identity.py:1042
+#: views/identity.py:1130
 msgid "Contract version has changed. Please try again."
 msgstr "Sopimuksen versio on muuttunut. Ole hyvä ja yritä uudelleen."
 
-#: views/identity.py:1045
+#: views/identity.py:1133
 msgid "Contract signed."
 msgstr "Sopimus allekirjoitettu."
 
-#: views/identity.py:1265
+#: views/identity.py:1353
 msgid "New identity created."
 msgstr "Uusi henkilöllisyys luotu."
 
-#: views/identity.py:1289
+#: views/identity.py:1377
 msgid "Invalid verification session."
 msgstr "Virheellinen varmennusistunto."
 
-#: views/identity.py:1302
+#: views/identity.py:1390
 msgid "Identity verification has been cancelled."
 msgstr "Henkilöllisyyden varmentaminen peruttiin."
 
-#: views/identity.py:1361
+#: views/identity.py:1449
 msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr ""
 "LDAP-haku palautti liian monta tulosta. Ole hyvä ja tarkenna hakuparametrejä."
 
-#: views/identity.py:1476
+#: views/identity.py:1564
 msgid "Too many results, please refine your search parameters."
 msgstr "Liian monta tulosta. Ole hyvä ja tarkenna hakuparametrejä."
 
-#: views/identity.py:1483
+#: views/identity.py:1571
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 "Osittaiset nimet palauttivat liian monta tulosta. Näytetään vain täsmälliset "
 "osumat."
 
-#: views/identity.py:1549
+#: views/identity.py:1637
 msgid "LDAP search failed, could not search existing accounts."
 msgstr "LDAP-haku epäonnistui. Olemassa olevia tilejä ei voitu hakea."
 
-#: views/identity.py:1557
+#: views/identity.py:1645
 msgid "Identifier match found, skipping name search."
 msgstr "Tunnisteella löydettiin osuma. Nimien haku ohitetaan."
 
-#: views/identity.py:1669
+#: views/identity.py:1757
 msgid "Incorrect primary keys."
 msgstr "Virheelliset yksilöivät avaimet."
 
-#: views/identity.py:1675
+#: views/identity.py:1763
 msgid "Identities combined."
 msgstr "Henkilöllisyydet yhdistetty."
 
@@ -4412,3 +4456,15 @@ msgstr "Sähköpostikutsu on lähetetty seuraaviin osoitteisiin: {0}"
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Lisätty seuraavat henkilöllisyydet: {0}"
+
+#~ msgid "User can authenticate with only one contact address:"
+#~ msgstr "Käyttäjä voi kirjautua vain yhdellä yhteystiedolla:"
+
+#~ msgid "Disallow"
+#~ msgstr "Kiellä"
+
+#~ msgid "Allow"
+#~ msgstr "Salli"
+
+#~ msgid "User can authenticate with unverified contact addresses:"
+#~ msgstr "Käyttäjä voi kirjautua vahvistamattomilla yhteystiedoilla:"

@@ -135,6 +135,13 @@ AUTHENTICATION_BACKENDS: Sequence[str] = (
 # RESET_UNVERIFIED_CONTACT_AUTH_ALLOWED: bool = True
 # RESET_SINGLE_CONTACT_AUTH_ALLOWED: bool = True
 
+# Disallow setting assurance levels higher than this value manually.
+# DISALLOW_SETTING_ASSURANCE_MANUALLY_HIGHER_THAN: int = 3
+
+# Disallow allowing unverified or single contact if assurance level is higher than this value.
+# DISALLOW_UNVERIFIED_CONTACT_AUTH_WITH_ASSURANCE_HIGHER_THAN: int = 3
+# DISALLOW_SINGLE_CONTACT_AUTH_WITH_ASSURANCE_HIGHER_THAN: int = 3
+
 # List of group prefixes that are synced for each backend.
 BACKEND_GROUP_PREFIXES: dict[str, list[str]] = {
     "kamu.backends.ShibbolethLocalBackend": ["grp-", "hy-", "sys-"],

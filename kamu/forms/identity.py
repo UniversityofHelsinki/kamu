@@ -339,6 +339,24 @@ class IdentityForm(forms.ModelForm):
                     ),
                 ]
             )
+            if self.request.user.has_perms(["kamu.view_authentication_settings"]):
+                layout.extend(
+                    [
+                        HTML("<h2 class='mb-3 mt-5'>" + _("Authentication") + "</h2>"),
+                        Div(
+                            Div("assurance_level", css_class="col-md-8"),
+                            css_class="row mb-3",
+                        ),
+                        Div(
+                            Div("allow_auth_with_unverified_contact", css_class="col-md-8"),
+                            css_class="row mb-3",
+                        ),
+                        Div(
+                            Div("allow_auth_with_single_contact", css_class="col-md-8"),
+                            css_class="row mb-3",
+                        ),
+                    ]
+                )
             if include_verification_fields:
                 layout[7].append(Div("date_of_birth_verification", css_class="col-md-4"))
                 layout[8].append(Div("gender_verification", css_class="col-md-4"))
@@ -357,6 +375,22 @@ class IdentityForm(forms.ModelForm):
                 )
             )
         return layout
+
+    def _set_authentication_fields(self) -> None:
+        """
+        Set authentication related fields based on settings.
+        """
+        if self.request.user.has_perms(["kamu.view_authentication_settings"]):
+            if not self.request.user.has_perms(["kamu.change_assurance_level"]):
+                self.fields["assurance_level"].disabled = True
+            if not self.request.user.has_perms(["kamu.change_unverified_contact_auth"]):
+                self.fields["allow_auth_with_unverified_contact"].disabled = True
+            if not self.request.user.has_perms(["kamu.change_single_contact_auth"]):
+                self.fields["allow_auth_with_single_contact"].disabled = True
+        else:
+            del self.fields["assurance_level"]
+            del self.fields["allow_auth_with_unverified_contact"]
+            del self.fields["allow_auth_with_single_contact"]
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -412,6 +446,7 @@ class IdentityForm(forms.ModelForm):
             restricted_fields = False
             for field in self.instance.restricted_fields() + self.instance.restricted_verification_fields():
                 del self.fields[field]
+        self._set_authentication_fields()
         self.helper.layout = self._create_layout(restricted_fields, verification_fields)
 
     def clean_remove_nationality(self) -> Any:
@@ -427,6 +462,18 @@ class IdentityForm(forms.ModelForm):
                 if nationality.verification_method >= disable_verify_level:
                     raise ValidationError(_("Cannot remove verified nationality."))
         return remove_nationalities
+
+    def clean_assurance_level(self) -> int:
+        """
+        Check that high assurance level cannot be set by hand.
+        """
+        assurance_level = self.cleaned_data["assurance_level"]
+        initial_assurance_level = self.initial.get("assurance_level")
+        if initial_assurance_level != assurance_level and assurance_level > getattr(
+            settings, "DISALLOW_SETTING_ASSURANCE_MANUALLY_HIGHER_THAN", Identity.AssuranceLevel.HIGH
+        ):
+            raise ValidationError(_("Cannot set this high assurance level manually."))
+        return assurance_level
 
     def clean(self) -> None:
         """
@@ -447,6 +494,24 @@ class IdentityForm(forms.ModelForm):
                 or (initial_verification is not None and initial_verification < Identity.VerificationMethod.STRONG)
             ) and verification == Identity.VerificationMethod.STRONG:
                 self.add_error(f"{field}_verification", _("Cannot set strong electrical verification manually."))
+        assurance_level = cleaned_data.get("assurance_level")
+        if assurance_level is not None and assurance_level > getattr(
+            settings, "DISALLOW_UNVERIFIED_CONTACT_AUTH_WITH_ASSURANCE_HIGHER_THAN", Identity.AssuranceLevel.HIGH
+        ):
+            if cleaned_data.get("allow_auth_with_unverified_contact"):
+                self.add_error(
+                    "allow_auth_with_unverified_contact",
+                    _("Cannot allow authentication with unverified contact at this high assurance level."),
+                )
+        if assurance_level is not None and assurance_level > getattr(
+            settings, "DISALLOW_SINGLE_CONTACT_AUTH_WITH_ASSURANCE_HIGHER_THAN", Identity.AssuranceLevel.HIGH
+        ):
+            if cleaned_data.get("allow_auth_with_single_contact"):
+                self.add_error(
+                    "allow_auth_with_single_contact",
+                    _("Cannot allow authentication with single contact at this high assurance level."),
+                )
+        return None
 
     class Meta:
         model = Identity
@@ -464,6 +529,9 @@ class IdentityForm(forms.ModelForm):
             "gender_verification",
             "fpic",
             "fpic_verification",
+            "assurance_level",
+            "allow_auth_with_unverified_contact",
+            "allow_auth_with_single_contact",
         ]
         widgets = {
             "date_of_birth": forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),

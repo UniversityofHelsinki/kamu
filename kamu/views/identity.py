@@ -458,6 +458,93 @@ class IdentityUpdateView(LoginRequiredMixin, UpdateView):
     form_class = IdentityForm
     template_name = "identity/identity_form.html"
 
+    def log_authentication_setting_changes(self, form: IdentityForm) -> None:
+        """
+        Log and message changes of authentication settings.
+        """
+        if "assurance_level" in form.changed_data:
+            audit_log.info(
+                f"Changed assurance level to {form.cleaned_data.get('assurance_level')}",
+                category="identity",
+                action="update",
+                outcome="success",
+                request=self.request,
+                objects=[self.object],
+                log_to_db=True,
+            )
+
+        if "allow_auth_with_single_contact" in form.changed_data and not form.cleaned_data.get(
+            "allow_auth_with_single_contact"
+        ):
+            audit_log.info(
+                "Disallowed authentication with one contact",
+                category="authentication",
+                action="update",
+                outcome="success",
+                request=self.request,
+                objects=[self.object],
+                log_to_db=True,
+            )
+            messages.add_message(
+                self.request,
+                messages.INFO,
+                _("Authentication with single contact has been disabled."),
+            )
+        if "allow_auth_with_single_contact" in form.changed_data and form.cleaned_data.get(
+            "allow_auth_with_single_contact"
+        ):
+            audit_log.info(
+                "Allowed authentication with single contact",
+                category="authentication",
+                action="update",
+                outcome="success",
+                request=self.request,
+                objects=[self.object],
+                log_to_db=True,
+            )
+            messages.add_message(
+                self.request,
+                messages.INFO,
+                _(
+                    "Authentication with a single contact has been enabled. User can authenticate with a code sent "
+                    "to either an email address or a phone number."
+                ),
+            )
+        if "allow_auth_with_unverified_contact" in form.changed_data and form.cleaned_data.get(
+            "allow_auth_with_unverified_contact"
+        ):
+            audit_log.info(
+                "Allowed authentication with unverified contact",
+                category="authentication",
+                action="update",
+                outcome="success",
+                request=self.request,
+                objects=[self.object],
+                log_to_db=True,
+            )
+            messages.add_message(
+                self.request,
+                messages.INFO,
+                _("Authentication with unverified contact has been enabled."),
+            )
+        if "allow_auth_with_unverified_contact" in form.changed_data and not form.cleaned_data.get(
+            "allow_auth_with_unverified_contact"
+        ):
+            audit_log.info(
+                "Disallowed authentication with unverified contact",
+                category="authentication",
+                action="update",
+                outcome="success",
+                request=self.request,
+                objects=[self.object],
+                log_to_db=True,
+            )
+            messages.add_message(
+                self.request,
+                messages.INFO,
+                _("Authentication with unverified contact has been disabled."),
+            )
+
     def form_valid(self, form: IdentityForm) -> HttpResponse:
         """
         Set verification level to self-asserted, if user is changing their own information.
@@ -514,6 +601,7 @@ class IdentityUpdateView(LoginRequiredMixin, UpdateView):
                 log_to_db=True,
                 db_message=change_message,
             )
+            self.log_authentication_setting_changes(form)
         return valid
 
     def get_form_kwargs(self) -> dict[str, Any]:

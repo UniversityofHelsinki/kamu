@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-26 16:33+0200\n"
+"POT-Creation-Date: 2026-01-27 10:58+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -430,7 +430,7 @@ msgstr ""
 msgid "Add"
 msgstr "Lägg till"
 
-#: forms/identity.py:136 forms/identity.py:354
+#: forms/identity.py:136 forms/identity.py:372
 #: templates/account/account_create.html:39
 #: templates/account/account_detail.html:82
 #: templates/account/account_list.html:61
@@ -489,17 +489,39 @@ msgstr "Allmänna uppgifter"
 msgid "Restricted information"
 msgstr "Begränsad information"
 
-#: forms/identity.py:349
+#: forms/identity.py:345
+msgid "Authentication"
+msgstr "Autentisering"
+
+#: forms/identity.py:367
 msgid "Save changes"
 msgstr "Spara ändringarna"
 
-#: forms/identity.py:428
+#: forms/identity.py:463
 msgid "Cannot remove verified nationality."
 msgstr "Kan inte ta bort verifierad nationalitet."
 
-#: forms/identity.py:449
+#: forms/identity.py:475
+msgid "Cannot set this high assurance level manually."
+msgstr "Kan inte ställa in denna höga tillitsnivå manuellt."
+
+#: forms/identity.py:496
 msgid "Cannot set strong electrical verification manually."
 msgstr "Kan inte ställa in stark elektronisk verifiering manuellt."
+
+#: forms/identity.py:504
+msgid ""
+"Cannot allow authentication with unverified contact at this high assurance "
+"level."
+msgstr ""
+"Kan inte tillåta autentisering med overifierad kontakt på denna höga "
+"tillitsnivå."
+
+#: forms/identity.py:512
+msgid ""
+"Cannot allow authentication with single contact at this high assurance level."
+msgstr ""
+"Kan inte tillåta autentisering med en enda kontakt på denna höga tillitsnivå."
 
 #: forms/membership.py:27 forms/membership.py:130 forms/membership.py:223
 msgid "Notify approvers"
@@ -3866,7 +3888,7 @@ msgstr ""
 msgid "Current user's identity cannot be the source identity."
 msgstr "Den aktuella användarens identitet kan inte vara källidentiteten."
 
-#: utils/identity.py:417 views/identity.py:597
+#: utils/identity.py:417 views/identity.py:685
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again. Please also check your spam folder."
@@ -3874,7 +3896,7 @@ msgstr ""
 "Du försökte skicka en ny kod för fort. Vänta en minut innan du försöker "
 "igen. Kontrollera även skräppostmappen i din e-post."
 
-#: utils/identity.py:427 views/identity.py:610
+#: utils/identity.py:427 views/identity.py:698
 msgid ""
 "The verification code has now been sent and should arrive in your email in a "
 "few minutes. If you do not receive a verification code, please check your "
@@ -3893,16 +3915,16 @@ msgid "Tried to send a new code too soon. Please try again in one minute."
 msgstr ""
 "Försökte skicka en ny kod för tidigt. Vänligen försök igen om en minut."
 
-#: utils/identity.py:451 views/identity.py:659
+#: utils/identity.py:451 views/identity.py:747
 #, python-format
 msgid "Your personal Kamu verification code is: %(token)s"
 msgstr "Din personliga Kamu-bekräftelsekod är: %(token)s"
 
-#: utils/identity.py:454 views/auth.py:664 views/identity.py:662
+#: utils/identity.py:454 views/auth.py:664 views/identity.py:750
 msgid "Could not send an SMS message."
 msgstr "Det gick inte att skicka SMS."
 
-#: utils/identity.py:459 views/identity.py:667
+#: utils/identity.py:459 views/identity.py:755
 msgid ""
 "The verification code has now been sent and should arrive in your phone in a "
 "few minutes."
@@ -4253,16 +4275,37 @@ msgstr ""
 msgid "Could not start Candour ID process, please try again later."
 msgstr "Kunde inte starta Candours ID‑process, försök igen senare."
 
-#: views/identity.py:602
+#: views/identity.py:491
+msgid "Authentication with single contact has been disabled."
+msgstr "Autentisering med en enda kontakt har inaktiverats."
+
+#: views/identity.py:509
+msgid ""
+"Authentication with a single contact has been enabled. User can authenticate "
+"with a code sent to either an email address or a phone number."
+msgstr ""
+"Autentisering med en enda kontakt har aktiverats. Användaren kan autentisera "
+"med en kod som skickats antingen till en e-postadress eller till ett "
+"telefonnummer."
+
+#: views/identity.py:528
+msgid "Authentication with unverified contact has been enabled."
+msgstr "Autentisering med overifierad kontakt har aktiverats."
+
+#: views/identity.py:545
+msgid "Authentication with unverified contact has been disabled."
+msgstr "Autentisering med overifierad kontakt har inaktiverats."
+
+#: views/identity.py:690
 msgid "Kamu: email address verification"
 msgstr "Kamu: verifiering av e-postadress"
 
-#: views/identity.py:603
+#: views/identity.py:691
 #, python-format
 msgid "Your verification code is: %(token)s"
 msgstr "Din bekräftelsekod är: %(token)s"
 
-#: views/identity.py:653
+#: views/identity.py:741
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again."
@@ -4270,59 +4313,59 @@ msgstr ""
 "Du försökte skicka en ny bekräftelsekod för fort. Vänta en minut innan du "
 "försöker igen."
 
-#: views/identity.py:1036
+#: views/identity.py:1124
 msgid "Contract already signed."
 msgstr "Avtalet har redan signerats."
 
-#: views/identity.py:1042
+#: views/identity.py:1130
 msgid "Contract version has changed. Please try again."
 msgstr "Avtalsversionen har ändrats. Vänligen försök igen."
 
-#: views/identity.py:1045
+#: views/identity.py:1133
 msgid "Contract signed."
 msgstr "Avtal signerat."
 
-#: views/identity.py:1265
+#: views/identity.py:1353
 msgid "New identity created."
 msgstr "Ny identitet skapad."
 
-#: views/identity.py:1289
+#: views/identity.py:1377
 msgid "Invalid verification session."
 msgstr "Ogiltig verifieringssession."
 
-#: views/identity.py:1302
+#: views/identity.py:1390
 msgid "Identity verification has been cancelled."
 msgstr "Identitetsverifieringen har avbrutits."
 
-#: views/identity.py:1361
+#: views/identity.py:1449
 msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr "LDAP-sökningen gav för många resultat, förfina sökparametrarna."
 
-#: views/identity.py:1476
+#: views/identity.py:1564
 msgid "Too many results, please refine your search parameters."
 msgstr "För många resultat, förfina sökparametrarna."
 
-#: views/identity.py:1483
+#: views/identity.py:1571
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 "Partiella namnträffar gav för många resultat. Återger endast exakta träffar."
 
-#: views/identity.py:1549
+#: views/identity.py:1637
 msgid "LDAP search failed, could not search existing accounts."
 msgstr ""
 "LDAP-sökningen misslyckades, det gick inte att söka efter befintliga konton."
 
-#: views/identity.py:1557
+#: views/identity.py:1645
 msgid "Identifier match found, skipping name search."
 msgstr "Identifierarträff hittades, skippar namnsökning."
 
-#: views/identity.py:1669
+#: views/identity.py:1757
 msgid "Incorrect primary keys."
 msgstr "Felaktiga primärnycklar."
 
-#: views/identity.py:1675
+#: views/identity.py:1763
 msgid "Identities combined."
 msgstr "Identiteter kombinerade."
 
@@ -4406,3 +4449,15 @@ msgstr "E-postinbjudan har skickats till följande e-postadresser: {0}"
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Följande identiteter har lagts till: {0}"
+
+#~ msgid "User can authenticate with only one contact address:"
+#~ msgstr "Användaren kan autentisera med endast en kontaktadress:"
+
+#~ msgid "Disallow"
+#~ msgstr "Inaktivera"
+
+#~ msgid "Allow"
+#~ msgstr "Tillåta"
+
+#~ msgid "User can authenticate with unverified contact addresses:"
+#~ msgstr "Användaren kan autentisera med overifierade kontaktadresser:"

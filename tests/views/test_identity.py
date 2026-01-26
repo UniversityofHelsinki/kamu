@@ -303,6 +303,9 @@ class IdentityEditTests(BaseTestCase):
             "date_of_birth_verification": self.identity.date_of_birth_verification,
             "gender_verification": self.identity.gender_verification,
             "fpic_verification": self.identity.fpic_verification,
+            "assurance_level": self.identity.assurance_level,
+            "allow_auth_with_unverified_contact": self.identity.allow_auth_with_unverified_contact,
+            "allow_auth_with_single_contact": self.identity.allow_auth_with_single_contact,
         }
 
     def test_edit_own_information_listed_fields(self):
@@ -312,6 +315,8 @@ class IdentityEditTests(BaseTestCase):
         self.assertIn("Basic information", response.content.decode("utf-8"))
         self.assertIn("Restricted information", response.content.decode("utf-8"))
         self.assertNotIn("verification method", response.content.decode("utf-8"))
+        self.assertNotIn("Authentication", response.content.decode("utf-8"))
+        self.assertNotIn("Assurance level", response.content.decode("utf-8"))
 
     def test_edit_own_information_disabled_fields(self):
         self.identity.given_names_verification = 4
@@ -415,6 +420,76 @@ class IdentityEditTests(BaseTestCase):
         response = self.client.post(self.url, self.data)
         self.assertEqual(self.identity.nationalities.all().count(), 1)
         self.assertIn("Cannot remove verified nationality", response.content.decode("utf-8"))
+
+    def test_setting_authentication_settings_without_permissions_fails(self):
+        self.client.force_login(self.user)
+        self.data["allow_auth_with_unverified_contact"] = True
+        self.data["allow_auth_with_single_contact"] = True
+        self.data["assurance_level"] = Identity.AssuranceLevel.MEDIUM
+        self.client.post(self.url, self.data)
+        self.identity.refresh_from_db()
+        self.assertFalse(self.identity.allow_auth_with_unverified_contact)
+        self.assertFalse(self.identity.allow_auth_with_single_contact)
+        self.assertNotEqual(self.identity.assurance_level, Identity.AssuranceLevel.MEDIUM)
+
+    def test_setting_authentication_settings_with_partial_permissions(self):
+        self.client.force_login(self.user)
+        view_permission, _ = Permission.objects.get_or_create(codename="view_authentication_settings")
+        change_permission, _ = Permission.objects.get_or_create(codename="change_single_contact_auth")
+        self.user.user_permissions.add(view_permission)
+        self.user.user_permissions.add(change_permission)
+        change_permission, _ = Permission.objects.get_or_create(codename="change_single_contact_auth")
+        self.data["allow_auth_with_unverified_contact"] = True
+        self.data["allow_auth_with_single_contact"] = True
+        self.data["assurance_level"] = Identity.AssuranceLevel.MEDIUM
+        self.client.post(self.url, self.data)
+        self.identity.refresh_from_db()
+        self.assertFalse(self.identity.allow_auth_with_unverified_contact)
+        self.assertTrue(self.identity.allow_auth_with_single_contact)
+        self.assertNotEqual(self.identity.assurance_level, Identity.AssuranceLevel.MEDIUM)
+
+    @mock.patch("kamu.utils.audit.logger_audit")
+    def test_set_authentication_settings(self, mock_logger):
+        self.create_superuser()
+        self.client.force_login(self.superuser)
+        self.data["allow_auth_with_unverified_contact"] = True
+        self.data["allow_auth_with_single_contact"] = True
+        self.data["assurance_level"] = Identity.AssuranceLevel.MEDIUM
+        response = self.client.post(self.url, self.data, follow=True)
+        self.identity.refresh_from_db()
+        self.assertTrue(self.identity.allow_auth_with_unverified_contact)
+        self.assertTrue(self.identity.allow_auth_with_single_contact)
+        self.assertEqual(self.identity.assurance_level, Identity.AssuranceLevel.MEDIUM)
+        self.assertIn("Authentication with a single contact has been enabled", response.content.decode("utf-8"))
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Changed identity information", extra=ANY),
+                call(20, "Changed assurance level to 2", extra=ANY),
+                call(20, "Allowed authentication with single contact", extra=ANY),
+                call(20, "Allowed authentication with unverified contact", extra=ANY),
+            ],
+        )
+
+    def test_set_highest_assurance_level_manually_fails(self):
+        self.create_superuser()
+        self.client.force_login(self.superuser)
+        self.data["assurance_level"] = Identity.AssuranceLevel.HIGHEST
+        response = self.client.post(self.url, self.data, follow=True)
+        self.assertIn("Cannot set this high assurance level manually", response.content.decode("utf-8"))
+
+    def test_set_login_settings_with_highest_assurance_level_fails(self):
+        self.create_superuser()
+        self.client.force_login(self.superuser)
+        self.identity.assurance_level = Identity.AssuranceLevel.HIGHEST
+        self.data["assurance_level"] = Identity.AssuranceLevel.HIGHEST
+        self.identity.save()
+        self.data["allow_auth_with_unverified_contact"] = True
+        self.data["allow_auth_with_single_contact"] = True
+        response = self.client.post(self.url, self.data, follow=True)
+        self.assertIn(
+            "Cannot allow authentication with single contact at this high assurance level",
+            response.content.decode("utf-8"),
+        )
 
 
 class ContactTests(BaseTestCase):
