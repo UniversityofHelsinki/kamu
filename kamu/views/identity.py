@@ -3,7 +3,7 @@ Identity views for the UI.
 """
 
 import string
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 from urllib.parse import quote_plus
 
@@ -1552,11 +1552,13 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
                 queryset = queryset.filter(Q(surname__icontains=surname) | Q(surname_display__icontains=surname))
         return queryset
 
-    def name_search(self, given_names: str, surname: str) -> QuerySet[Identity]:
+    def name_search(self, given_names: str, surname: str, date_of_birth: date | None = None) -> QuerySet[Identity]:
         """
-        Search identities based on names.
+        Search identities based on names and date of birth.
         """
         queryset = self.build_queryset_names(given_names=given_names, surname=surname)
+        if date_of_birth:
+            queryset = queryset.filter(Q(date_of_birth=date_of_birth) | Q(date_of_birth=None))
         if queryset.count() > getattr(settings, "KAMU_IDENTITY_SEARCH_LIMIT", 50):
             queryset = self.build_queryset_names(given_names=given_names, surname=surname, exact_matches=True)
             if queryset.count() > getattr(settings, "KAMU_IDENTITY_SEARCH_LIMIT", 50):
@@ -1618,7 +1620,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
 
     def search_results(self) -> dict[str, Any]:
         """
-        Search Kamu and user directory based on URL parameters.
+        Search Kamu and external services based on URL parameters.
 
         Limit search results to identifier matches if exact_match_skip is True and exact match is found.
         """
@@ -1628,6 +1630,10 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         uid = self.parse_search_attribute("uid")
         email = self.parse_search_attribute("email")
         phone = self.parse_search_attribute("phone")
+        try:
+            date_of_birth = datetime.strptime(self.request.POST.get("date_of_birth", "").strip(), "%Y-%m-%d").date()
+        except ValueError:
+            date_of_birth = None
         queryset = self.build_queryset_identifiers(fpic=fpic, uid=uid, email=email, phone=phone)
         if queryset.exists():
             self.exact_match_found = True
@@ -1639,7 +1645,9 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
                     self.request, messages.ERROR, _("LDAP search failed, could not search existing accounts.")
                 )
         if (given_names or surname) and not (self.exact_match_skip and self.exact_match_found):
-            queryset = queryset.union(self.name_search(given_names=given_names, surname=surname))
+            queryset = queryset.union(
+                self.name_search(given_names=given_names, surname=surname, date_of_birth=date_of_birth)
+            )
         elif given_names or surname:
             messages.add_message(
                 self.request,

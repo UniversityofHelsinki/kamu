@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-27 10:58+0200\n"
+"POT-Creation-Date: 2026-02-02 08:44+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -265,7 +265,7 @@ msgstr "Ogiltiga uppgifter i formuläret."
 msgid "Either given names or surname must be filled in."
 msgstr "Antingen förnamn eller efternamn måste anges."
 
-#: forms/auth.py:283 forms/identity.py:176
+#: forms/auth.py:283 forms/identity.py:186
 msgid "Enter the verification code you received by email"
 msgstr "Ange bekräftelsekoden som du har fått via e-post"
 
@@ -273,12 +273,12 @@ msgstr "Ange bekräftelsekoden som du har fått via e-post"
 msgid "Verify email address"
 msgstr "Bekräfta e-postadress"
 
-#: forms/auth.py:295 forms/auth.py:369 forms/identity.py:187
-#: forms/identity.py:227
+#: forms/auth.py:295 forms/auth.py:369 forms/identity.py:197
+#: forms/identity.py:237
 msgid "Send new code"
 msgstr "Skicka ny kod"
 
-#: forms/auth.py:309 forms/identity.py:197
+#: forms/auth.py:309 forms/identity.py:207
 msgid ""
 "Invalid verification code. Please note that the verification code is "
 "different from the invitation code. If you have received more than one "
@@ -308,7 +308,7 @@ msgstr "Det här telefonnumret är redan angivet av inbjudaren."
 msgid "Send verification code by SMS"
 msgstr "Skicka bekräftelsekod via textmeddelande"
 
-#: forms/auth.py:357 forms/identity.py:216
+#: forms/auth.py:357 forms/identity.py:226
 msgid "Enter the verification code you received by SMS"
 msgstr "Ange bekräftelsekoden som du har fått via textmeddelande"
 
@@ -316,7 +316,7 @@ msgstr "Ange bekräftelsekoden som du har fått via textmeddelande"
 msgid "Verify phone number"
 msgstr "Bekräfta telefonnummer"
 
-#: forms/auth.py:383 forms/identity.py:237
+#: forms/auth.py:383 forms/identity.py:247
 msgid ""
 "Invalid verification code. If you sent yourself more than one verification "
 "code, only the most recent one will be valid."
@@ -338,7 +338,7 @@ msgstr "Ogiltig inbjudningskod."
 msgid "Search text"
 msgstr "Söktext"
 
-#: forms/generic.py:30 forms/identity.py:70
+#: forms/generic.py:30 forms/identity.py:76
 msgid "Search"
 msgstr "Sök"
 
@@ -358,11 +358,23 @@ msgstr "Kombinera"
 msgid "Given name(s)"
 msgstr "Förnamn"
 
-#: forms/identity.py:53 models/identity.py:722
+#: forms/identity.py:53 models/identity.py:238
+#: templates/identity/identity_combine.html:94
+#: templates/identity/identity_detail.html:17
+#: templates/identity/identity_verify.html:17
+#: templates/identity/identity_verify.html:63
+msgid "Date of birth"
+msgstr "Födelsedatum"
+
+#: forms/identity.py:56
+msgid "You may limit name searches by date of birth to improve accuracy."
+msgstr "Du kan begränsa namnsökningar med födelsedatum för att förbättra träffsäkerheten."
+
+#: forms/identity.py:59 models/identity.py:722
 msgid "Identifier"
 msgstr "Identifierare"
 
-#: forms/identity.py:57
+#: forms/identity.py:63
 msgid ""
 "Email address, phone number in international format, e.g. +358401234567, "
 "Finnish personal identity code or user account name"
@@ -370,11 +382,11 @@ msgstr ""
 "E-postadress, telefonnummer i internationellt format, t.ex. +358401234567, "
 "finskt personbeteckningsnummer eller användarkontonamn"
 
-#: forms/identity.py:71
+#: forms/identity.py:77
 msgid "Reset"
 msgstr "Återställ"
 
-#: forms/identity.py:75
+#: forms/identity.py:81
 msgid ""
 "Searches both Kamu and the user directory. Returns partial matches in Kamu "
 "and names that start with your search terms in the user directory."
@@ -382,15 +394,15 @@ msgstr ""
 "Söker både i Kamu och i användarkatalogen. Returnerar partiella träffar i "
 "Kamu och namn som börjar med dina söktermer i användarkatalogen."
 
-#: forms/identity.py:79
+#: forms/identity.py:85
 msgid "Returns partial matches in Kamu."
 msgstr "Returnerar partiella träffar i Kamu."
 
-#: forms/identity.py:80
+#: forms/identity.py:86
 msgid "Matches only exact identifiers."
 msgstr "Matchar endast exakta identifierare."
 
-#: forms/identity.py:82
+#: forms/identity.py:88
 msgid ""
 "If you provide an identifier and a match is found, the name search is "
 "skipped."
@@ -398,7 +410,7 @@ msgstr ""
 "Om du anger en identifierare och en matchning hittas hoppas namnsökningen "
 "över."
 
-#: forms/identity.py:85
+#: forms/identity.py:91
 msgid ""
 "If you provide both an identifier and a name, the results from both searches "
 "are combined into a single list."
@@ -406,19 +418,19 @@ msgstr ""
 "Om du anger både en identifierare och ett namn, kombineras resultaten från "
 "båda sökningarna till en enda lista."
 
-#: forms/identity.py:90
+#: forms/identity.py:96
 msgid "Identifier search"
 msgstr "Identifieringssökning"
 
-#: forms/identity.py:96
+#: forms/identity.py:102
 msgid "Name search"
 msgstr "Namnsökning"
 
-#: forms/identity.py:112
+#: forms/identity.py:122
 msgid "Enter new email address or phone number"
 msgstr "Ange ny e-postadress eller nytt telefonnummer"
 
-#: forms/identity.py:114
+#: forms/identity.py:124
 msgid ""
 "Phone number in international format, e.g. +358123456789. Values containing "
 "@ are treated as email addresses."
@@ -426,11 +438,11 @@ msgstr ""
 "Telefonnummer i internationellt format, t.ex. +358123456789. Värden som "
 "innehåller @ behandlas som e-postadresser."
 
-#: forms/identity.py:131
+#: forms/identity.py:141
 msgid "Add"
 msgstr "Lägg till"
 
-#: forms/identity.py:136 forms/identity.py:372
+#: forms/identity.py:146 forms/identity.py:382
 #: templates/account/account_create.html:39
 #: templates/account/account_detail.html:82
 #: templates/account/account_list.html:61
@@ -441,75 +453,75 @@ msgstr "Lägg till"
 msgid "Return"
 msgstr "Gå tillbaka"
 
-#: forms/identity.py:151
+#: forms/identity.py:161
 msgid "Email address or phone number is required."
 msgstr "E-postadress eller telefonnummer krävs."
 
-#: forms/identity.py:157
+#: forms/identity.py:167
 msgid "Email address already exists."
 msgstr "E-postadressen finns redan."
 
-#: forms/identity.py:159
+#: forms/identity.py:169
 msgid "Maximum number of email addresses reached."
 msgstr "Maximalt antal e-postadresser har uppnåtts."
 
-#: forms/identity.py:165
+#: forms/identity.py:175
 msgid "Phone number already exists."
 msgstr "Telefonnumret finns redan."
 
-#: forms/identity.py:167
+#: forms/identity.py:177
 msgid "Maximum number of phone numbers reached."
 msgstr "Maximalt antal telefonnummer har uppnåtts."
 
-#: forms/identity.py:186
+#: forms/identity.py:196
 msgid "Verify email address and exit"
 msgstr "Bekräfta e-postadress och avsluta"
 
-#: forms/identity.py:226
+#: forms/identity.py:236
 msgid "Verify phone number and exit"
 msgstr "Bekräfta telefonnummer och avsluta"
 
-#: forms/identity.py:271
+#: forms/identity.py:281
 msgid "Add nationality"
 msgstr "Lägg till nationalitet"
 
-#: forms/identity.py:274
+#: forms/identity.py:284
 msgid "Nationality verification method"
 msgstr "Metod för verifiering av nationalitet"
 
-#: forms/identity.py:280
+#: forms/identity.py:290
 msgid "Remove nationality"
 msgstr "Ta bort nationalitet"
 
-#: forms/identity.py:291
+#: forms/identity.py:301
 msgid "Basic information"
 msgstr "Allmänna uppgifter"
 
-#: forms/identity.py:319
+#: forms/identity.py:329
 msgid "Restricted information"
 msgstr "Begränsad information"
 
-#: forms/identity.py:345
+#: forms/identity.py:355
 msgid "Authentication"
 msgstr "Autentisering"
 
-#: forms/identity.py:367
+#: forms/identity.py:377
 msgid "Save changes"
 msgstr "Spara ändringarna"
 
-#: forms/identity.py:463
+#: forms/identity.py:473
 msgid "Cannot remove verified nationality."
 msgstr "Kan inte ta bort verifierad nationalitet."
 
-#: forms/identity.py:475
+#: forms/identity.py:485
 msgid "Cannot set this high assurance level manually."
 msgstr "Kan inte ställa in denna höga tillitsnivå manuellt."
 
-#: forms/identity.py:496
+#: forms/identity.py:506
 msgid "Cannot set strong electrical verification manually."
 msgstr "Kan inte ställa in stark elektronisk verifiering manuellt."
 
-#: forms/identity.py:504
+#: forms/identity.py:514
 msgid ""
 "Cannot allow authentication with unverified contact at this high assurance "
 "level."
@@ -517,7 +529,7 @@ msgstr ""
 "Kan inte tillåta autentisering med overifierad kontakt på denna höga "
 "tillitsnivå."
 
-#: forms/identity.py:512
+#: forms/identity.py:522
 msgid ""
 "Cannot allow authentication with single contact at this high assurance level."
 msgstr ""
@@ -918,13 +930,6 @@ msgid ""
 msgstr ""
 "I princip det officiella efternamnet eller av motiverade skäl en del av det. "
 "Obs! Denna information visas vanligen i appar."
-
-#: models/identity.py:238 templates/identity/identity_combine.html:94
-#: templates/identity/identity_detail.html:17
-#: templates/identity/identity_verify.html:17
-#: templates/identity/identity_verify.html:63
-msgid "Date of birth"
-msgstr "Födelsedatum"
 
 #: models/identity.py:239 models/identity.py:251
 msgid ""
@@ -4342,30 +4347,30 @@ msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr "LDAP-sökningen gav för många resultat, förfina sökparametrarna."
 
-#: views/identity.py:1564
+#: views/identity.py:1566
 msgid "Too many results, please refine your search parameters."
 msgstr "För många resultat, förfina sökparametrarna."
 
-#: views/identity.py:1571
+#: views/identity.py:1573
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 "Partiella namnträffar gav för många resultat. Återger endast exakta träffar."
 
-#: views/identity.py:1637
+#: views/identity.py:1643
 msgid "LDAP search failed, could not search existing accounts."
 msgstr ""
 "LDAP-sökningen misslyckades, det gick inte att söka efter befintliga konton."
 
-#: views/identity.py:1645
+#: views/identity.py:1653
 msgid "Identifier match found, skipping name search."
 msgstr "Identifierarträff hittades, skippar namnsökning."
 
-#: views/identity.py:1757
+#: views/identity.py:1765
 msgid "Incorrect primary keys."
 msgstr "Felaktiga primärnycklar."
 
-#: views/identity.py:1763
+#: views/identity.py:1771
 msgid "Identities combined."
 msgstr "Identiteter kombinerade."
 

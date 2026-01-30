@@ -49,6 +49,12 @@ class IdentitySearchForm(forms.Form):
 
     given_names = forms.CharField(label=_("Given name(s)"), max_length=255, required=False)
     surname = forms.CharField(label=_("Surname"), max_length=255, required=False)
+    date_of_birth = forms.DateField(
+        label=_("Date of birth"),
+        required=False,
+        widget=forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
+        help_text=_("You may limit name searches by date of birth to improve accuracy."),
+    )
     identifier = forms.CharField(
         label=_("Identifier"),
         max_length=320,
@@ -98,6 +104,10 @@ class IdentitySearchForm(forms.Form):
             Div(
                 Div("given_names", css_class="col-md-6"),
                 Div("surname", css_class="col-md-6"),
+                css_class="row mb-3",
+            ),
+            Div(
+                Div("date_of_birth", css_class="col-md-6"),
                 css_class="row mb-3",
             ),
         )

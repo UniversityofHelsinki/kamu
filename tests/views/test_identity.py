@@ -161,6 +161,21 @@ class IdentitySearchTests(BaseTestCase):
             mock_logger.log.call_args_list[0][1]["extra"]["search_terms"],
         )
 
+    @mock.patch("kamu.utils.audit.logger_audit")
+    @override_settings(SKIP_NAME_SEARCH_IF_IDENTIFIER_MATCHES=False)
+    def test_search_identity_with_date_of_birth(self, mock_logger):
+        self.create_identity(email=True)
+        self.identity.date_of_birth = datetime.date(2000, 1, 1)
+        self.identity.save()
+        self.create_superidentity(email=True)
+        self.superidentity.date_of_birth = datetime.date(1980, 1, 1)
+        self.superidentity.save()
+        data = {"given_names": "test", "identifier": "super_test@example.org", "date_of_birth": "1980-01-01"}
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(self.identity.display_name(), response.content.decode("utf-8"))
+        self.assertIn(self.superidentity.display_name(), response.content.decode("utf-8"))
+
     def test_search_identity_skip_name_search_if_match_found(self):
         self.create_identity(email=True)
         self.create_superidentity(email=True)

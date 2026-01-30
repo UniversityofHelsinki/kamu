@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-27 10:58+0200\n"
+"POT-Creation-Date: 2026-02-02 08:44+0200\n"
 "Language: EN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -250,7 +250,7 @@ msgstr ""
 msgid "Either given names or surname must be filled in."
 msgstr ""
 
-#: forms/auth.py:283 forms/identity.py:176
+#: forms/auth.py:283 forms/identity.py:186
 msgid "Enter the verification code you received by email"
 msgstr ""
 
@@ -258,12 +258,12 @@ msgstr ""
 msgid "Verify email address"
 msgstr ""
 
-#: forms/auth.py:295 forms/auth.py:369 forms/identity.py:187
-#: forms/identity.py:227
+#: forms/auth.py:295 forms/auth.py:369 forms/identity.py:197
+#: forms/identity.py:237
 msgid "Send new code"
 msgstr ""
 
-#: forms/auth.py:309 forms/identity.py:197
+#: forms/auth.py:309 forms/identity.py:207
 msgid ""
 "Invalid verification code. Please note that the verification code is "
 "different from the invitation code. If you have received more than one "
@@ -288,7 +288,7 @@ msgstr ""
 msgid "Send verification code by SMS"
 msgstr ""
 
-#: forms/auth.py:357 forms/identity.py:216
+#: forms/auth.py:357 forms/identity.py:226
 msgid "Enter the verification code you received by SMS"
 msgstr ""
 
@@ -296,7 +296,7 @@ msgstr ""
 msgid "Verify phone number"
 msgstr ""
 
-#: forms/auth.py:383 forms/identity.py:237
+#: forms/auth.py:383 forms/identity.py:247
 msgid ""
 "Invalid verification code. If you sent yourself more than one verification "
 "code, only the most recent one will be valid."
@@ -316,7 +316,7 @@ msgstr ""
 msgid "Search text"
 msgstr ""
 
-#: forms/generic.py:30 forms/identity.py:70
+#: forms/generic.py:30 forms/identity.py:76
 msgid "Search"
 msgstr ""
 
@@ -336,69 +336,81 @@ msgstr ""
 msgid "Given name(s)"
 msgstr ""
 
-#: forms/identity.py:53 models/identity.py:722
+#: forms/identity.py:53 models/identity.py:238
+#: templates/identity/identity_combine.html:94
+#: templates/identity/identity_detail.html:17
+#: templates/identity/identity_verify.html:17
+#: templates/identity/identity_verify.html:63
+msgid "Date of birth"
+msgstr ""
+
+#: forms/identity.py:56
+msgid "You may limit name searches by date of birth to improve accuracy."
+msgstr ""
+
+#: forms/identity.py:59 models/identity.py:722
 msgid "Identifier"
 msgstr ""
 
-#: forms/identity.py:57
+#: forms/identity.py:63
 msgid ""
 "Email address, phone number in international format, e.g. +358401234567, "
 "Finnish personal identity code or user account name"
 msgstr ""
 
-#: forms/identity.py:71
+#: forms/identity.py:77
 msgid "Reset"
 msgstr ""
 
-#: forms/identity.py:75
+#: forms/identity.py:81
 msgid ""
 "Searches both Kamu and the user directory. Returns partial matches in Kamu "
 "and names that start with your search terms in the user directory."
 msgstr ""
 
-#: forms/identity.py:79
+#: forms/identity.py:85
 msgid "Returns partial matches in Kamu."
 msgstr ""
 
-#: forms/identity.py:80
+#: forms/identity.py:86
 msgid "Matches only exact identifiers."
 msgstr ""
 
-#: forms/identity.py:82
+#: forms/identity.py:88
 msgid ""
 "If you provide an identifier and a match is found, the name search is "
 "skipped."
 msgstr ""
 
-#: forms/identity.py:85
+#: forms/identity.py:91
 msgid ""
 "If you provide both an identifier and a name, the results from both searches "
 "are combined into a single list."
 msgstr ""
 
-#: forms/identity.py:90
+#: forms/identity.py:96
 msgid "Identifier search"
 msgstr ""
 
-#: forms/identity.py:96
+#: forms/identity.py:102
 msgid "Name search"
 msgstr ""
 
-#: forms/identity.py:112
+#: forms/identity.py:122
 msgid "Enter new email address or phone number"
 msgstr ""
 
-#: forms/identity.py:114
+#: forms/identity.py:124
 msgid ""
 "Phone number in international format, e.g. +358123456789. Values containing "
 "@ are treated as email addresses."
 msgstr ""
 
-#: forms/identity.py:131
+#: forms/identity.py:141
 msgid "Add"
 msgstr ""
 
-#: forms/identity.py:136 forms/identity.py:372
+#: forms/identity.py:146 forms/identity.py:382
 #: templates/account/account_create.html:39
 #: templates/account/account_detail.html:82
 #: templates/account/account_list.html:61
@@ -409,81 +421,81 @@ msgstr ""
 msgid "Return"
 msgstr ""
 
-#: forms/identity.py:151
+#: forms/identity.py:161
 msgid "Email address or phone number is required."
 msgstr ""
 
-#: forms/identity.py:157
+#: forms/identity.py:167
 msgid "Email address already exists."
 msgstr ""
 
-#: forms/identity.py:159
+#: forms/identity.py:169
 msgid "Maximum number of email addresses reached."
 msgstr ""
 
-#: forms/identity.py:165
+#: forms/identity.py:175
 msgid "Phone number already exists."
 msgstr ""
 
-#: forms/identity.py:167
+#: forms/identity.py:177
 msgid "Maximum number of phone numbers reached."
 msgstr ""
 
-#: forms/identity.py:186
+#: forms/identity.py:196
 msgid "Verify email address and exit"
 msgstr ""
 
-#: forms/identity.py:226
+#: forms/identity.py:236
 msgid "Verify phone number and exit"
 msgstr ""
 
-#: forms/identity.py:271
+#: forms/identity.py:281
 msgid "Add nationality"
 msgstr ""
 
-#: forms/identity.py:274
+#: forms/identity.py:284
 msgid "Nationality verification method"
 msgstr ""
 
-#: forms/identity.py:280
+#: forms/identity.py:290
 msgid "Remove nationality"
 msgstr ""
 
-#: forms/identity.py:291
+#: forms/identity.py:301
 msgid "Basic information"
 msgstr ""
 
-#: forms/identity.py:319
+#: forms/identity.py:329
 msgid "Restricted information"
 msgstr ""
 
-#: forms/identity.py:345
+#: forms/identity.py:355
 msgid "Authentication"
 msgstr ""
 
-#: forms/identity.py:367
+#: forms/identity.py:377
 msgid "Save changes"
 msgstr ""
 
-#: forms/identity.py:463
+#: forms/identity.py:473
 msgid "Cannot remove verified nationality."
 msgstr ""
 
-#: forms/identity.py:475
+#: forms/identity.py:485
 msgid "Cannot set this high assurance level manually."
 msgstr ""
 
-#: forms/identity.py:496
+#: forms/identity.py:506
 msgid "Cannot set strong electrical verification manually."
 msgstr ""
 
-#: forms/identity.py:504
+#: forms/identity.py:514
 msgid ""
 "Cannot allow authentication with unverified contact at this high assurance "
 "level."
 msgstr ""
 
-#: forms/identity.py:512
+#: forms/identity.py:522
 msgid ""
 "Cannot allow authentication with single contact at this high assurance level."
 msgstr ""
@@ -865,13 +877,6 @@ msgstr ""
 msgid ""
 "As a rule, the official last name or, for a justified reason, part thereof. "
 "Please note that this information is usually displayed in applications."
-msgstr ""
-
-#: models/identity.py:238 templates/identity/identity_combine.html:94
-#: templates/identity/identity_detail.html:17
-#: templates/identity/identity_verify.html:17
-#: templates/identity/identity_verify.html:63
-msgid "Date of birth"
 msgstr ""
 
 #: models/identity.py:239 models/identity.py:251
@@ -3969,28 +3974,28 @@ msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr ""
 
-#: views/identity.py:1564
+#: views/identity.py:1566
 msgid "Too many results, please refine your search parameters."
 msgstr ""
 
-#: views/identity.py:1571
+#: views/identity.py:1573
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 
-#: views/identity.py:1637
+#: views/identity.py:1643
 msgid "LDAP search failed, could not search existing accounts."
 msgstr ""
 
-#: views/identity.py:1645
+#: views/identity.py:1653
 msgid "Identifier match found, skipping name search."
 msgstr ""
 
-#: views/identity.py:1757
+#: views/identity.py:1765
 msgid "Incorrect primary keys."
 msgstr ""
 
-#: views/identity.py:1763
+#: views/identity.py:1771
 msgid "Identities combined."
 msgstr ""
 
