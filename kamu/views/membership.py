@@ -42,9 +42,9 @@ from kamu.models.role import Role
 from kamu.models.token import TimeLimitError, Token
 from kamu.utils.audit import AuditLog
 from kamu.utils.identity import (
+    create_identity_from_ldap,
     create_or_verify_phone_number,
     create_phone_verification_token,
-    import_identity,
 )
 from kamu.utils.membership import (
     add_missing_requirement_messages,
@@ -647,7 +647,7 @@ class MembershipInviteLdapView(BaseMembershipInviteView):
         """
         uid = self.kwargs.get("uid")
         inviter = self.request.user if self.request.user.is_authenticated else None
-        identity = import_identity(uid, request=self.request)
+        identity = create_identity_from_ldap(uid=uid, request=self.request) if uid else None
         if not identity or not inviter:
             raise PermissionDenied
         form.instance.identity = identity

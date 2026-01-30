@@ -190,6 +190,14 @@ KAMU_IDENTITY_SEARCH_LIMIT: int = 50
 LDAP_SEARCH_FOR_INVITES: bool = True  # Defaults to True
 LDAP_SEARCH_FOR_IDENTITIES: bool = False  # Defaults to False
 
+# List of account subtypes from which username is picked when importing from PersonDB.
+PERSONDB_IMPORT_USERNAME_FROM_ACCOUNT_SUBTYPES: list[int] = [1000]
+
+# List of account types and subtypes to ignore when checking for duplicate identities during PersonDB import.
+# Separate administrator accounts for same person may raise error in identity creation, if not excluded.
+PERSONDB_IMPORT_IGNORE_ACCOUNT_TYPES_IN_DUPLICATE_CHECK: list[int] = []
+PERSONDB_IMPORT_IGNORE_ACCOUNT_SUBTYPES_IN_DUPLICATE_CHECK: list[int] = []
+
 LDAP_SETTINGS: dict[str, Any] = {
     "HOST": "127.0.0.1",
     "PORT": 389,

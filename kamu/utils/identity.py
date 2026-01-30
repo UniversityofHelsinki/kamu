@@ -2,6 +2,7 @@
 Helper functions for the identity
 """
 
+import logging
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Any, Callable
 
@@ -11,6 +12,7 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.validators import URLValidator
 from django.db import IntegrityError, transaction
+from django.db.models import Q
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
@@ -20,6 +22,7 @@ from django.utils.translation import gettext_lazy as _
 from kamu.connectors import ApiError
 from kamu.connectors.email import send_verification_email
 from kamu.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
+from kamu.connectors.persondb import Person, PersonAccount
 from kamu.connectors.sms import SmsConnector
 from kamu.models.contract import Contract
 from kamu.models.identity import (
@@ -39,6 +42,7 @@ if TYPE_CHECKING:
     from kamu.utils.audit import CategoryTypes
 
 audit_log = AuditLog()
+logger = logging.getLogger(__name__)
 
 
 def combine_identities_requirements(
@@ -392,15 +396,127 @@ def create_identity_from_ldap(uid: str, request: HttpRequest | None = None) -> I
     return identity
 
 
-def import_identity(uid: str | None = None, request: HttpRequest | None = None) -> Identity | None:
+def get_identity_from_persondb(person: Person) -> Identity | None:
     """
-    Imports and creates identity from external source, if possible.
+    Get Identity from Person.
 
-    Currently importing from LDAP with uid is supported.
+    Some account types are ignored as same Identity may have administrator accounts with different roles.
+
+    Raises Identity.MultipleObjectsReturned if multiple existing identities are found.
     """
-    if uid:
-        return create_identity_from_ldap(uid, request)
-    return None
+    ignore_account_types = getattr(settings, "PERSONDB_IMPORT_IGNORE_ACCOUNT_TYPES_IN_DUPLICATE_CHECK", [])
+    ignore_account_subtypes = getattr(settings, "PERSONDB_IMPORT_IGNORE_ACCOUNT_SUBTYPES_IN_DUPLICATE_CHECK", [])
+    usernames = [
+        account.username
+        for account in person.accounts
+        if account.username
+        and account.account_type not in ignore_account_types
+        and account.account_subtype not in ignore_account_subtypes
+    ]
+    try:
+        q = Q(identifiers__type=Identifier.Type.PERSON, identifiers__value=person.person_uuid) | Q(uid__in=usernames)
+        if person.fpic:
+            q |= Q(fpic=person.fpic) | Q(identifiers__type=Identifier.Type.FPIC, identifiers__value=person.fpic)
+        identity = Identity.objects.filter(q).distinct().get()
+        return identity
+    except Identity.DoesNotExist:
+        return None
+    except Identity.MultipleObjectsReturned as e:
+        logger.error(f"Multiple identities found for PersonDB person_id: {person.person_uuid}")
+        raise Identity.MultipleObjectsReturned from e
+
+
+def get_username_from_person_accounts(accounts: frozenset[PersonAccount]) -> str | None:
+    """
+    Get username from accounts based on configured account subtypes.
+
+    First match from ordered list is returned, or None.
+    """
+    uid = None
+    for account_subtype in getattr(settings, "PERSONDB_IMPORT_USERNAME_FROM_ACCOUNT_SUBTYPES", [1000]):
+        for account in accounts:
+            if account.account_subtype == account_subtype and account.username:
+                uid = account.username
+                break
+        if uid:
+            break
+    return uid
+
+
+def get_or_create_identity_from_persondb(person: Person, request: HttpRequest | None = None) -> Identity:
+    """
+    Create Identity from Person.
+
+    Raises Identity.MultipleObjectsReturned if multiple existing identities are found.
+    """
+    identity = get_identity_from_persondb(person)
+    if identity:
+        return identity
+    identity = Identity.objects.create(
+        given_names=person.given_names,
+        surname=person.surname,
+        given_name_display=person.given_name_display,
+        surname_display=person.surname_display,
+        date_of_birth=person.date_of_birth,
+        preferred_language=person.preferred_language,
+        fpic=person.fpic,
+        uid=get_username_from_person_accounts(person.accounts),
+    )
+    audit_log.info(
+        "Identity created.",
+        category="identity",
+        action="create",
+        outcome="success",
+        request=request,
+        objects=[identity],
+        log_to_db=True,
+    )
+    for email_address in person.email_addresses:
+        email_object = EmailAddress.objects.create(
+            address=email_address.address,
+            identity=identity,
+            verified=timezone.now() if email_address.verified else None,
+        )
+        audit_log.info(
+            f"Email address added to identity {identity}",
+            category="email_address",
+            action="create",
+            outcome="success",
+            request=request,
+            objects=[email_object, identity],
+            log_to_db=True,
+        )
+    for phone_number in person.phone_numbers:
+        phone_object = PhoneNumber.objects.create(
+            number=phone_number.number,
+            identity=identity,
+            verified=timezone.now() if phone_number.verified else None,
+        )
+        audit_log.info(
+            f"Phone number added to identity {identity}",
+            category="phone_number",
+            action="create",
+            outcome="success",
+            request=request,
+            objects=[phone_object, identity],
+            log_to_db=True,
+        )
+    for identifier in person.identifiers:
+        identifier_object = Identifier.objects.create(
+            type=identifier.type,
+            value=identifier.value,
+            identity=identity,
+        )
+        audit_log.info(
+            f"Linked {identifier_object.type} identifier to identity {identity}",
+            category="identifier",
+            action="create",
+            outcome="success",
+            request=request,
+            objects=[identifier_object, identity],
+            log_to_db=True,
+        )
+    return identity
 
 
 def create_email_verification_token(request: HttpRequest, email_address: str) -> bool:
