@@ -1,13 +1,16 @@
+import dataclasses
 import datetime
 from unittest import mock
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from requests.models import Response
 
 from kamu.connectors import ApiError
 from kamu.connectors.candour import CandourApiConnector
 from kamu.connectors.organisation import OrganisationApiConnector
-from kamu.models.identity import Identity
+from kamu.connectors.persondb import PersonDBApiConnector
+from kamu.models.identity import Country, Identity
+from tests.data import PERSONS
 
 
 class GenericConnectorTests(TestCase):
@@ -53,3 +56,75 @@ class CandourConnectorTests(TestCase):
         connector = CandourApiConnector()
         connector.get_candour_result("1234")
         self.assertEqual(mock_get.call_args.args[0], "https://rest-test.candour.fi/v1/1234")
+
+
+class PersonDBConnectorTests(TestCase):
+    def setUp(self):
+        self.person_uuid = "12345678-1234-1234-1234-123456789012"
+
+    @override_settings(ALLOW_TEST_FPIC=True)
+    @mock.patch("requests.get", return_value=mock.MagicMock(status_code=200))
+    def test_importing_persondb_data(self, mock_get):
+        response = Response()
+        response.status_code = 200
+        response._content = b"""[{
+            "personUuid": "12345678-1234-1234-1234-123456789012",
+            "dateOfBirth": "1981-01-01",
+            "dateOfBirthTl": 10,
+            "officialGivenNames": "Tester",
+            "officialGivenNamesTl": 30,
+            "officialSurnames": "Mr. User",
+            "officialSurnamesTl": 30,
+            "preferredGivenName": "Test",
+            "preferredSurname": "User",
+            "preferredLanguage": "fi",
+            "nationality": null,
+            "extEmail": "tester@example.com",
+            "extEmailTl": 10,
+            "mobilePhonePersonal": "+358501234567",
+            "mobilePhonePersonalTl": 20,
+            "mobilePhoneWork": "+358401234567",
+            "mobilePhoneWorkTl": 30,
+            "email": "tester@example.org",
+            "emailTl": 30,
+            "personIdentifiers": [
+              {
+                "identifierName": "ssn",
+                "identifierValue": "010181-900C",
+                "trustLevel": 50
+              }
+            ],
+            "accounts": [
+              {
+                "username": "testuser",
+                "accountTypeId": 1,
+                "accountSubtypeId": 1000
+              },
+              {
+                "username": "adminuser",
+                "accountTypeId": 8,
+                "accountSubtypeId": 8000
+              }
+            ]
+          }]"""
+        mock_get.return_value = response
+        connector = PersonDBApiConnector()
+        person = connector.get_person(person_uuid=self.person_uuid)
+        person_example = PERSONS.get("tester")
+        self.assertEqual(person, person_example)
+
+    @override_settings(ALLOW_TEST_FPIC=True)
+    @mock.patch("requests.get", return_value=mock.MagicMock(status_code=200))
+    def test_importing_empty_person(self, mock_get):
+        Country.objects.create(code="FI", name_fi="Suomi", name_en="Finland", name_sv="Finland")
+        response = Response()
+        response.status_code = 200
+        response._content = b"""[{
+            "personUuid": "12345678-1234-1234-1234-123456789012"
+          }]"""
+        mock_get.return_value = response
+        connector = PersonDBApiConnector()
+        person = connector.get_person(person_uuid=self.person_uuid)
+        for field in [f.name for f in dataclasses.fields(person)]:
+            if field not in ["person_uuid", "preferred_language", "identifiers"]:
+                self.assertIn(getattr(person, field), [None, frozenset(), "", Identity.VerificationMethod.UNVERIFIED])

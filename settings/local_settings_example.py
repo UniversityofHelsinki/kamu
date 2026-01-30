@@ -259,6 +259,23 @@ ORGANISATION_API: dict[str, Any] = {
     # "ABBREVIATION_KEY": "abbreviation",
 }
 
+PERSONDB_API: dict[str, Any] = {
+    "URL": "https://localhost/persondb/v1/",
+    "API_KEY": "change-api-key",
+    "AUTH_HEADER": "apikey",
+    # "TIMEOUT": 3,
+    # "VERIFY_SSL": True
+    # "CERT_FILE_PATH": "/path/to/cert.pem",
+    # "KEY_FILE_PATH": "/path/to/key.pem",
+    # "SUCCESS_CODES": [200],
+    # "CONFIGURATION_ERROR_CODES": [400, 403, 500],
+    # "GET_PERSON_PATH": "person",
+    # "SEARCH_GENERIC_PATH": "searchperson",
+    # "SEARCH_IDENTIFIER_PATH": "search",
+    # "SEARCH_EMAIL_PATH": "search",
+    # "SEARCH_PHONE_PATH": "search",
+}
+
 SMS_API: dict[str, Any] = {
     "URL": "https://api-gateway.example.org/sms/send",
     "API_KEY": "change-api-key",

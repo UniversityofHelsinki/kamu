@@ -2,6 +2,16 @@
 Data used in tests and test data generation.
 """
 
+import datetime
+
+from kamu.connectors.persondb import (
+    Person,
+    PersonAccount,
+    PersonEmailAddress,
+    PersonIdentifier,
+    PersonPhoneNumber,
+)
+from kamu.models.identity import Identifier, Identity
 from kamu.models.role import Permission, Requirement
 
 CONTRACT_TEMPLATES: dict = {
@@ -247,4 +257,54 @@ USERS: dict = {
     },
     "inviter": {"username": "inviter", "password": "inviter_pass", "first_name": "In", "last_name": "Inviter"},
     "owner": {"username": "owner", "password": "owner_pass", "first_name": "Prof. O", "last_name": "Owner"},
+}
+
+PERSONS: dict = {
+    "tester": Person(
+        person_uuid="12345678-1234-1234-1234-123456789012",
+        given_names="Tester",
+        given_names_verification=Identity.VerificationMethod.EXTERNAL,
+        surname="Mr. User",
+        surname_verification=Identity.VerificationMethod.EXTERNAL,
+        given_name_display="Test",
+        surname_display="User",
+        date_of_birth=datetime.date(1981, 1, 1),
+        date_of_birth_verification=Identity.VerificationMethod.SELF_ASSURED,
+        fpic="010181-900C",
+        fpic_verification=Identity.VerificationMethod.STRONG,
+        preferred_language="fi",
+        nationality=None,
+        email_addresses=frozenset(
+            [
+                PersonEmailAddress(address="tester@example.org", verified=True, public=True),
+                PersonEmailAddress(address="tester@example.com", verified=False, public=False),
+            ]
+        ),
+        phone_numbers=frozenset(
+            [
+                PersonPhoneNumber(number="+358401234567", verified=True, public=True),
+                PersonPhoneNumber(number="+358501234567", verified=False, public=False),
+            ]
+        ),
+        identifiers=frozenset(
+            [
+                PersonIdentifier(
+                    type=Identifier.Type.PERSON,
+                    value="12345678-1234-1234-1234-123456789012",
+                    verification_level=Identity.VerificationMethod.UNVERIFIED,
+                ),
+                PersonIdentifier(
+                    type=Identifier.Type.FPIC,
+                    value="010181-900C",
+                    verification_level=Identity.VerificationMethod.STRONG,
+                ),
+            ]
+        ),
+        accounts=frozenset(
+            [
+                PersonAccount(username="testuser", account_type=1, account_subtype=1000),
+                PersonAccount(username="adminuser", account_type=8, account_subtype=8000),
+            ]
+        ),
+    )
 }
