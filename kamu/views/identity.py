@@ -1220,7 +1220,7 @@ class IdentifierView(LoginRequiredMixin, TemplateView):
         If the user does not have generic change_identifiers permission,
         prevent deactivation of last active identifier.
 
-        Also prevent deactivation of FPIC and local EPPN identifiers.
+        Also prevent deactivation of FPIC, EIDAS, PERSON and local EPPN identifiers.
         """
         if self.request.user.has_perms(["kamu.change_identifiers"]):
             return set()
@@ -1232,6 +1232,8 @@ class IdentifierView(LoginRequiredMixin, TemplateView):
             for identifier in active_identifiers
             if (
                 identifier.type == Identifier.Type.FPIC
+                or identifier.type == Identifier.Type.EIDAS
+                or identifier.type == Identifier.Type.PERSON
                 or (identifier.type == Identifier.Type.EPPN and identifier.value.endswith(settings.LOCAL_EPPN_SUFFIX))
             )
         }
