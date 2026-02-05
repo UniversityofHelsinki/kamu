@@ -334,6 +334,11 @@ def create_identity_from_ldap(uid: str, request: HttpRequest | None = None) -> I
     """
     user = get_user_from_ldap(uid)
     if not user:
+        messages.add_message(
+            request,
+            messages.WARNING,
+            _("Could not import user information from the user directory, please try again later."),
+        )
         return None
     identity = _check_existing_identity(user)
     if identity:

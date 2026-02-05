@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-02 08:44+0200\n"
+"POT-Creation-Date: 2026-02-06 12:08+0200\n"
 "Language: EN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -308,7 +308,7 @@ msgstr ""
 
 #: forms/auth.py:444 forms/auth.py:450 forms/auth.py:454 forms/auth.py:456
 #: views/auth.py:133 views/auth.py:154 views/auth.py:240
-#: views/membership.py:790
+#: views/membership.py:812
 msgid "Invalid invitation code."
 msgstr ""
 
@@ -3527,94 +3527,100 @@ msgstr ""
 msgid "Manage account"
 msgstr ""
 
-#: utils/identity.py:53
+#: utils/identity.py:57
 msgid "Cannot combine identity with itself."
 msgstr ""
 
-#: utils/identity.py:60
+#: utils/identity.py:64
 msgid "Source identity cannot have higher assurance level than target."
 msgstr ""
 
-#: utils/identity.py:67
+#: utils/identity.py:71
 msgid ""
 "Cannot combine two identities with uid. Please remove uid from the source "
 "first."
 msgstr ""
 
-#: utils/identity.py:75
+#: utils/identity.py:79
 msgid ""
 "Cannot combine two identities with Finnish personal identity code. Please "
 "remove FPIC from the source first."
 msgstr ""
 
-#: utils/identity.py:84
+#: utils/identity.py:88
 msgid "Source identity is linked to user and target identity is not."
 msgstr ""
 
-#: utils/identity.py:95
+#: utils/identity.py:99
 msgid "Current user's identity cannot be the source identity."
 msgstr ""
 
-#: utils/identity.py:417 views/identity.py:685
+#: utils/identity.py:340
+msgid ""
+"Could not import user information from the user directory, please try again "
+"later."
+msgstr ""
+
+#: utils/identity.py:538 views/identity.py:685
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again. Please also check your spam folder."
 msgstr ""
 
-#: utils/identity.py:427 views/identity.py:698
+#: utils/identity.py:548 views/identity.py:698
 msgid ""
 "The verification code has now been sent and should arrive in your email in a "
 "few minutes. If you do not receive a verification code, please check your "
 "spam folder."
 msgstr ""
 
-#: utils/identity.py:433
+#: utils/identity.py:554
 msgid "Failed to send verification code."
 msgstr ""
 
-#: utils/identity.py:445 views/auth.py:638 views/auth.py:661
+#: utils/identity.py:566 views/auth.py:638 views/auth.py:661
 msgid "Tried to send a new code too soon. Please try again in one minute."
 msgstr ""
 
-#: utils/identity.py:451 views/identity.py:747
+#: utils/identity.py:572 views/identity.py:747
 #, python-format
 msgid "Your personal Kamu verification code is: %(token)s"
 msgstr ""
 
-#: utils/identity.py:454 views/auth.py:664 views/identity.py:750
+#: utils/identity.py:575 views/auth.py:664 views/identity.py:750
 msgid "Could not send an SMS message."
 msgstr ""
 
-#: utils/identity.py:459 views/identity.py:755
+#: utils/identity.py:580 views/identity.py:755
 msgid ""
 "The verification code has now been sent and should arrive in your phone in a "
 "few minutes."
 msgstr ""
 
-#: utils/identity.py:499
+#: utils/identity.py:620
 msgid "Email address is required."
 msgstr ""
 
-#: utils/identity.py:550
+#: utils/identity.py:671
 msgid "Phone number is required."
 msgstr ""
 
-#: utils/identity.py:667
+#: utils/identity.py:788
 msgid ""
 "Suspected duplicate user. Finnish personal identity code already exists in "
 "the database: "
 msgstr ""
 
-#: utils/identity.py:733
+#: utils/identity.py:854
 #, python-format
 msgid "You can activate a new user account of type \"%(account_type)s\"."
 msgstr ""
 
-#: utils/identity.py:738
+#: utils/identity.py:859
 msgid "Activate account"
 msgstr ""
 
-#: utils/identity.py:753
+#: utils/identity.py:874
 msgid "Continue to external service to activate account"
 msgstr ""
 
@@ -4011,7 +4017,7 @@ msgstr ""
 msgid "You have approved the membership shown below."
 msgstr ""
 
-#: views/membership.py:260 views/membership.py:747
+#: views/membership.py:260 views/membership.py:769
 msgid "The email invitation has been sent."
 msgstr ""
 
@@ -4037,37 +4043,37 @@ msgstr ""
 msgid "Membership updated."
 msgstr ""
 
-#: views/membership.py:793
+#: views/membership.py:815
 msgid "This invitation is already claimed."
 msgstr ""
 
-#: views/membership.py:902
+#: views/membership.py:924
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and email address {email} are "
 "registered to different identities."
 msgstr ""
 
-#: views/membership.py:912
+#: views/membership.py:934
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and phone number {phone} are "
 "registered to different identities."
 msgstr ""
 
-#: views/membership.py:921
+#: views/membership.py:943
 #, python-brace-format
 msgid ""
 "Email address {email} and phone number {phone} are registered to different "
 "identities."
 msgstr ""
 
-#: views/membership.py:1025
+#: views/membership.py:1047
 #, python-brace-format
 msgid "The email invitation has been sent to following addresses: {0}"
 msgstr ""
 
-#: views/membership.py:1029
+#: views/membership.py:1051
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr ""

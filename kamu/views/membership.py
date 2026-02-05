@@ -597,9 +597,9 @@ class MembershipInviteView(BaseMembershipInviteView):
         return valid
 
 
-class MembershipInviteLdapView(BaseMembershipInviteView):
+class BaseMembershipInviteExternalView(BaseMembershipInviteView):
     """
-    Invite view for identities found in the LDAP.
+    Base invite view for external identities.
     """
 
     form_class = MembershipCreateForm
@@ -613,6 +613,53 @@ class MembershipInviteLdapView(BaseMembershipInviteView):
         if "identity" in context:
             return redirect("role-invite-details", role_pk=context["role"].pk, identity_pk=context["identity"].pk)
         return self.render_to_response(context)
+
+    def get_identity(self) -> Identity | None:
+        """
+        Get identity from external source.
+        """
+        return None
+
+    def form_valid(self, form: MembershipFormType) -> HttpResponse:
+        """
+        Create identity and membership.
+
+        If identity already exists with the same identifiers, use it instead.
+        """
+        inviter = self.request.user if self.request.user.is_authenticated else None
+        if not inviter:
+            raise PermissionDenied
+        identity = self.get_identity()
+        if not identity:
+            return self.form_invalid(form)
+        form.instance.identity = identity
+        form.instance.role = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
+        form.instance.inviter = inviter
+        if form.instance.role.is_approver(user=inviter):
+            form.instance.approver = inviter
+        valid = super().form_valid(form)
+        if self.object:
+            audit_log.info(
+                f"Membership to {self.object.role} added to identity: {self.object.identity}",
+                category="membership",
+                action="create",
+                outcome="success",
+                request=self.request,
+                objects=[self.object, self.object.identity, self.object.role],
+                log_to_db=True,
+            )
+            send_add_email(self.object)
+        if form.data.get("notify_approvers"):
+            send_notify_approvers_email(form.instance)
+        return valid
+
+
+class MembershipInviteLdapView(BaseMembershipInviteExternalView):
+    """
+    Invite view for identities found in the LDAP.
+    """
+
+    form_class = MembershipCreateForm
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
@@ -639,37 +686,12 @@ class MembershipInviteLdapView(BaseMembershipInviteView):
         context["ldapuser"] = user
         return context
 
-    def form_valid(self, form: MembershipFormType) -> HttpResponse:
+    def get_identity(self) -> Identity | None:
         """
-        Create identity and membership.
-
-        If identity already exists with the same uid or fpic, use it instead.
+        Get identity from Person.
         """
         uid = self.kwargs.get("uid")
-        inviter = self.request.user if self.request.user.is_authenticated else None
-        identity = create_identity_from_ldap(uid=uid, request=self.request) if uid else None
-        if not identity or not inviter:
-            raise PermissionDenied
-        form.instance.identity = identity
-        form.instance.role = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
-        form.instance.inviter = inviter
-        if form.instance.role.is_approver(user=inviter):
-            form.instance.approver = inviter
-        valid = super().form_valid(form)
-        if self.object:
-            audit_log.info(
-                f"Membership to {self.object.role} added to identity: {self.object.identity}",
-                category="membership",
-                action="create",
-                outcome="success",
-                request=self.request,
-                objects=[self.object, self.object.identity, self.object.role],
-                log_to_db=True,
-            )
-            send_add_email(self.object)
-        if form.data.get("notify_approvers"):
-            send_notify_approvers_email(form.instance)
-        return valid
+        return create_identity_from_ldap(uid=uid, request=self.request) if uid else None
 
 
 class MembershipInviteEmailView(BaseMembershipInviteView):

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-02 08:44+0200\n"
+"POT-Creation-Date: 2026-02-06 12:08+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -336,7 +336,7 @@ msgstr "Henkilökohtainen kutsukoodi"
 
 #: forms/auth.py:444 forms/auth.py:450 forms/auth.py:454 forms/auth.py:456
 #: views/auth.py:133 views/auth.py:154 views/auth.py:240
-#: views/membership.py:790
+#: views/membership.py:812
 msgid "Invalid invitation code."
 msgstr "Virheellinen kutsukoodi."
 
@@ -374,7 +374,8 @@ msgstr "Syntymäaika"
 
 #: forms/identity.py:56
 msgid "You may limit name searches by date of birth to improve accuracy."
-msgstr "Voit rajoittaa nimihakuja syntymäajan perusteella parantaaksesi tarkkuutta."
+msgstr ""
+"Voit rajoittaa nimihakuja syntymäajan perusteella parantaaksesi tarkkuutta."
 
 #: forms/identity.py:59 models/identity.py:722
 msgid "Identifier"
@@ -3855,16 +3856,16 @@ msgstr "Suorita haku saadaksesi tuloksia."
 msgid "Manage account"
 msgstr "Hallinnoi tunnusta"
 
-#: utils/identity.py:53
+#: utils/identity.py:57
 msgid "Cannot combine identity with itself."
 msgstr "Et voi yhdistää henkilöllisyyttä siihen itseensä."
 
-#: utils/identity.py:60
+#: utils/identity.py:64
 msgid "Source identity cannot have higher assurance level than target."
 msgstr ""
 "Lähdehenkilöllisyydellä ei voi olla korkeampaa varmuustasoa kuin kohteella."
 
-#: utils/identity.py:67
+#: utils/identity.py:71
 msgid ""
 "Cannot combine two identities with uid. Please remove uid from the source "
 "first."
@@ -3872,7 +3873,7 @@ msgstr ""
 "Et voi yhdistää kahta henkilöllisyyttä UID:n kanssa. Poista UID ensin "
 "lähteestä."
 
-#: utils/identity.py:75
+#: utils/identity.py:79
 msgid ""
 "Cannot combine two identities with Finnish personal identity code. Please "
 "remove FPIC from the source first."
@@ -3880,16 +3881,23 @@ msgstr ""
 "Et voi yhdistää kahta henkilöllisyyttä suomalaisella henkilötunnuksella. "
 "Poista henkilötunnus ensin lähteestä."
 
-#: utils/identity.py:84
+#: utils/identity.py:88
 msgid "Source identity is linked to user and target identity is not."
 msgstr ""
 "Lähdehenkilöllisyys on liitetty käyttäjään ja kohdehenkilöllisyyttä ei ole."
 
-#: utils/identity.py:95
+#: utils/identity.py:99
 msgid "Current user's identity cannot be the source identity."
 msgstr "Nykyisen käyttäjän henkilöllisyys ei voi olla lähdehenkilöllisyys."
 
-#: utils/identity.py:417 views/identity.py:685
+#: utils/identity.py:340
+msgid ""
+"Could not import user information from the user directory, please try again "
+"later."
+msgstr ""
+"Käyttäjätietoja ei voitu tuoda käyttäjähakemistosta, yritä myöhemmin uudelleen."
+
+#: utils/identity.py:538 views/identity.py:685
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again. Please also check your spam folder."
@@ -3897,7 +3905,7 @@ msgstr ""
 "Yritit lähettää uuden koodin liian pian. Ole hyvä ja odota yksi minuutti "
 "ennen uutta yritystä. Tarkista myös sähköpostisi roskapostikansio."
 
-#: utils/identity.py:427 views/identity.py:698
+#: utils/identity.py:548 views/identity.py:698
 msgid ""
 "The verification code has now been sent and should arrive in your email in a "
 "few minutes. If you do not receive a verification code, please check your "
@@ -3907,26 +3915,26 @@ msgstr ""
 "muutamassa minuutissa. Mikäli et saa vahvistuskoodia, tarkista myös "
 "roskapostikansiosi."
 
-#: utils/identity.py:433
+#: utils/identity.py:554
 msgid "Failed to send verification code."
 msgstr "Vahvistuskoodin lähetys epäonnistui."
 
-#: utils/identity.py:445 views/auth.py:638 views/auth.py:661
+#: utils/identity.py:566 views/auth.py:638 views/auth.py:661
 msgid "Tried to send a new code too soon. Please try again in one minute."
 msgstr ""
 "Yritit lähettää uuden koodin liian pian. Ole hyvä ja odota yksi minuutti "
 "ennen uutta yritystä."
 
-#: utils/identity.py:451 views/identity.py:747
+#: utils/identity.py:572 views/identity.py:747
 #, python-format
 msgid "Your personal Kamu verification code is: %(token)s"
 msgstr "Henkilökohtainen Kamu-vahvistuskoodisi on: %(token)s"
 
-#: utils/identity.py:454 views/auth.py:664 views/identity.py:750
+#: utils/identity.py:575 views/auth.py:664 views/identity.py:750
 msgid "Could not send an SMS message."
 msgstr "Tekstiviestin lähetys epäonnistui."
 
-#: utils/identity.py:459 views/identity.py:755
+#: utils/identity.py:580 views/identity.py:755
 msgid ""
 "The verification code has now been sent and should arrive in your phone in a "
 "few minutes."
@@ -3934,15 +3942,15 @@ msgstr ""
 "Vahvistuskoodi on nyt lähetetty ja sen pitäisi saapua puhelimeesi muutamassa "
 "minuutissa."
 
-#: utils/identity.py:499
+#: utils/identity.py:620
 msgid "Email address is required."
 msgstr "Sähköpostiosoite vaaditaan."
 
-#: utils/identity.py:550
+#: utils/identity.py:671
 msgid "Phone number is required."
 msgstr "Puhelinnumero vaaditaan."
 
-#: utils/identity.py:667
+#: utils/identity.py:788
 msgid ""
 "Suspected duplicate user. Finnish personal identity code already exists in "
 "the database: "
@@ -3950,16 +3958,16 @@ msgstr ""
 "Mahdollinen duplikaattikäyttäjä. Suomalainen henkilötunnus on jo olemassa "
 "tietokannassa: "
 
-#: utils/identity.py:733
+#: utils/identity.py:854
 #, python-format
 msgid "You can activate a new user account of type \"%(account_type)s\"."
 msgstr "Voit aktivoida uuden käyttäjätunnuksen tyyppiä \"%(account_type)s\"."
 
-#: utils/identity.py:738
+#: utils/identity.py:859
 msgid "Activate account"
 msgstr "Aktivoi käyttäjätunnus"
 
-#: utils/identity.py:753
+#: utils/identity.py:874
 msgid "Continue to external service to activate account"
 msgstr "Jatka ulkoiseen palveluun tunnuksen aktivoimiseksi"
 
@@ -4393,7 +4401,7 @@ msgstr "Olet jo tämän roolin jäsen."
 msgid "You have approved the membership shown below."
 msgstr "Hyväksyit alla näkyvän jäsenyyden."
 
-#: views/membership.py:260 views/membership.py:747
+#: views/membership.py:260 views/membership.py:769
 msgid "The email invitation has been sent."
 msgstr "Sähköpostikutsu on lähetetty."
 
@@ -4421,11 +4429,11 @@ msgstr "Jäsenyys peruttu."
 msgid "Membership updated."
 msgstr "Jäsenyys päivitetty."
 
-#: views/membership.py:793
+#: views/membership.py:815
 msgid "This invitation is already claimed."
 msgstr "Kutsu on jo käytetty."
 
-#: views/membership.py:902
+#: views/membership.py:924
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and email address {email} are "
@@ -4434,7 +4442,7 @@ msgstr ""
 "Henkilötunnus {fpic} ja sähköpostiosoite {email} ovat rekisteröity eri "
 "henkilöille."
 
-#: views/membership.py:912
+#: views/membership.py:934
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and phone number {phone} are "
@@ -4443,7 +4451,7 @@ msgstr ""
 "Henkilötunnus {fpic} ja puhelinnumero {phone} ovat rekisteröity eri "
 "henkilöille."
 
-#: views/membership.py:921
+#: views/membership.py:943
 #, python-brace-format
 msgid ""
 "Email address {email} and phone number {phone} are registered to different "
@@ -4452,12 +4460,12 @@ msgstr ""
 "Sähköpostiosoite {email} ja puhelinnumero {phone} ovat rekisteröity eri "
 "henkilöille."
 
-#: views/membership.py:1025
+#: views/membership.py:1047
 #, python-brace-format
 msgid "The email invitation has been sent to following addresses: {0}"
 msgstr "Sähköpostikutsu on lähetetty seuraaviin osoitteisiin: {0}"
 
-#: views/membership.py:1029
+#: views/membership.py:1051
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Lisätty seuraavat henkilöllisyydet: {0}"
