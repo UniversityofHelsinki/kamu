@@ -169,8 +169,9 @@ PUBLIC_EMAIL_DOMAINS: list[str] = ["example.net", "example.org"]
 # When searching identities, do not search names if matching identifier is found.
 SKIP_NAME_SEARCH_IF_IDENTIFIER_MATCHES: bool = True
 
-# When searching identities, do not show LDAP search results which are also found from Kamu.
+# When searching identities, do not show external search results which are also found from Kamu.
 FILTER_KAMU_RESULTS_FROM_LDAP_RESULTS: bool = True
+FILTER_KAMU_RESULTS_FROM_PERSONDB_RESULTS: bool = True
 
 # Generic Helpdesk link and base for numeric links, including trailing /
 HELP_LINK_BASE: str = "https://helpdesk.it.helsinki.fi/"
@@ -187,8 +188,13 @@ LDAP_SEARCH_LIMIT: int = 50
 # If Identity search would return more results, ask users to refine search.
 KAMU_IDENTITY_SEARCH_LIMIT: int = 50
 
+# Should LDAP be searched in identity search or when inviting members.
 LDAP_SEARCH_FOR_INVITES: bool = True  # Defaults to True
 LDAP_SEARCH_FOR_IDENTITIES: bool = False  # Defaults to False
+
+# Should PersonDB be searched in identity search or when inviting members.
+PERSONDB_SEARCH_FOR_INVITES: bool = False  # Defaults to False
+PERSONDB_SEARCH_FOR_IDENTITIES: bool = False  # Defaults to False
 
 # List of account subtypes from which username is picked when importing from PersonDB.
 PERSONDB_IMPORT_USERNAME_FROM_ACCOUNT_SUBTYPES: list[int] = [1000]

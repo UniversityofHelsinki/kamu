@@ -43,6 +43,7 @@ from kamu.connectors import ApiError
 from kamu.connectors.candour import CandourApiConnector
 from kamu.connectors.email import send_primary_email_changed_notification
 from kamu.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
+from kamu.connectors.persondb import Person, PersonDBApiConnector
 from kamu.connectors.sms import SmsConnector
 from kamu.forms.identity import (
     ContactForm,
@@ -1494,6 +1495,13 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         """
         return getattr(settings, "LDAP_SEARCH_FOR_IDENTITIES", False)
 
+    @staticmethod
+    def search_persondb() -> bool:
+        """
+        Check if PersonDB should be searched.
+        """
+        return getattr(settings, "PERSONDB_SEARCH_FOR_IDENTITIES", False)
+
     def log_search(self) -> None:
         """
         Log search terms.
@@ -1618,6 +1626,96 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
                     return uid
         return ""
 
+    def _get_persondb_results(
+        self, given_names: str, surname: str, date_of_birth: date | None, fpic: str, uid: str, email: str, phone: str
+    ) -> set[Person] | None:
+        """
+        Search PersonDB for identities based on given parameters
+
+        Return list of identities or None if search fails.
+        """
+        persondb_results: set[Person] = set()
+        try:
+            connector = PersonDBApiConnector()
+        except ApiError:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                _("PersonDB connection failed, could not load person information. Please try again later."),
+            )
+            return None
+        try:
+            if fpic or uid:
+                persondb_results = connector.search_identifier(fpic or uid)
+            elif email:
+                persondb_results = connector.search_email(email)
+            elif phone:
+                persondb_results = connector.search_phone(phone)
+        except ApiError:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                _("PersonDB connection failed, could not load person information. Please try again later."),
+            )
+            return None
+        if persondb_results:
+            self.exact_match_found = True
+            if self.exact_match_skip:
+                return persondb_results
+        if given_names or surname or date_of_birth:
+            try:
+                return persondb_results.union(
+                    connector.search_generic(
+                        {"given_names": given_names, "surname": surname, "date_of_birth": date_of_birth}
+                    )
+                )
+            except ApiError:
+                messages.add_message(
+                    self.request,
+                    messages.ERROR,
+                    _("PersonDB connection failed, could not load person information. Please try again later."),
+                )
+                return None
+        return persondb_results
+
+    @staticmethod
+    def _filter_persondb_list(object_list: QuerySet[Identity], persondb_results: set[Person]) -> set[Person]:
+        """
+        Filter out PersonDB results where uid, person_uuid or fpic is already in object_list, and sort results.
+        """
+        result_uids = set(object_list.values_list("uid", flat=True))
+        result_fpic = set(object_list.values_list("fpic", flat=True))
+        if object_list:
+            result_person_uuid: QuerySet[Identifier, str] | set = Identifier.objects.filter(
+                identity__in=object_list, type=Identifier.Type.PERSON
+            ).values_list("value", flat=True)
+        else:
+            result_person_uuid = set()
+
+        return {
+            res
+            for res in persondb_results
+            if (
+                not any(acc.username and acc.username in result_uids for acc in res.accounts)
+                and res.fpic not in result_fpic
+                and res.person_uuid not in result_person_uuid
+            )
+        }
+
+    def _sort_persondb_results(self, persondb_results: set[Person] | None) -> list[Person]:
+        """
+        Sort PersonDB results by given names and surname.
+        """
+        if not persondb_results:
+            return []
+        return sorted(
+            persondb_results,
+            key=lambda x: (
+                x.surname_display.lower() if x.surname_display else "",
+                x.given_name_display.lower() if x.given_name_display else "",
+            ),
+        )
+
     def search_results(self) -> dict[str, Any]:
         """
         Search Kamu and external services based on URL parameters.
@@ -1637,6 +1735,17 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         queryset = self.build_queryset_identifiers(fpic=fpic, uid=uid, email=email, phone=phone)
         if queryset.exists():
             self.exact_match_found = True
+        persondb_results: set[Person] | None = None
+        if self.search_persondb():
+            persondb_results = self._get_persondb_results(
+                given_names=given_names,
+                surname=surname,
+                date_of_birth=date_of_birth,
+                fpic=fpic,
+                uid=uid,
+                email=email,
+                phone=phone,
+            )
         ldap_results = None
         if self.search_ldap():
             ldap_results = self._get_ldap_results()
@@ -1656,8 +1765,15 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
             )
         if ldap_results and getattr(settings, "FILTER_KAMU_RESULTS_FROM_LDAP_RESULTS", True):
             ldap_results = self._filter_ldap_list(queryset, ldap_results)
+        if persondb_results and getattr(settings, "FILTER_KAMU_RESULTS_FROM_PERSONDB_RESULTS", True):
+            persondb_results = self._filter_persondb_list(queryset, persondb_results)
         self.log_search()
-        return {"object_list": queryset, "ldap_results": ldap_results}
+
+        return {
+            "object_list": queryset,
+            "ldap_results": ldap_results,
+            "persondb_results": self._sort_persondb_results(persondb_results),
+        }
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """

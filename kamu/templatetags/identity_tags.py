@@ -4,6 +4,7 @@ from django import template
 from django.conf import settings
 from django.utils.html import escape
 
+from kamu.connectors.persondb import Person
 from kamu.models.identity import Identifier, Identity
 
 logger = logging.getLogger(__name__)
@@ -62,3 +63,27 @@ def matching_attributes_ldap(result: dict[str, str], email: str = "", fpic: str 
         logger.error(log_msg)
         return ""
     return ", ".join(matching)
+
+
+@register.simple_tag
+def matching_attributes_persondb(result: Person, email: str = "", phone: str = "", fpic: str = "") -> str:
+    """
+    Return a string of all matching or public attributes for PersonDB result.
+    Bold the ones that match exact search terms.
+    """
+    matching = []
+    for email_address in result.email_addresses:
+        address = email_address.address
+        if address == email:
+            matching.append(f"<b>{escape(address)}</b>")
+        elif email_address.public:
+            matching.append(escape(address))
+    for phone_number in result.phone_numbers:
+        number = phone_number.number
+        if number == phone:
+            matching.append(f"<b>{escape(number)}</b>")
+        elif phone_number.public:
+            matching.append(escape(number))
+    if fpic and result.fpic == fpic:
+        matching.append(f"<b>{escape(fpic)}</b>")
+    return ", ".join(sorted(matching))

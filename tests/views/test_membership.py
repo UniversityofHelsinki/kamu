@@ -16,6 +16,7 @@ from kamu.models.identity import Identifier, Identity
 from kamu.models.membership import Membership
 from kamu.models.token import Token
 from kamu.utils.auth import set_default_permissions
+from tests.data import PERSONS
 from tests.setup import BaseTestCase
 from tests.utils import MockLdapConn
 
@@ -543,6 +544,62 @@ class MembershipInviteTests(BaseTestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Membership.objects.filter(role=self.role, identity=self.identity).exists())
+
+    @override_settings(LDAP_SEARCH_FOR_INVITES=False)
+    @override_settings(PERSONDB_SEARCH_FOR_INVITES=True)
+    @mock.patch("kamu.connectors.persondb.PersonDBApiConnector.search_email")
+    def test_search_email_found_persondb(self, mock_persondb):
+        mock_persondb.return_value = [PERSONS.get("tester")]
+        data = {"identifier": "tester@example.com"}
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Email address not found", response.content.decode("utf-8"))
+        self.assertIn("Test User", response.content.decode("utf-8"))
+
+    @override_settings(LDAP_SEARCH_FOR_INVITES=False)
+    @override_settings(PERSONDB_SEARCH_FOR_INVITES=True)
+    @mock.patch("kamu.connectors.persondb.PersonDBApiConnector.get_person")
+    @mock.patch("kamu.utils.audit.logger_audit")
+    @override_settings(ALLOW_TEST_FPIC=True)
+    def test_add_role_with_persondb(self, mock_logger, mock_persondb):
+        person = PERSONS.get("tester")
+        mock_persondb.return_value = person
+        url = f"{self.url}person/{person.person_uuid}/"
+        response = self.client.post(
+            url,
+            {
+                "start_date": timezone.now().date(),
+                "expire_date": timezone.now().date() + datetime.timedelta(days=7),
+                "reason": "Because",
+            },
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        identity = Identity.objects.get(fpic="010181-900C")
+        self.assertTrue(Membership.objects.filter(role=self.role, identity=identity).exists())
+        self.assertEqual(identity.display_name(), "Test User")
+        self.assertTrue(
+            Identifier.objects.filter(
+                identity=identity, type=Identifier.Type.PERSON, value=person.person_uuid
+            ).exists()
+        )
+        for log_message in [
+            "Identity created.",
+            "Email address added to identity Test User",
+            "Phone number added to identity Test User",
+            "Linked person identifier to identity Test User",
+            "Linked fpic identifier to identity Test User",
+            f"Membership to {self.role.name()} added to identity: Test User",
+            "tester@example.com",
+            "tester@example.org",
+            "+358401234567",
+            "+358501234567",
+        ]:
+            self.assertTrue(
+                any(log_message in str(call_args) for call_args in mock_logger.log.call_args_list),
+                f"'{log_message}' not found in log calls: {mock_logger.log.call_args_list}",
+            )
+        self.assertEqual(len(mail.outbox), 1)
 
     def test_email_invite_form_without_email(self):
         url = f"{self.url}email/"

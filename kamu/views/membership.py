@@ -20,6 +20,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic import DetailView, FormView, ListView
 from django.views.generic.edit import CreateView, UpdateView
 
+from kamu.connectors import ApiError
 from kamu.connectors.email import (
     create_invite_message,
     send_add_email,
@@ -29,6 +30,7 @@ from kamu.connectors.email import (
     send_notify_approvers_email,
 )
 from kamu.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
+from kamu.connectors.persondb import Person, PersonDBApiConnector
 from kamu.forms.auth import RegistrationPhoneNumberVerificationForm
 from kamu.forms.membership import (
     MembershipCreateForm,
@@ -45,6 +47,8 @@ from kamu.utils.identity import (
     create_identity_from_ldap,
     create_or_verify_phone_number,
     create_phone_verification_token,
+    get_identity_from_persondb,
+    get_or_create_identity_from_persondb,
 )
 from kamu.utils.membership import (
     add_missing_requirement_messages,
@@ -489,6 +493,13 @@ class MembershipInviteIdentitySearch(IdentitySearchView):
         """
         return getattr(settings, "LDAP_SEARCH_FOR_INVITES", True)
 
+    @staticmethod
+    def search_persondb() -> bool:
+        """
+        Enable PersonDB search.
+        """
+        return getattr(settings, "PERSONDB_SEARCH_FOR_INVITES", False)
+
     def _check_email(self, context: dict[str, Any], email: str | None) -> bool:
         """
         Check if email is found in the registry.
@@ -497,6 +508,13 @@ class MembershipInviteIdentitySearch(IdentitySearchView):
             return False
         if context.get("ldap_results") is not None:
             if any(obj.get("mail") == email for obj in context["ldap_results"]):
+                return True
+        if context.get("persondb_results") is not None:
+            if any(
+                email_address.address == email
+                for obj in context["persondb_results"]
+                for email_address in obj.email_addresses
+            ):
                 return True
         return Identity.objects.filter(email_addresses__address__iexact=email).exists()
 
@@ -692,6 +710,72 @@ class MembershipInviteLdapView(BaseMembershipInviteExternalView):
         """
         uid = self.kwargs.get("uid")
         return create_identity_from_ldap(uid=uid, request=self.request) if uid else None
+
+
+class MembershipInvitePersonDBView(BaseMembershipInviteExternalView):
+    """
+    Invite view for identities found in the PersonDB.
+    """
+
+    form_class = MembershipCreateForm
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Add user to context. Add identity to context if found with same identifiers.
+        """
+        context = super().get_context_data(**kwargs)
+        person_id = self.kwargs.get("person_id")
+        person = self.get_person(person_id)
+        if not person:
+            return context
+        try:
+            identity = get_identity_from_persondb(person)
+        except Identity.MultipleObjectsReturned:
+            messages.add_message(
+                self.request, messages.ERROR, _("Multiple identities found, please contact IT-Helpdesk.")
+            )
+            return context
+        if identity:
+            context["identity"] = identity
+            return context
+        context["person"] = person
+        return context
+
+    def get_person(self, person_id: str) -> Person | None:
+        try:
+            connector = PersonDBApiConnector()
+        except ApiError:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                _("PersonDB connection failed, could not load person information. Please try again later."),
+            )
+            return None
+        try:
+            return connector.get_person(person_id)
+        except ApiError:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                _("PersonDB connection failed, could not load person information. Please try again later."),
+            )
+            return None
+
+    def get_identity(self) -> Identity | None:
+        """
+        Get identity from Person.
+        """
+        person_id = self.kwargs.get("person_id")
+        person = self.get_person(person_id)
+        if not person:
+            return None
+        try:
+            return get_or_create_identity_from_persondb(person=person)
+        except Identity.MultipleObjectsReturned:
+            messages.add_message(
+                self.request, messages.ERROR, _("Multiple identities found, please contact IT-Helpdesk.")
+            )
+            return None
 
 
 class MembershipInviteEmailView(BaseMembershipInviteView):

@@ -35,6 +35,28 @@
     {% endif %}
   {% endif %}
 
+  {% if persondb_results %}
+    <h2 id="persondb-results-list" class="mt-4">{% trans "Person database results" %}</h2>
+    <div class="table-responsive">
+      <table class="table" aria-describedby="persondb-results-list">
+        <thead>
+        <tr>
+          <th scope="col">{% trans "Name" %}</th>
+          <th scope="col">{% trans "Attributes" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for result in persondb_results %}
+          <tr>
+            <th scope="row">{{ result.given_name_display }} {{ result.surname_display }}</th>
+            <td>{% matching_attributes_persondb result=result email=email phone=phone fpic=fpic as attributes %}{{ attributes|safe }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
   {% if ldap_results %}
     <h2 id="ldap-results-list" class="mt-4">{% trans "User directory results" %}</h2>
     <div class="table-responsive">

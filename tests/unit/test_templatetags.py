@@ -8,7 +8,9 @@ from kamu.templatetags.account_tags import manage_link
 from kamu.templatetags.identity_tags import (
     matching_attributes,
     matching_attributes_ldap,
+    matching_attributes_persondb,
 )
+from tests.data import PERSONS
 from tests.setup import TestData
 
 
@@ -66,6 +68,27 @@ class MatchingAttributeLdapTests(TestData):
     def test_matching_attributes(self):
         attributes = matching_attributes_ldap(self.ldap_result, email="test@example.org", fpic="010181-900C")
         self.assertEqual(attributes, "<b>test@example.org</b>, <b>010181-900C</b>")
+
+
+class MatchingAttributePersonDBTests(TestData):
+    def setUp(self):
+        super().setUp()
+        self.result = PERSONS["tester"]
+
+    def test_no_matching_attributes_only_public_are_shown(self):
+        attributes = matching_attributes_persondb(self.result)
+        self.assertEqual(attributes, "+358401234567, tester@example.org")
+
+    @override_settings(PUBLIC_EMAIL_DOMAINS=["example.org"])
+    @override_settings(ALLOW_TEST_FPIC=True)
+    def test_matching_attributes(self):
+        attributes = matching_attributes_persondb(
+            self.result, email="tester@example.com", fpic="010181-900C", phone="+358501234567"
+        )
+        self.assertEqual(
+            "+358401234567, <b>+358501234567</b>, <b>010181-900C</b>, <b>tester@example.com</b>, tester@example.org",
+            attributes,
+        )
 
 
 class AccountManageLinkTests(TestData):

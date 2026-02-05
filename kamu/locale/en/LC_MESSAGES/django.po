@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-06 12:08+0200\n"
+"POT-Creation-Date: 2026-02-06 12:39+0200\n"
 "Language: EN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -130,6 +130,7 @@ msgstr ""
 
 #: forms/auth.py:35 models/identity.py:643 models/identity.py:655
 #: models/token.py:301 templates/identity/contact_address.html:64
+#: templates/membership/membership_invite.html:42
 msgid "Phone number"
 msgstr ""
 
@@ -308,7 +309,7 @@ msgstr ""
 
 #: forms/auth.py:444 forms/auth.py:450 forms/auth.py:454 forms/auth.py:456
 #: views/auth.py:133 views/auth.py:154 views/auth.py:240
-#: views/membership.py:812
+#: views/membership.py:896
 msgid "Invalid invitation code."
 msgstr ""
 
@@ -530,7 +531,7 @@ msgid "Invite"
 msgstr ""
 
 #: forms/membership.py:154 forms/membership.py:242
-#: templates/membership/membership_invite.html:48
+#: templates/membership/membership_invite.html:58
 msgid "Preview message"
 msgstr ""
 
@@ -634,10 +635,10 @@ msgstr ""
 #: models/account.py:47 models/role.py:253
 #: templates/account/account_detail.html:8
 #: templates/identity/identity_search.html:18
-#: templates/identity/identity_search.html:45
-#: templates/membership/membership_invite.html:40
+#: templates/identity/identity_search.html:67
+#: templates/membership/membership_invite.html:50
 #: templates/membership/membership_invite_identity.html:24
-#: templates/membership/membership_invite_identity.html:58
+#: templates/membership/membership_invite_identity.html:83
 msgid "User account"
 msgstr ""
 
@@ -939,6 +940,7 @@ msgstr ""
 
 #: models/identity.py:311 templates/membership/membership_invite.html:28
 #: templates/membership/membership_invite.html:36
+#: templates/membership/membership_invite.html:46
 msgid "Identity"
 msgstr ""
 
@@ -1992,13 +1994,16 @@ msgstr ""
 #: templates/contract/contract_sign.html:13
 #: templates/identity/identity_search.html:17
 #: templates/identity/identity_search.html:44
+#: templates/identity/identity_search.html:66
 #: templates/membership/membership_detail.html:19
 #: templates/membership/membership_detail.html:37
 #: templates/membership/membership_invite.html:11
 #: templates/membership/membership_invite.html:30
 #: templates/membership/membership_invite.html:38
+#: templates/membership/membership_invite.html:48
 #: templates/membership/membership_invite_identity.html:23
-#: templates/membership/membership_invite_identity.html:57
+#: templates/membership/membership_invite_identity.html:58
+#: templates/membership/membership_invite_identity.html:82
 #: templates/role/role_detail.html:7
 msgid "Name"
 msgstr ""
@@ -2947,9 +2952,11 @@ msgid ""
 msgstr ""
 
 #: templates/identity/identity_search.html:19
-#: templates/identity/identity_search.html:46
+#: templates/identity/identity_search.html:45
+#: templates/identity/identity_search.html:68
 #: templates/membership/membership_invite_identity.html:25
 #: templates/membership/membership_invite_identity.html:59
+#: templates/membership/membership_invite_identity.html:84
 msgid "Attributes"
 msgstr ""
 
@@ -2960,7 +2967,12 @@ msgid "No results with the provided search parameters."
 msgstr ""
 
 #: templates/identity/identity_search.html:39
-#: templates/membership/membership_invite_identity.html:52
+#: templates/membership/membership_invite_identity.html:53
+msgid "Person database results"
+msgstr ""
+
+#: templates/identity/identity_search.html:61
+#: templates/membership/membership_invite_identity.html:77
 msgid "User directory results"
 msgstr ""
 
@@ -3176,7 +3188,8 @@ msgid "days"
 msgstr ""
 
 #: templates/membership/membership_detail.html:41
-#: templates/membership/membership_invite.html:42
+#: templates/membership/membership_invite.html:40
+#: templates/membership/membership_invite.html:52
 msgid "Email"
 msgstr ""
 
@@ -3328,33 +3341,33 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: templates/membership/membership_invite.html:49
+#: templates/membership/membership_invite.html:59
 msgid "Subject"
 msgstr ""
 
-#: templates/membership/membership_invite.html:51
+#: templates/membership/membership_invite.html:61
 msgid "Message"
 msgstr ""
 
-#: templates/membership/membership_invite.html:55
+#: templates/membership/membership_invite.html:65
 msgid "Multiple invites"
 msgstr ""
 
-#: templates/membership/membership_invite.html:57
+#: templates/membership/membership_invite.html:67
 msgid "Following identities in Kamu will be added to the role:"
 msgstr ""
 
-#: templates/membership/membership_invite.html:65
+#: templates/membership/membership_invite.html:75
 msgid "Following email addresses will receive an invitation:"
 msgstr ""
 
-#: templates/membership/membership_invite.html:73
+#: templates/membership/membership_invite.html:83
 msgid ""
 "This role requires SMS verification and following addresses will be skipped "
 "because of the missing phone number:"
 msgstr ""
 
-#: templates/membership/membership_invite.html:81
+#: templates/membership/membership_invite.html:91
 msgid "Membership information"
 msgstr ""
 
@@ -3381,6 +3394,7 @@ msgstr ""
 
 #: templates/membership/membership_invite_identity.html:26
 #: templates/membership/membership_invite_identity.html:60
+#: templates/membership/membership_invite_identity.html:85
 msgid "Select"
 msgstr ""
 
@@ -3407,7 +3421,8 @@ msgstr ""
 msgid "Go to sending the invitation"
 msgstr ""
 
-#: templates/membership/membership_invite_identity.html:69
+#: templates/membership/membership_invite_identity.html:68
+#: templates/membership/membership_invite_identity.html:94
 msgid "Add to role"
 msgstr ""
 
@@ -3561,13 +3576,13 @@ msgid ""
 "later."
 msgstr ""
 
-#: utils/identity.py:538 views/identity.py:685
+#: utils/identity.py:538 views/identity.py:686
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again. Please also check your spam folder."
 msgstr ""
 
-#: utils/identity.py:548 views/identity.py:698
+#: utils/identity.py:548 views/identity.py:699
 msgid ""
 "The verification code has now been sent and should arrive in your email in a "
 "few minutes. If you do not receive a verification code, please check your "
@@ -3582,16 +3597,16 @@ msgstr ""
 msgid "Tried to send a new code too soon. Please try again in one minute."
 msgstr ""
 
-#: utils/identity.py:572 views/identity.py:747
+#: utils/identity.py:572 views/identity.py:748
 #, python-format
 msgid "Your personal Kamu verification code is: %(token)s"
 msgstr ""
 
-#: utils/identity.py:575 views/auth.py:664 views/identity.py:750
+#: utils/identity.py:575 views/auth.py:664 views/identity.py:751
 msgid "Could not send an SMS message."
 msgstr ""
 
-#: utils/identity.py:580 views/identity.py:755
+#: utils/identity.py:580 views/identity.py:756
 msgid ""
 "The verification code has now been sent and should arrive in your phone in a "
 "few minutes."
@@ -3888,192 +3903,203 @@ msgstr ""
 msgid "Memberships are ending soon in roles you have approval rights."
 msgstr ""
 
-#: views/identity.py:185
+#: views/identity.py:186
 msgid "Selected as the target identity for identity combining."
 msgstr ""
 
-#: views/identity.py:191
+#: views/identity.py:192
 msgid "Selected as the source identity for identity combining."
 msgstr ""
 
-#: views/identity.py:349
+#: views/identity.py:350
 msgid "Failed to verify Candour ID verification status, please try again."
 msgstr ""
 
-#: views/identity.py:375
+#: views/identity.py:376
 msgid ""
 "Your identity has been verified and personal information updated with "
 "Candour ID identification service."
 msgstr ""
 
-#: views/identity.py:395
+#: views/identity.py:396
 msgid "Candour ID verification failed, please try again."
 msgstr ""
 
-#: views/identity.py:431
+#: views/identity.py:432
 msgid "Failed to create Candour ID verification session, please try again."
 msgstr ""
 
-#: views/identity.py:438
+#: views/identity.py:439
 msgid "Could not start Candour ID process, please try again later."
 msgstr ""
 
-#: views/identity.py:491
+#: views/identity.py:492
 msgid "Authentication with single contact has been disabled."
 msgstr ""
 
-#: views/identity.py:509
+#: views/identity.py:510
 msgid ""
 "Authentication with a single contact has been enabled. User can authenticate "
 "with a code sent to either an email address or a phone number."
 msgstr ""
 
-#: views/identity.py:528
+#: views/identity.py:529
 msgid "Authentication with unverified contact has been enabled."
 msgstr ""
 
-#: views/identity.py:545
+#: views/identity.py:546
 msgid "Authentication with unverified contact has been disabled."
 msgstr ""
 
-#: views/identity.py:690
+#: views/identity.py:691
 msgid "Kamu: email address verification"
 msgstr ""
 
-#: views/identity.py:691
+#: views/identity.py:692
 #, python-format
 msgid "Your verification code is: %(token)s"
 msgstr ""
 
-#: views/identity.py:741
+#: views/identity.py:742
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again."
 msgstr ""
 
-#: views/identity.py:1124
+#: views/identity.py:1125
 msgid "Contract already signed."
 msgstr ""
 
-#: views/identity.py:1130
+#: views/identity.py:1131
 msgid "Contract version has changed. Please try again."
 msgstr ""
 
-#: views/identity.py:1133
+#: views/identity.py:1134
 msgid "Contract signed."
 msgstr ""
 
-#: views/identity.py:1353
+#: views/identity.py:1354
 msgid "New identity created."
 msgstr ""
 
-#: views/identity.py:1377
+#: views/identity.py:1378
 msgid "Invalid verification session."
 msgstr ""
 
-#: views/identity.py:1390
+#: views/identity.py:1391
 msgid "Identity verification has been cancelled."
 msgstr ""
 
-#: views/identity.py:1449
+#: views/identity.py:1450
 msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr ""
 
-#: views/identity.py:1566
+#: views/identity.py:1574
 msgid "Too many results, please refine your search parameters."
 msgstr ""
 
-#: views/identity.py:1573
+#: views/identity.py:1581
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 
-#: views/identity.py:1643
+#: views/identity.py:1642 views/identity.py:1656 views/identity.py:1676
+#: views/membership.py:751 views/membership.py:760
+msgid ""
+"PersonDB connection failed, could not load person information. Please try "
+"again later."
+msgstr ""
+
+#: views/identity.py:1743
 msgid "LDAP search failed, could not search existing accounts."
 msgstr ""
 
-#: views/identity.py:1653
+#: views/identity.py:1753
 msgid "Identifier match found, skipping name search."
 msgstr ""
 
-#: views/identity.py:1765
+#: views/identity.py:1867
 msgid "Incorrect primary keys."
 msgstr ""
 
-#: views/identity.py:1771
+#: views/identity.py:1873
 msgid "Identities combined."
 msgstr ""
 
-#: views/membership.py:88
+#: views/membership.py:92
 msgid "You need to create an identity first."
 msgstr ""
 
-#: views/membership.py:92
+#: views/membership.py:96
 msgid "You are already a member of this role."
 msgstr ""
 
-#: views/membership.py:228
+#: views/membership.py:232
 msgid "You have approved the membership shown below."
 msgstr ""
 
-#: views/membership.py:260 views/membership.py:769
+#: views/membership.py:264 views/membership.py:853
 msgid "The email invitation has been sent."
 msgstr ""
 
-#: views/membership.py:262
+#: views/membership.py:266
 msgid "Could not send invite email."
 msgstr ""
 
-#: views/membership.py:267
+#: views/membership.py:271
 msgid ""
 "You tried to send a new email invitation too soon. Please wait one minute "
 "before trying again."
 msgstr ""
 
-#: views/membership.py:292
+#: views/membership.py:296
 msgid "Membership set to end today."
 msgstr ""
 
-#: views/membership.py:314
+#: views/membership.py:318
 msgid "Membership cancelled."
 msgstr ""
 
-#: views/membership.py:384
+#: views/membership.py:388
 msgid "Membership updated."
 msgstr ""
 
-#: views/membership.py:815
+#: views/membership.py:735 views/membership.py:776
+msgid "Multiple identities found, please contact IT-Helpdesk."
+msgstr ""
+
+#: views/membership.py:899
 msgid "This invitation is already claimed."
 msgstr ""
 
-#: views/membership.py:924
+#: views/membership.py:1008
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and email address {email} are "
 "registered to different identities."
 msgstr ""
 
-#: views/membership.py:934
+#: views/membership.py:1018
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and phone number {phone} are "
 "registered to different identities."
 msgstr ""
 
-#: views/membership.py:943
+#: views/membership.py:1027
 #, python-brace-format
 msgid ""
 "Email address {email} and phone number {phone} are registered to different "
 "identities."
 msgstr ""
 
-#: views/membership.py:1047
+#: views/membership.py:1131
 #, python-brace-format
 msgid "The email invitation has been sent to following addresses: {0}"
 msgstr ""
 
-#: views/membership.py:1051
+#: views/membership.py:1135
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr ""
