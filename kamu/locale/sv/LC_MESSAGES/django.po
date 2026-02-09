@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-06 12:39+0200\n"
+"POT-Creation-Date: 2026-02-10 13:06+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3918,7 +3918,7 @@ msgstr ""
 "Kunde inte importera användarinformation från användarkatalogen, försök igen "
 "senare."
 
-#: utils/identity.py:538 views/identity.py:686
+#: utils/identity.py:538 views/identity.py:726
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again. Please also check your spam folder."
@@ -3926,7 +3926,7 @@ msgstr ""
 "Du försökte skicka en ny kod för fort. Vänta en minut innan du försöker "
 "igen. Kontrollera även skräppostmappen i din e-post."
 
-#: utils/identity.py:548 views/identity.py:699
+#: utils/identity.py:548 views/identity.py:739
 msgid ""
 "The verification code has now been sent and should arrive in your email in a "
 "few minutes. If you do not receive a verification code, please check your "
@@ -3945,16 +3945,16 @@ msgid "Tried to send a new code too soon. Please try again in one minute."
 msgstr ""
 "Försökte skicka en ny kod för tidigt. Vänligen försök igen om en minut."
 
-#: utils/identity.py:572 views/identity.py:748
+#: utils/identity.py:572 views/identity.py:788
 #, python-format
 msgid "Your personal Kamu verification code is: %(token)s"
 msgstr "Din personliga Kamu-bekräftelsekod är: %(token)s"
 
-#: utils/identity.py:575 views/auth.py:664 views/identity.py:751
+#: utils/identity.py:575 views/auth.py:664 views/identity.py:791
 msgid "Could not send an SMS message."
 msgstr "Det gick inte att skicka SMS."
 
-#: utils/identity.py:580 views/identity.py:756
+#: utils/identity.py:580 views/identity.py:796
 msgid ""
 "The verification code has now been sent and should arrive in your phone in a "
 "few minutes."
@@ -4269,21 +4269,26 @@ msgid "Memberships are ending soon in roles you have approval rights."
 msgstr ""
 "Medlemskap upphör snart för roller som du har godkännanderättigheter för."
 
-#: views/identity.py:186
+#: views/identity.py:176
+#, python-format
+msgid "You have new membership in the role %(role)s."
+msgstr "Du har ett nytt medlemskap i rollen %(role)s."
+
+#: views/identity.py:226
 msgid "Selected as the target identity for identity combining."
 msgstr "Vald som målidentitet för identitetskombination."
 
-#: views/identity.py:192
+#: views/identity.py:232
 msgid "Selected as the source identity for identity combining."
 msgstr "Vald som källidentitet för identitetskombination."
 
-#: views/identity.py:350
+#: views/identity.py:390
 msgid "Failed to verify Candour ID verification status, please try again."
 msgstr ""
 "Det gick inte att verifiera Candour ID-verifieringsstatus, försök igen "
 "senare."
 
-#: views/identity.py:376
+#: views/identity.py:416
 msgid ""
 "Your identity has been verified and personal information updated with "
 "Candour ID identification service."
@@ -4291,25 +4296,25 @@ msgstr ""
 "Din identitet har verifierats och personuppgifter uppdaterats med hjälp av "
 "identifieringstjänsten Candour ID."
 
-#: views/identity.py:396
+#: views/identity.py:436
 msgid "Candour ID verification failed, please try again."
 msgstr "Verifieringen med Candour ID misslyckades. Försök igen."
 
-#: views/identity.py:432
+#: views/identity.py:472
 msgid "Failed to create Candour ID verification session, please try again."
 msgstr ""
 "Det gick inte att skapa en Candour ID-verifieringssession, försök igen "
 "senare."
 
-#: views/identity.py:439
+#: views/identity.py:479
 msgid "Could not start Candour ID process, please try again later."
 msgstr "Kunde inte starta Candours ID‑process, försök igen senare."
 
-#: views/identity.py:492
+#: views/identity.py:532
 msgid "Authentication with single contact has been disabled."
 msgstr "Autentisering med en enda kontakt har inaktiverats."
 
-#: views/identity.py:510
+#: views/identity.py:550
 msgid ""
 "Authentication with a single contact has been enabled. User can authenticate "
 "with a code sent to either an email address or a phone number."
@@ -4318,24 +4323,24 @@ msgstr ""
 "med en kod som skickats antingen till en e-postadress eller till ett "
 "telefonnummer."
 
-#: views/identity.py:529
+#: views/identity.py:569
 msgid "Authentication with unverified contact has been enabled."
 msgstr "Autentisering med overifierad kontakt har aktiverats."
 
-#: views/identity.py:546
+#: views/identity.py:586
 msgid "Authentication with unverified contact has been disabled."
 msgstr "Autentisering med overifierad kontakt har inaktiverats."
 
-#: views/identity.py:691
+#: views/identity.py:731
 msgid "Kamu: email address verification"
 msgstr "Kamu: verifiering av e-postadress"
 
-#: views/identity.py:692
+#: views/identity.py:732
 #, python-format
 msgid "Your verification code is: %(token)s"
 msgstr "Din bekräftelsekod är: %(token)s"
 
-#: views/identity.py:742
+#: views/identity.py:782
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again."
@@ -4343,46 +4348,46 @@ msgstr ""
 "Du försökte skicka en ny bekräftelsekod för fort. Vänta en minut innan du "
 "försöker igen."
 
-#: views/identity.py:1125
+#: views/identity.py:1165
 msgid "Contract already signed."
 msgstr "Avtalet har redan signerats."
 
-#: views/identity.py:1131
+#: views/identity.py:1171
 msgid "Contract version has changed. Please try again."
 msgstr "Avtalsversionen har ändrats. Vänligen försök igen."
 
-#: views/identity.py:1134
+#: views/identity.py:1174
 msgid "Contract signed."
 msgstr "Avtal signerat."
 
-#: views/identity.py:1354
+#: views/identity.py:1396
 msgid "New identity created."
 msgstr "Ny identitet skapad."
 
-#: views/identity.py:1378
+#: views/identity.py:1420
 msgid "Invalid verification session."
 msgstr "Ogiltig verifieringssession."
 
-#: views/identity.py:1391
+#: views/identity.py:1433
 msgid "Identity verification has been cancelled."
 msgstr "Identitetsverifieringen har avbrutits."
 
-#: views/identity.py:1450
+#: views/identity.py:1492
 msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr "LDAP-sökningen gav för många resultat, förfina sökparametrarna."
 
-#: views/identity.py:1574
+#: views/identity.py:1616
 msgid "Too many results, please refine your search parameters."
 msgstr "För många resultat, förfina sökparametrarna."
 
-#: views/identity.py:1581
+#: views/identity.py:1623
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 "Partiella namnträffar gav för många resultat. Återger endast exakta träffar."
 
-#: views/identity.py:1642 views/identity.py:1656 views/identity.py:1676
+#: views/identity.py:1684 views/identity.py:1698 views/identity.py:1716
 #: views/membership.py:751 views/membership.py:760
 msgid ""
 "PersonDB connection failed, could not load person information. Please try "
@@ -4391,20 +4396,20 @@ msgstr ""
 "Anslutningen till PersonDB misslyckades, personinformationen kunde inte "
 "hämtas. Försök igen senare."
 
-#: views/identity.py:1743
+#: views/identity.py:1794
 msgid "LDAP search failed, could not search existing accounts."
 msgstr ""
 "LDAP-sökningen misslyckades, det gick inte att söka efter befintliga konton."
 
-#: views/identity.py:1753
+#: views/identity.py:1804
 msgid "Identifier match found, skipping name search."
 msgstr "Identifierarträff hittades, skippar namnsökning."
 
-#: views/identity.py:1867
+#: views/identity.py:1923
 msgid "Incorrect primary keys."
 msgstr "Felaktiga primärnycklar."
 
-#: views/identity.py:1873
+#: views/identity.py:1929
 msgid "Identities combined."
 msgstr "Identiteter kombinerade."
 

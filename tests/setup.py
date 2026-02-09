@@ -110,6 +110,7 @@ class TestData(TestCase):
         approver=None,
         inviter=None,
         invite_email_address="",
+        verify_phone_number="",
         status=None,
     ):
         Membership.save = membership_new_save
@@ -126,6 +127,7 @@ class TestData(TestCase):
                     approver=approver,
                     inviter=inviter,
                     invite_email_address=invite_email_address,
+                    verify_phone_number=verify_phone_number,
                     status=status,
                 )
         return Membership.objects.create(
@@ -137,6 +139,7 @@ class TestData(TestCase):
             approver=approver,
             inviter=inviter,
             invite_email_address=invite_email_address,
+            verify_phone_number=verify_phone_number,
         )
 
     def create_permission(self, name="account"):

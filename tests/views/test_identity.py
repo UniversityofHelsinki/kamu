@@ -131,6 +131,86 @@ class IdentityViewTests(BaseTestCase):
         self.assertIn(role.name(), response.content.decode("utf-8"))
 
 
+class IdentityAutomaticMembershipClaimTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.identity = self.create_identity(user=True, email=True, phone=True)
+        self.role = self.create_role()
+        self.url = f"/identity/{self.identity.pk}/"
+        self.client = Client()
+        self.client.force_login(self.user)
+
+    @mock.patch("kamu.utils.audit.logger_audit")
+    def test_identity_claim_with_email_and_phone(self, logger_audit):
+        membership = self.create_membership(
+            role=self.role,
+            invite_email_address=self.email_address.address,
+            verify_phone_number=self.phone_number.number,
+        )
+        response = self.client.get(self.url)
+        membership.refresh_from_db()
+        self.assertEqual(membership.identity, self.identity)
+        self.assertIn("You have new membership in the role External employee", response.content.decode("utf-8"))
+        logger_audit.log.assert_has_calls(
+            [
+                call(20, "Membership to role ext_employee linked to identity: Tester Mc.", extra=ANY),
+            ]
+        )
+
+    def test_identity_claim_with_email_only(self):
+        membership = self.create_membership(
+            role=self.role,
+            invite_email_address=self.email_address.address,
+        )
+        self.client.get(self.url)
+        membership.refresh_from_db()
+        self.assertEqual(membership.identity, self.identity)
+
+    def test_identity_claim_with_invalid_email_match(self):
+        membership = self.create_membership(
+            role=self.role,
+            invite_email_address="e" + self.email_address.address,
+        )
+        self.client.get(self.url)
+        membership.refresh_from_db()
+        self.assertEqual(membership.identity, None)
+
+    def test_identity_claim_with_unverified_email(self):
+        self.email_address.verified = None
+        self.email_address.save()
+        membership = self.create_membership(
+            role=self.role,
+            invite_email_address=self.email_address.address,
+        )
+        self.client.get(self.url)
+        membership.refresh_from_db()
+        self.assertEqual(membership.identity, None)
+
+    def test_identity_claim_with_unverified_phone_number(self):
+        self.phone_number.verified = None
+        self.phone_number.save()
+        membership = self.create_membership(
+            role=self.role,
+            invite_email_address=self.email_address.address,
+            verify_phone_number=self.phone_number.number,
+        )
+        self.client.get(self.url)
+        membership.refresh_from_db()
+        self.assertEqual(membership.identity, None)
+
+    def test_identity_is_already_claimed(self):
+        another_identity = self.create_superidentity()
+        membership = self.create_membership(
+            role=self.role,
+            identity=another_identity,
+            invite_email_address=self.email_address.address,
+            verify_phone_number=self.phone_number.number,
+        )
+        self.client.get(self.url)
+        membership.refresh_from_db()
+        self.assertEqual(membership.identity, another_identity)
+
+
 class IdentitySearchTests(BaseTestCase):
     def setUp(self):
         super().setUp()

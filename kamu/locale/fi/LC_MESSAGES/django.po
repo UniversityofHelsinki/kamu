@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-06 12:39+0200\n"
+"POT-Creation-Date: 2026-02-10 13:06+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3913,7 +3913,7 @@ msgstr ""
 "Käyttäjätietoja ei voitu tuoda käyttäjähakemistosta, yritä myöhemmin "
 "uudelleen."
 
-#: utils/identity.py:538 views/identity.py:686
+#: utils/identity.py:538 views/identity.py:726
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again. Please also check your spam folder."
@@ -3921,7 +3921,7 @@ msgstr ""
 "Yritit lähettää uuden koodin liian pian. Ole hyvä ja odota yksi minuutti "
 "ennen uutta yritystä. Tarkista myös sähköpostisi roskapostikansio."
 
-#: utils/identity.py:548 views/identity.py:699
+#: utils/identity.py:548 views/identity.py:739
 msgid ""
 "The verification code has now been sent and should arrive in your email in a "
 "few minutes. If you do not receive a verification code, please check your "
@@ -3941,16 +3941,16 @@ msgstr ""
 "Yritit lähettää uuden koodin liian pian. Ole hyvä ja odota yksi minuutti "
 "ennen uutta yritystä."
 
-#: utils/identity.py:572 views/identity.py:748
+#: utils/identity.py:572 views/identity.py:788
 #, python-format
 msgid "Your personal Kamu verification code is: %(token)s"
 msgstr "Henkilökohtainen Kamu-vahvistuskoodisi on: %(token)s"
 
-#: utils/identity.py:575 views/auth.py:664 views/identity.py:751
+#: utils/identity.py:575 views/auth.py:664 views/identity.py:791
 msgid "Could not send an SMS message."
 msgstr "Tekstiviestin lähetys epäonnistui."
 
-#: utils/identity.py:580 views/identity.py:756
+#: utils/identity.py:580 views/identity.py:796
 msgid ""
 "The verification code has now been sent and should arrive in your phone in a "
 "few minutes."
@@ -4274,21 +4274,26 @@ msgid "Memberships are ending soon in roles you have approval rights."
 msgstr ""
 "Jäsenyyksiä päättyy pian rooleissa, joissa sinulla on hyväksymisoikeudet."
 
-#: views/identity.py:186
+#: views/identity.py:176
+#, python-format
+msgid "You have new membership in the role %(role)s."
+msgstr "Sinulle on uusi jäsenyys roolissa %(role)s."
+
+#: views/identity.py:226
 msgid "Selected as the target identity for identity combining."
 msgstr "Valittu kohteeksi henkilöllisyyksien yhdistämisessä."
 
-#: views/identity.py:192
+#: views/identity.py:232
 msgid "Selected as the source identity for identity combining."
 msgstr "Valittu lähteeksi henkilöllisyyksien yhdistämisessä."
 
-#: views/identity.py:350
+#: views/identity.py:390
 msgid "Failed to verify Candour ID verification status, please try again."
 msgstr ""
 "Candourin ID tunnistuksen tilaa ei pystytä vahvistamaan, yritä myöhemmin "
 "uudelleen."
 
-#: views/identity.py:376
+#: views/identity.py:416
 msgid ""
 "Your identity has been verified and personal information updated with "
 "Candour ID identification service."
@@ -4296,25 +4301,25 @@ msgstr ""
 "Henkilöllisyytesi on vahvistettu ja henkilötietosi on päivitetty käyttäen "
 "Candour ID ‑tunnistuspalvelua."
 
-#: views/identity.py:396
+#: views/identity.py:436
 msgid "Candour ID verification failed, please try again."
 msgstr ""
 "Henkilöllisyyden varmentaminen Candour ID:n avulla epäonnistui, yritä "
 "uudelleen."
 
-#: views/identity.py:432
+#: views/identity.py:472
 msgid "Failed to create Candour ID verification session, please try again."
 msgstr "Candourin h, yritä uudelleen."
 
-#: views/identity.py:439
+#: views/identity.py:479
 msgid "Could not start Candour ID process, please try again later."
 msgstr "Candourin ID-prosessia ei voitu aloittaa, yritä myöhemmin uudelleen."
 
-#: views/identity.py:492
+#: views/identity.py:532
 msgid "Authentication with single contact has been disabled."
 msgstr "Kirjautuminen vain yhdellä yhteystiedolla on estetty."
 
-#: views/identity.py:510
+#: views/identity.py:550
 msgid ""
 "Authentication with a single contact has been enabled. User can authenticate "
 "with a code sent to either an email address or a phone number."
@@ -4323,24 +4328,24 @@ msgstr ""
 "kirjautua koodilla, joka on lähetetty joko sähköpostiosoitteeseen tai "
 "puhelinnumeroon."
 
-#: views/identity.py:529
+#: views/identity.py:569
 msgid "Authentication with unverified contact has been enabled."
 msgstr "Kirjautuminen vahvistamattomalla yhteystiedolla on sallittu."
 
-#: views/identity.py:546
+#: views/identity.py:586
 msgid "Authentication with unverified contact has been disabled."
 msgstr "Kirjautuminen vahvistamattomalla yhteystiedolla on estetty."
 
-#: views/identity.py:691
+#: views/identity.py:731
 msgid "Kamu: email address verification"
 msgstr "Kamu: sähköpostiosoitteen vahvistaminen"
 
-#: views/identity.py:692
+#: views/identity.py:732
 #, python-format
 msgid "Your verification code is: %(token)s"
 msgstr "Vahvistuskoodisi on: %(token)s"
 
-#: views/identity.py:742
+#: views/identity.py:782
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again."
@@ -4348,48 +4353,48 @@ msgstr ""
 "Yritit lähettää uuden koodin liian pian. Odota yksi minuutti ennen uutta "
 "yritystä."
 
-#: views/identity.py:1125
+#: views/identity.py:1165
 msgid "Contract already signed."
 msgstr "Sopimus on jo allekirjoitettu."
 
-#: views/identity.py:1131
+#: views/identity.py:1171
 msgid "Contract version has changed. Please try again."
 msgstr "Sopimuksen versio on muuttunut. Ole hyvä ja yritä uudelleen."
 
-#: views/identity.py:1134
+#: views/identity.py:1174
 msgid "Contract signed."
 msgstr "Sopimus allekirjoitettu."
 
-#: views/identity.py:1354
+#: views/identity.py:1396
 msgid "New identity created."
 msgstr "Uusi henkilöllisyys luotu."
 
-#: views/identity.py:1378
+#: views/identity.py:1420
 msgid "Invalid verification session."
 msgstr "Virheellinen varmennusistunto."
 
-#: views/identity.py:1391
+#: views/identity.py:1433
 msgid "Identity verification has been cancelled."
 msgstr "Henkilöllisyyden varmentaminen peruttiin."
 
-#: views/identity.py:1450
+#: views/identity.py:1492
 msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr ""
 "LDAP-haku palautti liian monta tulosta. Ole hyvä ja tarkenna hakuparametrejä."
 
-#: views/identity.py:1574
+#: views/identity.py:1616
 msgid "Too many results, please refine your search parameters."
 msgstr "Liian monta tulosta. Ole hyvä ja tarkenna hakuparametrejä."
 
-#: views/identity.py:1581
+#: views/identity.py:1623
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 "Osittaiset nimet palauttivat liian monta tulosta. Näytetään vain täsmälliset "
 "osumat."
 
-#: views/identity.py:1642 views/identity.py:1656 views/identity.py:1676
+#: views/identity.py:1684 views/identity.py:1698 views/identity.py:1716
 #: views/membership.py:751 views/membership.py:760
 msgid ""
 "PersonDB connection failed, could not load person information. Please try "
@@ -4398,19 +4403,19 @@ msgstr ""
 "Yhteys PersonDB:hen epäonnistui, henkilötietoja ei voitu ladata. Yritä "
 "myöhemmin uudelleen."
 
-#: views/identity.py:1743
+#: views/identity.py:1794
 msgid "LDAP search failed, could not search existing accounts."
 msgstr "LDAP-haku epäonnistui. Olemassa olevia tilejä ei voitu hakea."
 
-#: views/identity.py:1753
+#: views/identity.py:1804
 msgid "Identifier match found, skipping name search."
 msgstr "Tunnisteella löydettiin osuma. Nimien haku ohitetaan."
 
-#: views/identity.py:1867
+#: views/identity.py:1923
 msgid "Incorrect primary keys."
 msgstr "Virheelliset yksilöivät avaimet."
 
-#: views/identity.py:1873
+#: views/identity.py:1929
 msgid "Identities combined."
 msgstr "Henkilöllisyydet yhdistetty."
 

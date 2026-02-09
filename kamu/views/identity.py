@@ -137,6 +137,45 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
                 )
         return creatable_accounts
 
+    def claim_memberships_based_on_verified_contact(self) -> None:
+        """
+        Claim memberships invites based on verified contact information.
+
+        If user has the same verified email address and phone number than Membership invite, claim it automatically.
+        If invite does not have phone number, matching email address is enough.
+        """
+        for membership in Membership.objects.filter(
+            Q(identity__isnull=True),
+            Q(status=Membership.Status.INVITED),
+            Q(
+                invite_email_address__in=self.object.email_addresses.filter(verified__isnull=False).values_list(
+                    "address", flat=True
+                )
+            ),
+            Q(verify_phone_number="")
+            | Q(
+                verify_phone_number__in=self.object.phone_numbers.filter(verified__isnull=False).values_list(
+                    "number", flat=True
+                )
+            ),
+        ).distinct():
+            membership.identity = self.object
+            membership.save()
+            audit_log.info(
+                f"Membership to role {membership.role.identifier} linked to identity: {self.object}",
+                category="membership",
+                action="link",
+                outcome="success",
+                request=self.request,
+                objects=[membership, self.object, membership.role],
+                log_to_db=True,
+            )
+            messages.add_message(
+                self.request,
+                messages.INFO,
+                _("You have new membership in the role %(role)s." % {"role": membership.role.name()}),
+            )
+
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """
         Log viewing identity information.
@@ -162,6 +201,7 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
             objects=[self.object],
             extra={"permissions": str(permissions)},
         )
+        self.claim_memberships_based_on_verified_contact()
         missing_requirements = self.object.get_missing_requirements()
         if missing_requirements:
             add_missing_requirement_messages(self.request, missing_requirements, self.object)
