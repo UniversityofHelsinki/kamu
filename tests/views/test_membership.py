@@ -34,6 +34,8 @@ class MembershipViewTests(BaseTestCase):
             expire_delta_days=1,
             inviter=self.superuser,
             invite_email_address="invited_user@example.org",
+            invite_given_name="Invited",
+            invite_surname="User",
         )
         self.url = f"/membership/{self.membership.pk}/"
         self.group = Group.objects.create(name="group")
@@ -66,6 +68,7 @@ class MembershipViewTests(BaseTestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Membership details", response.content.decode("utf-8"))
+        self.assertIn("Invited User", response.content.decode("utf-8"))
         self.assertIn("invited_user@example.org", response.content.decode("utf-8"))
         self.assertIn("Resend email invitation", response.content.decode("utf-8"))
 
@@ -637,6 +640,8 @@ class MembershipInviteTests(BaseTestCase):
             "reason": "Because",
             "invite_text": "Test text",
             "invite_email_address": "invite@example.org",
+            "invite_given_name": "Invite",
+            "invite_surname": "User",
             "invite_language": "en",
             "notify_approvers": "on",
         }
@@ -670,6 +675,8 @@ class MembershipInviteTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         membership = Membership.objects.get(role=self.role, identity=None, invite_email_address="invite@example.org")
         self.assertEqual(membership.inviter, self.user)
+        self.assertEqual(membership.invite_given_name, "Invite")
+        self.assertEqual(membership.invite_surname, "User")
         self.assertIsNone(membership.approver)
         self.assertIn("Your personal invitation code is", mail.outbox[0].body)
         self.assertIn("Test text", mail.outbox[0].body)
@@ -740,7 +747,10 @@ class MembershipMassInviteViewTests(BaseTestCase):
         response = self.client.post(
             self.url,
             self.data
-            | {"invited": f"{self.email_address}\n010181-900C\ninvited@example.org", "preview_message": "True"},
+            | {
+                "invited": f"Test,User,{self.email_address}\nT,U,010181-900C\n,,invited@example.org",
+                "preview_message": "True",
+            },
         )
         self.assertIn("Multiple invites", response.content.decode("utf-8"))
         self.assertIn("Tester Mc.", response.content.decode("utf-8"))
@@ -764,12 +774,12 @@ class MembershipMassInviteViewTests(BaseTestCase):
             self.url,
             self.data
             | {
-                "invited": "missing@example.org\ninvited@example.org,+1234567890",
+                "invited": "Test,User,missing@example.org\nT,U,invited@example.org,+1234567890",
                 "preview_message": "True",
             },
         )
-        self.assertIn("missing@example.org", response.context_data["missing_phone"])
-        self.assertIn(("invited@example.org", "+1234567890"), response.context_data["to_be_invited"])
+        self.assertIn(("Test", "User", "missing@example.org"), response.context_data["missing_phone"])
+        self.assertIn(("T", "U", "invited@example.org", "+1234567890"), response.context_data["to_be_invited"])
 
     @override_settings(ALLOW_TEST_FPIC=True)
     @override_settings(MASS_INVITE_PERMISSION_GROUPS={"group": 3})
@@ -777,7 +787,9 @@ class MembershipMassInviteViewTests(BaseTestCase):
     def test_mass_invite(self, mock_logger):
         Identifier.objects.create(identity=self.superidentity, type=Identifier.Type.FPIC, value="010181-900C")
         response = self.client.post(
-            self.url, self.data | {"invited": f"{self.email_address}\n010181-900C\ninvited@example.org"}, follow=True
+            self.url,
+            self.data | {"invited": f"Test,User,{self.email_address}\nT,U,010181-900C\n,,invited@example.org"},
+            follow=True,
         )
         self.assertIn("Role details", response.content.decode("utf-8"))
         self.assertIn("Added following identities: Tester Mc., Dr. User", response.content.decode("utf-8"))
@@ -807,7 +819,8 @@ class MembershipMassInviteViewTests(BaseTestCase):
     def test_mass_invite_too_many_lines(self):
         response = self.client.post(
             self.url,
-            self.data | {"invited": f"{self.email_address}\n{self.phone_number}", "preview_message": "True"},
+            self.data
+            | {"invited": f"Test,User,{self.email_address}\nT,U,{self.phone_number}", "preview_message": "True"},
         )
         self.assertIn("Too many invited persons.", response.content.decode("utf-8"))
         self.assertEqual(response.status_code, 200)
@@ -819,7 +832,7 @@ class MembershipMassInviteViewTests(BaseTestCase):
         response = self.client.post(
             self.url,
             self.data
-            | {"invited": f"{self.email_address},+1234000000\ninvited@example.org", "preview_message": "True"},
+            | {"invited": f" T,U,{self.email_address},+1234000000\n,,invited@example.org", "preview_message": "True"},
         )
         self.assertIn("are registered to different identities", response.content.decode("utf-8"))
 

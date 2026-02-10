@@ -74,16 +74,16 @@
     {% if to_be_invited %}
       <p>{% trans "Following email addresses will receive an invitation:" %}</p>
       <ul>
-        {% for email, phone in to_be_invited %}
-          <li>{{ email }}{% if phone %}, {{ phone }}{% endif %}</li>
+        {% for given_name, surname, email, phone in to_be_invited %}
+          <li>{{ email }}{% if phone %}, {{ phone }}{% endif %}{% if given_name or surname %} ({{ given_name }} {{ surname }}){% endif %}</li>
         {% endfor %}
       </ul>
     {% endif %}
     {% if missing_phone %}
       <p>{% trans "This role requires SMS verification and following addresses will be skipped because of the missing phone number:" %}</p>
       <ul>
-        {% for email in missing_phone %}
-          <li>{{ email }}</li>
+        {% for given_name, surname, email in missing_phone %}
+          <li>{{ email }}{% if given_name or surname %} ({{ given_name }} {{ surname }}){% endif %}</li>
         {% endfor %}
       </ul>
     {% endif %}

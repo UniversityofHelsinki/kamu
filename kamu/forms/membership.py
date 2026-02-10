@@ -156,6 +156,8 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
     class Meta:
         model = Membership
         fields = [
+            "invite_given_name",
+            "invite_surname",
             "invite_email_address",
             "verify_phone_number",
             "start_date",
@@ -214,9 +216,9 @@ class MembershipMassCreateForm(forms.ModelForm[Membership]):
         label=_("Invited persons"),
         widget=forms.Textarea,
         help_text=_(
-            "Invited persons, one per line. Each line should contain email address, followed by optional phone "
-            "number and/or Finnish personal identity code, values separated by comma. Phone number must be in "
-            'international format. Example: "person@example.org,+358501234567,010181-900C"'
+            "Invited persons, one per line. Each line should contain given name, surname, email address, followed by "
+            "optional phone number and/or Finnish personal identity code, values separated by comma. Phone number "
+            'must be in international format. Example: "Test,Person,person@example.org,+358501234567,010181-900C"'
         ),
     )
     notify_approvers = forms.BooleanField(
@@ -282,7 +284,9 @@ class MembershipMassCreateForm(forms.ModelForm[Membership]):
         for line in lines:
             person = {}
             parts = line.split(",")
-            for part in parts:
+            person.update({"given_name": parts[0].strip() if len(parts) > 0 else ""})
+            person.update({"surname": parts[1].strip() if len(parts) > 1 else ""})
+            for part in parts[2:]:
                 if not part.strip():
                     continue
                 try:
@@ -292,6 +296,10 @@ class MembershipMassCreateForm(forms.ModelForm[Membership]):
                 person.update(value)
             if not person:
                 raise ValidationError(_("Invalid line: %(line)s"), params={"line": line})
+            if not person.get("email") and not person.get("phone") and not person.get("fpic"):
+                raise ValidationError(
+                    _("Line is missing identifiers: %(line)s. First two fields are for names."), params={"line": line}
+                )
             invited.append(person)
         return invited
 

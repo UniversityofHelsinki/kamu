@@ -1054,14 +1054,16 @@ class MembershipMassInviteView(BaseMembershipInviteView):
             if not invited or not isinstance(invited, dict):
                 continue
             identity = self.find_identity(invited)
+            given_name = invited.get("given_name")
+            surname = invited.get("surname")
             email = invited.get("email")
             phone = invited.get("phone")
             if identity:
                 to_be_added.append(identity)
             elif email and (not form.instance.role.require_sms_verification or phone):
-                to_be_invited.append((email, phone))
+                to_be_invited.append((given_name, surname, email, phone))
             elif email:
-                missing_phone.append(email)
+                missing_phone.append((given_name, surname, email))
         if "preview_message" in self.request.POST:
             subject, message = create_invite_message(
                 role=form.instance.role,
@@ -1097,9 +1099,11 @@ class MembershipMassInviteView(BaseMembershipInviteView):
             )
             send_add_email(membership)
             added_list.append(identity.display_name())
-        for email, phone in to_be_invited:
+        for given_name, surname, email, phone in to_be_invited:
             form.instance.pk = None
             form.instance.identity = None
+            form.instance.invite_given_name = given_name
+            form.instance.invite_surname = surname
             form.instance.invite_email_address = email
             if form.instance.role.require_sms_verification:
                 form.instance.verify_phone_number = phone

@@ -21,7 +21,8 @@
       <tbody>
       {% for membership in object_list %}
         <tr>
-          <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{% if membership.identity %}{{ membership.identity }}{% else %}{% trans "Invite" %}: {{ membership.invite_email_address }}{% endif %}</a></th>
+          <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{% if membership.identity %}{{ membership.identity }}{% else %}
+            {% trans "Invited" %}: {{ membership.invite_email_address }}{% if membership.invite_name %} ({{ membership.invite_name }}){% endif %}{% endif %}</a></th>
           <td>{{ membership.role }}</td>
           <td>{{ membership.get_status_display }}</td>
           <td class="d-none d-xl-table-cell">{{ membership.start_date|date:"SHORT_DATE_FORMAT" }}</td>

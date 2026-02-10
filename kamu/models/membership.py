@@ -67,6 +67,16 @@ class Membership(models.Model):
         verbose_name=_("Membership ID"),
         help_text=_("Unique identifier for this membership."),
     )
+    invite_given_name = models.CharField(
+        blank=True,
+        max_length=200,
+        verbose_name=_("Given name"),
+    )
+    invite_surname = models.CharField(
+        blank=True,
+        max_length=200,
+        verbose_name=_("Surname"),
+    )
     invite_email_address = models.EmailField(blank=True, null=True, verbose_name=_("Invite email address"))
     verify_phone_number = models.CharField(
         max_length=20,
@@ -123,6 +133,13 @@ class Membership(models.Model):
         if self.identity:
             return f"{self.role.name()} - {self.identity.display_name()}"
         return f"{self.role.name()} - {self.invite_email_address}"
+
+    @property
+    def invite_name(self) -> str:
+        """
+        Returns the name in the invite.
+        """
+        return " ".join(n for n in (self.invite_given_name, self.invite_surname) if n)
 
     def clean(self) -> None:
         """

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-10 13:06+0200\n"
+"POT-Creation-Date: 2026-02-10 13:26+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -161,7 +161,7 @@ msgstr "Puhelinnumero kansainvälisessä muodossa, esim. +358123456789."
 msgid "This account is inactive."
 msgstr "Tämä tunnus ei ole käytössä."
 
-#: forms/auth.py:51 forms/auth.py:401 templates/auth/invite.html:18
+#: forms/auth.py:51 forms/auth.py:403 templates/auth/invite.html:18
 #: templates/auth/invite.html:20 templates/auth/login.html:7
 #: templates/auth/login_email.html:5 templates/auth/login_local.html:5
 #: templates/base.html:74 templates/front.html:90 templates/front.html:92
@@ -242,7 +242,7 @@ msgid "All official given names."
 msgstr "Kaikki viralliset etunimet"
 
 #: forms/auth.py:239 forms/identity.py:51 models/identity.py:206
-#: templates/account/account_create.html:12
+#: models/membership.py:78 templates/account/account_create.html:12
 #: templates/identity/identity_combine.html:13
 #: templates/identity/identity_combine.html:75
 msgid "Surname"
@@ -256,36 +256,36 @@ msgstr "Viralliset sukunimet."
 msgid "This email address is already set by the inviter."
 msgstr "Kutsuja on jo asettanut sähköpostiosoitteen."
 
-#: forms/auth.py:253
+#: forms/auth.py:255
 msgid "Send verification code"
 msgstr "Lähetä vahvistuskoodi"
 
-#: forms/auth.py:261
+#: forms/auth.py:263
 msgid "This email address is already linked to an account."
 msgstr "Sähköpostiosoite on jo liitetty käyttäjätiliin."
 
-#: forms/auth.py:270
+#: forms/auth.py:272
 msgid "Invalid form data."
 msgstr "Virhe lomakkeen tiedoissa."
 
-#: forms/auth.py:274
+#: forms/auth.py:276
 msgid "Either given names or surname must be filled in."
 msgstr "Joko etunimet tai sukunimi on annettava."
 
-#: forms/auth.py:283 forms/identity.py:186
+#: forms/auth.py:285 forms/identity.py:186
 msgid "Enter the verification code you received by email"
 msgstr "Anna sähköpostitse saamasi vahvistuskoodi"
 
-#: forms/auth.py:294
+#: forms/auth.py:296
 msgid "Verify email address"
 msgstr "Vahvista sähköpostiosoite"
 
-#: forms/auth.py:295 forms/auth.py:369 forms/identity.py:197
+#: forms/auth.py:297 forms/auth.py:371 forms/identity.py:197
 #: forms/identity.py:237
 msgid "Send new code"
 msgstr "Lähetä uusi koodi"
 
-#: forms/auth.py:309 forms/identity.py:207
+#: forms/auth.py:311 forms/identity.py:207
 msgid ""
 "Invalid verification code. Please note that the verification code is "
 "different from the invitation code. If you have received more than one "
@@ -295,11 +295,11 @@ msgstr ""
 "kutsukoodi. Jos olet lähettänyt itsellesi useamman vahvistuskoodin, vain "
 "viimeisin niistä on voimassa."
 
-#: forms/auth.py:323
+#: forms/auth.py:325
 msgid "Enter your phone number for SMS verification"
 msgstr "Anna puhelinnumerosi tekstiviestivahvistusta varten"
 
-#: forms/auth.py:326
+#: forms/auth.py:328
 msgid ""
 "Enter the phone number in the international format, e.g. +358123456789. "
 "Please note that we will not forward the phone number."
@@ -307,23 +307,23 @@ msgstr ""
 "Anna puhelinnumero kansainvälisessä muodossa, esim. +358123456789. Huom! "
 "Emme jaa puhelinnumeroa eteenpäin."
 
-#: forms/auth.py:340
+#: forms/auth.py:342
 msgid "This phone number is already set by the inviter."
 msgstr "Kutsuja on jo asettanut puhelinnumeron."
 
-#: forms/auth.py:343 templates/membership/verification_form.html:21
+#: forms/auth.py:345 templates/membership/verification_form.html:21
 msgid "Send verification code by SMS"
 msgstr "Lähetä vahvistuskoodi tekstiviestillä"
 
-#: forms/auth.py:357 forms/identity.py:226
+#: forms/auth.py:359 forms/identity.py:226
 msgid "Enter the verification code you received by SMS"
 msgstr "Anna tekstiviestinä saamasi vahvistuskoodi"
 
-#: forms/auth.py:368 models/membership.py:74
+#: forms/auth.py:370 models/membership.py:84
 msgid "Verify phone number"
 msgstr "Vahvista puhelinnumero"
 
-#: forms/auth.py:383 forms/identity.py:247
+#: forms/auth.py:385 forms/identity.py:247
 msgid ""
 "Invalid verification code. If you sent yourself more than one verification "
 "code, only the most recent one will be valid."
@@ -331,11 +331,11 @@ msgstr ""
 "Virheellinen vahvistuskoodi. Jos lähetit itsellesi useamman vahvistuskoodin, "
 "vain viimeisin niistä on voimassa."
 
-#: forms/auth.py:421
+#: forms/auth.py:423
 msgid "Personal invitation code"
 msgstr "Henkilökohtainen kutsukoodi"
 
-#: forms/auth.py:444 forms/auth.py:450 forms/auth.py:454 forms/auth.py:456
+#: forms/auth.py:446 forms/auth.py:452 forms/auth.py:456 forms/auth.py:458
 #: views/auth.py:133 views/auth.py:154 views/auth.py:240
 #: views/membership.py:896
 msgid "Invalid invitation code."
@@ -542,11 +542,11 @@ msgstr ""
 "Et voi sallia kirjautumista yhdellä yhteystiedolla näin korkealla "
 "tunnistustasolla."
 
-#: forms/membership.py:27 forms/membership.py:130 forms/membership.py:223
+#: forms/membership.py:27 forms/membership.py:130 forms/membership.py:225
 msgid "Notify approvers"
 msgstr "Ilmoita hyväksyjille"
 
-#: forms/membership.py:30 forms/membership.py:132 forms/membership.py:225
+#: forms/membership.py:30 forms/membership.py:132 forms/membership.py:227
 msgid ""
 "Send notification to the role notification address about the new invite "
 "requiring approval."
@@ -562,61 +562,65 @@ msgstr "Lisää jäsen"
 msgid "Update membership"
 msgstr "Päivitä jäsenyys"
 
-#: forms/membership.py:102 forms/membership.py:180
+#: forms/membership.py:102 forms/membership.py:182
 msgid "Verification phone number is required for this role."
 msgstr "Roolin jäsenyys vaatii vahvistuksessa käytetyn puhelinnummeron."
 
-#: forms/membership.py:153 forms/membership.py:241
-#: templates/membership/membership_approval_list.html:23
-#: templates/membership/membership_expiring_list.html:24
-#: templates/role/role_detail.html:72
+#: forms/membership.py:153 forms/membership.py:243
 msgid "Invite"
 msgstr "Lähetä kutsu"
 
-#: forms/membership.py:154 forms/membership.py:242
+#: forms/membership.py:154 forms/membership.py:244
 #: templates/membership/membership_invite.html:58
 msgid "Preview message"
 msgstr "Esikatsele viesti"
 
-#: forms/membership.py:205
+#: forms/membership.py:207
 msgid ""
 "This email address already has an invite to the role during this time period."
 msgstr "Tällä sähköpostiosoitteella on jo kutsu rooliin tälle aikajaksolle."
 
-#: forms/membership.py:214
+#: forms/membership.py:216
 msgid "Invited persons"
 msgstr "Kutsutut henkilöt"
 
-#: forms/membership.py:217
+#: forms/membership.py:219
 msgid ""
-"Invited persons, one per line. Each line should contain email address, "
-"followed by optional phone number and/or Finnish personal identity code, "
-"values separated by comma. Phone number must be in international format. "
-"Example: \"person@example.org,+358501234567,010181-900C\""
+"Invited persons, one per line. Each line should contain given name, surname, "
+"email address, followed by optional phone number and/or Finnish personal "
+"identity code, values separated by comma. Phone number must be in "
+"international format. Example: \"Test,Person,person@example.org,"
+"+358501234567,010181-900C\""
 msgstr ""
 "Kutsutut henkilöt, yksi per rivi. Jokaisen rivin tulisi sisältää "
-"sähköpostiosoite, mahdollisesti puhelinnumero ja/tai suomalainen "
-"henkilötunnus (arvot erotettuna pilkulla). Puhelinnumeron tulee olla "
-"kansainvälisessä muodossa. Esimerkki: \"henkilo@example.org,"
-"+358501234567,010181-900C\""
+"etunimi, sukunimi, sähköpostiosoite, mahdollisesti puhelinnumero ja/tai "
+"suomalainen henkilötunnus (arvot erotettuna pilkulla). Puhelinnumeron tulee "
+"olla kansainvälisessä muodossa. Esimerkki: \"Testi,Henkilö,"
+"henkilo@example.org,+358501234567,010181-900C\""
 
-#: forms/membership.py:277
+#: forms/membership.py:279
 msgid "No invited persons."
 msgstr "Ei kutsuttuja henkilöitä."
 
-#: forms/membership.py:280
+#: forms/membership.py:282
 msgid "Too many invited persons."
 msgstr "Liian monta kutsuttua henkilöä."
 
-#: forms/membership.py:291
+#: forms/membership.py:295
 #, python-format
 msgid "Invalid value: %(part)s"
 msgstr "Virheellinen arvo: %(part)s"
 
-#: forms/membership.py:294
+#: forms/membership.py:298
 #, python-format
 msgid "Invalid line: %(line)s"
 msgstr "Virheellinen rivi: %(line)s"
+
+#: forms/membership.py:301
+#, python-format
+msgid "Line is missing identifiers: %(line)s. First two fields are for names."
+msgstr ""
+"Riviltä puuttuu tunnisteet: %(line)s. Kaksi ensimmäistä kenttää ovat nimiä varten."
 
 #: models/account.py:29
 msgid "Enabled"
@@ -642,7 +646,7 @@ msgstr "Luo kevyttunnus"
 #: templates/account/account_list.html:18
 #: templates/identity/identity_detail.html:130
 #: templates/membership/membership_approval_list.html:15
-#: templates/membership/membership_detail.html:60
+#: templates/membership/membership_detail.html:61
 #: templates/membership/membership_expiring_list.html:16
 #: templates/membership/membership_managed_list.html:15
 #: templates/role/role_detail.html:64
@@ -667,14 +671,14 @@ msgstr "Suljettu"
 #: models/account.py:43 models/account.py:142 models/contract.py:55
 #: models/contract.py:112 models/identity.py:48 models/identity.py:288
 #: models/identity.py:502 models/identity.py:573 models/identity.py:647
-#: models/identity.py:716 models/membership.py:112 models/organisation.py:31
+#: models/identity.py:716 models/membership.py:122 models/organisation.py:31
 #: models/role.py:83 models/role.py:275 models/role.py:371 models/token.py:321
 msgid "Created at"
 msgstr "Luotu"
 
 #: models/account.py:44 models/account.py:143 models/identity.py:49
 #: models/identity.py:289 models/identity.py:503 models/identity.py:574
-#: models/identity.py:648 models/identity.py:717 models/membership.py:113
+#: models/identity.py:648 models/identity.py:717 models/membership.py:123
 #: models/organisation.py:32 models/role.py:84 models/role.py:276
 #: models/role.py:372
 msgid "Updated at"
@@ -1095,6 +1099,9 @@ msgid "Invalid eduPersonPrincipalName format."
 msgstr "Virheellinen eduPersonPrincipalNamen muoto."
 
 #: models/membership.py:56
+#: templates/membership/membership_approval_list.html:24
+#: templates/membership/membership_expiring_list.html:25
+#: templates/role/role_detail.html:73
 msgid "Invited"
 msgstr "Kutsuttu"
 
@@ -1126,11 +1133,15 @@ msgstr "Jäsenyyden tunniste"
 msgid "Unique identifier for this membership."
 msgstr "Yksilöllinen tunniste tälle jäsenyydelle."
 
-#: models/membership.py:70
+#: models/membership.py:73 templates/account/account_create.html:10
+msgid "Given name"
+msgstr "Etunimi"
+
+#: models/membership.py:80
 msgid "Invite email address"
 msgstr "Kutsuttavan henkilön sähköpostiosoite"
 
-#: models/membership.py:76
+#: models/membership.py:86
 msgid ""
 "Phone number to which the confirmation SMS will be sent, in the "
 "international format, e.g. +358123456789."
@@ -1138,15 +1149,15 @@ msgstr ""
 "Puhelinnumero, johon vahvistusviesti lähtetään, kansainvälisessä muodossa, "
 "esim. +358123456789."
 
-#: models/membership.py:86
+#: models/membership.py:96
 msgid "Possible default email invitation replacement text"
 msgstr "Mahdollinen oletussähköpostikutsun korvaava teksti"
 
-#: models/membership.py:91
+#: models/membership.py:101
 msgid "Invite text"
 msgstr "Kutsun teksti"
 
-#: models/membership.py:93
+#: models/membership.py:103
 msgid ""
 "If you wish, you can replace the beginning part of the default email invite "
 "with your own text (max. 70 characters). The invitation code and link are "
@@ -1157,35 +1168,35 @@ msgstr ""
 "70 merkkiä). Kutsukoodi ja linkki lisätään aina viestin loppuun. Esikatsele "
 "viesti nähdäksesi lopullisen sähköpostin."
 
-#: models/membership.py:99
+#: models/membership.py:109
 msgid "Membership status"
 msgstr "Jäsenyyden tila"
 
-#: models/membership.py:106
+#: models/membership.py:116
 msgid "Reasons for membership"
 msgstr "Perustelut jäsenyydelle"
 
-#: models/membership.py:107
+#: models/membership.py:117
 msgid "Membership start date"
 msgstr "Jäsenyyden alkamispäivämäärä"
 
-#: models/membership.py:108
+#: models/membership.py:118
 msgid "Membership expiry date"
 msgstr "Jäsenyyden päättymispäivämäärä"
 
-#: models/membership.py:109 templates/membership/membership_detail.html:64
+#: models/membership.py:119 templates/membership/membership_detail.html:65
 msgid "Cancelled at"
 msgstr "Peruttu"
 
-#: models/membership.py:111
+#: models/membership.py:121
 msgid "Requirements failed time"
 msgstr "Vaatimusten epäonnistumisaika"
 
-#: models/membership.py:119
+#: models/membership.py:129
 msgid "Membership"
 msgstr "Jäsenyys"
 
-#: models/membership.py:120 templates/base.html:32
+#: models/membership.py:130 templates/base.html:32
 #: templates/role/role_detail.html:58
 msgid "Memberships"
 msgstr "Jäsenyydet"
@@ -1307,9 +1318,9 @@ msgstr "Aika jäsenyyden päättymisestä jäsenyystietojen poistoon (päivissä
 #: templates/identity/identity_detail.html:156
 #: templates/membership/membership_approval_list.html:14
 #: templates/membership/membership_detail.html:17
-#: templates/membership/membership_detail.html:92
-#: templates/membership/membership_detail.html:122
-#: templates/membership/membership_detail.html:149
+#: templates/membership/membership_detail.html:93
+#: templates/membership/membership_detail.html:123
+#: templates/membership/membership_detail.html:150
 #: templates/membership/membership_expiring_list.html:15
 #: templates/membership/membership_managed_list.html:14
 #: templates/membership/verification_form.html:9
@@ -1636,10 +1647,6 @@ msgid ""
 "The limited user account will be created with the following information:"
 msgstr "Kevyttunnus luodaan seuraavilla tiedoilla:"
 
-#: templates/account/account_create.html:10
-msgid "Given name"
-msgstr "Etunimi"
-
 #: templates/account/account_create.html:14
 #: templates/identity/identity_detail.html:12
 msgid "Display name"
@@ -1699,9 +1706,9 @@ msgstr "Vahvista käyttäjätunnuksen sulkeminen"
 #: templates/identity/identity_detail.html:46
 #: templates/identity/identity_detail.html:77
 #: templates/identity/identity_detail.html:98
-#: templates/membership/membership_detail.html:87
-#: templates/membership/membership_detail.html:117
-#: templates/membership/membership_detail.html:144
+#: templates/membership/membership_detail.html:88
+#: templates/membership/membership_detail.html:118
+#: templates/membership/membership_detail.html:145
 msgid "Close"
 msgstr "Sulje"
 
@@ -3171,7 +3178,7 @@ msgstr "Voimassaolevat ja tulevat jäsenyydet"
 #: templates/identity/identity_detail.html:131
 #: templates/identity/identity_detail.html:157
 #: templates/membership/membership_approval_list.html:16
-#: templates/membership/membership_detail.html:62
+#: templates/membership/membership_detail.html:63
 #: templates/membership/membership_expiring_list.html:17
 #: templates/role/role_detail.html:65
 msgid "Start date"
@@ -3180,9 +3187,9 @@ msgstr "Aloituspäivä"
 #: templates/identity/identity_detail.html:132
 #: templates/identity/identity_detail.html:158
 #: templates/membership/membership_approval_list.html:17
-#: templates/membership/membership_detail.html:96
-#: templates/membership/membership_detail.html:126
-#: templates/membership/membership_detail.html:153
+#: templates/membership/membership_detail.html:97
+#: templates/membership/membership_detail.html:127
+#: templates/membership/membership_detail.html:154
 #: templates/membership/membership_expiring_list.html:18
 #: templates/role/role_detail.html:66
 msgid "Expiration date"
@@ -3437,9 +3444,9 @@ msgstr ""
 
 #: templates/membership/membership_approval_list.html:13
 #: templates/membership/membership_detail.html:34
-#: templates/membership/membership_detail.html:94
-#: templates/membership/membership_detail.html:124
-#: templates/membership/membership_detail.html:151
+#: templates/membership/membership_detail.html:95
+#: templates/membership/membership_detail.html:125
+#: templates/membership/membership_detail.html:152
 #: templates/membership/membership_expiring_list.html:14
 #: templates/membership/membership_managed_list.html:13
 #: templates/role/role_detail.html:63
@@ -3497,7 +3504,7 @@ msgstr "päivää"
 msgid "Email"
 msgstr "Sähköposti"
 
-#: templates/membership/membership_detail.html:47
+#: templates/membership/membership_detail.html:48
 msgid ""
 "The person has not yet registered for Kamu and provided their own "
 "information."
@@ -3505,94 +3512,94 @@ msgstr ""
 "Henkilö ei ole vielä rekisteröitynyt Kamuun ja tallentanut omia tietojaan."
 
 # python-format
-#: templates/membership/membership_detail.html:48
+#: templates/membership/membership_detail.html:49
 #, python-format
 msgid "An email invitation has been sent to %(address)s."
 msgstr "Sähköpostikutsu on lähetetty osoitteeseen %(address)s."
 
-#: templates/membership/membership_detail.html:49
+#: templates/membership/membership_detail.html:50
 #, python-format
 msgid "An SMS confirmation will be sent to %(number)s."
 msgstr "Tekstiviestivahvistus lähetetään numeroon %(number)s."
 
-#: templates/membership/membership_detail.html:52
+#: templates/membership/membership_detail.html:53
 msgid "Resend email invitation"
 msgstr "Lähetä sähköpostikutsu uudelleen"
 
-#: templates/membership/membership_detail.html:58
+#: templates/membership/membership_detail.html:59
 msgid "Membership details"
 msgstr "Jäsenyyden tiedot"
 
-#: templates/membership/membership_detail.html:64
+#: templates/membership/membership_detail.html:65
 msgid "Expiry date"
 msgstr "Päättymispäivä"
 
-#: templates/membership/membership_detail.html:66
+#: templates/membership/membership_detail.html:67
 msgid "Approver"
 msgstr "Hyväksyjä"
 
-#: templates/membership/membership_detail.html:68
+#: templates/membership/membership_detail.html:69
 #: templates/membership/verification_form.html:13
 msgid "Inviter"
 msgstr "Kutsuja"
 
-#: templates/membership/membership_detail.html:70
+#: templates/membership/membership_detail.html:71
 msgid "Reasons"
 msgstr "Perustelut"
 
-#: templates/membership/membership_detail.html:77
+#: templates/membership/membership_detail.html:78
 #: templates/membership/membership_edit_form.html:6
 msgid "Continue and edit membership"
 msgstr "Jatka ja muokkaa jäsenyyttä"
 
-#: templates/membership/membership_detail.html:81
-#: templates/membership/membership_detail.html:86
+#: templates/membership/membership_detail.html:82
+#: templates/membership/membership_detail.html:87
 msgid "End membership to today"
 msgstr "Päätä jäsenyys tähän päivään"
 
-#: templates/membership/membership_detail.html:90
+#: templates/membership/membership_detail.html:91
 msgid ""
 "Please confirm that you want to terminate the membership shown below by the "
 "end of today."
 msgstr ""
 "Vahvista, että haluat päättää alla näkyvän jäsenyyden tämän päivän loppuun."
 
-#: templates/membership/membership_detail.html:100
-#: templates/membership/membership_detail.html:130
-#: templates/membership/membership_detail.html:157
+#: templates/membership/membership_detail.html:101
+#: templates/membership/membership_detail.html:131
+#: templates/membership/membership_detail.html:158
 #: templates/membership/membership_edit_form.html:17
 msgid "Back"
 msgstr "Palaa"
 
-#: templates/membership/membership_detail.html:101
+#: templates/membership/membership_detail.html:102
 msgid "Confirm termination of membership"
 msgstr "Vahvista jäsenyyden päättäminen"
 
-#: templates/membership/membership_detail.html:111
-#: templates/membership/membership_detail.html:116
+#: templates/membership/membership_detail.html:112
+#: templates/membership/membership_detail.html:117
 msgid "Cancel membership effective immediately"
 msgstr "Peru jäsenyys välittömästi"
 
-#: templates/membership/membership_detail.html:120
+#: templates/membership/membership_detail.html:121
 msgid ""
 "Please confirm that you want to cancel the membership shown below effective "
 "immediately."
 msgstr "Vahvista, että haluat perua alla näkyvän jäsenyyden välittömästi."
 
-#: templates/membership/membership_detail.html:131
+#: templates/membership/membership_detail.html:132
 msgid "Confirm cancellation of membership"
 msgstr "Vahvista jäsenyyden peruminen"
 
-#: templates/membership/membership_detail.html:138
-#: templates/membership/membership_detail.html:143
+#: templates/membership/membership_detail.html:139
+#: templates/membership/membership_detail.html:144
 msgid "Reject membership"
 msgstr "Hylkää jäsenyys"
 
-#: templates/membership/membership_detail.html:147
+#: templates/membership/membership_detail.html:148
 msgid "The following membership will be rejected effective immediately."
 msgstr "Seuraava jäsenyys hylätään välittömästi."
 
-#: templates/membership/membership_detail.html:158
+#: templates/membership/membership_detail.html:159
 msgid "Confirm rejection of membership"
 msgstr "Vahvista jäsenyyden hylkääminen"
 
@@ -4494,12 +4501,12 @@ msgstr ""
 "Sähköpostiosoite {email} ja puhelinnumero {phone} ovat rekisteröity eri "
 "henkilöille."
 
-#: views/membership.py:1131
+#: views/membership.py:1135
 #, python-brace-format
 msgid "The email invitation has been sent to following addresses: {0}"
 msgstr "Sähköpostikutsu on lähetetty seuraaviin osoitteisiin: {0}"
 
-#: views/membership.py:1135
+#: views/membership.py:1139
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Lisätty seuraavat henkilöllisyydet: {0}"

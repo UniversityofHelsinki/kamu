@@ -249,6 +249,8 @@ class RegistrationForm(forms.Form):
             self.fields["email_address"].initial = self.membership.invite_email_address
             self.fields["email_address"].disabled = True
             self.fields["email_address"].help_text = _("This email address is already set by the inviter.")
+        self.fields["given_names"].initial = self.membership.invite_given_name
+        self.fields["surname"].initial = self.membership.invite_surname
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Send verification code")))
 
