@@ -126,6 +126,16 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
     Form for creating a new membership with email invite.
     """
 
+    send_invite_before_approval = forms.BooleanField(
+        label=_("Send invite email before approval"),
+        required=False,
+        help_text=_(
+            "Send the invitation email before approval. The invited person can accept immediately, but the membership "
+            "and its permissions, including the ability to create a user account, will only become active after "
+            "approval. If not selected, the invitation email will be sent after approval."
+        ),
+    )
+
     notify_approvers = forms.BooleanField(
         label=_("Notify approvers"),
         required=False,
@@ -144,6 +154,7 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
         super().__init__(*args, **kwargs)
         if self.is_approver:
             del self.fields["notify_approvers"]
+            del self.fields["send_invite_before_approval"]
         if self.invite_email_address:
             self.fields["invite_email_address"].initial = self.invite_email_address
             self.fields["invite_email_address"].disabled = True
@@ -221,6 +232,17 @@ class MembershipMassCreateForm(forms.ModelForm[Membership]):
             'must be in international format. Example: "Test,Person,person@example.org,+358501234567,010181-900C"'
         ),
     )
+
+    send_invite_before_approval = forms.BooleanField(
+        label=_("Send invite email before approval"),
+        required=False,
+        help_text=_(
+            "Send the invitation email before approval. The invited person can accept immediately, but the membership "
+            "and its permissions, including the ability to create a user account, will only become active after "
+            "approval. If not selected, the invitation email will be sent after approval."
+        ),
+    )
+
     notify_approvers = forms.BooleanField(
         label=_("Notify approvers"),
         required=False,
@@ -239,6 +261,7 @@ class MembershipMassCreateForm(forms.ModelForm[Membership]):
         super().__init__(*args, **kwargs)
         if self.is_approver:
             del self.fields["notify_approvers"]
+            del self.fields["send_invite_before_approval"]
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", _("Invite")))
         self.helper.add_input(Submit("preview_message", _("Preview message"), css_class="btn-info"))

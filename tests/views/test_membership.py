@@ -125,6 +125,7 @@ class MembershipViewTests(BaseTestCase):
     def test_approve_membership_without_identity(self, mock_logger):
         self.membership.identity = None
         self.membership.save()
+        Token.objects.create_invite_token(self.membership)
         self.role.approvers.add(self.group)
         response = self.client.post(self.url, {"approve_membership": "approve"}, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -138,6 +139,15 @@ class MembershipViewTests(BaseTestCase):
             ]
         )
         self.assertEqual(len(mail.outbox), 0)
+
+    def test_approve_membership_without_identity_and_invite(self):
+        self.membership.identity = None
+        self.membership.save()
+        self.role.approvers.add(self.group)
+        response = self.client.post(self.url, {"approve_membership": "approve"}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Register as a member using the personal link below", mail.outbox[0].body)
 
     def test_view_membership_approval_list(self):
         response = self.client.get("/membership/approval/")
@@ -629,7 +639,9 @@ class MembershipInviteTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Notify approvers", response.content.decode("utf-8"))
 
-    def _test_join_role_send_email_invite(self, preview=False, verify_phone_number=""):
+    def _test_join_role_send_email_invite(
+        self, preview=False, verify_phone_number="", send_invite_before_approval=True
+    ):
         self.session = self.client.session
         self.session["invitation_email_address"] = "invite@example.org"
         self.session.save()
@@ -644,6 +656,7 @@ class MembershipInviteTests(BaseTestCase):
             "invite_surname": "User",
             "invite_language": "en",
             "notify_approvers": "on",
+            "send_invite_before_approval": "on" if send_invite_before_approval else "",
         }
         if verify_phone_number:
             data["verify_phone_number"] = verify_phone_number
@@ -686,6 +699,15 @@ class MembershipInviteTests(BaseTestCase):
                 call(20, f"Invited invite@example.org to role {self.role.name()}", extra=ANY),
             ]
         )
+
+    def test_join_role_no_email_before_approval(self):
+        response = self._test_join_role_send_email_invite(send_invite_before_approval=False)
+        self.assertEqual(response.status_code, 200)
+        membership = Membership.objects.get(role=self.role, identity=None, invite_email_address="invite@example.org")
+        self.assertEqual(membership.inviter, self.user)
+        self.assertIsNone(membership.approver)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertNotIn("Your personal invitation code is", mail.outbox[0].body)
 
     def test_join_role_invite_as_approver(self):
         self.role.approvers.add(self.group)
@@ -734,6 +756,7 @@ class MembershipMassInviteViewTests(BaseTestCase):
             "reason": "Because",
             "invite_language": "en",
             "notify_approvers": "on",
+            "send_invite_before_approval": "on",
         }
         self.client = Client()
         self.client.force_login(self.user)

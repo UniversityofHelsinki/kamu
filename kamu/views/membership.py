@@ -212,6 +212,9 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
     def _approve_membership(self, request: HttpRequest) -> None:
         """
         Approve membership, if user is approver and membership is not approved.
+
+        If membership is already linked to an identity, send approval notification email to member.
+        If membership is not linked and no invitation token exists, send invite email to the invite email address.
         """
         if not self.request.user.is_authenticated or not self.object.role.is_approver(self.request.user):
             raise PermissionDenied
@@ -229,7 +232,6 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
                 objects=[self.object, self.object.identity, self.object.role],
                 log_to_db=True,
             )
-            messages.add_message(request, messages.INFO, _("You have approved the membership shown below."))
             if self.object.identity:
                 identity_email = self.object.identity.email_addresses.first()
                 notify_email = identity_email.address if identity_email else self.object.invite_email_address
@@ -240,6 +242,35 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
                     send_approval_notification_to_member(
                         membership=self.object, email_address=notify_email, lang=notify_language
                     )
+                messages.add_message(
+                    request,
+                    messages.INFO,
+                    _("You have approved the membership below. The member has been notified by email."),
+                )
+            elif (
+                not Token.objects.filter(membership=self.object, token_type=Token.Type.INVITE).exists()
+                and self.object.invite_email_address
+            ):
+                token = Token.objects.create_invite_token(membership=self.object)
+                send_invite_email(
+                    membership=self.object,
+                    token=token,
+                    address=self.object.invite_email_address,
+                    invite_text=self.object.invite_text,
+                    lang=self.object.invite_language,
+                    request=self.request,
+                )
+                messages.add_message(
+                    request,
+                    messages.INFO,
+                    _("You have approved the membership below. An invitation email has been sent to the member."),
+                )
+            else:
+                messages.add_message(
+                    request,
+                    messages.INFO,
+                    _("You have approved the membership below."),
+                )
 
     def _resend_invite(self, request: HttpRequest) -> None:
         """
@@ -841,16 +872,23 @@ class MembershipInviteEmailView(BaseMembershipInviteView):
             objects=[membership, membership.role],
             log_to_db=True,
         )
-        token = Token.objects.create_invite_token(membership=membership)
-        send_invite_email(
-            membership=membership,
-            token=token,
-            address=invite_email_address,
-            invite_text=invite_text,
-            lang=invite_language,
-            request=self.request,
-        )
-        messages.add_message(self.request, messages.INFO, _("The email invitation has been sent."))
+        if form.data.get("send_invite_before_approval") or form.instance.approver:
+            token = Token.objects.create_invite_token(membership=membership)
+            send_invite_email(
+                membership=membership,
+                token=token,
+                address=invite_email_address,
+                invite_text=invite_text,
+                lang=invite_language,
+                request=self.request,
+            )
+            messages.add_message(self.request, messages.INFO, _("The email invitation has been sent."))
+        else:
+            messages.add_message(
+                self.request,
+                messages.INFO,
+                _("The email invitation will be sent when the membership has been approved."),
+            )
         if form.data.get("notify_approvers"):
             send_notify_approvers_email(form.instance)
         return redirect("membership-detail", pk=membership.pk)
@@ -1118,22 +1156,41 @@ class MembershipMassInviteView(BaseMembershipInviteView):
                 objects=[membership, membership.role],
                 log_to_db=True,
             )
-            token = Token.objects.create_invite_token(membership=membership)
-            send_invite_email(
-                membership=membership,
-                token=token,
-                address=email,
-                invite_text=invite_text,
-                lang=invite_language,
-                request=self.request,
-            )
+            if form.data.get("send_invite_before_approval") or form.instance.approver:
+                token = Token.objects.create_invite_token(membership=membership)
+                send_invite_email(
+                    membership=membership,
+                    token=token,
+                    address=email,
+                    invite_text=invite_text,
+                    lang=invite_language,
+                    request=self.request,
+                )
+            else:
+                messages.add_message(
+                    self.request,
+                    messages.INFO,
+                    _("The email invitation will be sent when the membership has been approved."),
+                )
             invited_list.append(email)
         if invited_list:
-            messages.add_message(
-                self.request,
-                messages.INFO,
-                _("The email invitation has been sent to following addresses: {0}").format(", ".join(invited_list)),
-            )
+            if form.data.get("send_invite_before_approval") or form.instance.approver:
+                messages.add_message(
+                    self.request,
+                    messages.INFO,
+                    _("The email invitation has been sent to following addresses: {0}").format(
+                        ", ".join(invited_list)
+                    ),
+                )
+            else:
+                messages.add_message(
+                    self.request,
+                    messages.INFO,
+                    _(
+                        "The email invitation will be sent to following addresses when the membership has been "
+                        "approved: {0}"
+                    ).format(", ".join(invited_list)),
+                )
         if added_list:
             messages.add_message(
                 self.request, messages.INFO, _("Added following identities: {0}").format(", ".join(added_list))
