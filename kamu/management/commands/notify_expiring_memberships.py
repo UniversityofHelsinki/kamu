@@ -72,7 +72,9 @@ class Command(BaseCommand):
         Email is sent to primary (first) email address. Notification is only sent to members whose membership
         is expiring at the set expire_date.
         """
-        expiring_memberships = Membership.objects.filter(expire_date=expire_date).exclude(identity=None)
+        expiring_memberships = Membership.objects.filter(
+            expire_date=expire_date, status=Membership.Status.ACTIVE
+        ).exclude(identity=None)
         for membership in expiring_memberships:
             if verbosity > 1:
                 self.stdout.write(f"Notifying member {membership.identity} of role {membership.role}")
@@ -99,8 +101,7 @@ class Command(BaseCommand):
             if exact_date:
                 expiring_memberships = (
                     Membership.objects.filter(
-                        expire_date=expire_period_end_date,
-                        role=role,
+                        expire_date=expire_period_end_date, role=role, status=Membership.Status.ACTIVE
                     )
                     .exclude(identity=None)
                     .distinct()
@@ -110,6 +111,7 @@ class Command(BaseCommand):
                     Membership.objects.filter(
                         Q(expire_date__lte=expire_period_end_date) & Q(expire_date__gte=timezone.now().date()),
                         role=role,
+                        status=Membership.Status.ACTIVE,
                     )
                     .exclude(identity=None)
                     .distinct()

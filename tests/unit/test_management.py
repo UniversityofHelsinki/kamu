@@ -360,11 +360,31 @@ class MembershipExpireNotifications(TestData, ManagementCommandTestCase):
         self.create_identity(user=False, email=True)
         self.create_superidentity(user=True, email=True)
         self.create_membership(
-            self.role, identity=self.identity, start_delta_days=0, expire_delta_days=10, inviter=self.superuser
+            self.role,
+            identity=self.identity,
+            inviter=self.superuser,
+            approver=self.superuser,
+            start_delta_days=0,
+            expire_delta_days=10,
         )
-        self.create_membership(self.role, identity=self.superidentity, start_delta_days=0, expire_delta_days=5)
-        self.create_membership(self.role_guest, identity=self.identity, start_delta_days=0, expire_delta_days=8)
-        self.create_membership(self.role, identity=self.superidentity, start_delta_days=-1, expire_delta_days=-1)
+        self.membership_5 = self.create_membership(
+            self.role, identity=self.superidentity, approver=self.superuser, start_delta_days=0, expire_delta_days=5
+        )
+        self.create_membership(
+            self.role_guest, identity=self.identity, approver=self.superuser, start_delta_days=0, expire_delta_days=8
+        )
+        self.create_membership(
+            self.role, identity=self.superidentity, approver=self.superuser, start_delta_days=-1, expire_delta_days=-1
+        )
+
+    def test_notification_not_send_for_nonactive_membership(self):
+        self.call_command("-v 0", "-d 5", "-m", "-r")
+        self.assertEqual(len(mail.outbox), 2)
+        mail.outbox = []
+        self.membership_5.approver = None
+        self.membership_5.save()
+        self.call_command("-v 0", "-d 5", "-m", "-r")
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_member_notifications(self):
         self.call_command("-v 0", "-d 11", "-m")
