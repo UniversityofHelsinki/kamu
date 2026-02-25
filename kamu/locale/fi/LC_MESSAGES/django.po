@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-10 14:30+0200\n"
+"POT-Creation-Date: 2026-02-26 09:56+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -624,19 +624,20 @@ msgstr "Liian monta kutsuttua henkilöä."
 
 #: forms/membership.py:318
 #, python-format
-msgid "Invalid value: %(part)s"
-msgstr "Virheellinen arvo: %(part)s"
+msgid "Invalid value: \"%(part)s\"."
+msgstr "Virheellinen arvo: \"%(part)s\"."
 
 #: forms/membership.py:321
 #, python-format
-msgid "Invalid line: %(line)s"
-msgstr "Virheellinen rivi: %(line)s"
+msgid "Invalid line: \"%(line)s\"."
+msgstr "Virheellinen rivi: \"%(line)s\"."
 
 #: forms/membership.py:324
 #, python-format
-msgid "Line is missing identifiers: %(line)s. First two fields are for names."
+msgid ""
+"Line is missing identifiers: \"%(line)s\". First two fields are for names."
 msgstr ""
-"Riviltä puuttuu tunnisteet: %(line)s. Kaksi ensimmäistä kenttää ovat nimiä "
+"Riviltä puuttuu tunnisteet: \"%(line)s\". Kaksi ensimmäistä kenttää ovat nimiä "
 "varten."
 
 #: models/account.py:29
@@ -3697,14 +3698,6 @@ msgid "Following email addresses will receive an invitation:"
 msgstr "Kutsu lähetetään seuraaviin sähköpostiosoitteisiin:"
 
 #: templates/membership/membership_invite.html:83
-msgid ""
-"This role requires SMS verification and following addresses will be skipped "
-"because of the missing phone number:"
-msgstr ""
-"Tämä rooli vaatii tekstiviestivahvistuksen; seuraavat osoitteet ohitetaan "
-"puhelinnumeron puuttumisen vuoksi:"
-
-#: templates/membership/membership_invite.html:91
 msgid "Membership information"
 msgstr "Jäsenyyden tiedot"
 
@@ -4501,7 +4494,7 @@ msgstr "Jäsenyys päivitetty."
 msgid "Multiple identities found, please contact IT-Helpdesk."
 msgstr "Useita identiteettejä löytyi, ota yhteyttä IT-helpdeskiin."
 
-#: views/membership.py:890 views/membership.py:1173
+#: views/membership.py:890 views/membership.py:1184
 msgid ""
 "The email invitation will be sent when the membership has been approved."
 msgstr "Sähköpostikutsu lähetetään, kun jäsenyys on hyväksytty."
@@ -4537,12 +4530,23 @@ msgstr ""
 "Sähköpostiosoite {email} ja puhelinnumero {phone} ovat rekisteröity eri "
 "henkilöille."
 
-#: views/membership.py:1181
+#: views/membership.py:1103
+#, python-format
+msgid "Email address is required. Invalid line: \"%(line)s\"."
+msgstr "Sähköpostiosoite vaaditaan. Virheellinen rivi \"%(line)s\"."
+
+#: views/membership.py:1111
+#, python-format
+msgid "Phone number is required for this role. Invalid line: \"%(line)s\"."
+msgstr ""
+"Puhelinnumero vaaditaan tähän rooliin. Virheellinen rivi: \"%(line)s\"."
+
+#: views/membership.py:1192
 #, python-brace-format
 msgid "The email invitation has been sent to following addresses: {0}"
 msgstr "Sähköpostikutsu on lähetetty seuraaviin osoitteisiin: {0}"
 
-#: views/membership.py:1190
+#: views/membership.py:1201
 #, python-brace-format
 msgid ""
 "The email invitation will be sent to following addresses when the membership "
@@ -4551,10 +4555,17 @@ msgstr ""
 "Sähkökutsu lähetetään seuraaviin osoitteisiin, kun jäsenyys on hyväksytty: "
 "{0}"
 
-#: views/membership.py:1196
+#: views/membership.py:1207
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Lisätty seuraavat henkilöllisyydet: {0}"
+
+#~ msgid ""
+#~ "This role requires SMS verification and following addresses will be "
+#~ "skipped because of the missing phone number:"
+#~ msgstr ""
+#~ "Tämä rooli vaatii tekstiviestivahvistuksen; seuraavat osoitteet ohitetaan "
+#~ "puhelinnumeron puuttumisen vuoksi:"
 
 #~ msgid ""
 #~ "Send invitation email before approval. Invited person can accept the "

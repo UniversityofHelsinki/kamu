@@ -801,8 +801,10 @@ class MembershipMassInviteViewTests(BaseTestCase):
                 "preview_message": "True",
             },
         )
-        self.assertIn(("Test", "User", "missing@example.org"), response.context_data["missing_phone"])
-        self.assertIn(("T", "U", "invited@example.org", "+1234567890"), response.context_data["to_be_invited"])
+        self.assertIn(
+            "Phone number is required for this role. Invalid line: &quot;Test,User,missing@example.org&quot;.",
+            response.content.decode("utf-8"),
+        )
 
     @override_settings(ALLOW_TEST_FPIC=True)
     @override_settings(MASS_INVITE_PERMISSION_GROUPS={"group": 3})

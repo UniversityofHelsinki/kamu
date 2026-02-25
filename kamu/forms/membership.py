@@ -315,13 +315,14 @@ class MembershipMassCreateForm(forms.ModelForm[Membership]):
                 try:
                     value = self._parse_value(part.strip())
                 except ValidationError:
-                    raise ValidationError(_("Invalid value: %(part)s"), params={"part": part})
+                    raise ValidationError(_('Invalid value: "%(part)s".'), params={"part": part})
                 person.update(value)
             if not person:
-                raise ValidationError(_("Invalid line: %(line)s"), params={"line": line})
+                raise ValidationError(_('Invalid line: "%(line)s".'), params={"line": line})
             if not person.get("email") and not person.get("phone") and not person.get("fpic"):
                 raise ValidationError(
-                    _("Line is missing identifiers: %(line)s. First two fields are for names."), params={"line": line}
+                    _('Line is missing identifiers: "%(line)s". First two fields are for names.'),
+                    params={"line": line},
                 )
             invited.append(person)
         return invited

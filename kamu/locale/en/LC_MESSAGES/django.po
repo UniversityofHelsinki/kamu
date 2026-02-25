@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-10 14:30+0200\n"
+"POT-Creation-Date: 2026-02-26 09:56+0200\n"
 "Language: EN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -572,17 +572,18 @@ msgstr ""
 
 #: forms/membership.py:318
 #, python-format
-msgid "Invalid value: %(part)s"
+msgid "Invalid value: \"%(part)s\"."
 msgstr ""
 
 #: forms/membership.py:321
 #, python-format
-msgid "Invalid line: %(line)s"
+msgid "Invalid line: \"%(line)s\"."
 msgstr ""
 
 #: forms/membership.py:324
 #, python-format
-msgid "Line is missing identifiers: %(line)s. First two fields are for names."
+msgid ""
+"Line is missing identifiers: \"%(line)s\". First two fields are for names."
 msgstr ""
 
 #: models/account.py:29
@@ -3380,12 +3381,6 @@ msgid "Following email addresses will receive an invitation:"
 msgstr ""
 
 #: templates/membership/membership_invite.html:83
-msgid ""
-"This role requires SMS verification and following addresses will be skipped "
-"because of the missing phone number:"
-msgstr ""
-
-#: templates/membership/membership_invite.html:91
 msgid "Membership information"
 msgstr ""
 
@@ -4104,7 +4099,7 @@ msgstr ""
 msgid "Multiple identities found, please contact IT-Helpdesk."
 msgstr ""
 
-#: views/membership.py:890 views/membership.py:1173
+#: views/membership.py:890 views/membership.py:1184
 msgid ""
 "The email invitation will be sent when the membership has been approved."
 msgstr ""
@@ -4134,19 +4129,29 @@ msgid ""
 "identities."
 msgstr ""
 
-#: views/membership.py:1181
+#: views/membership.py:1103
+#, python-format
+msgid "Email address is required. Invalid line: \"%(line)s\"."
+msgstr ""
+
+#: views/membership.py:1111
+#, python-format
+msgid "Phone number is required for this role. Invalid line: \"%(line)s\"."
+msgstr ""
+
+#: views/membership.py:1192
 #, python-brace-format
 msgid "The email invitation has been sent to following addresses: {0}"
 msgstr ""
 
-#: views/membership.py:1190
+#: views/membership.py:1201
 #, python-brace-format
 msgid ""
 "The email invitation will be sent to following addresses when the membership "
 "has been approved: {0}"
 msgstr ""
 
-#: views/membership.py:1196
+#: views/membership.py:1207
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr ""

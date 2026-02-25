@@ -1087,7 +1087,6 @@ class MembershipMassInviteView(BaseMembershipInviteView):
         invitees = form.cleaned_data["invited"]
         to_be_invited = []
         to_be_added = []
-        missing_phone = []
         for invited in invitees:
             if not invited or not isinstance(invited, dict):
                 continue
@@ -1098,10 +1097,23 @@ class MembershipMassInviteView(BaseMembershipInviteView):
             phone = invited.get("phone")
             if identity:
                 to_be_added.append(identity)
-            elif email and (not form.instance.role.require_sms_verification or phone):
+            elif not email:
+                form.add_error(
+                    "invited",
+                    _('Email address is required. Invalid line: "%(line)s".' % {"line": ",".join(invited.values())}),
+                )
+            elif form.instance.role.require_sms_verification and not phone:
+                form.add_error(
+                    "invited",
+                    _(
+                        'Phone number is required for this role. Invalid line: "%(line)s".'
+                        % {"line": ",".join(invited.values())}
+                    ),
+                )
+            else:
                 to_be_invited.append((given_name, surname, email, phone))
-            elif email:
-                missing_phone.append((given_name, surname, email))
+        if form.errors:
+            return self.form_invalid(form)
         if "preview_message" in self.request.POST:
             subject, message = create_invite_message(
                 role=form.instance.role,
@@ -1114,7 +1126,6 @@ class MembershipMassInviteView(BaseMembershipInviteView):
             context = self.get_context_data()
             context["to_be_invited"] = to_be_invited
             context["to_be_added"] = to_be_added
-            context["missing_phone"] = missing_phone
             context["preview_subject"] = subject
             context["preview_message"] = message
             return self.render_to_response(context)

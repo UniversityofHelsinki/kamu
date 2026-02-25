@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-10 14:30+0200\n"
+"POT-Creation-Date: 2026-02-26 09:56+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -621,19 +621,20 @@ msgstr "För många inbjudna personer."
 
 #: forms/membership.py:318
 #, python-format
-msgid "Invalid value: %(part)s"
-msgstr "Ogiltigt värde: %(part)s"
+msgid "Invalid value: \"%(part)s\"."
+msgstr "Ogiltigt värde: \"%(part)s\"."
 
 #: forms/membership.py:321
 #, python-format
-msgid "Invalid line: %(line)s"
-msgstr "Ogiltig rad: %(line)s"
+msgid "Invalid line: \"%(line)s\"."
+msgstr "Ogiltig rad: \"%(line)s\"."
 
 #: forms/membership.py:324
 #, python-format
-msgid "Line is missing identifiers: %(line)s. First two fields are for names."
+msgid ""
+"Line is missing identifiers: \"%(line)s\". First two fields are for names."
 msgstr ""
-"Raden saknar identifierare: %(line)s. De två första fälten är för namn."
+"Raden saknar identifierare: \"%(line)s\". De två första fälten är för namn."
 
 #: models/account.py:29
 msgid "Enabled"
@@ -3703,14 +3704,6 @@ msgid "Following email addresses will receive an invitation:"
 msgstr "Följande e-postadresser kommer att få en inbjudan:"
 
 #: templates/membership/membership_invite.html:83
-msgid ""
-"This role requires SMS verification and following addresses will be skipped "
-"because of the missing phone number:"
-msgstr ""
-"Den här rollen kräver SMS-verifiering och följande adresser kommer att "
-"hoppas över på grund av saknat telefonnummer:"
-
-#: templates/membership/membership_invite.html:91
 msgid "Membership information"
 msgstr "Uppgifter om medlemskapet"
 
@@ -4448,8 +4441,7 @@ msgstr "Du är redan medlem i den här rollen."
 msgid ""
 "You have approved the membership below. The member has been notified by "
 "email."
-msgstr ""
-"Du har godkänt medlemskapet nedan. Medlemmen har meddelats via e-post."
+msgstr "Du har godkänt medlemskapet nedan. Medlemmen har meddelats via e-post."
 
 #: views/membership.py:266
 msgid ""
@@ -4495,7 +4487,7 @@ msgstr "Medlemskap uppdaterat."
 msgid "Multiple identities found, please contact IT-Helpdesk."
 msgstr "Flera identiteter hittades, kontakta IT-helpdesk."
 
-#: views/membership.py:890 views/membership.py:1173
+#: views/membership.py:890 views/membership.py:1184
 msgid ""
 "The email invitation will be sent when the membership has been approved."
 msgstr "E-postinbjudan skickas när medlemskapet har godkänts."
@@ -4531,24 +4523,41 @@ msgstr ""
 "E-postadressen {email} och telefonnumret {phone} är registrerade för olika "
 "identiteter."
 
-#: views/membership.py:1181
+#: views/membership.py:1103
+#, python-format
+msgid "Email address is required. Invalid line: \"%(line)s\"."
+msgstr "E-postadress krävs. Ogiltig rad: \"%(line)s\"."
+
+#: views/membership.py:1111
+#, python-format
+msgid "Phone number is required for this role. Invalid line: \"%(line)s\"."
+msgstr "Telefonnummer krävs för den här rollen. Ogiltig rad: \"%(line)s\"."
+
+#: views/membership.py:1192
 #, python-brace-format
 msgid "The email invitation has been sent to following addresses: {0}"
 msgstr "E-postinbjudan har skickats till följande e-postadresser: {0}"
 
-#: views/membership.py:1190
+#: views/membership.py:1201
 #, python-brace-format
 msgid ""
 "The email invitation will be sent to following addresses when the membership "
 "has been approved: {0}"
 msgstr ""
-"E-postinbjudan skickas till följande adresser när medlemskapet har "
-"godkänts: {0}"
+"E-postinbjudan skickas till följande adresser när medlemskapet har godkänts: "
+"{0}"
 
-#: views/membership.py:1196
+#: views/membership.py:1207
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Följande identiteter har lagts till: {0}"
+
+#~ msgid ""
+#~ "This role requires SMS verification and following addresses will be "
+#~ "skipped because of the missing phone number:"
+#~ msgstr ""
+#~ "Den här rollen kräver SMS-verifiering och följande adresser kommer att "
+#~ "hoppas över på grund av saknat telefonnummer:"
 
 #~ msgid "PersonDB search failed, could not search existing identities."
 #~ msgstr ""

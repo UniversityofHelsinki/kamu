@@ -79,14 +79,6 @@
         {% endfor %}
       </ul>
     {% endif %}
-    {% if missing_phone %}
-      <p>{% trans "This role requires SMS verification and following addresses will be skipped because of the missing phone number:" %}</p>
-      <ul>
-        {% for given_name, surname, email in missing_phone %}
-          <li>{{ email }}{% if given_name or surname %} ({{ given_name }} {{ surname }}){% endif %}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
   {% endif %}
   <h2 class="mb-3 mt-4">{% trans "Membership information" %}</h2>
   <form method="post">
