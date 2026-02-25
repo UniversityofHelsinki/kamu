@@ -1178,12 +1178,11 @@ msgstr "Kutsun teksti"
 #: models/membership.py:103
 msgid ""
 "If you wish, you can replace the beginning part of the default email invite "
-"with your own text (max. 70 characters). The invitation code and link are "
-"always added at the end of the message. Preview the message to see the "
-"finished email."
+"with your own text. The invitation code and link are always added at the end "
+"of the message. Preview the message to see the finished email."
 msgstr ""
-"Korvaa halutessasi oletussähköpostikutsun alkuosa omalla tekstillä (enintään "
-"70 merkkiä). Kutsukoodi ja linkki lisätään aina viestin loppuun. Esikatsele "
+"Korvaa halutessasi oletussähköpostikutsun alkuosa omalla tekstillä. "
+"Kutsukoodi ja linkki lisätään aina viestin loppuun. Esikatsele "
 "viesti nähdäksesi lopullisen sähköpostin."
 
 #: models/membership.py:109

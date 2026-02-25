@@ -1174,14 +1174,12 @@ msgstr "Text för inbjudan"
 #: models/membership.py:103
 msgid ""
 "If you wish, you can replace the beginning part of the default email invite "
-"with your own text (max. 70 characters). The invitation code and link are "
-"always added at the end of the message. Preview the message to see the "
-"finished email."
+"with your own text. The invitation code and link are always added at the end "
+"of the message. Preview the message to see the finished email."
 msgstr ""
 "Om du vill kan du ersätta början av standardinbjudan via e-post med din egen "
-"text (max 70 tecken). Inbjudningskoden och länken läggs alltid till i slutet "
-"av meddelandet. Förhandsgranska meddelandet för att se det slutgiltiga e-"
-"postmeddelandet."
+"text. Inbjudningskoden och länken läggs alltid till i slutet av meddelandet. "
+"Förhandsgranska meddelandet för att se det slutgiltiga e-postmeddelandet."
 
 #: models/membership.py:109
 msgid "Membership status"

@@ -100,9 +100,9 @@ class Membership(models.Model):
         blank=True,
         verbose_name=_("Invite text"),
         help_text=_(
-            "If you wish, you can replace the beginning part of the default email invite with your own text (max. 70 "
-            "characters). The invitation code and link are always added at the end of the message. Preview the "
-            "message to see the finished email."
+            "If you wish, you can replace the beginning part of the default email invite with your own text. The "
+            "invitation code and link are always added at the end of the message. Preview the message to see the "
+            "finished email."
         ),
     )
 
