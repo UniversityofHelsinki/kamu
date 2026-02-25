@@ -191,14 +191,19 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
 
     def get_queryset(self) -> QuerySet[Membership]:
         """
-        Limit membership details to a member, approvers, inviters and owners.
+        Limit membership details to a member, approvers, inviters, owner and persons with systemwide permissions.
         """
         user = self.request.user
         if not user.is_authenticated:
             raise PermissionDenied
         groups = user.groups.all()
         queryset = Membership.objects.all()
-        if not user.is_superuser:
+        if (
+            not user.is_superuser
+            and not user.has_perm("kamu.view_memberships")
+            and not user.has_perm("kamu.approve_memberships")
+            and not user.has_perm("kamu.invite_memberships")
+        ):
             queryset = queryset.filter(
                 Q(role__approvers__in=groups)
                 | Q(role__inviters__in=groups)

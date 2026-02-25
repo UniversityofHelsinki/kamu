@@ -213,7 +213,7 @@ class Role(models.Model):
 
         Superusers, approvers and the role owner have invite permission.
         """
-        if user.is_superuser:
+        if user.is_superuser or user.has_perm("kamu.approve_memberships"):
             return True
         groups = user.groups.all()
         try:
@@ -229,7 +229,7 @@ class Role(models.Model):
 
         Superusers, inviters, approvers and the role owner have invite permission.
         """
-        if user.is_superuser:
+        if user.is_superuser or user.has_perm("kamu.approve_memberships") or user.has_perm("kamu.invite_memberships"):
             return True
         groups = user.groups.all()
         try:

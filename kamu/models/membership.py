@@ -126,6 +126,11 @@ class Membership(models.Model):
 
     class Meta:
         ordering = ["role__identifier", "expire_date"]
+        permissions = [
+            ("view_memberships", "Can view membership details"),
+            ("approve_memberships", "Can approve all memberships"),
+            ("invite_memberships", "Can invite to all roles"),
+        ]
         verbose_name = _("Membership")
         verbose_name_plural = _("Memberships")
 

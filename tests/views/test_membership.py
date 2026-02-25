@@ -7,7 +7,8 @@ from unittest import mock
 from unittest.mock import ANY, call, patch
 
 from django.conf import settings
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.test import Client, override_settings
 from django.utils import timezone
@@ -19,6 +20,68 @@ from kamu.utils.auth import set_default_permissions
 from tests.data import PERSONS
 from tests.setup import BaseTestCase
 from tests.utils import MockLdapConn
+
+
+class MembershipPermissionViewTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.role = self.create_role()
+        self.create_identity(user=True)
+        self.create_superidentity(user=True)
+        self.membership = self.create_membership(
+            self.role,
+            None,
+            start_delta_days=0,
+            expire_delta_days=1,
+            inviter=self.superuser,
+            invite_email_address="invited_user@example.org",
+        )
+        self.url = f"/membership/{self.membership.pk}/"
+        self.client = Client()
+        self.client.force_login(self.user)
+
+    def test_view_membership_without_permissions(self):
+        response = self.client.get(f"/membership/{self.membership.pk}/")
+        self.assertEqual(response.status_code, 404)
+
+    def test_view_membership_with_generic_view_permission(self):
+        content_type = ContentType.objects.get(app_label="kamu", model="membership")
+        permission, _ = Permission.objects.get_or_create(
+            content_type=content_type,
+            codename="view_memberships",
+        )
+        self.user.user_permissions.add(permission)
+        response = self.client.get(f"/membership/{self.membership.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.role.name(), response.content.decode("utf-8"))
+        self.assertNotIn("Resend email invitation", response.content.decode("utf-8"))
+
+    def test_view_membership_with_generic_inviter_permission(self):
+        content_type = ContentType.objects.get(app_label="kamu", model="membership")
+        permission, _ = Permission.objects.get_or_create(
+            content_type=content_type,
+            codename="invite_memberships",
+        )
+        self.user.user_permissions.add(permission)
+        self.client.force_login(self.user)
+        response = self.client.get(f"/membership/{self.membership.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.role.name(), response.content.decode("utf-8"))
+        self.assertIn("Resend email invitation", response.content.decode("utf-8"))
+        self.assertNotIn("End membership", response.content.decode("utf-8"))
+
+    def test_view_membership_with_generic_approver_permission(self):
+        content_type = ContentType.objects.get(app_label="kamu", model="membership")
+        permission, _ = Permission.objects.get_or_create(
+            content_type=content_type,
+            codename="approve_memberships",
+        )
+        self.user.user_permissions.add(permission)
+        self.client.force_login(self.user)
+        response = self.client.get(f"/membership/{self.membership.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.role.name(), response.content.decode("utf-8"))
+        self.assertIn("End membership", response.content.decode("utf-8"))
 
 
 class MembershipViewTests(BaseTestCase):
