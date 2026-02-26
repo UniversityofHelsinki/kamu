@@ -47,7 +47,7 @@
         {% if membership.invite_name %}<p>{{ membership.invite_name }}</p>{% endif %}
         <p>{% trans "The person has not yet registered for Kamu and provided their own information." %}</p>
         <p>{% blocktrans with address=membership.invite_email_address %}An email invitation has been sent to {{ address }}.{% endblocktrans %}</p>
-        <p>{% blocktrans with number=membership.verify_phone_number %}An SMS confirmation will be sent to {{ number }}.{% endblocktrans %}</p>
+        {% if membership.verify_phone_number %}<p>{% blocktrans with number=membership.verify_phone_number %}An SMS confirmation will be sent to {{ number }}.{% endblocktrans %}</p>{% endif %}
         {% if is_inviter %}
           <form method="post">{% csrf_token %}
             <input type="submit" name="resend_invite" value="{% trans 'Resend email invitation' %}" class="btn btn-primary"/>
