@@ -105,7 +105,10 @@ def _get_search_base() -> str | None:
 
 
 def ldap_search(
-    search_filter: str, search_values: list[str] | None = None, ldap_attributes: list[str] | None = None
+    search_filter: str,
+    search_values: list[str] | None = None,
+    ldap_attributes: list[str] | None = None,
+    search_base: str | None = None,
 ) -> list | None:
     """
     Search LDAP
@@ -120,7 +123,8 @@ def ldap_search(
     if not ldap_attributes:
         ldap_attributes = getattr(settings, "LDAP_ATTRIBUTES")
     ldap_connection = _get_connection()
-    search_base = _get_search_base()
+    if not search_base:
+        search_base = _get_search_base()
     if not ldap_connection or not search_base or not search_filter or not ldap_attributes:
         return None
     if search_values:
