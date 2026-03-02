@@ -418,16 +418,20 @@ def get_identity_from_persondb(person: Person) -> Identity | None:
         and account.account_type not in ignore_account_types
         and account.account_subtype not in ignore_account_subtypes
     ]
+    q = Q(identifiers__type=Identifier.Type.PERSON, identifiers__value=person.person_uuid) | Q(uid__in=usernames)
+    if person.fpic:
+        q |= Q(fpic=person.fpic) | Q(identifiers__type=Identifier.Type.FPIC, identifiers__value=person.fpic)
+    identities = Identity.objects.filter(q).distinct()
     try:
-        q = Q(identifiers__type=Identifier.Type.PERSON, identifiers__value=person.person_uuid) | Q(uid__in=usernames)
-        if person.fpic:
-            q |= Q(fpic=person.fpic) | Q(identifiers__type=Identifier.Type.FPIC, identifiers__value=person.fpic)
-        identity = Identity.objects.filter(q).distinct().get()
-        return identity
+        return identities.get()
     except Identity.DoesNotExist:
         return None
     except Identity.MultipleObjectsReturned as e:
-        logger.error(f"Multiple identities found for PersonDB person_id: {person.person_uuid}")
+        kamu_ids = {str(kamu_id) for kamu_id in identities.values_list("kamu_id", flat=True)}
+        logger.error(
+            f"Multiple identities found for PersonDB person_id: {person.person_uuid}, "
+            f"identities: {', '.join(kamu_ids)}"
+        )
         raise Identity.MultipleObjectsReturned from e
 
 
