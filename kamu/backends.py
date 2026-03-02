@@ -456,29 +456,60 @@ class LocalBaseBackend(ModelBackend):
         if not identifier:
             raise AuthenticationError(self.error_messages["identifier_missing"])
 
+    def _get_identity_with_local_user(self, identifier_type: str, unique_identifier: str) -> Identity | None:
+        """
+        If identifier is local EPPN, try to find identity with uid.
+        """
+        if identifier_type == Identifier.Type.EPPN and unique_identifier.endswith(settings.LOCAL_EPPN_SUFFIX):
+            uid = unique_identifier.removesuffix(settings.LOCAL_EPPN_SUFFIX)
+            try:
+                identity = Identity.objects.get(uid=uid)
+                return identity
+            except Identity.DoesNotExist:
+                pass
+            try:
+                identity = Identity.objects.get(useraccount__uid=uid)
+                return identity
+            except Identity.DoesNotExist:
+                pass
+        return None
+
+    def _get_identity_with_identifier(self, identifier_type: str, unique_identifier: str) -> Identity | None:
+        """
+        Try to find identity with the given identifier.
+        """
+        try:
+            identity = Identity.objects.get(
+                identifiers__type=identifier_type,
+                identifiers__value=unique_identifier,
+                identifiers__deactivated_at=None,
+            )
+            return identity
+        except Identity.DoesNotExist:
+            pass
+        return None
+
     def _authenticate_login(self, request: HttpRequest, identifier_type: str, unique_identifier: str) -> UserType:
         """
         Log in with existing user.
         """
-        try:
-            identifier = Identifier.objects.get(type=identifier_type, value=unique_identifier, deactivated_at=None)
-        except Identifier.DoesNotExist:
+        identity = self._get_identity_with_local_user(
+            identifier_type, unique_identifier
+        ) or self._get_identity_with_identifier(identifier_type, unique_identifier)
+        if not identity:
             raise AuthenticationError(self.error_messages["identifier_not_found"])
-        if not identifier.identity:
-            # Identifier exists but is not linked to an identity. This should not be possible.
-            raise AuthenticationError(self.error_messages["unexpected"])
-        if not identifier.identity.user:
+        if not identity.user:
             # Identifier and identity exists but is not linked to a user. Create user.
-            self._link_identity_to_new_user(request, identifier.identity, unique_identifier)
-            identifier.refresh_from_db()
-            if not identifier.identity.user:
+            self._link_identity_to_new_user(request, identity, unique_identifier)
+            identity.refresh_from_db()
+            if not identity.user:
                 # Linking identity to new user failed. This should not be possible but is checked to satisfy mypy.
                 raise AuthenticationError(self.error_messages["unexpected"])
         if not isinstance(request.user, UserType) or not request.user.is_authenticated:
             # Identifier exists and is linked to an unauthenticated user.
-            self.post_authentication_tasks(request, identifier.identity.user)
-            return identifier.identity.user
-        if request.user == identifier.identity.user:
+            self.post_authentication_tasks(request, identity.user)
+            return identity.user
+        if request.user == identity.user:
             # Identifier exists and is linked to the current user.
             self.post_authentication_tasks(request, request.user)
             return request.user
@@ -489,8 +520,8 @@ class LocalBaseBackend(ModelBackend):
             action="login",
             outcome="failure",
             request=request,
-            objects=[identifier],
-            extra={"sensitive": f"{identifier.type}: {identifier.value}"},
+            objects=[identity],
+            extra={"sensitive": f"{identifier_type}: {unique_identifier}"},
         )
         raise AuthenticationError(self.error_messages["identity_already_exists"])
 
@@ -505,12 +536,11 @@ class LocalBaseBackend(ModelBackend):
         username = self._get_username(preferred_username, unique_identifier)
         if isinstance(request.user, UserType) and request.user.is_authenticated:
             raise AuthenticationError(self.error_messages["user_authenticated"])
-        try:
-            identity = Identifier.objects.get(
-                type=identifier_type, value=unique_identifier, deactivated_at=None
-            ).identity
-        except Identifier.DoesNotExist:
-            # Identifier does not exist. Create user and link identifier.
+        identity = self._get_identity_with_local_user(
+            identifier_type, unique_identifier
+        ) or self._get_identity_with_identifier(identifier_type, unique_identifier)
+        if not identity:
+            # Identity does not exist. Create user and link identifier (creates identity).
             user = self._create_user(username=username, email=email, given_names=given_names, surname=surname)
             self._link_identifier(request, user, identifier_type, unique_identifier)
             self.post_authentication_tasks(request, user)

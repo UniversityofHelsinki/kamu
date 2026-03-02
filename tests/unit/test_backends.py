@@ -53,6 +53,23 @@ class ShibbolethBackendTests(TransactionTestCase):
             backend.authenticate(request=self.request, create_user=True)
         self.assertEqual(str(e.exception), "Invalid identifier format.")
 
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    def test_local_login_with_existing_uid(self):
+        self.identity.uid = "testuid"
+        self.identity.save()
+        self.request.META = {settings.SAML_ATTR_EPPN: "testuid@example.org"}
+        backend = ShibbolethLocalBackend()
+        user = backend.authenticate(request=self.request, create_user=True)
+        self.assertEqual(user.username, "testuser@example.org")
+
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    def test_local_login_with_existing_account_uid(self):
+        self.identity.useraccount.create(uid="testuid")
+        self.request.META = {settings.SAML_ATTR_EPPN: "testuid@example.org"}
+        backend = ShibbolethLocalBackend()
+        user = backend.authenticate(request=self.request, create_user=True)
+        self.assertEqual(user.username, "testuser@example.org")
+
     def test_haka_local_login_with_existing_user(self):
         setattr(self.request, "session", {})
         self.request.META = {settings.SAML_ATTR_EPPN: "testuser@example.org"}
@@ -127,7 +144,7 @@ class ShibbolethBackendTests(TransactionTestCase):
 
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @patch("kamu.utils.audit.logger_audit")
-    def test_update_uid_already_exists(self, mock_logger):
+    def test_update_uid_changed(self, mock_logger):
         user2 = UserModel.objects.create(username="testuser2@example.org")
         Identity.objects.create(user=user2, uid="testuser")
         self.request.META = {
@@ -137,7 +154,7 @@ class ShibbolethBackendTests(TransactionTestCase):
         setattr(self.request, "session", "session")
         messages = FallbackStorage(self.request)
         setattr(self.request, "_messages", messages)
-        backend.authenticate(request=self.request, create_user=True)
+        backend._set_uid(request=self.request, user=self.user, unique_identifier="testuser@example.org")
         mock_logger.log.assert_has_calls(
             [
                 call(30, "UID already exists in the database", extra=ANY),
