@@ -86,7 +86,9 @@ class RoleSerializer(serializers.ModelSerializer[Role], EagerLoadingMixin):
     permissions = serializers.SlugRelatedField(
         slug_field="identifier", required=False, many=True, queryset=Permission.objects.all()
     )
-    organisation = serializers.SlugRelatedField(slug_field="code", required=False, queryset=Organisation.objects.all())
+    organisation = serializers.SlugRelatedField(
+        slug_field="identifier", required=False, queryset=Organisation.objects.all()
+    )
 
     _PREFETCH_RELATED_FIELDS = ["inviters", "approvers", "permissions", "requirements", "organisation"]
     _SELECT_RELATED_FIELDS = ["owner", "parent"]
