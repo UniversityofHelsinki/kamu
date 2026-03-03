@@ -90,7 +90,7 @@ class RoleSerializer(serializers.ModelSerializer[Role], EagerLoadingMixin):
         slug_field="identifier", required=False, queryset=Organisation.objects.all()
     )
 
-    _PREFETCH_RELATED_FIELDS = ["inviters", "approvers", "permissions", "requirements", "organisation"]
+    _PREFETCH_RELATED_FIELDS = ["inviters", "approvers", "permissions", "organisation"]
     _SELECT_RELATED_FIELDS = ["owner", "parent"]
 
     class Meta:
@@ -112,7 +112,6 @@ class RoleSerializer(serializers.ModelSerializer[Role], EagerLoadingMixin):
             "inviters",
             "approvers",
             "permissions",
-            "requirements",
             "iam_group",
             "maximum_duration",
             "purge_delay",
