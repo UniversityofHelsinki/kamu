@@ -4,6 +4,7 @@ Router configuration for the API endpoints.
 
 from rest_framework import routers
 
+from kamu.api.account import AccountViewSet
 from kamu.api.identity import (
     ContractTemplateViewSet,
     ContractViewSet,
@@ -17,6 +18,7 @@ from kamu.api.membership import MembershipViewSet
 from kamu.api.role import PermissionViewSet, RoleViewSet
 
 router = routers.DefaultRouter()
+router.register(r"accounts", AccountViewSet)
 router.register(r"contracts", ContractViewSet)
 router.register(r"contracttemplates", ContractTemplateViewSet)
 router.register(r"emailaddresses", EmailAddressViewSet)

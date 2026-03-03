@@ -18,6 +18,7 @@ from kamu.models.identity import (
     Nationality,
     PhoneNumber,
 )
+from kamu.serializers.account import AccountLimitedSerializer
 from kamu.serializers.membership import MembershipLimitedIdentitySerializer
 from kamu.serializers.mixins import EagerLoadingMixin
 from kamu.validators.identity import FpicValidator
@@ -264,6 +265,7 @@ class IdentitySerializer(serializers.ModelSerializer[Identity], EagerLoadingMixi
     Serializer for :class:`kamu.models.identity.Identity`.
     """
 
+    accounts: Field = AccountLimitedSerializer(source="useraccount", many=True, read_only=True)
     contracts: Field = ContractLimitedSerializer(many=True, read_only=True)
     email_addresses: Field = EmailAddressLimitedSerializer(many=True, read_only=True)
     identifiers: Field = IdentifierLimitedSerializer(many=True, read_only=True)
@@ -285,6 +287,7 @@ class IdentitySerializer(serializers.ModelSerializer[Identity], EagerLoadingMixi
             "nationalities",
             "nationalities__country",
             "phone_numbers",
+            "useraccount",
         ]
         parent = ""
         for i in range(max_depth):
@@ -322,6 +325,7 @@ class IdentitySerializer(serializers.ModelSerializer[Identity], EagerLoadingMixi
             "surname_display",
             "uid",
             "user",
+            "accounts",
             "contracts",
             "email_addresses",
             "identifiers",

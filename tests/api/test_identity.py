@@ -147,6 +147,7 @@ class IdentityAPIDetailTests(BaseAPITestCase):
         self.role3.permissions.add(permission2)
         self.create_membership(self.role3, self.identity)
         self.create_superuser()
+        self.create_account(uid="testaccount")
         self.client = APIClient()
 
     def test_get_identity(self):
@@ -160,6 +161,7 @@ class IdentityAPIDetailTests(BaseAPITestCase):
         self.assertEqual(data["memberships"][0]["role"], self.role3.identifier)
         self.assertEqual(set(data["memberships"][0]["parents"]), {"ext_employee", "ext_research"})
         self.assertEqual(set(data["memberships"][0]["permissions"]), {"lightaccount", "account"})
+        self.assertEqual(data["accounts"][0]["uid"], "testaccount")
 
 
 class EmailAddressAPITests(BaseAPITestCase):
