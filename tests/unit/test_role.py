@@ -165,7 +165,7 @@ class RequirementsTests(BaseRoleTestCase):
         self.assertEqual(self.membership.get_missing_requirements().count(), 2)
         self._create_contract()
         self.assertEqual(self.membership.get_missing_requirements().count(), 1)
-        self.identity.assurance_level = 3
+        self.identity.assurance_level = Identity.AssuranceLevel.HIGH
         self.identity.save()
         self.membership.refresh_from_db()
         self.assertEqual(self.membership.get_missing_requirements().count(), 0)

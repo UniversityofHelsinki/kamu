@@ -414,7 +414,7 @@ class IdentityEditTests(BaseTestCase):
         self.assertNotIn("Assurance level", response.content.decode("utf-8"))
 
     def test_edit_own_information_disabled_fields(self):
-        self.identity.given_names_verification = 4
+        self.identity.given_names_verification = Identity.VerificationMethod.STRONG
         self.identity.save()
         self.client.force_login(self.user)
         response = self.client.get(self.url)
@@ -559,7 +559,7 @@ class IdentityEditTests(BaseTestCase):
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Changed identity information", extra=ANY),
-                call(20, "Changed assurance level to 2", extra=ANY),
+                call(20, "Changed assurance level to 20", extra=ANY),
                 call(20, "Allowed authentication with single contact", extra=ANY),
                 call(20, "Allowed authentication with unverified contact", extra=ANY),
             ],
@@ -1471,7 +1471,7 @@ class IdentityVerificationTests(BaseTestCase):
                 ),
                 call(
                     20,
-                    "Updated identity assurance level from Candour ID verification to 3",
+                    "Updated identity assurance level from Candour ID verification to 30",
                     extra=ANY,
                 ),
             ]

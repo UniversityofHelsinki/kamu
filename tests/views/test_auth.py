@@ -784,7 +784,7 @@ class RegistrationViewTests(BaseTestCase):
         )
         self.assertEqual(response.status_code, 200)
         identity = Identity.objects.get(identifiers__value="ES/FI/abcdefg")
-        self.assertEqual(identity.assurance_level, 2)
+        self.assertEqual(identity.assurance_level, Identity.AssuranceLevel.MEDIUM)
         self.assertEqual(identity.given_names, "eIDAS")
         self.assertEqual(identity.surname, "User")
         self.membership.refresh_from_db()
@@ -966,7 +966,7 @@ class LinkIdentifierTests(BaseTestCase):
                 ),
                 call(
                     20,
-                    "Updated identity assurance level from Suomi.fi/eIDAS verification to 4",
+                    "Updated identity assurance level from Suomi.fi/eIDAS verification to 40",
                     extra=ANY,
                 ),
             ]

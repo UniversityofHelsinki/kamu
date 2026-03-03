@@ -86,7 +86,11 @@ class IdentityAPITests(BaseAPITestCase):
         self.create_superuser()
         self.create_country(code="FI")
         self.client.force_authenticate(user=self.superuser)
-        data = {"identity": self.identity.pk, "country": "FI", "verification_method": 3}
+        data = {
+            "identity": self.identity.pk,
+            "country": "FI",
+            "verification_method": Identity.VerificationMethod.PHOTO_ID,
+        }
         response = self.client.post(f"{self.url}nationalities/", data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         mock_logger.log.assert_has_calls(

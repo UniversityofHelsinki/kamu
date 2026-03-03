@@ -148,17 +148,18 @@ class Identity(models.Model):
 
     class AssuranceLevel(models.IntegerChoices):
         NONE = (0, _("No verification"))
-        LOW = (1, _("Low"))
-        MEDIUM = (2, _("Medium"))
-        HIGH = (3, _("High"))
-        HIGHEST = (4, _("Very high"))
+        LOW = (10, _("Low"))
+        MEDIUM = (20, _("Medium"))
+        HIGH = (30, _("High"))
+        HIGHEST = (40, _("Very high"))
 
     class VerificationMethod(models.IntegerChoices):
         UNVERIFIED = (0, _("No verification"))
-        SELF_ASSURED = (1, _("Self assurance"))
-        EXTERNAL = (2, _("External source"))
-        PHOTO_ID = (3, _("Verified with a government issued photo-ID"))
-        STRONG = (4, _("Strong electrical verification"))
+        SELF_ASSURED = (10, _("Self assurance"))
+        EXTERNAL = (20, _("External source"))
+        USER_VERIFIED = (30, _("User verified"))
+        PHOTO_ID = (40, _("Verified with a government issued photo-ID"))
+        STRONG = (50, _("Strong electrical verification"))
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     kamu_id = Char32UUIDField(
