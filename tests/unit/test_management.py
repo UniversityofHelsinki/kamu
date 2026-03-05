@@ -4,14 +4,11 @@ Tests for management commands.
 
 import datetime
 import json
-from io import StringIO
 from unittest import mock
 from unittest.mock import ANY, patch
 
 from django.contrib.auth import get_user_model
 from django.core import mail
-from django.core.management import call_command
-from django.test import TestCase
 from django.utils import timezone
 
 from kamu.management.commands.purge_data import UsageError
@@ -20,24 +17,8 @@ from kamu.models.identity import Identifier, Identity
 from kamu.models.membership import Membership
 from kamu.models.organisation import Organisation
 from kamu.models.role import Role
-from tests.setup import TestData
+from tests.setup import ManagementCommandTestCase, TestData
 from tests.views.test_account import AccountApiResponseMock
-
-
-class ManagementCommandTestCase(TestCase):
-    command = None
-
-    def call_command(self, *args, **kwargs):
-        out = StringIO()
-        err = StringIO()
-        call_command(
-            self.command,
-            *args,
-            stdout=out,
-            stderr=err,
-            **kwargs,
-        )
-        return out.getvalue(), err.getvalue()
 
 
 class GenerateTestDataTests(ManagementCommandTestCase):
@@ -491,7 +472,7 @@ class OrganisationSynchronizationTests(TestData, ManagementCommandTestCase):
     @mock.patch("kamu.connectors.organisation.OrganisationApiConnector.api_call_get")
     def test_synchronization(self, mock_connector):
         mock_connector.return_value = OrganisationApiResponseMock()
-        out, err = self.call_command("-v 2")
+        out, _ = self.call_command("-v 2")
         self.assertEqual(Organisation.objects.all().count(), 2)
         self.assertIn("Organisation 1-1 updated with parent 1", out)
         self.assertIn("Organisation 1 updated with abbreviation ORG", out)

@@ -3,10 +3,12 @@ Test setup for all tests.
 """
 
 import datetime
+from io import StringIO
 from typing import Any
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.management import call_command
 from django.test import RequestFactory, TestCase
 from django.utils import timezone
 from rest_framework.test import APIRequestFactory, APITestCase
@@ -190,3 +192,19 @@ class BaseAPITestCase(TestData, APITestCase):
         super().setUp()
         self.factory = APIRequestFactory()
         self.url = "/api/v0/"
+
+
+class ManagementCommandTestCase(TestCase):
+    command = None
+
+    def call_command(self, *args, **kwargs):
+        out = StringIO()
+        err = StringIO()
+        call_command(
+            self.command,
+            *args,
+            stdout=out,
+            stderr=err,
+            **kwargs,
+        )
+        return out.getvalue(), err.getvalue()
