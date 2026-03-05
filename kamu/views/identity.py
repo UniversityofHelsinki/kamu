@@ -1704,11 +1704,20 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
                 return persondb_results
         if given_names or surname or date_of_birth:
             try:
-                return persondb_results.union(
-                    connector.search_generic(
-                        {"given_names": given_names, "surname": surname, "date_of_birth": date_of_birth}
-                    )
+                persondb_name_results = connector.search_generic(
+                    {"given_names": given_names, "surname": surname, "date_of_birth": date_of_birth}
                 )
+                if len(persondb_name_results) > getattr(settings, "PERSONDB_NAME_SEARCH_LIMIT", 50):
+                    messages.add_message(
+                        self.request,
+                        messages.WARNING,
+                        _(
+                            "Name search returned too many results from the person database, and was skipped. "
+                            "Please refine your search parameters."
+                        ),
+                    )
+                    return persondb_results
+                return persondb_results.union(persondb_name_results)
             except ApiError:
                 messages.add_message(
                     self.request,

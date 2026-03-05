@@ -634,6 +634,17 @@ class MembershipInviteTests(BaseTestCase):
 
     @override_settings(LDAP_SEARCH_FOR_INVITES=False)
     @override_settings(PERSONDB_SEARCH_FOR_INVITES=True)
+    @override_settings(PERSONDB_NAME_SEARCH_LIMIT=1)
+    @mock.patch("kamu.connectors.persondb.PersonDBApiConnector.search_generic")
+    def test_search_persondb_too_many_results(self, mock_persondb):
+        mock_persondb.return_value = [PERSONS.get("tester"), PERSONS.get("tester")]
+        data = {"given_names": "test"}
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Name search returned too many results", response.content.decode("utf-8"))
+
+    @override_settings(LDAP_SEARCH_FOR_INVITES=False)
+    @override_settings(PERSONDB_SEARCH_FOR_INVITES=True)
     @mock.patch("kamu.connectors.persondb.PersonDBApiConnector.get_person")
     @mock.patch("kamu.utils.audit.logger_audit")
     @override_settings(ALLOW_TEST_FPIC=True)

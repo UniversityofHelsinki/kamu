@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-03 15:21+0200\n"
+"POT-Creation-Date: 2026-03-05 15:26+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -4414,7 +4414,7 @@ msgstr ""
 "Osittaiset nimet palauttivat liian monta tulosta. Näytetään vain täsmälliset "
 "osumat."
 
-#: views/identity.py:1684 views/identity.py:1698 views/identity.py:1716
+#: views/identity.py:1684 views/identity.py:1698 views/identity.py:1725
 #: views/membership.py:787 views/membership.py:796
 msgid ""
 "PersonDB connection failed, could not load person information. Please try "
@@ -4423,19 +4423,27 @@ msgstr ""
 "Yhteys PersonDB:hen epäonnistui, henkilötietoja ei voitu ladata. Yritä "
 "myöhemmin uudelleen."
 
-#: views/identity.py:1794
+#: views/identity.py:1715
+msgid ""
+"Name search returned too many results from the person database, and was "
+"skipped. Please refine your search parameters."
+msgstr ""
+"Nimihaku henkilötietokannasta palautti liian monta tulosta, "
+"joten se ohitettiin. Tarkenna hakuparametreja."
+
+#: views/identity.py:1803
 msgid "LDAP search failed, could not search existing accounts."
 msgstr "LDAP-haku epäonnistui. Olemassa olevia tilejä ei voitu hakea."
 
-#: views/identity.py:1804
+#: views/identity.py:1813
 msgid "Identifier match found, skipping name search."
 msgstr "Tunnisteella löydettiin osuma. Nimien haku ohitetaan."
 
-#: views/identity.py:1923
+#: views/identity.py:1932
 msgid "Incorrect primary keys."
 msgstr "Virheelliset yksilöivät avaimet."
 
-#: views/identity.py:1929
+#: views/identity.py:1938
 msgid "Identities combined."
 msgstr "Henkilöllisyydet yhdistetty."
 

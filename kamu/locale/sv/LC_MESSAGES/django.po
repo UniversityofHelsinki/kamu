@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-03 15:21+0200\n"
+"POT-Creation-Date: 2026-03-05 15:26+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -4405,7 +4405,7 @@ msgid ""
 msgstr ""
 "Partiella namnträffar gav för många resultat. Återger endast exakta träffar."
 
-#: views/identity.py:1684 views/identity.py:1698 views/identity.py:1716
+#: views/identity.py:1684 views/identity.py:1698 views/identity.py:1725
 #: views/membership.py:787 views/membership.py:796
 msgid ""
 "PersonDB connection failed, could not load person information. Please try "
@@ -4414,20 +4414,28 @@ msgstr ""
 "Anslutningen till PersonDB misslyckades, personinformationen kunde inte "
 "hämtas. Försök igen senare."
 
-#: views/identity.py:1794
+#: views/identity.py:1715
+msgid ""
+"Name search returned too many results from the person database, and was "
+"skipped. Please refine your search parameters."
+msgstr ""
+"Namnsökningen i persondatabasen returnerade för många resultat och "
+"hoppades över. Förfina dina sökparametrar."
+
+#: views/identity.py:1803
 msgid "LDAP search failed, could not search existing accounts."
 msgstr ""
 "LDAP-sökningen misslyckades, det gick inte att söka efter befintliga konton."
 
-#: views/identity.py:1804
+#: views/identity.py:1813
 msgid "Identifier match found, skipping name search."
 msgstr "Identifierarträff hittades, skippar namnsökning."
 
-#: views/identity.py:1923
+#: views/identity.py:1932
 msgid "Incorrect primary keys."
 msgstr "Felaktiga primärnycklar."
 
-#: views/identity.py:1929
+#: views/identity.py:1938
 msgid "Identities combined."
 msgstr "Identiteter kombinerade."
 

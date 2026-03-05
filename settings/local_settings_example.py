@@ -187,6 +187,8 @@ LIGHT_ACCOUNT_DEFAULT_SERVICES: list[str] = ["https://attributetest.it.helsinki.
 LDAP_SEARCH_LIMIT: int = 50
 # If Identity search would return more results, ask users to refine search.
 KAMU_IDENTITY_SEARCH_LIMIT: int = 50
+# If PersonDB name search would return more results, ask users to refine search.
+PERSONDB_NAME_SEARCH_LIMIT: int = 50
 
 # Should LDAP be searched in identity search or when inviting members.
 LDAP_SEARCH_FOR_INVITES: bool = True  # Defaults to True
