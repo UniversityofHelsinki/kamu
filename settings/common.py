@@ -307,3 +307,9 @@ ACCOUNT_ATTRIBUTES: dict[str, str] = {
 # This is a problem if the value is not actually latin-1 encoded. You can change
 # this setting to encoding Django is receiving from the web server.
 META_ENCODING: str = "iso-8859-1"
+
+MIGRATION_USER: dict[str, str] = {
+    "username": "migration_script",
+    "first_name": "migration",
+    "last_name": "script",
+}

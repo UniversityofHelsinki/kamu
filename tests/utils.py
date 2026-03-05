@@ -35,6 +35,7 @@ class MockLdapConn:
                 "sn": [b"User"],
                 "schacDateOfBirth": [b"19810101"],
                 "schacPersonalUniqueID": [b"urn:schac:personalUniqueID:fi:010181-900C"],
+                "schacExpiryDate": [b"21000101000000Z"],
             },
         )
     ]
