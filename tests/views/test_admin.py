@@ -294,3 +294,33 @@ class AdminSiteTests(BaseTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertIn(f'href="{self.url}role/add/?based_on={role.pk}"', response.content.decode("utf-8"))
+
+    def _test_add_requirement(
+        self, requirement_type: str = "external", requirement_value: str = "", requirement_level: int = 0
+    ):
+        url = f"{self.url}requirement/add/"
+        form_data = {
+            "identifier": "test_requirement",
+            "name_fi": "Testivaatimus",
+            "name_en": "Test requirement",
+            "name_sv": "Testkrav",
+            "type": requirement_type,
+            "value": requirement_value,
+            "level": requirement_level,
+            "grace": 1,
+        }
+        form_data.update(self.created_at)
+        return self.client.post(url, form_data, follow=True)
+
+    def test_add_assurance_requirement(self):
+        response = self._test_add_requirement("assurance", "", 40)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Select this object for an action - Test requirement", response.content.decode("utf-8"))
+
+    def test_add_assurance_requirement_invalid(self):
+        response = self._test_add_requirement("assurance", "", 5)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "Allowed assurance levels are: 10 (low), 20 (medium), 30 (high), 40 (very high).",
+            response.content.decode("utf-8"),
+        )

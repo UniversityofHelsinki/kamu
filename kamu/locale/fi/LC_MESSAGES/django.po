@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-05 15:26+0200\n"
+"POT-Creation-Date: 2026-03-09 14:59+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -140,14 +140,14 @@ msgstr "Luo kevyttunnus"
 msgid "Reset password"
 msgstr "Nollaa salasana"
 
-#: forms/auth.py:33 forms/auth.py:240 models/identity.py:570
-#: models/identity.py:582 models/token.py:304
+#: forms/auth.py:33 forms/auth.py:240 models/identity.py:580
+#: models/identity.py:592 models/token.py:304
 #: templates/account/account_create.html:16
 #: templates/identity/contact_address.html:15
 msgid "Email address"
 msgstr "Sähköpostiosoite"
 
-#: forms/auth.py:35 models/identity.py:644 models/identity.py:656
+#: forms/auth.py:35 models/identity.py:654 models/identity.py:666
 #: models/token.py:301 templates/identity/contact_address.html:64
 #: templates/membership/membership_invite.html:42
 msgid "Phone number"
@@ -337,7 +337,7 @@ msgstr "Henkilökohtainen kutsukoodi"
 
 #: forms/auth.py:446 forms/auth.py:452 forms/auth.py:456 forms/auth.py:458
 #: views/auth.py:133 views/auth.py:154 views/auth.py:240
-#: views/membership.py:939
+#: views/membership.py:956
 msgid "Invalid invitation code."
 msgstr "Virheellinen kutsukoodi."
 
@@ -378,7 +378,7 @@ msgid "You may limit name searches by date of birth to improve accuracy."
 msgstr ""
 "Voit rajoittaa nimihakuja syntymäajan perusteella parantaaksesi tarkkuutta."
 
-#: forms/identity.py:59 models/identity.py:723
+#: forms/identity.py:59 models/identity.py:733
 msgid "Identifier"
 msgstr "Tunniste"
 
@@ -682,21 +682,21 @@ msgstr "Tunnuksen tyyppi"
 msgid "User ID"
 msgstr "Käyttäjätunnus"
 
-#: models/account.py:42 models/identity.py:716
+#: models/account.py:42 models/identity.py:726
 msgid "Deactivated at"
 msgstr "Suljettu"
 
 #: models/account.py:43 models/account.py:142 models/contract.py:55
 #: models/contract.py:112 models/identity.py:48 models/identity.py:289
-#: models/identity.py:503 models/identity.py:574 models/identity.py:648
-#: models/identity.py:717 models/membership.py:122 models/organisation.py:31
+#: models/identity.py:513 models/identity.py:584 models/identity.py:658
+#: models/identity.py:727 models/membership.py:122 models/organisation.py:31
 #: models/role.py:83 models/role.py:275 models/role.py:371 models/token.py:321
 msgid "Created at"
 msgstr "Luotu"
 
 #: models/account.py:44 models/account.py:143 models/identity.py:49
-#: models/identity.py:290 models/identity.py:504 models/identity.py:575
-#: models/identity.py:649 models/identity.py:718 models/membership.py:123
+#: models/identity.py:290 models/identity.py:514 models/identity.py:585
+#: models/identity.py:659 models/identity.py:728 models/membership.py:123
 #: models/organisation.py:32 models/role.py:84 models/role.py:276
 #: models/role.py:372
 msgid "Updated at"
@@ -982,7 +982,7 @@ msgstr "Sukupuoli"
 msgid "Gender verification method"
 msgstr "Sukupuolen vahvistusmenetelmä"
 
-#: models/identity.py:264 models/identity.py:699
+#: models/identity.py:264 models/identity.py:709
 #: templates/identity/identity_combine.html:15
 #: templates/identity/identity_combine.html:112
 #: templates/identity/identity_detail.html:25
@@ -1031,92 +1031,92 @@ msgstr "Henkilöllisyys"
 msgid "Identities"
 msgstr "Henkilöllisyydet"
 
-#: models/identity.py:500
+#: models/identity.py:510
 msgid "Verification method"
 msgstr "Vahvistusmenetelmä"
 
-#: models/identity.py:508 templates/identity/identity_combine.html:118
+#: models/identity.py:518 templates/identity/identity_combine.html:118
 #: templates/identity/identity_detail.html:23
 #: templates/identity/identity_verify.html:18
 msgid "Nationality"
 msgstr "Kansalaisuus"
 
-#: models/identity.py:509
+#: models/identity.py:519
 msgid "Nationalities"
 msgstr "Kansalaisuudet"
 
-#: models/identity.py:571 models/identity.py:645
+#: models/identity.py:581 models/identity.py:655
 msgid "Priority"
 msgstr "Prioriteetti"
 
-#: models/identity.py:572 models/identity.py:646 models/identity.py:714
+#: models/identity.py:582 models/identity.py:656 models/identity.py:724
 msgid "Verified at"
 msgstr "Vahvistettu"
 
-#: models/identity.py:583 templates/identity/contact_address.html:9
+#: models/identity.py:593 templates/identity/contact_address.html:9
 #: templates/identity/identity_detail.html:57
 msgid "Email addresses"
 msgstr "Sähköpostiosoitteet"
 
-#: models/identity.py:657 templates/identity/contact_address.html:58
+#: models/identity.py:667 templates/identity/contact_address.html:58
 #: templates/identity/identity_detail.html:59
 msgid "Phone numbers"
 msgstr "Puhelinnumerot"
 
-#: models/identity.py:700
+#: models/identity.py:710
 msgid "eIDAS identifier"
 msgstr "eIDAS-tunniste"
 
-#: models/identity.py:701
+#: models/identity.py:711
 msgid "User identifier from organisation"
 msgstr "Organisaatiotunniste"
 
-#: models/identity.py:702
+#: models/identity.py:712
 msgid "Google account"
 msgstr "Google-tili"
 
-#: models/identity.py:703
+#: models/identity.py:713
 msgid "Microsoft account"
 msgstr "Microsoft-tili"
 
-#: models/identity.py:704 templates/identity/identity_combine.html:45
+#: models/identity.py:714 templates/identity/identity_combine.html:45
 msgid "Kamu identifier"
 msgstr "Kamu-tunniste"
 
-#: models/identity.py:705
+#: models/identity.py:715
 msgid "Person identifier"
 msgstr "Henkilön tunniste"
 
-#: models/identity.py:706
+#: models/identity.py:716
 msgid "Government issued ID"
 msgstr "Viranomaisen myöntämä henkilöllisyystodistus"
 
-#: models/identity.py:707
+#: models/identity.py:717
 msgid "Other identifier"
 msgstr "Muu tunniste"
 
-#: models/identity.py:709
+#: models/identity.py:719
 msgid "Identifier type"
 msgstr "Tunnisteen tyyppi"
 
-#: models/identity.py:710
+#: models/identity.py:720
 msgid "Identifier value"
 msgstr "Tunnisteen arvo"
 
-#: models/identity.py:711
+#: models/identity.py:721
 msgid "Identifier name"
 msgstr "Tunnisteen nimi"
 
-#: models/identity.py:712
+#: models/identity.py:722
 msgid "Valid until"
 msgstr "Voimassa"
 
-#: models/identity.py:724 templates/identity/identity_detail.html:63
+#: models/identity.py:734 templates/identity/identity_detail.html:63
 #: templates/identity/identity_detail.html:110
 msgid "Identifiers"
 msgstr "Tunnisteet"
 
-#: models/identity.py:741
+#: models/identity.py:751
 msgid "Invalid eduPersonPrincipalName format."
 msgstr "Virheellinen eduPersonPrincipalNamen muoto."
 
@@ -1448,13 +1448,14 @@ msgstr "Vaadittu taso tai versio"
 msgid ""
 "Require a minimum level of assurance or attribute verification level, or a "
 "minimum version of contract. Contract level must be a positive integer. "
-"Assurance levels are from 1 (low) to 3 (high) and attribute verification "
-"levels are from 1 (self assured) to 4 (strong electrical verification)"
+"Assurance levels are from 10 (low) to 40 (highest) and attribute "
+"verification levels are from 10 (self assured) to 50 (strong electrical "
+"verification)"
 msgstr ""
 "Vaadi vähimmäisvarmuustaso, alin käyttäjätiedon vahvistustaso tai "
 "vähimmäisversio sopimuksesta. Sopimuksen tason tulee olla positiivinen "
-"kokonaisluku. Varmuustasot ovat välillä 1 (matala) – 3 (korkea), ja "
-"käyttäjätiedon vahvistustasot ovat välillä 1 (itse vakuutettu) – 4 (vahva "
+"kokonaisluku. Varmuustasot ovat välillä 10 (matala) – 40 (korkein), ja "
+"käyttäjätiedon vahvistustasot ovat välillä 10 (itse vakuutettu) – 40 (vahva "
 "sähköinen tunnistautuminen)"
 
 #: models/role.py:367
@@ -1477,22 +1478,23 @@ msgstr "Vaadittu sopimus vaatii sopimustyypin arvoksi."
 msgid "Contract version must be a positive integer."
 msgstr "Sopimuksen version tulee olla positiivinen kokonaisluku."
 
-#: models/role.py:438
+#: models/role.py:442
 #, python-format
-msgid "Allowed assurance levels are from %(min)d (low) to %(max)d (high)."
-msgstr "Sallitut varmuustasot ovat %(min)d (matala) – %(max)d (korkea)."
+msgid "Allowed assurance levels are: %(choices)s."
+msgstr "Sallitut varmuustasot ovat: %(choices)s."
 
-#: models/role.py:448
+#: models/role.py:449
 msgid "Invalid attribute name."
 msgstr "Virheellinen käyttäjätiedon nimi."
 
-#: models/role.py:453
+#: models/role.py:454
 msgid "Attribute does not have verification level."
 msgstr "Käyttäjätiedolla ei ole vahvistustasoa."
 
-#: models/role.py:460
-msgid "Allowed levels are from %(min) to %(max)."
-msgstr "Sallitut tasot ovat välillä %(min) – %(max)."
+#: models/role.py:468
+#, python-format
+msgid "Allowed levels are: %(choices)s."
+msgstr "Sallitut tasot ovat: %(choices)s."
 
 #: models/token.py:308
 msgid "Email login token"
@@ -1542,7 +1544,7 @@ msgstr "Kirjautumistunniste"
 msgid "Login tokens"
 msgstr "Kirjautumistunnisteet"
 
-#: serializers/identity.py:114
+#: serializers/identity.py:115
 msgid "This identity already has the given email address."
 msgstr "Annettu sähköpostiosoite on jo tällä henkilöllisyydellä."
 
@@ -1551,7 +1553,7 @@ msgstr "Annettu sähköpostiosoite on jo tällä henkilöllisyydellä."
 msgid "Field %(attribute)s is required."
 msgstr "Kenttä %(attribute)s on pakollinen."
 
-#: serializers/role.py:132
+#: serializers/role.py:133
 msgid "Cannot validate sequence data."
 msgstr "Rooliketjua ei voida vahvistaa."
 
@@ -3933,7 +3935,7 @@ msgstr ""
 "Käyttäjätietoja ei voitu tuoda käyttäjähakemistosta, yritä myöhemmin "
 "uudelleen."
 
-#: utils/identity.py:538 views/identity.py:726
+#: utils/identity.py:542 views/identity.py:726
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again. Please also check your spam folder."
@@ -3941,7 +3943,7 @@ msgstr ""
 "Yritit lähettää uuden koodin liian pian. Ole hyvä ja odota yksi minuutti "
 "ennen uutta yritystä. Tarkista myös sähköpostisi roskapostikansio."
 
-#: utils/identity.py:548 views/identity.py:739
+#: utils/identity.py:552 views/identity.py:739
 msgid ""
 "The verification code has now been sent and should arrive in your email in a "
 "few minutes. If you do not receive a verification code, please check your "
@@ -3951,26 +3953,26 @@ msgstr ""
 "muutamassa minuutissa. Mikäli et saa vahvistuskoodia, tarkista myös "
 "roskapostikansiosi."
 
-#: utils/identity.py:554
+#: utils/identity.py:558
 msgid "Failed to send verification code."
 msgstr "Vahvistuskoodin lähetys epäonnistui."
 
-#: utils/identity.py:566 views/auth.py:638 views/auth.py:661
+#: utils/identity.py:570 views/auth.py:638 views/auth.py:661
 msgid "Tried to send a new code too soon. Please try again in one minute."
 msgstr ""
 "Yritit lähettää uuden koodin liian pian. Ole hyvä ja odota yksi minuutti "
 "ennen uutta yritystä."
 
-#: utils/identity.py:572 views/identity.py:788
+#: utils/identity.py:576 views/identity.py:788
 #, python-format
 msgid "Your personal Kamu verification code is: %(token)s"
 msgstr "Henkilökohtainen Kamu-vahvistuskoodisi on: %(token)s"
 
-#: utils/identity.py:575 views/auth.py:664 views/identity.py:791
+#: utils/identity.py:579 views/auth.py:664 views/identity.py:791
 msgid "Could not send an SMS message."
 msgstr "Tekstiviestin lähetys epäonnistui."
 
-#: utils/identity.py:580 views/identity.py:796
+#: utils/identity.py:584 views/identity.py:796
 msgid ""
 "The verification code has now been sent and should arrive in your phone in a "
 "few minutes."
@@ -3978,15 +3980,15 @@ msgstr ""
 "Vahvistuskoodi on nyt lähetetty ja sen pitäisi saapua puhelimeesi muutamassa "
 "minuutissa."
 
-#: utils/identity.py:620
+#: utils/identity.py:624
 msgid "Email address is required."
 msgstr "Sähköpostiosoite vaaditaan."
 
-#: utils/identity.py:671
+#: utils/identity.py:675
 msgid "Phone number is required."
 msgstr "Puhelinnumero vaaditaan."
 
-#: utils/identity.py:788
+#: utils/identity.py:792
 msgid ""
 "Suspected duplicate user. Finnish personal identity code already exists in "
 "the database: "
@@ -3994,16 +3996,16 @@ msgstr ""
 "Mahdollinen duplikaattikäyttäjä. Suomalainen henkilötunnus on jo olemassa "
 "tietokannassa: "
 
-#: utils/identity.py:854
+#: utils/identity.py:858
 #, python-format
 msgid "You can activate a new user account of type \"%(account_type)s\"."
 msgstr "Voit aktivoida uuden käyttäjätunnuksen tyyppiä \"%(account_type)s\"."
 
-#: utils/identity.py:859
+#: utils/identity.py:863
 msgid "Activate account"
 msgstr "Aktivoi käyttäjätunnus"
 
-#: utils/identity.py:874
+#: utils/identity.py:878
 msgid "Continue to external service to activate account"
 msgstr "Jatka ulkoiseen palveluun tunnuksen aktivoimiseksi"
 
@@ -4397,25 +4399,25 @@ msgstr "Virheellinen varmennusistunto."
 msgid "Identity verification has been cancelled."
 msgstr "Henkilöllisyyden varmentaminen peruttiin."
 
-#: views/identity.py:1492
+#: views/identity.py:1500
 msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr ""
 "LDAP-haku palautti liian monta tulosta. Ole hyvä ja tarkenna hakuparametrejä."
 
-#: views/identity.py:1616
+#: views/identity.py:1624
 msgid "Too many results, please refine your search parameters."
 msgstr "Liian monta tulosta. Ole hyvä ja tarkenna hakuparametrejä."
 
-#: views/identity.py:1623
+#: views/identity.py:1631
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 "Osittaiset nimet palauttivat liian monta tulosta. Näytetään vain täsmälliset "
 "osumat."
 
-#: views/identity.py:1684 views/identity.py:1698 views/identity.py:1725
-#: views/membership.py:787 views/membership.py:796
+#: views/identity.py:1692 views/identity.py:1706 views/identity.py:1733
+#: views/membership.py:804 views/membership.py:813
 msgid ""
 "PersonDB connection failed, could not load person information. Please try "
 "again later."
@@ -4423,27 +4425,27 @@ msgstr ""
 "Yhteys PersonDB:hen epäonnistui, henkilötietoja ei voitu ladata. Yritä "
 "myöhemmin uudelleen."
 
-#: views/identity.py:1715
+#: views/identity.py:1723
 msgid ""
 "Name search returned too many results from the person database, and was "
 "skipped. Please refine your search parameters."
 msgstr ""
-"Nimihaku henkilötietokannasta palautti liian monta tulosta, "
-"joten se ohitettiin. Tarkenna hakuparametreja."
+"Nimihaku henkilötietokannasta palautti liian monta tulosta, joten se "
+"ohitettiin. Tarkenna hakuparametreja."
 
-#: views/identity.py:1803
+#: views/identity.py:1811
 msgid "LDAP search failed, could not search existing accounts."
 msgstr "LDAP-haku epäonnistui. Olemassa olevia tilejä ei voitu hakea."
 
-#: views/identity.py:1813
+#: views/identity.py:1821
 msgid "Identifier match found, skipping name search."
 msgstr "Tunnisteella löydettiin osuma. Nimien haku ohitetaan."
 
-#: views/identity.py:1932
+#: views/identity.py:1940
 msgid "Incorrect primary keys."
 msgstr "Virheelliset yksilöivät avaimet."
 
-#: views/identity.py:1938
+#: views/identity.py:1946
 msgid "Identities combined."
 msgstr "Henkilöllisyydet yhdistetty."
 
@@ -4473,7 +4475,7 @@ msgstr ""
 msgid "You have approved the membership below."
 msgstr "Hyväksyit alla näkyvän jäsenyyden."
 
-#: views/membership.py:300 views/membership.py:890
+#: views/membership.py:300 views/membership.py:907
 msgid "The email invitation has been sent."
 msgstr "Sähköpostikutsu on lähetetty."
 
@@ -4501,20 +4503,20 @@ msgstr "Jäsenyys peruttu."
 msgid "Membership updated."
 msgstr "Jäsenyys päivitetty."
 
-#: views/membership.py:771 views/membership.py:812
+#: views/membership.py:788 views/membership.py:829
 msgid "Multiple identities found, please contact IT-Helpdesk."
 msgstr "Useita identiteettejä löytyi, ota yhteyttä IT-helpdeskiin."
 
-#: views/membership.py:895 views/membership.py:1189
+#: views/membership.py:912 views/membership.py:1206
 msgid ""
 "The email invitation will be sent when the membership has been approved."
 msgstr "Sähköpostikutsu lähetetään, kun jäsenyys on hyväksytty."
 
-#: views/membership.py:942
+#: views/membership.py:959
 msgid "This invitation is already claimed."
 msgstr "Kutsu on jo käytetty."
 
-#: views/membership.py:1051
+#: views/membership.py:1068
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and email address {email} are "
@@ -4523,7 +4525,7 @@ msgstr ""
 "Henkilötunnus {fpic} ja sähköpostiosoite {email} ovat rekisteröity eri "
 "henkilöille."
 
-#: views/membership.py:1061
+#: views/membership.py:1078
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and phone number {phone} are "
@@ -4532,7 +4534,7 @@ msgstr ""
 "Henkilötunnus {fpic} ja puhelinnumero {phone} ovat rekisteröity eri "
 "henkilöille."
 
-#: views/membership.py:1070
+#: views/membership.py:1087
 #, python-brace-format
 msgid ""
 "Email address {email} and phone number {phone} are registered to different "
@@ -4541,23 +4543,23 @@ msgstr ""
 "Sähköpostiosoite {email} ja puhelinnumero {phone} ovat rekisteröity eri "
 "henkilöille."
 
-#: views/membership.py:1108
+#: views/membership.py:1125
 #, python-format
 msgid "Email address is required. Invalid line: \"%(line)s\"."
 msgstr "Sähköpostiosoite vaaditaan. Virheellinen rivi \"%(line)s\"."
 
-#: views/membership.py:1114
+#: views/membership.py:1131
 #, python-format
 msgid "Phone number is required for this role. Invalid line: \"%(line)s\"."
 msgstr ""
 "Puhelinnumero vaaditaan tähän rooliin. Virheellinen rivi: \"%(line)s\"."
 
-#: views/membership.py:1197
+#: views/membership.py:1214
 #, python-brace-format
 msgid "The email invitation has been sent to following addresses: {0}"
 msgstr "Sähköpostikutsu on lähetetty seuraaviin osoitteisiin: {0}"
 
-#: views/membership.py:1206
+#: views/membership.py:1223
 #, python-brace-format
 msgid ""
 "The email invitation will be sent to following addresses when the membership "
@@ -4566,7 +4568,7 @@ msgstr ""
 "Sähkökutsu lähetetään seuraaviin osoitteisiin, kun jäsenyys on hyväksytty: "
 "{0}"
 
-#: views/membership.py:1212
+#: views/membership.py:1229
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Lisätty seuraavat henkilöllisyydet: {0}"

@@ -358,8 +358,8 @@ class Requirement(models.Model):
         verbose_name=_("Level or version required"),
         help_text=_(
             "Require a minimum level of assurance or attribute verification level, or a minimum version of "
-            "contract. Contract level must be a positive integer. Assurance levels are from 1 (low) to 3 (high) "
-            "and attribute verification levels are from 1 (self assured) to 4 (strong electrical verification)"
+            "contract. Contract level must be a positive integer. Assurance levels are from 10 (low) to 40 (highest) "
+            "and attribute verification levels are from 10 (self assured) to 50 (strong electrical verification)"
         ),
     )
     grace = models.IntegerField(
@@ -430,15 +430,16 @@ class Requirement(models.Model):
                 raise ValidationError({"level": [_("Contract version must be a positive integer.")]})
         if self.type == Requirement.Type.ASSURANCE:
             min_assurance = Identity.AssuranceLevel.LOW
-            max_assurance = Identity.AssuranceLevel.HIGH
-            if min_assurance > int(self.level) or int(self.level) > max_assurance:
+            max_assurance = Identity.AssuranceLevel.HIGHEST
+            level = int(self.level)
+            if level not in Identity.AssuranceLevel.values or not min_assurance <= level <= max_assurance:
+                assurance_levels = ", ".join(
+                    f"{assurance.value} ({assurance.label.lower()})"
+                    for assurance in Identity.AssuranceLevel
+                    if min_assurance <= assurance <= max_assurance
+                )
                 raise ValidationError(
-                    {
-                        "level": [
-                            _("Allowed assurance levels are from %(min)d (low) to %(max)d (high).")
-                            % {"min": min_assurance, "max": max_assurance}
-                        ]
-                    }
+                    {"level": [_("Allowed assurance levels are: %(choices)s.") % {"choices": assurance_levels}]}
                 )
         if self.type == Requirement.Type.ATTRIBUTE:
             if self.value not in ["phone_number", "email_address"]:
@@ -453,14 +454,18 @@ class Requirement(models.Model):
                     raise ValidationError({"level": [_("Attribute does not have verification level.")]})
                 min_verification = Identity.VerificationMethod.SELF_ASSURED
                 max_verification = Identity.VerificationMethod.STRONG
-                if min_verification > int(self.level) or int(self.level) > max_verification:
+                level = int(self.level)
+                if (
+                    level not in Identity.VerificationMethod.values
+                    or not min_verification <= level <= max_verification
+                ):
+                    verification_levels = ", ".join(
+                        f"{verification.value} ({verification.label.lower()})"
+                        for verification in Identity.VerificationMethod
+                        if min_verification <= verification <= max_verification
+                    )
                     raise ValidationError(
-                        {
-                            "level": [
-                                _("Allowed levels are from %(min) to %(max).")
-                                % {"min": min_verification.value, "max": max_verification.value}
-                            ]
-                        }
+                        {"level": [_("Allowed levels are: %(choices)s.") % {"choices": verification_levels}]}
                     )
 
     def test(self, identity: IdentityType) -> bool:
