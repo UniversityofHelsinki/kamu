@@ -2,7 +2,7 @@
 {% load i18n %}
 {% block content %}
   <h1 class="mb-5">{% trans "Agreement on membership of the University community" %}</h1>
-  {% if is_approver and not object.approver and not object.cancelled_at %}
+  {% if is_approver and not object.expired_or_cancelled and not object.approver %}
     <div class="alert alert-info">
       <h4>{% trans "Approval required" %}</h4>
       <p>{% trans "Please check the information below and accept or reject the membership." %}</p>
@@ -48,7 +48,7 @@
         <p>{% trans "The person has not yet registered for Kamu and provided their own information." %}</p>
         <p>{% blocktrans with address=membership.invite_email_address %}An email invitation has been sent to {{ address }}.{% endblocktrans %}</p>
         {% if membership.verify_phone_number %}<p>{% blocktrans with number=membership.verify_phone_number %}An SMS confirmation will be sent to {{ number }}.{% endblocktrans %}</p>{% endif %}
-        {% if is_inviter %}
+        {% if is_inviter and not object.expired_or_cancelled %}
           <form method="post">{% csrf_token %}
             <input type="submit" name="resend_invite" value="{% trans 'Resend email invitation' %}" class="btn btn-primary"/>
           </form>
@@ -71,101 +71,101 @@
         <dt class="col-sm-4">{% trans "Reasons" %}</dt>
         <dd class="col-sm-8">{{ object.reason }}</dd>
       </dl>
-      {% if is_approver or user.identity == object.identity %}
-        <form method="post">{% csrf_token %}
-      {% endif %}
-      {% if is_approver %}
-        <a href="{% url 'membership-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Continue and edit membership" %}</a>
-      {% endif %}
-      {% if object.ending_in_future and not object.cancelled_at %}
+      {% if not object.expired_or_cancelled %}
         {% if is_approver or user.identity == object.identity %}
-          <button type="button" class="btn btn-warning me-2 mb-2" data-bs-toggle="modal" data-bs-target="#endMembershipModal">{% trans "End membership to today" %}</button>
-          <div class="modal fade" id="endMembershipModal" tabindex="-1" aria-labelledby="endMembershipModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="endMembershipModalLabel">{% trans "End membership to today" %}</h1>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans "Close" %}"></button>
-                </div>
-                <div class="modal-body">
-                  <p class="text-break">{% trans "Please confirm that you want to terminate the membership shown below by the end of today." %}</p>
-                  <dl class="row">
-                    <dt class="col-sm-4">{% trans "Role" %}</dt>
-                    <dd class="col-sm-8">{{ object.role }}</dd>
-                    <dt class="col-sm-4">{% trans "Person" %}</dt>
-                    <dd class="col-sm-8">{{ object.identity }}</dd>
-                    <dt class="col-sm-4">{% trans "Expiration date" %}</dt>
-                    <dd class="col-sm-8">{% now "DATE_FORMAT" %}</dd>
-                  </dl>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Back" %}</button>
-                    <button type="submit" name="end_membership" class="btn btn-danger">{% trans 'Confirm termination of membership' %}</button>
+          <form method="post">{% csrf_token %}
+            {% if is_approver %}
+              <a href="{% url 'membership-change' object.pk %}" class="btn btn-primary me-2 mb-2">{% trans "Continue and edit membership" %}</a>
+            {% endif %}
+            {% if object.ending_in_future %}
+              {% if is_approver or user.identity == object.identity %}
+                <button type="button" class="btn btn-warning me-2 mb-2" data-bs-toggle="modal" data-bs-target="#endMembershipModal">{% trans "End membership to today" %}</button>
+                <div class="modal fade" id="endMembershipModal" tabindex="-1" aria-labelledby="endMembershipModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="endMembershipModalLabel">{% trans "End membership to today" %}</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+                      </div>
+                      <div class="modal-body">
+                        <p class="text-break">{% trans "Please confirm that you want to terminate the membership shown below by the end of today." %}</p>
+                        <dl class="row">
+                          <dt class="col-sm-4">{% trans "Role" %}</dt>
+                          <dd class="col-sm-8">{{ object.role }}</dd>
+                          <dt class="col-sm-4">{% trans "Person" %}</dt>
+                          <dd class="col-sm-8">{{ object.identity }}</dd>
+                          <dt class="col-sm-4">{% trans "Expiration date" %}</dt>
+                          <dd class="col-sm-8">{% now "DATE_FORMAT" %}</dd>
+                        </dl>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Back" %}</button>
+                          <button type="submit" name="end_membership" class="btn btn-danger">{% trans 'Confirm termination of membership' %}</button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
+              {% endif %}
+            {% endif %}
+            {% if is_approver %}
+              {% if object.approver %}
+                <button type="button" class="btn btn-danger me-2 mb-2" data-bs-toggle="modal" data-bs-target="#cancelMembershipModal">{% trans "Cancel membership effective immediately" %}</button>
+                <div class="modal fade" id="cancelMembershipModal" tabindex="-1" aria-labelledby="cancelMembershipModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="cancelMembershipModalLabel">{% trans "Cancel membership effective immediately" %}</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+                      </div>
+                      <div class="modal-body">
+                        <p class="text-break">{% trans "Please confirm that you want to cancel the membership shown below effective immediately." %}</p>
+                        <dl class="row">
+                          <dt class="col-sm-4">{% trans "Role" %}</dt>
+                          <dd class="col-sm-8">{{ object.role }}</dd>
+                          <dt class="col-sm-4">{% trans "Person" %}</dt>
+                          <dd class="col-sm-8">{{ object.identity }}</dd>
+                          <dt class="col-sm-4">{% trans "Expiration date" %}</dt>
+                          <dd class="col-sm-8">{% now "DATE_FORMAT" %}</dd>
+                        </dl>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Back" %}</button>
+                          <button type="submit" name="cancel_membership" class="btn btn-danger">{% trans 'Confirm cancellation of membership' %}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% else %}
+                <button type="button" class="btn btn-danger me-2 mb-2" data-bs-toggle="modal" data-bs-target="#cancelMembershipModal">{% trans "Reject membership" %}</button>
+                <div class="modal fade" id="cancelMembershipModal" tabindex="-1" aria-labelledby="cancelMembershipModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="cancelMembershipModalLabel">{% trans "Reject membership" %}</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+                      </div>
+                      <div class="modal-body">
+                        <p class="text-break">{% trans "The following membership will be rejected effective immediately." %}</p>
+                        <dl class="row">
+                          <dt class="col-sm-4">{% trans "Role" %}</dt>
+                          <dd class="col-sm-8">{{ object.role }}</dd>
+                          <dt class="col-sm-4">{% trans "Person" %}</dt>
+                          <dd class="col-sm-8">{{ object.identity }}</dd>
+                          <dt class="col-sm-4">{% trans "Expiration date" %}</dt>
+                          <dd class="col-sm-8">{% now "DATE_FORMAT" %}</dd>
+                        </dl>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Back" %}</button>
+                          <button type="submit" name="cancel_membership" class="btn btn-danger">{% trans 'Confirm rejection of membership' %}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+            {% endif %}
+          </form>
         {% endif %}
-      {% endif %}
-      {% if is_approver and object.cancelled_at is null %}
-        {% if object.approver %}
-          <button type="button" class="btn btn-danger me-2 mb-2" data-bs-toggle="modal" data-bs-target="#cancelMembershipModal">{% trans "Cancel membership effective immediately" %}</button>
-          <div class="modal fade" id="cancelMembershipModal" tabindex="-1" aria-labelledby="cancelMembershipModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="cancelMembershipModalLabel">{% trans "Cancel membership effective immediately" %}</h1>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans "Close" %}"></button>
-                </div>
-                <div class="modal-body">
-                  <p class="text-break">{% trans "Please confirm that you want to cancel the membership shown below effective immediately." %}</p>
-                  <dl class="row">
-                    <dt class="col-sm-4">{% trans "Role" %}</dt>
-                    <dd class="col-sm-8">{{ object.role }}</dd>
-                    <dt class="col-sm-4">{% trans "Person" %}</dt>
-                    <dd class="col-sm-8">{{ object.identity }}</dd>
-                    <dt class="col-sm-4">{% trans "Expiration date" %}</dt>
-                    <dd class="col-sm-8">{% now "DATE_FORMAT" %}</dd>
-                  </dl>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Back" %}</button>
-                    <button type="submit" name="cancel_membership" class="btn btn-danger">{% trans 'Confirm cancellation of membership' %}</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        {% else %}
-          <button type="button" class="btn btn-danger me-2 mb-2" data-bs-toggle="modal" data-bs-target="#cancelMembershipModal">{% trans "Reject membership" %}</button>
-          <div class="modal fade" id="cancelMembershipModal" tabindex="-1" aria-labelledby="cancelMembershipModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="cancelMembershipModalLabel">{% trans "Reject membership" %}</h1>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans "Close" %}"></button>
-                </div>
-                <div class="modal-body">
-                  <p class="text-break">{% trans "The following membership will be rejected effective immediately." %}</p>
-                  <dl class="row">
-                    <dt class="col-sm-4">{% trans "Role" %}</dt>
-                    <dd class="col-sm-8">{{ object.role }}</dd>
-                    <dt class="col-sm-4">{% trans "Person" %}</dt>
-                    <dd class="col-sm-8">{{ object.identity }}</dd>
-                    <dt class="col-sm-4">{% trans "Expiration date" %}</dt>
-                    <dd class="col-sm-8">{% now "DATE_FORMAT" %}</dd>
-                  </dl>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Back" %}</button>
-                    <button type="submit" name="cancel_membership" class="btn btn-danger">{% trans 'Confirm rejection of membership' %}</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        {% endif %}
-      {% endif %}
-      {% if is_approver or user.identity == object.identity %}
-        </form>
       {% endif %}
     </div>
   </div>

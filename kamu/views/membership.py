@@ -371,7 +371,7 @@ class MembershipDetailView(LoginRequiredMixin, DetailView[Membership]):
         Check for role approval.
         """
         self.object = self.get_object()
-        if not self.request.user.is_authenticated:
+        if not self.request.user.is_authenticated or self.object.expired_or_cancelled():
             raise PermissionDenied
         if "approve_membership" in self.request.POST:
             self._approve_membership(request)
@@ -392,6 +392,15 @@ class MembershipUpdateView(LoginRequiredMixin, UpdateView[Membership, Membership
     model = Membership
     form_class = MembershipEditForm
     template_name = "membership/membership_edit_form.html"
+
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        """
+        Prevent editing expired memberships.
+        """
+        self.object = self.get_object()
+        if not self.object or self.object.expired_or_cancelled():
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self) -> dict[str, Any]:
         """

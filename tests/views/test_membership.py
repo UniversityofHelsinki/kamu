@@ -155,6 +155,16 @@ class MembershipViewTests(BaseTestCase):
         self.assertIn("Your personal invitation code is", mail.outbox[0].body)
         self.assertIn("Custom invite text", mail.outbox[0].body)
 
+    def test_show_expired_membership(self):
+        self.role.approvers.add(self.group)
+        self.membership.start_date = timezone.now().date() - datetime.timedelta(days=10)
+        self.membership.expire_date = timezone.now().date() - datetime.timedelta(days=1)
+        self.membership.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Expired", response.content.decode("utf-8"))
+        self.assertNotIn("Continue and edit membership", response.content.decode("utf-8"))
+
     def test_show_membership_approver_actions(self):
         self.role.approvers.add(self.group)
         response = self.client.get(self.url)
@@ -183,6 +193,14 @@ class MembershipViewTests(BaseTestCase):
         )
         self.assertIn("invited_user@example.org", mail.outbox[0].to)
         self.assertIn("has been approved", mail.outbox[0].body)
+
+    def test_disallow_approve_expired_membership(self):
+        self.role.approvers.add(self.group)
+        self.membership.start_date = timezone.now().date() - datetime.timedelta(days=10)
+        self.membership.expire_date = timezone.now().date() - datetime.timedelta(days=1)
+        self.membership.save()
+        response = self.client.post(self.url, {"approve_membership": "approve"}, follow=True)
+        self.assertEqual(response.status_code, 403)
 
     @patch("kamu.utils.audit.logger_audit")
     def test_approve_membership_without_identity(self, mock_logger):
@@ -300,6 +318,15 @@ class MembershipViewTests(BaseTestCase):
                 ),
             ]
         )
+
+    def test_disallow_edit_expired_membership(self):
+        self.role.approvers.add(self.group)
+        url = f"{self.url}change/"
+        self.membership.start_date = timezone.now().date() - datetime.timedelta(days=10)
+        self.membership.expire_date = timezone.now().date() - datetime.timedelta(days=1)
+        self.membership.save()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
 
     def test_edit_membership_ignore_past_start_date_change(self):
         self.role.approvers.add(self.group)

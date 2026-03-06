@@ -196,6 +196,12 @@ class Membership(models.Model):
         """
         return self.expire_date > timezone.now().date()
 
+    def expired_or_cancelled(self) -> bool:
+        """
+        Returns True if membership is expired or cancelled.
+        """
+        return self.expire_date < timezone.now().date() or self.cancelled_at is not None
+
     def get_absolute_url(self) -> str:
         """
         Returns url to current membership's detail view.
