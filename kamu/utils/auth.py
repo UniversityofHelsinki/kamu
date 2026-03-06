@@ -20,7 +20,6 @@ def set_default_permissions(instance: AbstractBaseUser | Group, remove: bool = F
 
     default_permissions = [
         ("kamu", "role", "search_roles"),
-        ("kamu", "identity", "search_identities"),
         ("kamu", "identity", "view_basic_information"),
     ]
     for app, model, codename in default_permissions:

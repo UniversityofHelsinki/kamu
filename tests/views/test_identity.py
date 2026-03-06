@@ -217,7 +217,8 @@ class IdentitySearchTests(BaseTestCase):
         self.create_user()
         self.url = "/identity/search/"
         self.client = Client()
-        set_default_permissions(self.user)
+        self.permission = Permission.objects.get(codename="search_identities")
+        self.user.user_permissions.add(self.permission)
         self.client.force_login(self.user)
 
     @mock.patch("kamu.utils.audit.logger_audit")
@@ -295,7 +296,7 @@ class IdentitySearchTests(BaseTestCase):
         )
 
     def test_search_identity_without_permission(self):
-        set_default_permissions(self.user, remove=True)
+        self.user.user_permissions.remove(self.permission)
         data = {"given_names": "test", "email": "super@example.org"}
         response = self.client.post(self.url, data, follow=True)
         self.assertEqual(response.status_code, 403)
