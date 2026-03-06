@@ -318,18 +318,28 @@ class Identity(models.Model):
     def display_name(self) -> str:
         return f"{self.given_name_display} {self.surname_display}"
 
-    def email_address(self) -> str | None:
+    def email_address(self, unverified: bool = False) -> str | None:
         """
         Returns the highest priority verified email address, if available.
+
+        If unverified option is given, returns the highest priority unverified email address if no verified address is
+        available.
         """
         email_address = self.email_addresses.filter(verified__isnull=False).order_by("priority").first()
+        if not email_address and unverified:
+            email_address = self.email_addresses.all().order_by("priority").first()
         return email_address.address if email_address else None
 
-    def phone_number(self) -> str | None:
+    def phone_number(self, unverified: bool = False) -> str | None:
         """
         Returns the highest priority verified phone number, if available.
+
+        If unverified option is given, returns the highest priority unverified phone number if no verified number is
+        available.
         """
         phone_number = self.phone_numbers.filter(verified__isnull=False).order_by("priority").first()
+        if not phone_number and unverified:
+            phone_number = self.phone_numbers.all().order_by("priority").first()
         return phone_number.number if phone_number else None
 
     def log_values(self) -> dict[str, str | int]:
