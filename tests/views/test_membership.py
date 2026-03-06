@@ -461,6 +461,15 @@ class MembershipInviteTests(BaseTestCase):
         self.role.inviters.add(self.group)
         self.user.groups.add(self.group)
 
+    def test_invite_view_without_inviter_permission(self):
+        self.user.groups.remove(self.group)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_invite_view(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
     @mock.patch("kamu.views.identity.ldap_search")
     def test_search_user(self, mock_ldap):
         mock_ldap.return_value = []

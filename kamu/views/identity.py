@@ -1450,12 +1450,20 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         self.exact_match_found = False
         self.exact_match_skip = getattr(settings, "SKIP_NAME_SEARCH_IF_IDENTIFIER_MATCHES", True)
 
+    def check_view_permissions(self) -> None:
+        """
+        Check that user has permission to search identities.
+
+        Separate method to allow custom permissions for subclasses.
+        """
+        if not self.request.user.has_perm("kamu.search_identities"):
+            raise PermissionDenied
+
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """
         Check that user has permission to search identities.
         """
-        if not self.request.user.has_perm("kamu.search_identities"):
-            raise PermissionDenied
+        self.check_view_permissions()
         return super().dispatch(request, *args, **kwargs)
 
     def _ldap_search_attribute(self, attribute: dict[str, LdapSearchAttributeType]) -> list | None:

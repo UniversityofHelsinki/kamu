@@ -521,6 +521,23 @@ class MembershipInviteIdentitySearch(IdentitySearchView):
     """
 
     template_name = "membership/membership_invite_identity.html"
+    role: Role
+
+    def check_view_permissions(self) -> None:
+        """
+        Check that user has permission to invite identities.
+
+        Overrides parents check for search_identities permission.
+        """
+        if not self.request.user.is_authenticated or not self.role.is_inviter(self.request.user):
+            raise PermissionDenied
+
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        """
+        Sets role.
+        """
+        self.role = get_object_or_404(Role, pk=self.kwargs.get("role_pk"))
+        return super().dispatch(request, *args, **kwargs)
 
     @staticmethod
     def search_ldap() -> bool:
