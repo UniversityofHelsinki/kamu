@@ -92,6 +92,14 @@ def get_account_data(identity: Identity, account_type: Account.Type) -> dict[str
     Returns data for creating or updating a user account.
     """
     membership = get_account_base_membership(identity, account_type)
+    unverified_email_permission = getattr(settings, "ACCOUNT_UNVERIFIED_EMAIL_PERMISSION", None)
+    if (
+        unverified_email_permission
+        and identity.get_permissions().filter(identifier=unverified_email_permission).exists()
+    ):
+        email = identity.email_address(unverified=True)
+    else:
+        email = identity.email_address()
     data = {
         settings.ACCOUNT_ATTRIBUTES["accountType"]: get_account_type(account_type),
         settings.ACCOUNT_ATTRIBUTES["cn"]: identity.display_name(),
@@ -101,7 +109,7 @@ def get_account_data(identity: Identity, account_type: Account.Type) -> dict[str
         settings.ACCOUNT_ATTRIBUTES["gecos"]: get_gecos(identity),
         settings.ACCOUNT_ATTRIBUTES["givenName"]: identity.given_name_display,
         settings.ACCOUNT_ATTRIBUTES["kamuIdentifier"]: str(identity.kamu_id),
-        settings.ACCOUNT_ATTRIBUTES["mail"]: identity.email_address(),
+        settings.ACCOUNT_ATTRIBUTES["mail"]: email,
         settings.ACCOUNT_ATTRIBUTES["organizationUnit"]: (
             membership.role.organisation.code if membership and membership.role.organisation else None
         ),

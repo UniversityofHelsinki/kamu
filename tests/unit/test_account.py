@@ -3,6 +3,7 @@ Unit tests for accounts.
 """
 
 from django.conf import settings
+from django.test import override_settings
 from django.utils import timezone
 
 from kamu.models.account import Account
@@ -39,12 +40,28 @@ class AccountUnitTests(BaseTestCase):
         data = get_account_data(self.identity, Account.Type.LIGHT)
         self.assertEqual(data.get("schacExpiryDate"), self.membership2.expire_date.isoformat())
         self.assertEqual(data.get("accountType"), 9)
+        self.assertEqual(data.get("mail"), "test@example.org")
         self.assertIn("affiliate", data.get("eduPersonAffiliation"))
         self.assertIn("service-identifier-1", data.get("lightAccountService"))
         self.assertIn(settings.LIGHT_ACCOUNT_DEFAULT_SERVICES[0], data.get("lightAccountService"))
         self.assertEqual(2, len(data.get("lightAccountExternalIdentifier")))
         self.assertIn("EPPN:testuser@example.org", data.get("lightAccountExternalIdentifier"))
         self.assertIn("MICROSOFT:123456789", data.get("lightAccountExternalIdentifier"))
+
+    def test_unverified_email(self):
+        self.email_address.verified = None
+        self.email_address.save()
+        data = get_account_data(self.identity, Account.Type.LIGHT)
+        self.assertEqual(data.get("mail"), None)
+
+    @override_settings(ACCOUNT_UNVERIFIED_EMAIL_PERMISSION="unverified_email")
+    def test_unverified_email_allowed(self):
+        self.email_address.verified = None
+        self.email_address.save()
+        self.permission_service.identifier = "unverified_email"
+        self.permission_service.save()
+        data = get_account_data(self.identity, Account.Type.LIGHT)
+        self.assertEqual(data.get("mail"), "test@example.org")
 
     def test_account_data_ignore_deactivated_identifiers(self):
         self.identifier.deactivated_at = timezone.now()

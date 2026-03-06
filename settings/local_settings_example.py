@@ -323,6 +323,10 @@ ACCOUNT_TYPES: dict[str, int | str] = {
     "lightaccount": 9,
 }
 
+# If user has a permission identified in this setting, unverified email address is given to Account API
+# if verified is not available.
+ACCOUNT_UNVERIFIED_EMAIL_PERMISSION: str = "unverified_email"
+
 # Change what level of attribute or assurance is shown as verified in identity view.
 # Check levels from kamu.models.Identity
 # ASSURANCE_LEVEL_DISPLAY_AS_VERIFIED: int = 2
