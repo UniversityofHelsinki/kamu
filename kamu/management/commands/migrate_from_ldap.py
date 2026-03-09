@@ -50,6 +50,7 @@ class Command(BaseCommand):
     dry_run = False
     skip_email_match = False
     verify_email = False
+    skip_account_synchronization = False
     attribute_mapping = {
         "uid": "uid",
         "givenName": "given_name_display",
@@ -120,6 +121,13 @@ class Command(BaseCommand):
             action="store_true",
             dest="verify_email",
             help="Verify imported email addresses.",
+        )
+        parser.add_argument(
+            "--skip-account-synchronisation",
+            default=False,
+            action="store_true",
+            dest="skip_account_synchronization",
+            help="Skip account synchronization for created accounts.",
         )
         parser.add_argument(
             "--dry-run",
@@ -642,6 +650,8 @@ class Command(BaseCommand):
                 objects=[identity, account],
             )
             self.message(f"Created account '{account.uid}' to identity: {identity}", level=2, error=False)
+            if not self.skip_account_synchronization:
+                account.accountsynchronization_set.update_or_create()
         return account
 
     def migrate_user(self, uid: str) -> bool:
@@ -754,6 +764,7 @@ class Command(BaseCommand):
         self.ldap_search_base = options["ldap_search_base"]
         self.skip_email_match = options["skip_email_match"]
         self.verify_email = options["verify_email"]
+        self.skip_account_synchronization = options["skip_account_synchronization"]
 
         account_uids = [uid.strip() for uid in accounts.split(",") if uid.strip()]
         for uid in account_uids:

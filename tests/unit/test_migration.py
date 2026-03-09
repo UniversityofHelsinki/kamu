@@ -8,6 +8,7 @@ from unittest import mock
 from django.test import override_settings
 from django.utils import timezone
 
+from kamu.models.account import AccountSynchronization
 from kamu.models.identity import Identifier, Identity
 from tests.data import PERSONS
 from tests.setup import ManagementCommandTestCase, TestData
@@ -33,6 +34,7 @@ class LdapMigrationTests(TestData, ManagementCommandTestCase):
         self.assertEqual(identity.identifiers.filter(type=Identifier.Type.FPIC).first().value, "010181-900C")
         self.assertEqual(identity.date_of_birth.isoformat(), "1981-01-01")
         self.assertEqual(identity.useraccount.first().uid, "ldapuser")
+        self.assertTrue(AccountSynchronization.objects.filter(account__uid="ldapuser").exists())
         membership = identity.membership_set.first()
         self.assertEqual(membership.role, role)
         self.assertEqual(membership.start_date, timezone.localdate())
