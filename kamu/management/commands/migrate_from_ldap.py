@@ -379,9 +379,9 @@ class Command(BaseCommand):
                     raise MigrationSkipError()
         return None
 
-    def add_attributes_to_created_identity(self, identity: Identity, ldap_person: dict[str, Any]) -> None:
+    def add_ldap_email_to_identity(self, identity: Identity, ldap_person: dict[str, Any]) -> None:
         """
-        Adds email address and FPIC identifier to newly created identity if they exist in LDAP and are not already
+        Adds email address to identity if it exists in LDAP and is not already associated with identity.
         """
         email_address = ldap_person.get("email_address")
         if email_address and not EmailAddress.objects.filter(identity=identity, address=email_address).exists():
@@ -408,8 +408,13 @@ class Command(BaseCommand):
                     level=3,
                     error=False,
                 )
+
+    def add_ldap_fpic_to_identity(self, identity: Identity, ldap_person: dict[str, Any]) -> None:
+        """
+        Adds FPIC to identity if it exists in LDAP and identity has no FPIC.
+        """
         fpic = ldap_person.get("fpic")
-        if fpic and not Identifier.objects.filter(identity=identity, type=Identifier.Type.FPIC, value=fpic).exists():
+        if fpic and not Identifier.objects.filter(identity=identity, type=Identifier.Type.FPIC).exists():
             if self.dry_run:
                 self.message(
                     f"[DRY RUN] Would create identifier '{fpic}' for identity UID: {ldap_person['uid']}",
@@ -566,8 +571,9 @@ class Command(BaseCommand):
                     objects=[identity],
                 )
                 self.message(f"Created identity for UID: {ldap_person['uid']}", level=2, error=False)
+        self.add_ldap_email_to_identity(identity=identity, ldap_person=ldap_person)
         if created:
-            self.add_attributes_to_created_identity(identity=identity, ldap_person=ldap_person)
+            self.add_ldap_fpic_to_identity(identity=identity, ldap_person=ldap_person)
         return identity
 
     def add_role_membership(self, identity: Identity, expire_date: date) -> Membership | None:
