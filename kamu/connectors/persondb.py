@@ -339,12 +339,12 @@ class PersonDBApiConnector(ApiConnector):
                     fpic_verification = identifier.verification_level
             parsed_result = Person(
                 person_uuid=result["personUuid"],
-                given_names=result.get("officialGivenNames", ""),
+                given_names=result.get("officialGivenNames") or "",
                 given_names_verification=self.map_verification_method(result.get("officialGivenNamesTl", 0)),
-                surname=result.get("officialSurnames", ""),
+                surname=result.get("officialSurnames") or "",
                 surname_verification=self.map_verification_method(result.get("officialSurnamesTl", 0)),
-                given_name_display=result.get("preferredGivenName", ""),
-                surname_display=result.get("preferredSurname", ""),
+                given_name_display=result.get("preferredGivenName") or "",
+                surname_display=result.get("preferredSurname") or "",
                 date_of_birth=self.parse_date(result.get("dateOfBirth")),
                 date_of_birth_verification=self.map_verification_method(result.get("dateOfBirthTl", 0)),
                 fpic=fpic,
