@@ -29,6 +29,7 @@ class Account(models.Model):
         ENABLED = ("enabled", _("Enabled"))
         EXPIRED = ("expired", _("Expired"))
         DISABLED = ("disabled", _("Disabled"))
+        LOCKED = ("locked", _("Locked"))
 
     class Type(models.TextChoices):
         ACCOUNT = ("account", _("Account"))
@@ -44,6 +45,11 @@ class Account(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
     class Meta:
+        permissions = [
+            ("view_accounts", "Can view account information"),
+            ("change_accounts", "Can change account information"),
+            ("lock_accounts", "Can lock and unlock accounts"),
+        ]
         verbose_name = _("User account")
         verbose_name_plural = _("User accounts")
 

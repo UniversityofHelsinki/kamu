@@ -314,6 +314,8 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
         if self.object:
             if self.object.update_status(request=self.request):
                 self.object.refresh_from_db()
+            if self.object.status == Account.Status.LOCKED:
+                messages.add_message(self.request, messages.WARNING, _("This account has been locked by IT services."))
             if self.object.status == Account.Status.EXPIRED:
                 messages.add_message(self.request, messages.WARNING, _("Your permission to this account has expired."))
         audit_log.info(
@@ -429,6 +431,66 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
             )
             messages.add_message(self.request, messages.INFO, _("Account disabled."))
 
+    def _lock_account(self) -> None:
+        """
+        Locks account. No other changes to account are done until account is unlocked.
+        """
+        if not self.request.user.is_authenticated or not self.request.user.has_perms(["kamu.lock_accounts"]):
+            raise PermissionDenied
+        try:
+            connector = AccountApiConnector()
+            connector.disable_account(self.object)
+        except ApiError as e:
+            audit_log.warning(
+                f"Account disabling failed: {e}",
+                category="account",
+                action="update",
+                outcome="failure",
+                request=self.request,
+                objects=[self.object, self.object.identity],
+                log_to_db=False,
+            )
+            messages.add_message(self.request, messages.ERROR, _("Account locking failed, please try again later."))
+            return
+        self.object.status = Account.Status.LOCKED
+        self.object.save()
+        audit_log.info(
+            f"Account locked: {self.object.uid}",
+            category="account",
+            action="update",
+            outcome="success",
+            request=self.request,
+            objects=[self.object, self.object.identity],
+            log_to_db=True,
+        )
+        messages.add_message(self.request, messages.INFO, _("Account locked."))
+        self.object.accountsynchronization_set.update_or_create()
+
+    def _unlock_account(self) -> None:
+        """
+        Unlock account
+        """
+        if not self.request.user.is_authenticated or not self.request.user.has_perms(["kamu.lock_accounts"]):
+            raise PermissionDenied
+        if self.object.status == Account.Status.LOCKED:
+            if self.object.type in self.object.identity.get_permissions(
+                permission_type=Permission.Type.ACCOUNT
+            ).values_list("identifier", flat=True):
+                self.object.status = Account.Status.DISABLED
+            else:
+                self.object.status = Account.Status.EXPIRED
+            self.object.save()
+            audit_log.info(
+                f"Account unlocked: {self.object.uid}",
+                category="account",
+                action="update",
+                outcome="success",
+                request=self.request,
+                objects=[self.object, self.object.identity],
+                log_to_db=True,
+            )
+            messages.add_message(self.request, messages.INFO, _("Account unlocked."))
+
     @method_decorator(sensitive_post_parameters("password"))
     @method_decorator(csrf_protect)
     @method_decorator(never_cache)
@@ -439,14 +501,22 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
         if not self.request.user.is_authenticated:
             raise PermissionDenied
         self.object = self.get_object()
-        if self.object:
-            if self.object.update_status(request=self.request):
-                self.object.refresh_from_db()
-            if self.object.status == Account.Status.EXPIRED:
-                messages.add_message(self.request, messages.WARNING, _("Your permission to this account has expired."))
-                return HttpResponseRedirect(self.get_success_url())
-        else:
+        if not self.object:
             raise PermissionDenied
+        if "unlock_account" in self.request.POST:
+            self._unlock_account()
+            return HttpResponseRedirect(self.get_success_url())
+        elif self.object.status == Account.Status.LOCKED:
+            messages.add_message(self.request, messages.WARNING, _("Cannot modify locked account."))
+            return HttpResponseRedirect(self.get_success_url())
+        if "lock_account" in self.request.POST:
+            self._lock_account()
+            return HttpResponseRedirect(self.get_success_url())
+        if self.object.update_status(request=self.request):
+            self.object.refresh_from_db()
+        if self.object.status == Account.Status.EXPIRED:
+            messages.add_message(self.request, messages.WARNING, _("Your permission to this account has expired."))
+            return HttpResponseRedirect(self.get_success_url())
         if "enable_account" in self.request.POST:
             self._enable_account()
             return HttpResponseRedirect(self.get_success_url())

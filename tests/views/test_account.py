@@ -7,6 +7,7 @@ import string
 from unittest import mock
 from unittest.mock import ANY, call
 
+from django.contrib.auth.models import Permission
 from django.core import mail
 from django.test import Client, override_settings
 
@@ -208,6 +209,71 @@ class AccountTests(BaseTestCase):
         response = self.client.post(f"/account/{account.pk}/", data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Your permission to this account has expired", response.content.decode("utf-8"))
+        account.refresh_from_db()
+        self.assertEqual(account.status, Account.Status.EXPIRED)
+
+    def test_view_lock_account_without_permission(self):
+        account = self.create_account()
+        data = {"lock_account": True}
+        response = self.client.post(f"/account/{account.pk}/", data, follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_view_unlock_account_without_permission(self):
+        account = self.create_account(status=Account.Status.LOCKED)
+        data = {"unlock_account": True}
+        response = self.client.post(f"/account/{account.pk}/", data, follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_view_locked_account(self):
+        account = self.create_account(status=Account.Status.LOCKED)
+        response = self.client.get(f"/account/{account.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("This account has been locked by IT services.", response.content.decode("utf-8"))
+        self.assertNotIn("Password reset", response.content.decode("utf-8"))
+
+    @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_post")
+    def test_view_modify_locked_account(self, mock_connector):
+        account = self.create_account(status=Account.Status.LOCKED)
+        data = {"enable_account": True}
+        response = self.client.post(f"/account/{account.pk}/", data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Cannot modify locked account", response.content.decode("utf-8"))
+        mock_connector.assert_not_called()
+
+    @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_post")
+    def test_view_lock_account(self, mock_connector):
+        mock_connector.return_value = AccountApiResponseMock()
+        account = self.create_account()
+        superuser = self.create_superuser()
+        self.client.force_login(superuser)
+        data = {"lock_account": True}
+        response = self.client.post(f"/account/{account.pk}/", data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        account.refresh_from_db()
+        self.assertEqual(account.status, Account.Status.LOCKED)
+
+    @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_post")
+    def test_view_unlock_account(self, mock_connector):
+        permission = Permission.objects.get(codename="lock_accounts")
+        self.user.user_permissions.add(permission)
+        mock_connector.return_value = AccountApiResponseMock()
+        account = self.create_account(status=Account.Status.LOCKED)
+        data = {"unlock_account": True}
+        response = self.client.post(f"/account/{account.pk}/", data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        account.refresh_from_db()
+        self.assertEqual(account.status, Account.Status.DISABLED)
+
+    @mock.patch("kamu.connectors.account.AccountApiConnector.api_call_post")
+    def test_view_unlock_expired_account(self, mock_connector):
+        self.permission.delete()
+        permission = Permission.objects.get(codename="lock_accounts")
+        self.user.user_permissions.add(permission)
+        mock_connector.return_value = AccountApiResponseMock()
+        account = self.create_account(status=Account.Status.EXPIRED)
+        data = {"unlock_account": True}
+        response = self.client.post(f"/account/{account.pk}/", data, follow=True)
+        self.assertEqual(response.status_code, 200)
         account.refresh_from_db()
         self.assertEqual(account.status, Account.Status.EXPIRED)
 

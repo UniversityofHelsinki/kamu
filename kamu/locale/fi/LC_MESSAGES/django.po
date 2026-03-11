@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-09 14:59+0200\n"
+"POT-Creation-Date: 2026-03-11 09:51+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -337,7 +337,7 @@ msgstr "Henkilökohtainen kutsukoodi"
 
 #: forms/auth.py:446 forms/auth.py:452 forms/auth.py:456 forms/auth.py:458
 #: views/auth.py:133 views/auth.py:154 views/auth.py:240
-#: views/membership.py:956
+#: views/membership.py:965
 msgid "Invalid invitation code."
 msgstr "Virheellinen kutsukoodi."
 
@@ -450,7 +450,7 @@ msgstr "Lisää"
 
 #: forms/identity.py:146 forms/identity.py:382
 #: templates/account/account_create.html:39
-#: templates/account/account_detail.html:82
+#: templates/account/account_detail.html:134
 #: templates/account/account_list.html:61
 #: templates/contract/contract_detail.html:26
 #: templates/contract/contract_list.html:64
@@ -652,15 +652,19 @@ msgstr "Päättynyt"
 msgid "Disabled"
 msgstr "Suljettu"
 
-#: models/account.py:34
+#: models/account.py:32
+msgid "Locked"
+msgstr "Lukittu"
+
+#: models/account.py:35
 msgid "Account"
 msgstr "Tunnus"
 
-#: models/account.py:35
+#: models/account.py:36
 msgid "Limited user account"
 msgstr "Luo kevyttunnus"
 
-#: models/account.py:37 templates/account/account_detail.html:14
+#: models/account.py:38 templates/account/account_detail.html:14
 #: templates/account/account_list.html:18
 #: templates/identity/identity_detail.html:130
 #: templates/membership/membership_approval_list.html:15
@@ -671,22 +675,24 @@ msgstr "Luo kevyttunnus"
 msgid "Status"
 msgstr "Tila"
 
-#: models/account.py:38
+#: models/account.py:39
 msgid "Account type"
 msgstr "Tunnuksen tyyppi"
 
-#: models/account.py:40 templates/account/account_detail.html:10
+#: models/account.py:41 templates/account/account_detail.html:10
 #: templates/account/account_detail.html:33
 #: templates/account/account_detail.html:57
+#: templates/account/account_detail.html:95
+#: templates/account/account_detail.html:119
 #: templates/account/account_list.html:17
 msgid "User ID"
 msgstr "Käyttäjätunnus"
 
-#: models/account.py:42 models/identity.py:726
+#: models/account.py:43 models/identity.py:726
 msgid "Deactivated at"
 msgstr "Suljettu"
 
-#: models/account.py:43 models/account.py:142 models/contract.py:55
+#: models/account.py:44 models/account.py:143 models/contract.py:55
 #: models/contract.py:112 models/identity.py:48 models/identity.py:289
 #: models/identity.py:513 models/identity.py:584 models/identity.py:658
 #: models/identity.py:727 models/membership.py:122 models/organisation.py:31
@@ -694,7 +700,7 @@ msgstr "Suljettu"
 msgid "Created at"
 msgstr "Luotu"
 
-#: models/account.py:44 models/account.py:143 models/identity.py:49
+#: models/account.py:45 models/account.py:144 models/identity.py:49
 #: models/identity.py:290 models/identity.py:514 models/identity.py:585
 #: models/identity.py:659 models/identity.py:728 models/membership.py:123
 #: models/organisation.py:32 models/role.py:84 models/role.py:276
@@ -702,7 +708,7 @@ msgstr "Luotu"
 msgid "Updated at"
 msgstr "Päivitetty"
 
-#: models/account.py:47 models/role.py:253
+#: models/account.py:48 models/role.py:253
 #: templates/account/account_detail.html:8
 #: templates/identity/identity_search.html:18
 #: templates/identity/identity_search.html:67
@@ -712,21 +718,21 @@ msgstr "Päivitetty"
 msgid "User account"
 msgstr "Käyttäjätunnus"
 
-#: models/account.py:48 templates/account/account_list.html:10
+#: models/account.py:49 templates/account/account_list.html:10
 #: templates/identity/identity_detail.html:54
 #: templates/identity/identity_detail.html:120
 msgid "User accounts"
 msgstr "Käyttäjätunnukset"
 
-#: models/account.py:141
+#: models/account.py:142
 msgid "Number of failures"
 msgstr "Epäonnistumisten määrä"
 
-#: models/account.py:146
+#: models/account.py:147
 msgid "Account synchronisation"
 msgstr "Tunnusten synkronointi"
 
-#: models/account.py:147
+#: models/account.py:148
 msgid "Account synchronisations"
 msgstr "Tunnusten synkronoinnit"
 
@@ -1723,7 +1729,9 @@ msgid "Confirm disabling user account"
 msgstr "Vahvista käyttäjätunnuksen sulkeminen"
 
 #: templates/account/account_detail.html:28
-#: templates/account/account_detail.html:52 templates/front.html:15
+#: templates/account/account_detail.html:52
+#: templates/account/account_detail.html:90
+#: templates/account/account_detail.html:114 templates/front.html:15
 #: templates/front.html:27 templates/identity/identifier.html:35
 #: templates/identity/identity_detail.html:37
 #: templates/identity/identity_detail.html:46
@@ -1741,6 +1749,8 @@ msgstr "Käyttäjätunnus suljetaan välittömästi."
 
 #: templates/account/account_detail.html:37
 #: templates/account/account_detail.html:61
+#: templates/account/account_detail.html:99
+#: templates/account/account_detail.html:123
 #: templates/contract/contract_sign.html:19
 #: templates/identity/contact_address.html:42
 #: templates/identity/contact_address.html:91
@@ -1750,6 +1760,8 @@ msgstr "Peruuta"
 
 #: templates/account/account_detail.html:38
 #: templates/account/account_detail.html:62
+#: templates/account/account_detail.html:100
+#: templates/account/account_detail.html:124
 msgid "Confirm"
 msgstr "Vahvista"
 
@@ -1768,6 +1780,38 @@ msgstr "Käyttäjätunnus aktivoidaan välittömästi."
 #: templates/account/account_detail.html:70
 msgid "Reset user account password"
 msgstr "Palauta käyttäjätunnuksen salasana"
+
+#: templates/account/account_detail.html:84
+msgid "Lock user account"
+msgstr "Lukitse käyttäjätunnus"
+
+#: templates/account/account_detail.html:89
+msgid "Confirm locking user account"
+msgstr "Vahvista käyttäjätunnuksen lukitseminen"
+
+#: templates/account/account_detail.html:93
+msgid ""
+"This user account will be locked immediately. User cannot modify or update "
+"account information."
+msgstr ""
+"Käyttäjätunnus lukitaan välittömästi. Käyttäjä ei voi muuttaa tai päivittää "
+"käyttäjätunnuksen tietoja."
+
+#: templates/account/account_detail.html:108
+msgid "Unlock user account"
+msgstr "Poista käyttäjätunnuksen lukitus"
+
+#: templates/account/account_detail.html:113
+msgid "Confirm unlocking user account"
+msgstr "Vahvista käyttäjätunnuksen lukituksen purkaminen"
+
+#: templates/account/account_detail.html:117
+msgid ""
+"This user account will be unlocked and set to disabled or expired state, "
+"depending on expiration."
+msgstr ""
+"Käyttäjätunnuksen lukitus puretaan ja tila asetataan suljetuksi tai "
+"vanhentuneeksi, riippuen oikeuden voimassaolosta."
 
 #: templates/account/account_list.html:9
 msgid "User account information"
@@ -4210,36 +4254,58 @@ msgstr ""
 msgid "Account created."
 msgstr "Käyttäjätunnus luotu."
 
-#: views/account.py:318 views/account.py:362 views/account.py:446
+#: views/account.py:318
+msgid "This account has been locked by IT services."
+msgstr "Tunnus on lukittu IT-palveluiden toimesta."
+
+#: views/account.py:320 views/account.py:364 views/account.py:517
 msgid "Your permission to this account has expired."
 msgstr "Oikeutesi tähän käyttäjätunnukseen on päättynyt."
 
-#: views/account.py:379
+#: views/account.py:381
 msgid "Account enabling failed, please try again later."
 msgstr ""
 "Käyttäjätunnuksen aktivointi epäonnistui, ole hyvä ja yritä myöhemmin "
 "uudelleen."
 
-#: views/account.py:391
+#: views/account.py:393
 msgid "Account enabled."
 msgstr "Käyttäjätunnus aktivoitu."
 
-#: views/account.py:418
+#: views/account.py:420
 msgid "Account disabling failed, please try again later."
 msgstr ""
 "Käyttäjätunnuksen sulkeminen epäonnistui, ole hyvä ja yritä myöhemmin "
 "uudelleen."
 
-#: views/account.py:430
+#: views/account.py:432
 msgid "Account disabled."
 msgstr "Käyttäjätunnus suljettu."
 
-#: views/account.py:480
+#: views/account.py:453
+msgid "Account locking failed, please try again later."
+msgstr ""
+"Käyttäjätunnuksen lukitseminen epäonnistui, ole hyvä ja yritä myöhemmin "
+"uudelleen."
+
+#: views/account.py:466
+msgid "Account locked."
+msgstr "Käyttäjätunnus lukittu."
+
+#: views/account.py:492
+msgid "Account unlocked."
+msgstr "Käyttäjätunnusen lukitus poistettu."
+
+#: views/account.py:510
+msgid "Cannot modify locked account."
+msgstr "Lukitun käyttäjätunnuksen tietoja ei voi muuttaa."
+
+#: views/account.py:549
 msgid "Password reset failed, please try again later."
 msgstr ""
 "Salasanan asettaminen epäonnistui, ole hyvä ja yritä myöhemmin uudelleen."
 
-#: views/account.py:491
+#: views/account.py:560
 msgid "Password reset."
 msgstr "Salasana asetettu."
 
@@ -4417,7 +4483,7 @@ msgstr ""
 "osumat."
 
 #: views/identity.py:1692 views/identity.py:1706 views/identity.py:1733
-#: views/membership.py:804 views/membership.py:813
+#: views/membership.py:813 views/membership.py:822
 msgid ""
 "PersonDB connection failed, could not load person information. Please try "
 "again later."
@@ -4475,7 +4541,7 @@ msgstr ""
 msgid "You have approved the membership below."
 msgstr "Hyväksyit alla näkyvän jäsenyyden."
 
-#: views/membership.py:300 views/membership.py:907
+#: views/membership.py:300 views/membership.py:916
 msgid "The email invitation has been sent."
 msgstr "Sähköpostikutsu on lähetetty."
 
@@ -4499,24 +4565,24 @@ msgstr "Jäsenyys asetettu päättymään tänään."
 msgid "Membership cancelled."
 msgstr "Jäsenyys peruttu."
 
-#: views/membership.py:424
+#: views/membership.py:433
 msgid "Membership updated."
 msgstr "Jäsenyys päivitetty."
 
-#: views/membership.py:788 views/membership.py:829
+#: views/membership.py:797 views/membership.py:838
 msgid "Multiple identities found, please contact IT-Helpdesk."
 msgstr "Useita identiteettejä löytyi, ota yhteyttä IT-helpdeskiin."
 
-#: views/membership.py:912 views/membership.py:1206
+#: views/membership.py:921 views/membership.py:1215
 msgid ""
 "The email invitation will be sent when the membership has been approved."
 msgstr "Sähköpostikutsu lähetetään, kun jäsenyys on hyväksytty."
 
-#: views/membership.py:959
+#: views/membership.py:968
 msgid "This invitation is already claimed."
 msgstr "Kutsu on jo käytetty."
 
-#: views/membership.py:1068
+#: views/membership.py:1077
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and email address {email} are "
@@ -4525,7 +4591,7 @@ msgstr ""
 "Henkilötunnus {fpic} ja sähköpostiosoite {email} ovat rekisteröity eri "
 "henkilöille."
 
-#: views/membership.py:1078
+#: views/membership.py:1087
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and phone number {phone} are "
@@ -4534,7 +4600,7 @@ msgstr ""
 "Henkilötunnus {fpic} ja puhelinnumero {phone} ovat rekisteröity eri "
 "henkilöille."
 
-#: views/membership.py:1087
+#: views/membership.py:1096
 #, python-brace-format
 msgid ""
 "Email address {email} and phone number {phone} are registered to different "
@@ -4543,23 +4609,23 @@ msgstr ""
 "Sähköpostiosoite {email} ja puhelinnumero {phone} ovat rekisteröity eri "
 "henkilöille."
 
-#: views/membership.py:1125
+#: views/membership.py:1134
 #, python-format
 msgid "Email address is required. Invalid line: \"%(line)s\"."
 msgstr "Sähköpostiosoite vaaditaan. Virheellinen rivi \"%(line)s\"."
 
-#: views/membership.py:1131
+#: views/membership.py:1140
 #, python-format
 msgid "Phone number is required for this role. Invalid line: \"%(line)s\"."
 msgstr ""
 "Puhelinnumero vaaditaan tähän rooliin. Virheellinen rivi: \"%(line)s\"."
 
-#: views/membership.py:1214
+#: views/membership.py:1223
 #, python-brace-format
 msgid "The email invitation has been sent to following addresses: {0}"
 msgstr "Sähköpostikutsu on lähetetty seuraaviin osoitteisiin: {0}"
 
-#: views/membership.py:1223
+#: views/membership.py:1232
 #, python-brace-format
 msgid ""
 "The email invitation will be sent to following addresses when the membership "
@@ -4568,10 +4634,13 @@ msgstr ""
 "Sähkökutsu lähetetään seuraaviin osoitteisiin, kun jäsenyys on hyväksytty: "
 "{0}"
 
-#: views/membership.py:1229
+#: views/membership.py:1238
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Lisätty seuraavat henkilöllisyydet: {0}"
+
+#~ msgid "This user account will be unlocked immediately."
+#~ msgstr "Käyttäjätunnuksen lukitus poistetaan välittömästi."
 
 #~ msgid ""
 #~ "This role requires SMS verification and following addresses will be "

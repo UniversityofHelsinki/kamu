@@ -15,7 +15,7 @@
         <dd class="col-sm-8 mb-5">{{ object.get_status_display }}{% if object.status != "enabled" %} ({{ object.deactivated_at }}){% endif %}</dd>
       </dl>
     </div>
-    {% if object.status != "expired" %}
+    {% if object.status != "expired" and object.status != "locked" %}
       {% if user.identity == object.identity or perms.kamu.change_accounts %}
         <form method="post">{% csrf_token %}
           {% if object.status == "enabled" %}
@@ -77,6 +77,58 @@
         </div>
         {% crispy form form.helper %}
       {% endif %}
+    {% endif %}
+    {% if perms.kamu.lock_accounts %}
+      <form method="post">{% csrf_token %}
+          {% if object.status != "locked" %}
+            <button type="button" class="btn btn-danger me-2 mb-2" data-bs-toggle="modal" data-bs-target="#lockAccountModal">{% trans "Lock user account" %}</button>
+            <div class="modal fade" id="lockAccountModal" tabindex="-1" aria-labelledby="lockAccountModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="lockAccountModalLabel">{% trans "Confirm locking user account" %}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p class="text-break">{% trans "This user account will be locked immediately. User cannot modify or update account information." %}</p>
+                    <dl class="row">
+                      <dt class="col-sm-4">{% trans "User ID" %}</dt>
+                      <dd class="col-sm-8">{{ object.uid }}</dd>
+                    </dl>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                      <button type="submit" name="lock_account" class="btn btn-danger">{% trans 'Confirm' %}</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+          {% if object.status == "locked" %}
+            <button type="button" class="btn btn-success me-2 mb-2" data-bs-toggle="modal" data-bs-target="#unlockAccountModal">{% trans "Unlock user account" %}</button>
+            <div class="modal fade" id="unlockAccountModal" tabindex="-1" aria-labelledby="unlockAccountModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="unlockAccountModalLabel">{% trans "Confirm unlocking user account" %}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p class="text-break">{% trans "This user account will be unlocked and set to disabled or expired state, depending on expiration." %}</p>
+                    <dl class="row">
+                      <dt class="col-sm-4">{% trans "User ID" %}</dt>
+                      <dd class="col-sm-8">{{ object.uid }}</dd>
+                    </dl>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                      <button type="submit" name="unlock_account" class="btn btn-danger">{% trans "Confirm" %}</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        </form>
     {% endif %}
   </div>
   <a class="btn btn-secondary" href="{% url 'account-list' pk=object.identity.pk %}">{% trans "Return" %}</a>
