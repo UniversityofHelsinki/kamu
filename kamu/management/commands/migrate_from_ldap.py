@@ -240,13 +240,11 @@ class Command(BaseCommand):
             return False
         return True
 
-    def find_identity_from_persondb(self, ldap_person: dict[str, Any]) -> Identity | None:
+    def find_person_from_persondb(self, ldap_person: dict[str, Any]) -> Person | None:
         """
         Searches for identity from PersonDB by given identifiers and email address.
 
-        Finds or creates Kamu Identity based on PersonDB result if found.
-
-        Retruns None if no matching PersonDB result is found.
+        Returns Person if one found.
 
         Raises MigrationSkipError if
             1. multiple PersonDB results are found for given identifiers/email
@@ -324,7 +322,6 @@ class Command(BaseCommand):
                     )
                     raise MigrationSkipError()
 
-        # If PersonDB result is found, find or create matching Identity.
         if persondb_result:
             self.message(
                 f"PersonDB result found for person UUID: {persondb_result.person_uuid}.",
@@ -342,42 +339,42 @@ class Command(BaseCommand):
                         error=False,
                     )
                     return None
+        return persondb_result
 
-            if self.dry_run:
-                # In dry run, just check if identity matching PersonDB result already exists and log it. Retrurs None.
-                try:
-                    identity = get_identity_from_persondb(persondb_result)
-                except Identity.MultipleObjectsReturned:
-                    self.message(
-                        f"[DRY RUN] Multiple identities found for PersonDB result: {persondb_result.person_uuid}."
-                        f" UID: {ldap_person.get('uid')}",
-                        level=2,
-                        error=True,
-                    )
-                    raise MigrationSkipError()
-                if identity:
-                    self.message(
-                        f"[DRY RUN] Identity matching PersonDB result found: {identity}", level=2, error=False
-                    )
-                else:
-                    self.message(
-                        f"[DRY RUN] Would create identity from PersonDB: {persondb_result.person_uuid}",
-                        level=2,
-                        error=False,
-                    )
-                return None
+    def create_identity_from_persondb_result(self, person: Person, uid: str) -> Identity | None:
+        """
+        Creates Kamu Identity base on PersonDB person.
+        """
+        if self.dry_run:
+            # In dry run, just check if identity matching PersonDB result already exists and log it. Returns None.
+            try:
+                identity = get_identity_from_persondb(person)
+            except Identity.MultipleObjectsReturned:
+                self.message(
+                    f"[DRY RUN] Multiple identities found for PersonDB result: {person.person_uuid}. UID: {uid}",
+                    level=2,
+                    error=True,
+                )
+                raise MigrationSkipError()
+            if identity:
+                self.message(f"[DRY RUN] Identity matching PersonDB result found: {identity}", level=2, error=False)
             else:
-                try:
-                    return get_or_create_identity_from_persondb(persondb_result)
-                except Identity.MultipleObjectsReturned:
-                    self.message(
-                        f"Multiple identities found for PersonDB result: {persondb_result.person_uuid}."
-                        f" UID: {ldap_person.get('uid')}",
-                        level=2,
-                        error=True,
-                    )
-                    raise MigrationSkipError()
-        return None
+                self.message(
+                    f"[DRY RUN] Would create identity from PersonDB: {person.person_uuid}",
+                    level=2,
+                    error=False,
+                )
+            return None
+        else:
+            try:
+                return get_or_create_identity_from_persondb(person)
+            except Identity.MultipleObjectsReturned:
+                self.message(
+                    f"Multiple identities found for PersonDB result: {person.person_uuid}. UID: {uid}",
+                    level=2,
+                    error=True,
+                )
+                raise MigrationSkipError()
 
     def add_ldap_email_to_identity(self, identity: Identity, ldap_person: dict[str, Any]) -> None:
         """
@@ -531,7 +528,9 @@ class Command(BaseCommand):
 
         # Check existing identity from PersonDB.
         if not identity and getattr(settings, "PERSONDB_SEARCH_FOR_INVITES", False):
-            identity = self.find_identity_from_persondb(ldap_person)
+            person = self.find_person_from_persondb(ldap_person)
+            if person:
+                identity = self.create_identity_from_persondb_result(person, ldap_person["uid"])
 
         # Create new identity if no existing identity is found.
         if not identity:
