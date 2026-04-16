@@ -61,6 +61,8 @@ class IdentityAdmin(AuditModelAdmin):
     list_display = ["given_names", "surname", "assurance_level"]
     list_filter = ["roles__identifier"]
     search_fields = [
+        "kamu_id",
+        "identifiers__value",
         "given_names",
         "surname",
         "given_name_display",

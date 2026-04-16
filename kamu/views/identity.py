@@ -6,6 +6,7 @@ import string
 from datetime import date, datetime
 from typing import Any
 from urllib.parse import quote_plus
+from uuid import UUID
 
 from django.conf import settings
 from django.contrib import messages
@@ -1568,7 +1569,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
             extra={"search_terms": str(search_terms), "ldap": self.search_ldap()},
         )
 
-    def build_queryset_identifiers(self, fpic: str, uid: str, email: str, phone: str) -> QuerySet[Identity]:
+    def build_queryset_identifiers(self, fpic: str, uid: str, email: str, phone: str, uuid: str) -> QuerySet[Identity]:
         """
         Build queryset with identifier search terms.
         """
@@ -1585,6 +1586,8 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         if phone:
             phone = phone.replace(" ", "")
             queryset = queryset.union(Identity.objects.filter(phone_numbers__number__exact=phone))
+        if uuid:
+            queryset = queryset.union(Identity.objects.filter(Q(kamu_id=uuid) | Q(identifiers__value=uuid)))
         return queryset
 
     def build_queryset_names(self, given_names: str, surname: str, exact_matches: bool = False) -> QuerySet[Identity]:
@@ -1672,10 +1675,25 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
                 uid = identifier.strip().lower()
                 if set(uid).issubset(uid_characters):
                     return uid
+            case "uuid":
+                try:
+                    uuid = identifier.strip()
+                    _ = UUID(uuid)
+                    return uuid
+                except ValueError:
+                    return ""
         return ""
 
     def _get_persondb_results(
-        self, given_names: str, surname: str, date_of_birth: date | None, fpic: str, uid: str, email: str, phone: str
+        self,
+        given_names: str,
+        surname: str,
+        date_of_birth: date | None,
+        fpic: str,
+        uid: str,
+        email: str,
+        phone: str,
+        uuid: str,
     ) -> set[Person] | None:
         """
         Search PersonDB for identities based on given parameters
@@ -1693,8 +1711,8 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
             )
             return None
         try:
-            if fpic or uid:
-                persondb_results = connector.search_identifier(fpic or uid)
+            if fpic or uuid or uid:
+                persondb_results = connector.search_identifier(fpic or uuid or uid)
             elif email:
                 persondb_results = connector.search_email(email)
             elif phone:
@@ -1785,11 +1803,12 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         uid = self.parse_search_attribute("uid")
         email = self.parse_search_attribute("email")
         phone = self.parse_search_attribute("phone")
+        uuid = self.parse_search_attribute("uuid")
         try:
             date_of_birth = datetime.strptime(self.request.POST.get("date_of_birth", "").strip(), "%Y-%m-%d").date()
         except ValueError:
             date_of_birth = None
-        queryset = self.build_queryset_identifiers(fpic=fpic, uid=uid, email=email, phone=phone)
+        queryset = self.build_queryset_identifiers(fpic=fpic, uid=uid, email=email, phone=phone, uuid=uuid)
         if queryset.exists():
             self.exact_match_found = True
         persondb_results: set[Person] | None = None
@@ -1802,6 +1821,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
                 uid=uid,
                 email=email,
                 phone=phone,
+                uuid=uuid,
             )
         ldap_results = None
         if self.search_ldap():

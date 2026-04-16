@@ -4,6 +4,7 @@ View tests for identities.
 
 import datetime
 import json
+import uuid
 from unittest import mock
 from unittest.mock import ANY, call
 
@@ -329,6 +330,18 @@ class IdentitySearchTests(BaseTestCase):
         data = {"identifier": "010181-9234"}
         response = self.client.post(self.url, data)
         self.assertNotIn(self.identity.display_name(), response.content.decode("utf-8"))
+
+    def test_search_identity_uuid(self):
+        identity = self.create_identity()
+        data = {"identifier": identity.kamu_id}
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.identity.display_name(), response.content.decode("utf-8"))
+        old_uuid = str(uuid.uuid4())
+        identity.identifiers.create(type=Identifier.Type.KAMU, value=old_uuid)
+        data = {"identifier": old_uuid}
+        response = self.client.post(self.url, data)
+        self.assertEqual(len(response.context["object_list"]), 1)
 
     @override_settings(ALLOW_TEST_FPIC=True)
     @override_settings(SKIP_NAME_SEARCH_IF_IDENTIFIER_MATCHES=False)
