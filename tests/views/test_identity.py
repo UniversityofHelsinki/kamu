@@ -81,11 +81,19 @@ class IdentityViewTests(BaseTestCase):
     @mock.patch("kamu.utils.audit.logger_audit")
     def test_view_other_identity(self, mock_logger):
         self._login_user()
-        self.create_superidentity()
+        self.create_superidentity(email=True)
+        self.superidentity.given_name = "Supersecretname"
+        self.superidentity.uid = "superaccount"
+        self.superidentity.email_addresses.create(address="test@private.org")
+        self.superidentity.save()
         response = self.client.get(f"{self.url}{self.superidentity.pk}/")
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("alert", response.content.decode("utf-8"))
         self.assertIn(f"{self.superidentity.display_name()} |", response.content.decode("utf-8"))
+        self.assertIn("superaccount", response.content.decode("utf-8"))
+        self.assertNotIn("Supersecretname", response.content.decode("utf-8"))
+        self.assertIn("super_test@example.org", response.content.decode("utf-8"))
+        self.assertNotIn("test@private.org", response.content.decode("utf-8"))
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Read identity information", extra=ANY),

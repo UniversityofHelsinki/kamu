@@ -16,6 +16,19 @@ def get_gender_value(name: str) -> Identity.Gender:
     return Identity.Gender[name]
 
 
+@register.filter
+def public_email_address(value: str = "") -> bool:
+    """
+    Return a boolean indicating if an email address is in public email domains.
+    """
+    if not value:
+        return False
+    public_email_domains = getattr(settings, "PUBLIC_EMAIL_DOMAINS", [])
+    if value.split("@")[-1] in public_email_domains:
+        return True
+    return False
+
+
 @register.simple_tag
 def matching_attributes(identity: Identity, email: str = "", phone: str = "", fpic: str = "") -> str:
     """

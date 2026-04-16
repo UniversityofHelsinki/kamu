@@ -1,14 +1,18 @@
 {% extends "base.html" %}
+{% load identity_tags %}
 {% load i18n %}
+
 {% block content %}
   <h1 class="mb-4">{{ object.display_name }} | {% trans "Identity information" %}</h1>
   <div class="row">
     <div class="col-12 col-lg-6">
       <dl class="row">
-        <dt class="col-sm-4">{% trans "Official given names" %}</dt>
-        <dd class="col-sm-8">{{ object.given_names|default:"&nbsp;" }}{% if object.given_names_verification >= attribute_verified_level %}<span class="text-success"> *</span>{% endif %}</dd>
-        <dt class="col-sm-4">{% trans "Official surname(s)" %}</dt>
-        <dd class="col-sm-8">{{ object.surname|default:"&nbsp;" }}{% if object.surname_verification >= attribute_verified_level %}<span class="text-success"> *</span>{% endif %}</dd>
+        {% if user == object.user or perms.kamu.view_restricted_information %}
+          <dt class="col-sm-4">{% trans "Official given names" %}</dt>
+          <dd class="col-sm-8">{{ object.given_names|default:"&nbsp;" }}{% if object.given_names_verification >= attribute_verified_level %}<span class="text-success"> *</span>{% endif %}</dd>
+          <dt class="col-sm-4">{% trans "Official surname(s)" %}</dt>
+          <dd class="col-sm-8">{{ object.surname|default:"&nbsp;" }}{% if object.surname_verification >= attribute_verified_level %}<span class="text-success"> *</span>{% endif %}</dd>
+        {% endif %}
         <dt class="col-sm-4">{% trans "Display name" %}</dt>
         <dd class="col-sm-8">{{ object.display_name|default:"&nbsp;" }}</dd>
         <dt class="col-sm-4">{% trans "Preferred language" %}</dt>
@@ -52,12 +56,18 @@
     <div class="col-12 col-lg-6">
       <dl>
         <dt class="col-sm-4">{% trans "User accounts" %}</dt>
-        <dd class="col-sm-8">{% for account in object.useraccount.all %}{{ account.uid }} ({{ account.get_type_display | lower }}, {{ account.get_status_display | lower }}){% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
+        <dd class="col-sm-8">
+          {% if object.uid %}{{ object.uid }}{% for account in object.useraccount.all %}{% if account.uid == object.uid %} ({{ account.get_type_display | lower }}, {{ account.get_status_display | lower }})<br>{% endif %}{% endfor %}{% endif %}
+          {% for account in object.useraccount.all %}{% if account.uid != object.uid %}{{ account.uid }} ({{ account.get_type_display | lower }}, {{ account.get_status_display | lower }}){% if not forloop.last %}<br>{% endif %}{% endif %}{% empty %}&nbsp;{% endfor %}
+        </dd>
         {% if user == object.user or perms.kamu.view_contacts %}
           <dt class="col-sm-4">{% trans "Email addresses" %}</dt>
           <dd class="col-sm-8">{% for address in object.email_addresses.all %}{{ address.address }}{% if address.verified %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
           <dt class="col-sm-4">{% trans "Phone numbers" %}</dt>
           <dd class="col-sm-8">{% for number in object.phone_numbers.all %}{{ number.number }}{% if number.verified %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
+        {% else %}
+          <dt class="col-sm-4">{% trans "Email address" %}</dt>
+          <dd class="col-sm-8">{% for address in object.email_addresses.all %}{% if address.address|public_email_address %}{{ address.address }}{% if address.verified %}<span class="text-success"> *</span>{% endif %}{% if not forloop.last %}<br>{% endif %}{% endif %}{% empty %}&nbsp;{% endfor %}</dd>
         {% endif %}
         {% if user == object.user or perms.kamu.view_identifiers %}
           <dt class="col-sm-4">{% trans "Identifiers" %}</dt>
