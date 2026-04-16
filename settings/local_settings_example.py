@@ -334,3 +334,10 @@ ACCOUNT_UNVERIFIED_EMAIL_PERMISSION: str = "unverified_email"
 
 # Change what level of attribute verifications are disabled for manual edit by user.
 # ATTRIBUTE_VERIFICATION_LEVEL_UNEDITABLE: int = 3
+
+# LDAP migration script settings
+MIGRATION_LDAP_CUSTOM_SEARCH_FILTER: str = (
+    "(&(schacExpiryDate>=20260416000000Z)(eduPersonPrimaryAffiliation=affiliate))"
+)
+MIGRATION_SKIP_CURRENT_ACCOUNT_RIGHT_SUBTYPES: list[str] = ["1000"]
+ACCOUNT_RIGHTS_API_URL: str = "https://localhost/accountrights/current"

@@ -7,11 +7,13 @@ environment before running in production. Customise for your environment as need
 Usage help: ./manage.py migrate_from_ldap -h
 """
 
+import json
 import sys
 import unicodedata
 from datetime import date, datetime, time, timedelta
 from typing import Any
 
+import requests
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -130,11 +132,35 @@ class Command(BaseCommand):
             help="Skip account synchronization for created accounts.",
         )
         parser.add_argument(
+            "--custom-ldap-search",
+            default=False,
+            action="store_true",
+            dest="custom_ldap_search",
+            help="Get accounts from ldap search filtered with MIGRATION_LDAP_CUSTOM_SEARCH_FILTER settings.",
+        )
+        parser.add_argument(
             "--dry-run",
             default=False,
             action="store_true",
             dest="dry_run",
             help="Do not import accounts, just print according to verbosity level.",
+        )
+        parser.add_argument(
+            "--skip-current-account-right",
+            default=False,
+            action="store_true",
+            dest="skip_current_account_right",
+            help=(
+                "Skip import if person has current account right for accounts defined in "
+                "MIGRATION_SKIP_CURRENT_ACCOUNT_RIGHT_SUBTYPES setting."
+            ),
+        )
+        parser.add_argument(
+            "--skip-account-import",
+            default=False,
+            action="store_true",
+            dest="skip_account_import",
+            help="Do not run import script, only check current account status.",
         )
 
     def get_person_from_ldap(self, uid: str) -> dict[str, str | date | None] | None:
@@ -748,7 +774,8 @@ class Command(BaseCommand):
     def handle(self, **options: Any) -> None:
         self.verbosity = options.get("verbosity", 1)
         accounts = options["accounts"]
-        if not accounts:
+        custom_ldap_search = options["custom_ldap_search"]
+        if not accounts and not custom_ldap_search:
             self.message("Accounts are required for migration.", level=1, error=True)
             sys.exit(2)
 
@@ -770,12 +797,90 @@ class Command(BaseCommand):
         self.skip_email_match = options["skip_email_match"]
         self.verify_email = options["verify_email"]
         self.skip_account_synchronization = options["skip_account_synchronization"]
+        skip_current_account_right = options["skip_current_account_right"]
+        skip_account_import = options["skip_account_import"]
+        account_rights_url = getattr(settings, "ACCOUNT_RIGHTS_API_URL", "")
+        skipped_subtypes = getattr(settings, "MIGRATION_SKIP_CURRENT_ACCOUNT_RIGHT_SUBTYPES", ["1000"])
 
-        account_uids = [uid.strip() for uid in accounts.split(",") if uid.strip()]
+        if skip_current_account_right and not account_rights_url:
+            self.message("Missing ACCOUNT_RIGHTS_API_URL setting.", level=1, error=True)
+            sys.exit(2)
+
+        if custom_ldap_search:
+            search_filter = getattr(settings, "MIGRATION_LDAP_CUSTOM_SEARCH_FILTER", "")
+            if not search_filter:
+                self.message("Missing MIGRATION_LDAP_CUSTOM_SEARCH_FILTER setting.", level=1, error=True)
+                sys.exit(2)
+            try:
+                ldap_result = ldap_search(
+                    search_filter=search_filter,
+                    search_values=[],
+                    ldap_attributes=["uid"],
+                    search_base=self.ldap_search_base,
+                    ignore_local_size_limit=True,
+                )
+            except LDAP_SIZELIMIT_EXCEEDED:
+                self.message("LDAP search limit exceeded. Increase the limit and try again", level=1, error=True)
+                sys.exit(2)
+            if ldap_result is None:
+                self.message("LDAP search failed.", level=1, error=True)
+                sys.exit(2)
+            account_uids = [entry.get("uid") for entry in ldap_result if entry.get("uid")]
+            self.message(f"Found {len(account_uids)} results from LDAP", level=1, error=False)
+        else:
+            account_uids = [uid.strip() for uid in accounts.split(",") if uid.strip()]
         for uid in account_uids:
+            if skip_current_account_right:
+                skip = False
+                try:
+                    response = requests.get(
+                        f"{account_rights_url}?username={uid}",
+                        timeout=3,
+                        verify=True,
+                    )
+                except requests.exceptions.RequestException:
+                    self.message(f"Account rights API connection error with username {uid}", level=1, error=True)
+                    continue
+                if response.status_code != 200:
+                    self.message(
+                        f"Account rights API status {response.status_code} with username {uid}", level=1, error=True
+                    )
+                    continue
+                self.message(
+                    f"Account rights API response for username {uid}: {response.json()}", level=3, error=False
+                )
+                try:
+                    content = json.loads(response.content)
+                except json.JSONDecodeError as e:
+                    self.message(
+                        f"Account rights API returned invalid JSON for username {uid}: {e}",
+                        level=1,
+                        error=True,
+                    )
+                    continue
+                account_rights = content.get("account_rights", [])
+                if not account_rights:
+                    self.message(
+                        f"Account rights API returned no account rights for username {uid}", level=2, error=False
+                    )
+                for account_right in account_rights:
+                    account_type = account_right.get("account_type")
+                    subtype = account_type.get("subtype")
+                    if subtype in skipped_subtypes:
+                        current_period = account_right.get("current_period")
+                        self.message(
+                            f"Person already has right for account subtype {subtype} valid "
+                            f"from {current_period.get('begin')} to {current_period.get('end')}",
+                            level=2,
+                            error=False,
+                        )
+                        skip = True
+                if skip:
+                    continue
             if self.dry_run:
                 self.message(f"[DRY RUN] Would migrate account with UID: {uid}", level=2, error=False)
             else:
                 self.message(f"Migrating account with UID: {uid}", level=2, error=False)
-            if self.migrate_user(uid) and not self.dry_run:
-                self.message(f"Account with UID: {uid} migrated successfully.", level=2, error=False)
+            if not skip_account_import:
+                if self.migrate_user(uid) and not self.dry_run:
+                    self.message(f"Account with UID: {uid} migrated successfully.", level=2, error=False)
