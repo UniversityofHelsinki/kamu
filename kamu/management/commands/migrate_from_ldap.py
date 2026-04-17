@@ -314,7 +314,7 @@ class Command(BaseCommand):
                 email_result = None
         except ApiError:
             self.message(
-                "PersonDB API error occurred while searching for identity. UID: {ldap_person.get('uid')}",
+                f"PersonDB API error occurred while searching for identity. UID: {ldap_person.get('uid')}",
                 level=1,
                 error=True,
             )
@@ -407,14 +407,14 @@ class Command(BaseCommand):
         Adds email address to identity if it exists in LDAP and is not already associated with identity.
         """
         email_address = ldap_person.get("email_address")
-        if email_address and not EmailAddress.objects.filter(identity=identity, address=email_address).exists():
+        if email_address:
             if self.dry_run:
                 self.message(
                     f"[DRY RUN] Would create email address '{email_address}' for identity UID: {ldap_person['uid']}",
                     level=3,
                     error=False,
                 )
-            else:
+            elif not EmailAddress.objects.filter(identity=identity, address=email_address).exists():
                 email_object = EmailAddress.objects.create(
                     identity=identity, address=email_address, verified=timezone.now() if self.verify_email else None
                 )
@@ -437,14 +437,14 @@ class Command(BaseCommand):
         Adds FPIC to identity if it exists in LDAP and identity has no FPIC.
         """
         fpic = ldap_person.get("fpic")
-        if fpic and not Identifier.objects.filter(identity=identity, type=Identifier.Type.FPIC).exists():
+        if fpic:
             if self.dry_run:
                 self.message(
                     f"[DRY RUN] Would create identifier '{fpic}' for identity UID: {ldap_person['uid']}",
                     level=3,
                     error=False,
                 )
-            else:
+            elif not Identifier.objects.filter(identity=identity, type=Identifier.Type.FPIC).exists():
                 identifier = Identifier.objects.create(identity=identity, type=Identifier.Type.FPIC, value=fpic)
                 audit_log.info(
                     f"Created new identifier from migration: {identifier}.",
@@ -752,7 +752,7 @@ class Command(BaseCommand):
             except Role.DoesNotExist:
                 self.message(f"Role with identifier '{role_identifier}' does not exist.", level=1, error=True)
                 sys.exit(2)
-            self.message(f"Users will be added to role: {self.role}", level=1, error=False)
+            self.message(f"Users will be added to role: {role}", level=1, error=False)
 
             migration_user_conf = getattr(settings, "MIGRATION_USER", {})
             username = migration_user_conf.get("username", "migration_script")
