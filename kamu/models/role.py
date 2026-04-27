@@ -198,13 +198,17 @@ class Role(models.Model):
 
     def get_hierarchy_memberships(self) -> models.QuerySet:
         """
-        Returns all active memberships in the role hierarchy.
+        Returns all active memberships in the role hierarchy. Including current role and all parent roles.
         """
         from kamu.models.membership import Membership
 
         roles = self.get_role_hierarchy()
         return Membership.objects.filter(
             role__in=roles, start_date__lte=timezone.now(), expire_date__gte=timezone.now()
+            role__in=roles,
+            start_date__lte=timezone.now(),
+            expire_date__gte=timezone.now(),
+            status=Membership.Status.ACTIVE,
         )
 
     def is_approver(self, user: UserType) -> bool:
