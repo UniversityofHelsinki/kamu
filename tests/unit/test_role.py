@@ -41,17 +41,26 @@ class RoleModelTests(BaseRoleTestCase):
         self.assertEqual(self.role.description(lang="fi"), ROLES["consultant"]["description_fi"])
 
     def test_role_hierarchy(self):
+        role = self.create_role("ext_board", parent=self.role)
+        self.create_role("ext_research", parent=self.role)
         self.assertEqual(self.parent_role.get_role_hierarchy().count(), 1)
         self.assertEqual(self.role.get_role_hierarchy().count(), 2)
+        self.assertEqual(role.get_role_hierarchy().count(), 3)
+        self.assertEqual(self.parent_role.get_role_hierarchy_subroles().count(), 4)
+        self.assertEqual(self.role.get_role_hierarchy_subroles().count(), 3)
+        self.assertEqual(role.get_role_hierarchy_subroles().count(), 1)
 
     @override_settings(ROLE_HIERARCHY_MAXIMUM_DEPTH=1)
     def test_role_hierarchy_limit(self):
         self.assertEqual(self.role.get_role_hierarchy().count(), 1)
+        self.assertEqual(self.parent_role.get_role_hierarchy_subroles().count(), 1)
 
     def test_role_hierarchy_memberships(self):
-        identity = self.create_identity(user=False)
-        self.create_membership(self.parent_role, identity, start_delta_days=0, expire_delta_days=1)
-        self.assertEqual(self.role.get_hierarchy_memberships().count(), 1)
+        identity = self.create_identity(user=True)
+        self.create_membership(self.role, identity, start_delta_days=0, expire_delta_days=1, approver=self.user)
+        self.create_membership(self.parent_role, identity, start_delta_days=0, expire_delta_days=1, approver=self.user)
+        self.assertEqual(self.role.get_hierarchy_memberships().count(), 2)
+        self.assertEqual(self.parent_role.get_hierarchy_memberships_subroles().count(), 2)
 
     def test_role_cost(self):
         self.assertEqual(self.parent_role.get_cost(), 5)

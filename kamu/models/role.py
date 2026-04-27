@@ -171,6 +171,27 @@ class Role(models.Model):
             roles = roles | Role.objects.filter(pk=role.pk)
         return roles
 
+    def get_role_hierarchy_subroles(self) -> models.QuerySet:
+        """
+        Returns a hierarchy of all roles, following subroles until maximum depth is reached.
+
+        Role modification is validated against a circular hierarchy, but preparing for it anyway.
+        """
+        role = self
+        roles = Role.objects.filter(pk=role.pk)
+
+        def get_sub_roles(parent_role: Role, all_roles: models.QuerySet[Role], n: int = 1) -> models.QuerySet[Role]:
+            if n >= settings.ROLE_HIERARCHY_MAXIMUM_DEPTH:
+                return all_roles
+            subroles = Role.objects.filter(parent=parent_role)
+            all_roles = all_roles | subroles
+            for subrole in subroles:
+                all_roles = all_roles | get_sub_roles(subrole, all_roles, n + 1)
+            return all_roles
+
+        roles = get_sub_roles(role, roles, 1)
+        return roles
+
     def get_permissions(self) -> models.QuerySet:
         """
         Returns combined permissions of all distinct roles in hierarchy.
@@ -196,20 +217,32 @@ class Role(models.Model):
         cost = Permission.objects.filter(role__in=roles).distinct().aggregate(models.Sum("cost"))["cost__sum"]
         return cost if cost else 0
 
-    def get_hierarchy_memberships(self) -> models.QuerySet:
+    def get_role_memberships(self, roles: models.QuerySet[Role]) -> models.QuerySet:
         """
-        Returns all active memberships in the role hierarchy. Including current role and all parent roles.
+        Returns combined Active memberships for all roles in given role queryset.
         """
         from kamu.models.membership import Membership
 
-        roles = self.get_role_hierarchy()
         return Membership.objects.filter(
-            role__in=roles, start_date__lte=timezone.now(), expire_date__gte=timezone.now()
             role__in=roles,
             start_date__lte=timezone.now(),
             expire_date__gte=timezone.now(),
             status=Membership.Status.ACTIVE,
         )
+
+    def get_hierarchy_memberships(self) -> models.QuerySet:
+        """
+        Returns all active memberships in the role hierarchy. Including current role and all parent roles.
+        """
+        roles = self.get_role_hierarchy()
+        return self.get_role_memberships(roles)
+
+    def get_hierarchy_memberships_subroles(self) -> models.QuerySet:
+        """
+        Returns all active memberships in the role hierarchy, starting from the current role and finding subroles.
+        """
+        roles = self.get_role_hierarchy_subroles()
+        return self.get_role_memberships(roles)
 
     def is_approver(self, user: UserType) -> bool:
         """
