@@ -13,7 +13,7 @@ from django.utils import timezone
 
 from kamu.management.commands.purge_data import UsageError
 from kamu.models.account import AccountSynchronization
-from kamu.models.identity import Identifier, Identity
+from kamu.models.identity import EmailAddress, Identifier, Identity
 from kamu.models.membership import Membership
 from kamu.models.organisation import Organisation
 from kamu.models.role import Role
@@ -613,3 +613,44 @@ class MembershipStatusUpdateTests(TestData, ManagementCommandTestCase):
         self.assertEqual(activated.status, Membership.Status.ACTIVE)
         self.assertEqual(activating.status, Membership.Status.ACTIVE)
         self.assertEqual(pending.status, Membership.Status.PENDING)
+
+
+class ListEmailsTests(TestData, ManagementCommandTestCase):
+    command = "list_emails"
+
+    def setUp(self):
+        super().setUp()
+        self.role = self.create_role(name="ext_employee")
+        self.role_guest = self.create_role(name="ext_research")
+        self.create_identity(email=True)
+        self.create_superidentity(email=True)
+        self.create_membership(self.role, identity=self.identity, start_delta_days=0, expire_delta_days=1)
+        self.create_membership(self.role_guest, identity=self.superidentity, start_delta_days=0, expire_delta_days=1)
+
+    def test_list_emails(self):
+        out, _ = self.call_command()
+        self.assertIn(self.identity.email_addresses.first().address, out)
+        self.assertIn(self.superidentity.email_addresses.first().address, out)
+
+    def test_list_emails_role(self):
+        out, _ = self.call_command("-r ext_employee")
+        self.assertIn(self.identity.email_addresses.first().address, out)
+        self.assertNotIn(self.superidentity.email_addresses.first().address, out)
+
+    def test_list_emails_unverified(self):
+        email_address = EmailAddress.objects.get(address="super_test@example.org")
+        email_address.verified = None
+        email_address.save()
+        out, _ = self.call_command()
+        self.assertIn(self.identity.email_addresses.first().address, out)
+        self.assertNotIn(self.superidentity.email_addresses.first().address, out)
+        out, _ = self.call_command("-u")
+        self.assertIn(self.identity.email_addresses.first().address, out)
+        self.assertIn(self.superidentity.email_addresses.first().address, out)
+
+    def test_list_emails_include_names_and_accounts(self):
+        self.identity.uid = "testuser"
+        self.identity.save()
+        out, _ = self.call_command("-n", "-a")
+        self.assertIn("test@example.org;Tester Mc.;testuser", out)
+        self.assertIn("super_test@example.org;Dr. User;", out)
