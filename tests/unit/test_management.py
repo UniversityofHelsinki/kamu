@@ -654,3 +654,25 @@ class ListEmailsTests(TestData, ManagementCommandTestCase):
         out, _ = self.call_command("-n", "-a")
         self.assertIn("test@example.org;Tester Mc.;testuser", out)
         self.assertIn("super_test@example.org;Dr. User;", out)
+
+
+class MembershipStatisticsTests(TestData, ManagementCommandTestCase):
+    command = "membership_statistics"
+
+    def setUp(self):
+        super().setUp()
+        self.role = self.create_role(name="ext_employee")
+        self.role_guest = self.create_role(name="ext_research", parent=self.role)
+        self.create_identity(user=True, email=True)
+        self.create_superidentity(email=True)
+        self.create_membership(
+            self.role, identity=self.identity, start_delta_days=0, expire_delta_days=1, approver=self.user
+        )
+        self.create_membership(
+            self.role_guest, identity=self.superidentity, start_delta_days=0, expire_delta_days=1, approver=self.user
+        )
+
+    def test_membership_statistics(self):
+        out, _ = self.call_command()
+        self.assertIn("External employee (ext_employee) direct members: 1 (including subrole members: 2)", out)
+        self.assertIn("(ext_research) direct members: 1 (including subrole members: 1)", out)
