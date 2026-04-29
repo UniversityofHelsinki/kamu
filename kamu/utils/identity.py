@@ -481,11 +481,15 @@ def get_or_create_identity_from_persondb(person: Person, request: HttpRequest | 
         log_to_db=True,
     )
     for email_address in person.email_addresses:
-        email_object = EmailAddress.objects.create(
-            address=email_address.address,
-            identity=identity,
-            verified=timezone.now() if email_address.verified else None,
-        )
+        try:
+            email_object = EmailAddress.objects.create(
+                address=email_address.address,
+                identity=identity,
+                verified=timezone.now() if email_address.verified else None,
+            )
+        except IntegrityError:
+            logger.warning(f"Email address already exists in the database: {email_address.address}")
+            continue
         audit_log.info(
             f"Email address added to identity {identity}",
             category="email_address",
@@ -496,11 +500,15 @@ def get_or_create_identity_from_persondb(person: Person, request: HttpRequest | 
             log_to_db=True,
         )
     for phone_number in person.phone_numbers:
-        phone_object = PhoneNumber.objects.create(
-            number=phone_number.number,
-            identity=identity,
-            verified=timezone.now() if phone_number.verified else None,
-        )
+        try:
+            phone_object = PhoneNumber.objects.create(
+                number=phone_number.number,
+                identity=identity,
+                verified=timezone.now() if phone_number.verified else None,
+            )
+        except IntegrityError:
+            logger.warning(f"Phone number already exists in the database: {phone_number.number}")
+            continue
         audit_log.info(
             f"Phone number added to identity {identity}",
             category="phone_number",
@@ -511,11 +519,15 @@ def get_or_create_identity_from_persondb(person: Person, request: HttpRequest | 
             log_to_db=True,
         )
     for identifier in person.identifiers:
-        identifier_object = Identifier.objects.create(
-            type=identifier.type,
-            value=identifier.value,
-            identity=identity,
-        )
+        try:
+            identifier_object = Identifier.objects.create(
+                type=identifier.type,
+                value=identifier.value,
+                identity=identity,
+            )
+        except IntegrityError:
+            logger.warning(f"Identifier already exists in the database: {identifier.value}")
+            continue
         audit_log.info(
             f"Linked {identifier_object.type} identifier to identity {identity}",
             category="identifier",
