@@ -18,6 +18,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
+from django_stubs_ext import StrOrPromise
 
 from kamu.connectors import ApiError
 from kamu.connectors.email import send_verification_email
@@ -860,12 +861,13 @@ def update_identity_attributes(
         )
 
 
-def add_account_messages(request: HttpRequest, activable_accounts: list[dict[str, str]], identity: Identity) -> None:
+def add_account_messages(
+    request: HttpRequest, activable_accounts: list[dict[str, StrOrPromise]], identity: Identity
+) -> None:
     """
     Add messages for accounts you can activate.
     """
     url_validator = URLValidator(schemes=("http", "https"))
-
     for account in activable_accounts:
         message = _('You can activate a new user account of type "%(account_type)s".') % {
             "account_type": account.get("name", "")
@@ -888,7 +890,7 @@ def add_account_messages(request: HttpRequest, activable_accounts: list[dict[str
                 continue
             if request.user == identity.user:
                 link_text = _("Continue to external service to activate account")
-                link = action
+                link = str(action)
                 message = (
                     f'<p class="fw-bold">{message}</p>' + f'<a href="{link}" class="btn btn-success">{link_text}</a>'
                 )

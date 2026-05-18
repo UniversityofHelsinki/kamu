@@ -35,7 +35,11 @@ from kamu.forms.account import AccountCreateForm, PasswordResetForm
 from kamu.models.account import Account
 from kamu.models.identity import Identity
 from kamu.models.role import Permission
-from kamu.utils.account import get_account_data, get_minimum_password_length
+from kamu.utils.account import (
+    get_account_data,
+    get_creatable_accounts,
+    get_minimum_password_length,
+)
 from kamu.utils.audit import AuditLog
 
 audit_log = AuditLog()
@@ -266,26 +270,14 @@ class AccountListView(LoginRequiredMixin, ListView[Account]):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
         Add identity and the list of creatable accounts to context.
+
+        Uses Account.Type label for accounts created in Kamu and permission name for externally created accounts.
         """
         context = super().get_context_data(**kwargs)
         if not self.identity:
             raise PermissionDenied
         context["identity"] = self.identity
-        account_permissions = self.identity.get_permissions(permission_type=Permission.Type.ACCOUNT).values_list(
-            "identifier", flat=True
-        )
-        existing_accounts = self.get_queryset().values_list("type", flat=True)
-        creatable_accounts = []
-        for account_type in set(account_permissions) - set(existing_accounts):
-            if settings.ACCOUNT_ACTIONS.get(account_type):
-                creatable_accounts.append(
-                    {
-                        "type": account_type,
-                        "name": Account.Type(account_type).label,
-                        "action": settings.ACCOUNT_ACTIONS.get(account_type),
-                    }
-                )
-        context["creatable_accounts"] = creatable_accounts
+        context["creatable_accounts"] = get_creatable_accounts(self.identity)
         return context
 
     def get_queryset(self) -> QuerySet[Account]:

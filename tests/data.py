@@ -122,6 +122,17 @@ PERMISSIONS: dict = {
         "description_sv": "Användarkonto med begränsad åtkomst",
         "cost": 5,
     },
+    "externalaccount": {
+        "type": Permission.Type.ACCOUNT,
+        "identifier": "externalaccount",
+        "name_en": "External account",
+        "name_fi": "Ulkoinen tunnus",
+        "name_sv": "Extern konto",
+        "description_en": "External account",
+        "description_fi": "Ulkoinen tunnus",
+        "description_sv": "Extern konto",
+        "cost": 5,
+    },
     "service": {
         "type": Permission.Type.SERVICE,
         "identifier": "service",

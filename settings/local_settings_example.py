@@ -312,7 +312,12 @@ SMS_DEBUG: bool = False
 ACCOUNT_ACTIONS: dict[str, str] = {
     "lightaccount": "create",
     "account": "https://localhost/accountactivation",
+    "externalaccount": "https://localhost/accountactivation",
 }
+# Skip notifications for external account activation by default as there is no way to know if account is already
+# created
+SKIP_EXTERNAL_ACCOUNT_ACTIVATION_NOTIFICATIONS: bool = True
+
 # External account affiliations for create and update actions. First one is used as primary affiliation.
 ACCOUNT_AFFILIATIONS: dict[str, list[str]] = {
     "lightaccount": ["affiliate"],

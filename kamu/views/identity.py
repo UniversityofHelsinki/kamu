@@ -54,12 +54,12 @@ from kamu.forms.identity import (
     IdentitySearchForm,
     PhoneNumberVerificationForm,
 )
-from kamu.models.account import Account
 from kamu.models.contract import Contract, ContractTemplate
 from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
 from kamu.models.membership import Membership
-from kamu.models.role import Permission, Requirement
+from kamu.models.role import Requirement
 from kamu.models.token import TimeLimitError, Token
+from kamu.utils.account import get_creatable_accounts
 from kamu.utils.audit import AuditLog
 from kamu.utils.identity import (
     add_account_messages,
@@ -117,26 +117,6 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
                 Q(user=self.request.user) | Q(roles__approvers__in=groups) | Q(roles__inviters__in=groups)
             ).distinct()
         return queryset
-
-    def get_activable_accounts(self) -> list[dict[str, str]]:
-        """
-        Return a list of account types that the user has permissions for but has not yet activated.
-        """
-        account_permissions = self.object.get_permissions(permission_type=Permission.Type.ACCOUNT).values_list(
-            "identifier", flat=True
-        )
-        existing_accounts = self.object.useraccount.values_list("type", flat=True)
-        creatable_accounts = []
-        for account_type in set(account_permissions) - set(existing_accounts):
-            if settings.ACCOUNT_ACTIONS.get(account_type):
-                creatable_accounts.append(
-                    {
-                        "type": account_type,
-                        "name": Account.Type(account_type).label,
-                        "action": settings.ACCOUNT_ACTIONS.get(account_type),
-                    }
-                )
-        return creatable_accounts
 
     def claim_memberships_based_on_verified_contact(self) -> None:
         """
@@ -206,7 +186,9 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
         missing_requirements = self.object.get_missing_requirements()
         if missing_requirements:
             add_missing_requirement_messages(self.request, missing_requirements, self.object)
-        activable_accounts = self.get_activable_accounts()
+        activable_accounts = get_creatable_accounts(
+            self.object, include_external=not getattr(settings, "SKIP_EXTERNAL_ACCOUNT_ACTIVATION_NOTIFICATIONS", True)
+        )
         if activable_accounts:
             add_account_messages(self.request, activable_accounts, self.object)
         return get

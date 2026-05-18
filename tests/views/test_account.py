@@ -320,10 +320,24 @@ class AccountTests(BaseTestCase):
         self.assertIn("You can activate a new user account", response.content.decode("utf-8"))
         self.assertIn("Activate account", response.content.decode("utf-8"))
 
+    @override_settings(SKIP_EXTERNAL_ACCOUNT_ACTIVATION_NOTIFICATIONS=False)
     def test_view_notification_of_available_external_account(self):
-        self.permission_account = self.create_permission("account")
+        self.permission_account = self.create_permission("externalaccount")
         self.role.permissions.add(self.permission_account)
         response = self.client.get(f"/identity/{self.identity.pk}/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("You can activate a new user account", response.content.decode("utf-8"))
+        self.assertIn(
+            'You can activate a new user account of type "External account"', response.content.decode("utf-8")
+        )
         self.assertIn("Continue to external service to activate account", response.content.decode("utf-8"))
+
+    @override_settings(SKIP_EXTERNAL_ACCOUNT_ACTIVATION_NOTIFICATIONS=True)
+    def test_view_skip_notification_of_available_external_account(self):
+        self.permission_account = self.create_permission("externalaccount")
+        self.role.permissions.add(self.permission_account)
+        response = self.client.get(f"/identity/{self.identity.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(
+            'You can activate a new user account of type "External account"', response.content.decode("utf-8")
+        )
+        self.assertNotIn("Continue to external service to activate account", response.content.decode("utf-8"))

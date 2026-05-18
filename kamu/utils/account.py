@@ -6,6 +6,7 @@ import unicodedata
 from datetime import date
 
 from django.conf import settings
+from django_stubs_ext import StrOrPromise
 
 from kamu.models.account import Account
 from kamu.models.identity import Identifier, Identity
@@ -43,6 +44,36 @@ def get_light_account_services(identity: Identity) -> list[str]:
     for service in default_services:
         services.add(service)
     return list(services)
+
+
+def get_creatable_accounts(identity: Identity, include_external: bool = True) -> list[dict[str, StrOrPromise]]:
+    """
+    Returns list of creatable accounts for UI.
+
+    Includes account permissions where action is defined in settings and user has no such account yet.
+
+    Returned dicts including type, name and action.
+    Name is Account.Type label for accounts created in Kamu and permission name for externally created accounts.
+    """
+    account_permissions = identity.get_permissions(permission_type=Permission.Type.ACCOUNT)
+    account_permission_types = account_permissions.values_list("identifier", flat=True)
+    existing_account_types = identity.useraccount.values_list("type", flat=True)
+    creatable_accounts = []
+    for account_type in set(account_permission_types) - set(existing_account_types):
+        action = settings.ACCOUNT_ACTIONS.get(account_type, "")
+        if action and (action == "create" or include_external):
+            creatable_accounts.append(
+                {
+                    "type": account_type,
+                    "name": (
+                        Account.Type(account_type).label
+                        if account_type in Account.Type and action == "create"
+                        else account_permissions.get(identifier=account_type).name()
+                    ),
+                    "action": action,
+                }
+            )
+    return creatable_accounts
 
 
 def get_account_type(account_type: Account.Type) -> int | str:
