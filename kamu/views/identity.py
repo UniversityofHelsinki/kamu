@@ -1842,17 +1842,14 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         """
         context = super().get_context_data(**kwargs)
         if "reset_form" in self.request.POST:
-            context["form"] = IdentitySearchForm(use_ldap=self.search_ldap())
+            context["form"] = IdentitySearchForm()
             return context
         context["phone"] = self.parse_search_attribute("phone")
         context["email"] = self.parse_search_attribute("email")
         context["fpic"] = self.parse_search_attribute("fpic")
         context["uid"] = self.parse_search_attribute("uid")
-        context["form"] = IdentitySearchForm(self.request.POST, use_ldap=self.search_ldap())
-        if (
-            self.request.method == "POST"
-            and IdentitySearchForm(self.request.POST, use_ldap=self.search_ldap()).is_valid()
-        ):
+        context["form"] = IdentitySearchForm(self.request.POST)
+        if self.request.method == "POST" and IdentitySearchForm(self.request.POST).is_valid():
             context.update(self.search_results())
         return context
 

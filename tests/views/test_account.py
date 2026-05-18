@@ -137,7 +137,7 @@ class AccountTests(BaseTestCase):
         response = self.client.get(f"/account/{account.pk}/", follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("User account details", response.content.decode("utf-8"))
-        self.assertIn("Reset user account password", response.content.decode("utf-8"))
+        self.assertIn("Change your user account password", response.content.decode("utf-8"))
         mock_logger.log.assert_has_calls(
             [
                 call(20, "Read account information", extra=ANY),

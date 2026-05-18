@@ -56,12 +56,12 @@ class IdentitySearchForm(forms.Form):
         help_text=_("You may limit name searches by date of birth to improve accuracy."),
     )
     identifier = forms.CharField(
-        label=_("Identifier"),
+        label=_("Enter the full unique identifier"),
         max_length=320,
         required=False,
         help_text=_(
             "Email address, phone number in international format, e.g. +358401234567, "
-            "Finnish personal identity code or user account name"
+            "Finnish personal identity code or user account name."
         ),
     )
 
@@ -69,23 +69,17 @@ class IdentitySearchForm(forms.Form):
         """
         Crispy Forms helper to set form styles, configuration and buttons.
         """
-        use_ldap = kwargs.pop("use_ldap", False)
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "POST"
         self.helper.add_input(Submit("submit", _("Search"), css_class="me-2"))
         self.helper.add_input(Submit("reset_form", _("Reset"), css_class="btn-warning"))
 
-        if use_ldap:
-            name_search_text = _(
-                "Searches both Kamu and the user directory. "
-                "Returns partial matches in Kamu and names that start with your search terms in the user directory."
-            )
-        else:
-            name_search_text = _("Returns partial matches in Kamu.")
-        identifier_search_text = _("Matches only exact identifiers.")
         if getattr(settings, "SKIP_NAME_SEARCH_IF_IDENTIFIER_MATCHES", True):
-            both_search_text = _("If you provide an identifier and a match is found, the name search is skipped.")
+            both_search_text = _(
+                "Search for the person you want to invite primarily using a unique identifier. If the person is "
+                "found using the identifier you provided, the name search will be skipped."
+            )
         else:
             both_search_text = _(
                 "If you provide both an identifier and a name, the results from both searches are combined into a "
@@ -93,14 +87,12 @@ class IdentitySearchForm(forms.Form):
             )
         self.helper.layout = Layout(
             HTML("<p>" + both_search_text + "</p>"),
-            HTML("<h2 class='mb-3'>" + _("Identifier search") + "</h2>"),
-            HTML("<p>" + identifier_search_text + "</p>"),
+            HTML("<h2 class='mb-3'>" + _("Search by a unique identifier") + "</h2>"),
             Div(
                 Div("identifier", css_class="col-md-12"),
                 css_class="row mb-3",
             ),
-            HTML("<h2 class='mb-3'>" + _("Name search") + "</h2>"),
-            HTML("<p>" + name_search_text + "</p>"),
+            HTML("<h2 class='mb-3'>" + _("Search by name") + "</h2>"),
             Div(
                 Div("given_names", css_class="col-md-6"),
                 Div("surname", css_class="col-md-6"),

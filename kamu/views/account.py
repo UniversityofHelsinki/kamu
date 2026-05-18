@@ -539,7 +539,11 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
                 objects=[self.object.identity, self.object],
                 log_to_db=False,
             )
-            messages.add_message(self.request, messages.ERROR, _("Password reset failed, please try again later."))
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                _("Password change failed. Your new password must differ from your past passwords."),
+            )
             return self.form_invalid(form)
         audit_log.info(
             f"Password reset: {self.object.uid}",

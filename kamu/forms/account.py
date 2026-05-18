@@ -77,4 +77,4 @@ class PasswordResetForm(AccountBaseForm):
         """
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", _("Reset password")))
+        self.helper.add_input(Submit("submit", _("Change your password")))

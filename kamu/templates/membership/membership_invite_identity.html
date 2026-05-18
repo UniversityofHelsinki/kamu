@@ -6,16 +6,14 @@
 {% block content %}
   <h1>{% trans "Invite new member to role of" %} {{ role.name }}</h1>
   <div class="alert alert-success" role="alert">
-    <p>{% trans "To invite a new member, first search for the identity with known user information such as email and phone number." %}</p>
-    <p>{% trans "If person is already found from the Kamu or the user directory, you can add role directly to the person." %}</p>
-    <p>{% trans "Otherwise you can invite them by email, by searching with the email address." %}</p>
-    {% if HELP_LINK_MANAGERS %}<p class="text-break">{% blocktrans with link=HELP_LINK_MANAGERS %}Read more about role management from the <a href="{{ link }}">IT Helpdesk</a>.{% endblocktrans %}</p>{% endif %}
+    <p>{% trans "Start by searching for a person using their identifiers or name. If the person is already in the university’s personal data register, you can assign them a role directly. Otherwise, search by email address and send the person an invitation to register for Kamu." %}</p>
+    {% if HELP_LINK_MANAGERS %}<p class="text-break">{% blocktrans with link=HELP_LINK_MANAGERS %}You can find more instructions on the <a href="{{ link }}">IT-Helpdesk support pages</a>.{% endblocktrans %}</p>{% endif %}
   </div>
   {% crispy form form.helper %}
   {% if object_list or request.POST.submit %}
-    <h2 id="results-list">{% trans "Kamu results" %}</h2>
+    <h2 id="results-list">{% trans "Search results" %}</h2>
     {% if object_list %}
-      <p>{% trans "To protect user privacy, email addresses and phone numbers are only listed when exactly matching the search parameter." %}</p>
+      <p>{% trans "To protect individuals' privacy, unique identifiers are displayed only if they match exactly the identifier entered in the search." %}</p>
       <div class="table-responsive">
         <table class="table" aria-describedby="results-list">
           <thead>
@@ -40,12 +38,12 @@
       </div>
     {% else %}
       <p>{% trans "No results with the provided search parameters." %}</p>
-      {% if not email %}<p>{% trans "Please search with email address if you wish to send an email invite to the role." %}</p>{% endif %}
+      {% if not email %}<p>{% trans "If you want to invite someone to a role, try searching again using their email address. An email address is required for everyone who registers with Kamu." %}</p>{% endif %}
     {% endif %}
   {% endif %}
   {% if email and not email_found %}
     <h3>{% trans "Email invitation" %}</h3>
-    <p>{% blocktrans with email=email %}Email address not found in the registry: {{ email }}{% endblocktrans %}</p>
+    <p>{% blocktrans with email=email %}The email address you provided was not found in our records: {{ email }}{% endblocktrans %}</p>
     <a href="{% url 'role-invite-details-email' role.pk %}" class="btn btn-primary mb-3 me-3">{% trans "Go to sending the invitation" %}</a>
   {% endif %}
 

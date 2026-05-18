@@ -70,18 +70,18 @@ class Membership(models.Model):
     invite_given_name = models.CharField(
         blank=True,
         max_length=200,
-        verbose_name=_("Given name"),
+        verbose_name=_("Given name of the person being invited"),
     )
     invite_surname = models.CharField(
         blank=True,
         max_length=200,
-        verbose_name=_("Surname"),
+        verbose_name=_("Surname of the person being invited"),
     )
     invite_email_address = models.EmailField(blank=True, null=True, verbose_name=_("Invite email address"))
     verify_phone_number = models.CharField(
         max_length=20,
         blank=True,
-        verbose_name=_("Verify phone number"),
+        verbose_name=_("Invite mobile phone number"),
         help_text=_(
             "Phone number to which the confirmation SMS will be sent, in the international format, e.g. "
             "+358123456789."
@@ -93,12 +93,12 @@ class Membership(models.Model):
         max_length=2,
         default="en",
         choices=settings.LANGUAGES,
-        verbose_name=_("Possible default email invitation replacement text"),
+        verbose_name=_("The language used to communicate with the invited person"),
     )
 
     invite_text = models.TextField(
         blank=True,
-        verbose_name=_("Invite text"),
+        verbose_name=_("Alternative text for the default email invitation"),
         help_text=_(
             "If you wish, you can replace the beginning part of the default email invite with your own text. The "
             "invitation code and link are always added at the end of the message. Preview the message to see the "

@@ -135,7 +135,7 @@ class IdentityViewTests(BaseTestCase):
         )
         response = self.client.get(f"{self.url}{self.identity.pk}/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("You do not have any current or upcoming memberships.", response.content.decode("utf-8"))
+        self.assertIn("No current or future memberships.", response.content.decode("utf-8"))
         self.assertIn("Expired memberships", response.content.decode("utf-8"))
         self.assertIn(role.name(), response.content.decode("utf-8"))
 
@@ -274,7 +274,7 @@ class IdentitySearchTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(self.identity.display_name(), response.content.decode("utf-8"))
         self.assertIn(self.superidentity.display_name(), response.content.decode("utf-8"))
-        self.assertIn("name search is skipped", response.content.decode("utf-8"))
+        self.assertIn("name search will be skipped", response.content.decode("utf-8"))
 
     @override_settings(KAMU_IDENTITY_SEARCH_LIMIT=1)
     def test_search_identity_partial_limit(self):
@@ -382,11 +382,7 @@ class IdentitySearchTests(BaseTestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            "Returns partial matches in Kamu.",
-            response.content.decode("utf-8"),
-        )
-        self.assertNotIn(
-            "user directory",
+            "Search for the person you want to invite primarily using a unique identifier.",
             response.content.decode("utf-8"),
         )
 

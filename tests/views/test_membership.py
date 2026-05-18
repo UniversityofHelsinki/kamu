@@ -569,7 +569,7 @@ class MembershipInviteTests(BaseTestCase):
         data = {"identifier": "nonexisting@example.org"}
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Email address not found", response.content.decode("utf-8"))
+        self.assertIn("The email address you provided was not found in our records", response.content.decode("utf-8"))
 
     @mock.patch("kamu.views.identity.ldap_search")
     def test_search_email_found_kamu(self, mock_ldap):
@@ -577,7 +577,9 @@ class MembershipInviteTests(BaseTestCase):
         data = {"identifier": self.email_address.address}
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Email address not found", response.content.decode("utf-8"))
+        self.assertNotIn(
+            "The email address you provided was not found in our records", response.content.decode("utf-8")
+        )
 
     @mock.patch("kamu.connectors.ldap._get_connection")
     def test_search_email_found_ldap(self, mock_ldap):
@@ -585,7 +587,9 @@ class MembershipInviteTests(BaseTestCase):
         data = {"identifier": "ldap.user@example.org"}
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Email address not found", response.content.decode("utf-8"))
+        self.assertNotIn(
+            "The email address you provided was not found in our records", response.content.decode("utf-8")
+        )
 
     def test_join_role_with_identity(self):
         url = f"{self.url}{self.identity.pk}/"
@@ -845,7 +849,7 @@ class MembershipInviteTests(BaseTestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            "Returns partial matches in Kamu and names that start with your search terms in the user directory.",
+            "Start by searching for a person using their identifiers or name.",
             response.content.decode("utf-8"),
         )
 

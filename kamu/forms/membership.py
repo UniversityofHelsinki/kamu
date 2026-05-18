@@ -127,19 +127,22 @@ class MembershipEmailCreateForm(forms.ModelForm[Membership]):
     """
 
     send_invite_before_approval = forms.BooleanField(
-        label=_("Send invite email before approval"),
+        label=_("Send an email to the invitee right away"),
         required=False,
         help_text=_(
-            "Send the invitation email before approval. The invited person can accept immediately, but the membership "
-            "and its permissions, including the ability to create a user account, will only become active after "
-            "approval. If not selected, the invitation email will be sent after approval."
+            "The invited person can accept the invitation in Kamu even before approval. However, membership and "
+            "services—such as the ability to create a username—will not be available until after approval. By "
+            "default, Kamu sends an email to the invited person only after approval."
         ),
     )
 
     notify_approvers = forms.BooleanField(
         label=_("Notify approvers"),
         required=False,
-        help_text=_("Send notification to the role notification address about the new invite requiring approval."),
+        help_text=_(
+            "Approvers can accept the invitation as soon as you send it, but you can choose to send them an email "
+            "to speed up the process. By default, no email is sent."
+        ),
     )
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
