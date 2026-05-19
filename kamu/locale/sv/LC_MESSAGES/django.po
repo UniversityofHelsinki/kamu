@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-18 15:49+0300\n"
+"POT-Creation-Date: 2026-05-19 16:22+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -558,10 +558,11 @@ msgid ""
 "will not be available until after approval. By default, Kamu sends an email "
 "to the invited person only after approval."
 msgstr ""
-"Den inbjudna personen kan acceptera inbjudan i Kamu redan innan godkännandet. "
-"Medlemskapet och tjänsterna, t.ex. möjligheten att skapa ett användarkonto, "
-"fungerar dock först efter godkännandet. Som standard skickas ett "
-"e-postmeddelande från Kamu till den inbjudna personen först efter godkännandet."
+"Den inbjudna personen kan acceptera inbjudan i Kamu redan innan "
+"godkännandet. Medlemskapet och tjänsterna, t.ex. möjligheten att skapa ett "
+"användarkonto, fungerar dock först efter godkännandet. Som standard skickas "
+"ett e-postmeddelande från Kamu till den inbjudna personen först efter "
+"godkännandet."
 
 #: forms/membership.py:143
 msgid ""
@@ -569,8 +570,8 @@ msgid ""
 "choose to send them an email to speed up the process. By default, no email "
 "is sent."
 msgstr ""
-"De som ska godkänna inbjudan kan göra det direkt när du har skickat den, "
-"men du kan om du vill skicka ett e-postmeddelande till dem för att påskynda "
+"De som ska godkänna inbjudan kan göra det direkt när du har skickat den, men "
+"du kan om du vill skicka ett e-postmeddelande till dem för att påskynda "
 "processen. Som standard skickas inget e-postmeddelande."
 
 #: forms/membership.py:167 forms/membership.py:269
@@ -1198,7 +1199,8 @@ msgstr ""
 
 #: models/membership.py:96
 msgid "The language used to communicate with the invited person"
-msgstr "Det språk som används för att skicka meddelanden till den inbjudna personen"
+msgstr ""
+"Det språk som används för att skicka meddelanden till den inbjudna personen"
 
 #: models/membership.py:101
 msgid "Alternative text for the default email invitation"
@@ -3316,9 +3318,8 @@ msgid ""
 "To protect individuals' privacy, unique identifiers are displayed only if "
 "they match exactly the identifier entered in the search."
 msgstr ""
-"För att skydda personernas integritet visas identifierande uppgifter "
-"endast om de stämmer exakt överens med den identifierare som angetts i "
-"sökningen."
+"För att skydda personernas integritet visas identifierande uppgifter endast "
+"om de stämmer exakt överens med den identifierare som angetts i sökningen."
 
 #: templates/identity/identity_search.html:19
 #: templates/identity/identity_search.html:45
@@ -3790,8 +3791,8 @@ msgid ""
 msgstr ""
 "Börja med att söka efter personen med hjälp av identifierare eller namn. Om "
 "personen redan finns i universitetets personregister kan du tilldela hen en "
-"roll direkt. I annat fall sök vidare med e-postadress och skicka en "
-"inbjudan till personen att registrera sig i Kamu."
+"roll direkt. I annat fall sök vidare med e-postadress och skicka en inbjudan "
+"till personen att registrera sig i Kamu."
 
 #: templates/membership/membership_invite_identity.html:10
 #, python-format
@@ -4146,11 +4147,12 @@ msgstr "Medlemskapet kräver attributet ”%(name)s”."
 msgid "Add %(name)s"
 msgstr "Lägg till %(name)s"
 
-#: utils/membership.py:168
-msgid "The membership requires higher assurance level: "
-msgstr "Medlemskapet kräver högre säkerhetsnivå: "
+#: utils/membership.py:167
+#, python-format
+msgid "The membership requires higher assurance level: %(level)s."
+msgstr "Medlemskapet kräver högre kontrollnivå: %(level)s."
 
-#: utils/membership.py:183
+#: utils/membership.py:177
 #, python-format
 msgid ""
 "The membership requires a requirement you cannot currently fulfill: %(name)s."
@@ -4158,23 +4160,23 @@ msgstr ""
 "Medlemskapet kräver ett krav som du för närvarande inte kan uppfylla: "
 "%(name)s."
 
-#: utils/membership.py:246
+#: utils/membership.py:240
 msgid "Invitation process has taken too long."
 msgstr "Inbjudningsprocessen tog för lång tid."
 
-#: utils/membership.py:252
+#: utils/membership.py:246
 msgid "This invitation has already been used."
 msgstr "Denna inbjudan har redan använts."
 
-#: utils/membership.py:256
+#: utils/membership.py:250
 msgid "This invitation has expired."
 msgstr "Denna inbjudan har gått ut."
 
-#: utils/membership.py:260
+#: utils/membership.py:254
 msgid "Invalid invitation token."
 msgstr "Ogiltig inbjudningstoken."
 
-#: utils/membership.py:263
+#: utils/membership.py:257
 msgid "The membership information has now been created."
 msgstr "Uppgifterna om medlemskapet har nu skapats."
 
@@ -4324,8 +4326,8 @@ msgid ""
 "Password change failed. Your new password must differ from your past "
 "passwords."
 msgstr ""
-"Lösenordsändringen misslyckades. Ditt nya lösenord måste skilja sig från dina "
-"tidigare lösenord."
+"Lösenordsändringen misslyckades. Ditt nya lösenord måste skilja sig från "
+"dina tidigare lösenord."
 
 #: views/account.py:565
 msgid "Password reset."

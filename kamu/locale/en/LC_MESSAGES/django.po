@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-18 15:49+0300\n"
+"POT-Creation-Date: 2026-05-19 16:22+0300\n"
 "Language: EN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3776,33 +3776,34 @@ msgstr ""
 msgid "Add %(name)s"
 msgstr ""
 
-#: utils/membership.py:168
-msgid "The membership requires higher assurance level: "
+#: utils/membership.py:167
+#, python-format
+msgid "The membership requires higher assurance level: %(level)s."
 msgstr ""
 
-#: utils/membership.py:183
+#: utils/membership.py:177
 #, python-format
 msgid ""
 "The membership requires a requirement you cannot currently fulfill: %(name)s."
 msgstr ""
 
-#: utils/membership.py:246
+#: utils/membership.py:240
 msgid "Invitation process has taken too long."
 msgstr ""
 
-#: utils/membership.py:252
+#: utils/membership.py:246
 msgid "This invitation has already been used."
 msgstr ""
 
-#: utils/membership.py:256
+#: utils/membership.py:250
 msgid "This invitation has expired."
 msgstr ""
 
-#: utils/membership.py:260
+#: utils/membership.py:254
 msgid "Invalid invitation token."
 msgstr ""
 
-#: utils/membership.py:263
+#: utils/membership.py:257
 msgid "The membership information has now been created."
 msgstr ""
 

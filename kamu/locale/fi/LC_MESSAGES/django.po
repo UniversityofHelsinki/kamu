@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-18 15:49+0300\n"
+"POT-Creation-Date: 2026-05-19 16:22+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -400,8 +400,8 @@ msgid ""
 "identifier. If the person is found using the identifier you provided, the "
 "name search will be skipped."
 msgstr ""
-"Etsi kutsuttavaa henkilöä ensisijaisesti yksilöivällä tunnisteella. "
-"Mikäli antamallasi tunnisteella löytyy henkilö, nimihaku ohitetaan."
+"Etsi kutsuttavaa henkilöä ensisijaisesti yksilöivällä tunnisteella. Mikäli "
+"antamallasi tunnisteella löytyy henkilö, nimihaku ohitetaan."
 
 #: forms/identity.py:85
 msgid ""
@@ -575,8 +575,8 @@ msgid ""
 "choose to send them an email to speed up the process. By default, no email "
 "is sent."
 msgstr ""
-"Hyväksyjät pystyvät hyväksymään kutsun heti kun olet sen tehnyt, mutta "
-"voit halutessasi lähettää sähköpostia hyväksyjille nopeuttaaksesi käsittelyä. "
+"Hyväksyjät pystyvät hyväksymään kutsun heti kun olet sen tehnyt, mutta voit "
+"halutessasi lähettää sähköpostia hyväksyjille nopeuttaaksesi käsittelyä. "
 "Oletuksena sähköpostiviestiä ei lähde."
 
 #: forms/membership.py:167 forms/membership.py:269
@@ -3827,7 +3827,6 @@ msgstr "Sähköpostikutsu"
 
 #: templates/membership/membership_invite_identity.html:46
 #, python-format
-#| msgid "Email address not found in the registry: %(email)s"
 msgid "The email address you provided was not found in our records: %(email)s"
 msgstr "Rekisteristä ei löytynyt antamaasi sähköpostiosoitetta: %(email)s"
 
@@ -4146,34 +4145,35 @@ msgstr "Jäsenyys vaatii käyttäjätiedon \"%(name)s\"."
 msgid "Add %(name)s"
 msgstr "Lisää %(name)s"
 
-#: utils/membership.py:168
-msgid "The membership requires higher assurance level: "
-msgstr "Jäsenyys vaatii korkeamman tunnistustason: "
+#: utils/membership.py:167
+#, python-format
+msgid "The membership requires higher assurance level: %(level)s."
+msgstr "Jäsenyys vaatii korkeamman tunnistustason: %(level)s."
 
-#: utils/membership.py:183
+#: utils/membership.py:177
 #, python-format
 msgid ""
 "The membership requires a requirement you cannot currently fulfill: %(name)s."
 msgstr ""
 "Jäsenyydellä on vaatimus, jota et voi tällä hetkellä täyttää: %(name)s."
 
-#: utils/membership.py:246
+#: utils/membership.py:240
 msgid "Invitation process has taken too long."
 msgstr "Kutsuprosessi on kestänyt liian kauan."
 
-#: utils/membership.py:252
+#: utils/membership.py:246
 msgid "This invitation has already been used."
 msgstr "Kutsu on jo käytetty."
 
-#: utils/membership.py:256
+#: utils/membership.py:250
 msgid "This invitation has expired."
 msgstr "Kutsu on vanhentunut."
 
-#: utils/membership.py:260
+#: utils/membership.py:254
 msgid "Invalid invitation token."
 msgstr "Virheellinen kutsukoodi."
 
-#: utils/membership.py:263
+#: utils/membership.py:257
 msgid "The membership information has now been created."
 msgstr "Jäsenyyden tiedot on nyt luotu."
 
@@ -4332,8 +4332,8 @@ msgid ""
 "Password change failed. Your new password must differ from your past "
 "passwords."
 msgstr ""
-"Salasanan vaihto epäonnistui. Uuden salasanan on oltava eri kuin "
-"aiemmat salasanasi."
+"Salasanan vaihto epäonnistui. Uuden salasanan on oltava eri kuin aiemmat "
+"salasanasi."
 
 #: views/account.py:565
 msgid "Password reset."

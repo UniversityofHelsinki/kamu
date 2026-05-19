@@ -164,13 +164,7 @@ def add_missing_requirement_messages(
             messages.add_message(
                 request,
                 messages.WARNING,
-                _(
-                    "The membership requires higher assurance level: "
-                    + str(requirement.level)
-                    + " ("
-                    + level_text
-                    + ")."
-                ),
+                _("The membership requires higher assurance level: %(level)s." % {"level": level_text}),
             )
         elif requirement.type == Requirement.Type.CONTRACT:
             _add_contract_message()

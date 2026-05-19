@@ -208,7 +208,7 @@ class RequirementsTests(BaseRoleTestCase):
         missing = self.membership.get_missing_requirements()
         add_missing_requirement_messages(request, missing, self.identity)
         self.assertEqual(
-            f"The membership requires higher assurance level: {Identity.AssuranceLevel.HIGH} (High).",
+            "The membership requires higher assurance level: High.",
             messages._queued_messages[0].message,
         )
         self.assertEqual(
