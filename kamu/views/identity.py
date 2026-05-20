@@ -272,6 +272,7 @@ class IdentityVerifyView(LoginRequiredMixin, DetailView):
                 objects=[self.object],
                 log_to_db=True,
             )
+            self.object.update_membership_statuses()
 
     def update_identifier(self, candour_response: dict[str, Any]) -> bool:
         """
@@ -626,6 +627,7 @@ class IdentityUpdateView(LoginRequiredMixin, UpdateView):
                 db_message=change_message,
             )
             self.log_authentication_setting_changes(form)
+            self.object.update_membership_statuses()
         return valid
 
     def get_form_kwargs(self) -> dict[str, Any]:

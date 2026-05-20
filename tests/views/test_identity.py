@@ -1366,6 +1366,29 @@ class IdentityVerificationTests(BaseTestCase):
             ]
         )
 
+    @override_settings(SAML_SUOMIFI_SSN="HTTP_SSN")
+    @override_settings(SAML_SUOMIFI_ASSURANCE="HTTP_ASSURANCE")
+    @override_settings(ALLOW_TEST_FPIC=True)
+    def test_identity_verify_suomifi_update_membership_requirements(self):
+        requirement = self.create_requirement(name="assurance")
+        role = self.create_role()
+        role.requirements.add(requirement)
+        membership = self.create_membership(
+            role, self.identity, start_delta_days=0, expire_delta_days=1, approver=self.user
+        )
+        self.assertEqual(membership.status, "require")
+        response = self.client.post(
+            self.url,
+            data={"verify_identity": "suomifi"},
+            follow=True,
+            headers={"SSN": "010181-900C", "ASSURANCE": "http://ftn.ficora.fi/2017/loa3"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.identity.refresh_from_db()
+        self.assertEqual(self.identity.assurance_level, Identity.AssuranceLevel.HIGHEST)
+        membership.refresh_from_db()
+        self.assertEqual(membership.status, "active")
+
     def create_candour_response(self, status_code=200, json_data=None):
         response = Response()
         response.status_code = status_code

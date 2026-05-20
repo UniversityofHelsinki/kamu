@@ -172,6 +172,15 @@ REQUIREMENTS: dict = {
         "value": "phone_number",
         "grace": 30,
     },
+    "assurance": {
+        "name_en": "Assurance level high",
+        "name_fi": "Varmennustaso korkea",
+        "name_sv": "Varmenningsnivå hög",
+        "type": Requirement.Type.ASSURANCE,
+        "value": "",
+        "level": 30,
+        "grace": 0,
+    },
 }
 
 ROLES: dict = {

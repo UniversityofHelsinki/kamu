@@ -1063,6 +1063,7 @@ class SuomiFiBackend(LocalBaseBackend):
                 objects=[identity],
                 log_to_db=True,
             )
+            identity.update_membership_statuses()
         return None
 
 

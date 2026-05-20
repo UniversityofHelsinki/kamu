@@ -390,6 +390,16 @@ class Identity(models.Model):
             for attr in self.basic_verification_fields() + self.restricted_verification_fields()
         ]
 
+    def update_membership_statuses(self) -> None:
+        """
+        Check and update linked membership statuses.
+        """
+        for membership in self.membership_set.exclude(status=Membership.Status.EXPIRED).exclude(
+            status=Membership.Status.CANCELLED
+        ):
+            if membership.status != membership.get_status():
+                membership.save()
+
     def save(self, *args: Any, **kwargs: Any) -> None:
         """
         Override save method to update the user's display names if they are not given.
