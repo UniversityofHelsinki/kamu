@@ -27,6 +27,8 @@ from django.utils import timezone
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
+from kamu.connectors import ApiError
+from kamu.connectors.persondb import PersonDBApiConnector
 from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
 from kamu.models.role import Role
 from kamu.models.token import Token
@@ -35,6 +37,7 @@ from kamu.utils.auth import set_default_permissions
 from kamu.utils.identity import (
     create_or_verify_email_address,
     create_or_verify_phone_number,
+    get_identity_from_persondb,
     update_identity_attributes,
 )
 from kamu.validators.identity import validate_fpic
@@ -158,6 +161,9 @@ class LocalBaseBackend(ModelBackend):
         "staff_restricted_to_ip": _("Staff and Superuser access is not allowed from this IP address."),
         "group_restricted_to_ip": _("You belong to a group that is not allowed from this IP address."),
         "configuration_error": _("Configuration error, service administrators have been notified."),
+        "multiple_identities_found": _(
+            "Multiple identities found with the same identifier. Please contact IT Helpdesk."
+        ),
     }
 
     def check_enabled(self) -> None:
@@ -489,13 +495,66 @@ class LocalBaseBackend(ModelBackend):
             pass
         return None
 
+    def _get_persondb_searchable_identifier(self, identifier_type: str, unique_identifier: str) -> str | None:
+        """
+        Get identifier value for PersonDB search. Only local EPPN, eIDAS and FPIC identifiers are supported.
+        """
+        if identifier_type == Identifier.Type.EPPN:
+            return (
+                unique_identifier.removesuffix(settings.LOCAL_EPPN_SUFFIX)
+                if unique_identifier.endswith(settings.LOCAL_EPPN_SUFFIX)
+                else None
+            )
+        elif identifier_type == Identifier.Type.FPIC:
+            try:
+                validate_fpic(unique_identifier)
+                return unique_identifier
+            except ValidationError:
+                return None
+        elif identifier_type == Identifier.Type.EIDAS:
+            return unique_identifier
+        return None
+
+    def _get_identity_with_persondb(self, identifier_type: str, unique_identifier: str) -> Identity | None:
+        """
+        Search PersonDB with identifier and if found, search for Kamu identity with person's unique identifiers.
+        """
+        identifier = self._get_persondb_searchable_identifier(identifier_type, unique_identifier)
+        if identifier:
+            try:
+                connector = PersonDBApiConnector()
+                persons = connector.search_identifier(identifier)
+            except ApiError as e:
+                logger.error(f"PersonDB search failed with: {e}")
+                return None
+            if len(persons) == 1:
+                try:
+                    return get_identity_from_persondb(persons.pop())
+                except MultipleObjectsReturned:
+                    logger.error(f"Multiple identities found with PersonDB identifier {identifier}.")
+                    raise AuthenticationError(self.error_messages["multiple_identities_found"])
+            elif len(persons) > 1:
+                logger.error(f"Multiple persons found from PersonDB with identifier {identifier}.")
+        return None
+
+    def _get_identity(
+        self, identifier_type: str, unique_identifier: str, search_from_persondb: bool = False
+    ) -> Identity | None:
+        """
+        Search Identity from Kamu. Optionally with PersonDB information if PersonDB search is enabled.
+        """
+        identity = self._get_identity_with_local_user(identifier_type, unique_identifier)
+        if not identity:
+            identity = self._get_identity_with_identifier(identifier_type, unique_identifier)
+        if not identity and search_from_persondb:
+            identity = self._get_identity_with_persondb(identifier_type, unique_identifier)
+        return identity
+
     def _authenticate_login(self, request: HttpRequest, identifier_type: str, unique_identifier: str) -> UserType:
         """
         Log in with existing user.
         """
-        identity = self._get_identity_with_local_user(
-            identifier_type, unique_identifier
-        ) or self._get_identity_with_identifier(identifier_type, unique_identifier)
+        identity = self._get_identity(identifier_type, unique_identifier)
         if not identity:
             raise AuthenticationError(self.error_messages["identifier_not_found"])
         if not identity.user:
@@ -536,9 +595,9 @@ class LocalBaseBackend(ModelBackend):
         username = self._get_username(preferred_username, unique_identifier)
         if isinstance(request.user, UserType) and request.user.is_authenticated:
             raise AuthenticationError(self.error_messages["user_authenticated"])
-        identity = self._get_identity_with_local_user(
-            identifier_type, unique_identifier
-        ) or self._get_identity_with_identifier(identifier_type, unique_identifier)
+        identity = self._get_identity(
+            identifier_type, unique_identifier, getattr(settings, "PERSONDB_SEARCH_FOR_AUTH", False)
+        )
         if not identity:
             # Identity does not exist. Create user and link identifier (creates identity).
             user = self._create_user(username=username, email=email, given_names=given_names, surname=surname)

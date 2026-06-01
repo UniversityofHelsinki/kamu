@@ -17,7 +17,7 @@ from django.utils import timezone
 from kamu.models.identity import EmailAddress, Identifier, Identity, PhoneNumber
 from kamu.models.membership import Membership
 from kamu.models.token import Token
-from tests.data import USERS
+from tests.data import PERSONS, USERS
 from tests.setup import BaseTestCase
 
 UserModel = get_user_model()
@@ -95,6 +95,7 @@ class LoginViewTests(BaseTestCase):
     @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
     @override_settings(SAML_ATTR_PREFERRED_LANGUAGE="HTTP_PREFERRED_LANGUAGE")
+    @override_settings(PERSONDB_SEARCH_FOR_AUTH=True)
     def test_shibboleth_local_login_create_user(self):
         url = reverse("login-shibboleth")
         response = self.client.get(
@@ -105,6 +106,56 @@ class LoginViewTests(BaseTestCase):
         self.assertEqual(
             Identity.objects.filter(user__username="newuser@example.org", preferred_language="fi").count(), 1
         )
+
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
+    @override_settings(SAML_ATTR_PREFERRED_LANGUAGE="HTTP_PREFERRED_LANGUAGE")
+    @override_settings(PERSONDB_SEARCH_FOR_AUTH=True)
+    @mock.patch("kamu.connectors.persondb.PersonDBApiConnector.search_identifier")
+    def test_shibboleth_local_login_find_identity_with_persondb_fpic(self, mock_persondb_identifier):
+        Identifier.objects.create(type=Identifier.Type.FPIC, value="010181-900C", identity=self.identity)
+        url = reverse("login-shibboleth")
+        mock_persondb_identifier.return_value = [PERSONS.get("tester")]
+        response = self.client.get(
+            url, follow=True, headers={"EPPN": "testuser@example.org", "PREFERRED_LANGUAGE": "fi"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.identity.refresh_from_db()
+        self.assertEqual(self.identity.uid, "testuser")
+
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
+    @override_settings(SAML_ATTR_PREFERRED_LANGUAGE="HTTP_PREFERRED_LANGUAGE")
+    @override_settings(PERSONDB_SEARCH_FOR_AUTH=True)
+    @mock.patch("kamu.connectors.persondb.PersonDBApiConnector.search_identifier")
+    def test_shibboleth_local_login_find_identity_with_persondb_account_match(self, mock_persondb_identifier):
+        self.identity.uid = "testuser"
+        self.identity.save()
+        url = reverse("login-shibboleth")
+        mock_persondb_identifier.return_value = [PERSONS.get("tester")]
+        response = self.client.get(
+            url, follow=True, headers={"EPPN": "adminuser@example.org", "PREFERRED_LANGUAGE": "fi"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Identity.objects.all().count(), 1)
+
+    @override_settings(LOCAL_EPPN_SUFFIX="@example.org")
+    @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
+    @override_settings(SAML_ATTR_PREFERRED_LANGUAGE="HTTP_PREFERRED_LANGUAGE")
+    @override_settings(PERSONDB_SEARCH_FOR_AUTH=True)
+    @override_settings(PERSONDB_IMPORT_IGNORE_ACCOUNT_TYPES_IN_DUPLICATE_CHECK=["8"])
+    @mock.patch("kamu.connectors.persondb.PersonDBApiConnector.search_identifier")
+    def test_shibboleth_local_login_find_identity_with_persondb_skip_admin_account(self, mock_persondb_identifier):
+        url = reverse("login-shibboleth")
+        mock_persondb_identifier.return_value = [PERSONS.get("tester")]
+        response = self.client.get(
+            url, follow=True, headers={"EPPN": "adminuser@example.org", "PREFERRED_LANGUAGE": "fi"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.identity.refresh_from_db()
+        self.assertEqual(self.identity.uid, None)
+        self.assertEqual(Identity.objects.filter(uid="adminuser").count(), 1)
+        self.assertEqual(Identity.objects.all().count(), 2)
 
     @override_settings(SAML_ATTR_EPPN="HTTP_EPPN")
     def test_shibboleth_remote_login_no_user(self):

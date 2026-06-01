@@ -197,6 +197,9 @@ LDAP_SEARCH_FOR_IDENTITIES: bool = False  # Defaults to False
 # Should PersonDB be searched in identity search or when inviting members.
 PERSONDB_SEARCH_FOR_INVITES: bool = False  # Defaults to False
 PERSONDB_SEARCH_FOR_IDENTITIES: bool = False  # Defaults to False
+# Should PersonDB be searched when authenticating user. If True, identifier is also searched from the PersonDB and
+# Kamu identity will be searched with identifiers returned from the PersonDB (accounts and other unique identifiers).
+PERSONDB_SEARCH_FOR_AUTH: bool = False  # Defaults to False
 
 # List of account subtypes from which username is picked when importing from PersonDB.
 PERSONDB_IMPORT_USERNAME_FROM_ACCOUNT_SUBTYPES: list[int] = [1000]
