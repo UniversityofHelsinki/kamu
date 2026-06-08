@@ -40,12 +40,20 @@ Permissions can have cost, value and requirements, in addition to type, identifi
 Permission types are:
 
 - account
-   - User has permission to create account. Some accounts may be created through Kamu, others are linked to external
-     systems.
+   - User has permission to user account. See Account permissions below for more details.
 - service
    - User has permission to use a service. These are used to limit light account access to specific services.
 - generic
    - Generic permissions have no effect for the Kamu system itself, and are meant to be used by the external systems.
+
+Account permissions
+...................
+Account permissions are used to define what kind of accounts a user has permission to have.
+
+Permission value defines the account type. Actions for different account types are defined in the ACCOUNT_ACTIONS
+setting. Key in the ACCOUNT_ACTIONS dict is the "value" of the account permission and value is the action to perform.
+Supported actions are either "create" that means the account is created internally with the Kamu UI and URL that means
+the user is redirected to that URL to create the account.
 
 Requirements
 ------------

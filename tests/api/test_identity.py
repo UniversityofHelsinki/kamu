@@ -164,7 +164,7 @@ class IdentityAPIDetailTests(BaseAPITestCase):
         self.assertEqual(data["phone_numbers"][0]["number"], self.phone_number.number)
         self.assertEqual(data["memberships"][0]["role"], self.role3.identifier)
         self.assertEqual(set(data["memberships"][0]["parents"]), {"ext_employee", "ext_research"})
-        self.assertEqual(set(data["memberships"][0]["permissions"]), {"lightaccount", "account"})
+        self.assertEqual(set(data["memberships"][0]["permissions"]), {"lightaccount-id", "account-id"})
         self.assertEqual(data["accounts"][0]["uid"], "testaccount")
 
 

@@ -102,7 +102,8 @@ ORGANISATIONS: dict = {
 PERMISSIONS: dict = {
     "account": {
         "type": Permission.Type.ACCOUNT,
-        "identifier": "account",
+        "identifier": "account-id",
+        "value": "account",
         "name_en": "User account",
         "name_fi": "Käyttäjätunnus",
         "name_sv": "Användarnamn",
@@ -113,7 +114,8 @@ PERMISSIONS: dict = {
     },
     "lightaccount": {
         "type": Permission.Type.ACCOUNT,
-        "identifier": "lightaccount",
+        "identifier": "lightaccount-id",
+        "value": "lightaccount",
         "name_en": "Lightaccount",
         "name_fi": "Kevyttunnus",
         "name_sv": "Lättkonto",
@@ -125,6 +127,7 @@ PERMISSIONS: dict = {
     "externalaccount": {
         "type": Permission.Type.ACCOUNT,
         "identifier": "externalaccount",
+        "value": "externalaccount",
         "name_en": "External account",
         "name_fi": "Ulkoinen tunnus",
         "name_sv": "Extern konto",

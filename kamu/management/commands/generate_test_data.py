@@ -44,7 +44,7 @@ fake = Faker()
 ROLE_ADDONS: dict = {
     "ext_employee": {
         "sub_roles": ["HY247", "HY+", "Unigrafia"],
-        "permissions": ["account"],
+        "permissions": ["account-id"],
         "requirements": ["contract:nda"],
         "purge_delay": 50,
         "set_inviters": False,
@@ -53,7 +53,7 @@ ROLE_ADDONS: dict = {
     },
     "consultant": {
         "sub_roles": ["TIKE", "OPA", "HY247", "KK"],
-        "permissions": ["account"],
+        "permissions": ["account-id"],
         "requirements": ["attribute:phone_number"],
         "purge_delay": 70,
         "set_inviters": True,
@@ -62,7 +62,7 @@ ROLE_ADDONS: dict = {
     },
     "ext_research": {
         "sub_roles": ["BYTDK", "HYMTDK", "MLTDK", "MMTDK"],
-        "permissions": ["lightaccount"],
+        "permissions": ["lightaccount-id"],
         "requirements": [],
         "purge_delay": 90,
         "set_inviters": False,
@@ -71,7 +71,7 @@ ROLE_ADDONS: dict = {
     },
     "guest_student": {
         "sub_roles": ["BYTDK", "HYMTDK", "MLTDK", "MMTDK"],
-        "permissions": ["lightaccount"],
+        "permissions": ["lightaccount-id"],
         "requirements": [],
         "purge_delay": 110,
         "set_inviters": False,
@@ -80,7 +80,7 @@ ROLE_ADDONS: dict = {
     },
     "ext_board": {
         "sub_roles": [],
-        "permissions": ["account"],
+        "permissions": ["account-id"],
         "requirements": ["contract:secretcontract"],
         "set_inviters": False,
         "set_approvers": False,

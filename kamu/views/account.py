@@ -74,7 +74,7 @@ class AccountCreateView(LoginRequiredMixin, FormView):
         if self.identity.user != user and not user.has_perms(["kamu.change_accounts"]):
             raise PermissionDenied
         account_permissions = self.identity.get_permissions(permission_type=Permission.Type.ACCOUNT).values_list(
-            "identifier", flat=True
+            "value", flat=True
         )
         existing_accounts = Account._default_manager.filter(identity=self.identity).values_list("type", flat=True)
         self.account_type = self.kwargs.get("account_type", None)
@@ -352,7 +352,7 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
             raise PermissionDenied
         if self.object.type not in self.object.identity.get_permissions(
             permission_type=Permission.Type.ACCOUNT
-        ).values_list("identifier", flat=True):
+        ).values_list("value", flat=True):
             messages.add_message(self.request, messages.WARNING, _("Your permission to this account has expired."))
             return
         if self.object.status == Account.Status.DISABLED:
@@ -467,7 +467,7 @@ class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
         if self.object.status == Account.Status.LOCKED:
             if self.object.type in self.object.identity.get_permissions(
                 permission_type=Permission.Type.ACCOUNT
-            ).values_list("identifier", flat=True):
+            ).values_list("value", flat=True):
                 self.object.status = Account.Status.DISABLED
             else:
                 self.object.status = Account.Status.EXPIRED

@@ -56,7 +56,7 @@ def get_creatable_accounts(identity: Identity, include_external: bool = True) ->
     Name is Account.Type label for accounts created in Kamu and permission name for externally created accounts.
     """
     account_permissions = identity.get_permissions(permission_type=Permission.Type.ACCOUNT)
-    account_permission_types = account_permissions.values_list("identifier", flat=True)
+    account_permission_types = account_permissions.values_list("value", flat=True)
     existing_account_types = identity.useraccount.values_list("type", flat=True)
     creatable_accounts = []
     for account_type in set(account_permission_types) - set(existing_account_types):
@@ -68,7 +68,7 @@ def get_creatable_accounts(identity: Identity, include_external: bool = True) ->
                     "name": (
                         Account.Type(account_type).label
                         if account_type in Account.Type and action == "create"
-                        else account_permissions.get(identifier=account_type).name()
+                        else account_permissions.get(value=account_type).name()
                     ),
                     "action": action,
                 }
@@ -102,7 +102,7 @@ def get_account_base_membership(identity: Identity, account_type: Account.Type) 
     )
     for membership in memberships:
         for permission in membership.role.get_permissions():
-            if permission.identifier == account_type:
+            if permission.value == account_type:
                 return membership
     return None
 

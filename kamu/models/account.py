@@ -77,7 +77,7 @@ class Account(models.Model):
         from kamu.connectors.account import AccountApiConnector
 
         account_permissions = self.identity.get_permissions(permission_type=Permission.Type.ACCOUNT).values_list(
-            "identifier", flat=True
+            "value", flat=True
         )
         if self.type not in account_permissions:
             if self.status == Account.Status.ENABLED:
