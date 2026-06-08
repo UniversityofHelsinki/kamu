@@ -1564,7 +1564,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
                 Identity.objects.filter(identifiers__type=Identifier.Type.FPIC, identifiers__value=fpic)
             )
         if uid:
-            queryset = queryset.union(Identity.objects.filter(uid=uid))
+            queryset = queryset.union(Identity.objects.filter(Q(uid=uid) | Q(useraccount__uid=uid)))
         if email:
             queryset = queryset.union(Identity.objects.filter(email_addresses__address__iexact=email))
         if phone:

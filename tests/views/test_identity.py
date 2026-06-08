@@ -343,6 +343,20 @@ class IdentitySearchTests(BaseTestCase):
         response = self.client.post(self.url, data)
         self.assertEqual(len(response.context["object_list"]), 1)
 
+    def test_search_identity_uid(self):
+        identity = self.create_identity()
+        uid = "test1234"
+        account = self.create_account(uid=uid)
+        data = {"identifier": account.uid}
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(identity.display_name(), response.content.decode("utf-8"))
+        account.delete()
+        identity.uid = uid
+        identity.save()
+        response = self.client.post(self.url, data)
+        self.assertIn(identity.display_name(), response.content.decode("utf-8"))
+
     @override_settings(ALLOW_TEST_FPIC=True)
     @override_settings(SKIP_NAME_SEARCH_IF_IDENTIFIER_MATCHES=False)
     def test_search_identity_show_attributes(self):
