@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timedelta
 
 from django.conf import settings
@@ -20,6 +21,7 @@ from kamu.models.token import Token
 from kamu.utils.audit import AuditLog
 
 audit_log = AuditLog()
+logger = logging.getLogger(__name__)
 
 
 def _get_base_membership_queryset(user: AbstractUser, include_inviters: bool = False) -> QuerySet[Membership]:
@@ -75,6 +77,13 @@ def add_missing_requirement_messages(
     Add messages for missing requirements to the request.
     """
 
+    if request.user == identity.user:
+        message_level = messages.WARNING
+        optional_manager_text = ""
+    else:
+        message_level = messages.INFO
+        optional_manager_text = " " + _("The member can fulfill this requirement in Kamu.")
+
     def _get_link(url_name: str, text: StrOrPromise, kwargs: dict[str, int]) -> str:
         """
         Add link to the message.
@@ -90,17 +99,19 @@ def add_missing_requirement_messages(
         """
         Add missing contract message to the request. Add link if the user is the identity owner.
         """
+        message: StrOrPromise = ""
         template = (
             ContractTemplate.objects.filter(type=requirement.value, version__gte=requirement.level)
             .order_by("-version")
             .first()
         )
         if not template:
-            messages.add_message(
-                request,
-                messages.ERROR,
-                _("The membership requires a contract you cannot currently sign."),
-            )
+            if request.user == identity.user:
+                message = _("The membership requires a contract you cannot currently sign.")
+            else:
+                message = _("The membership requires a contract the member cannot currently sign.")
+            messages.add_message(request, messages.ERROR, message)
+            logger.error(f"Contract type does not have template: {requirement.value}")
         else:
             message = _('The membership requires a signed contract: "%(name)s".') % {"name": template.name()}
             if requirement.level:
@@ -113,7 +124,7 @@ def add_missing_requirement_messages(
                     "contract-sign", _("Review and sign"), {"identity_pk": identity.pk, "template_pk": template.pk}
                 )
                 message = f'<p class="fw-bold">{message}</p>{link}'
-            messages.add_message(request, messages.WARNING, message, extra_tags="safe")
+            messages.add_message(request, message_level, message + optional_manager_text, extra_tags="safe")
 
     def _add_attribute_message() -> None:
         """
@@ -127,14 +138,14 @@ def add_missing_requirement_messages(
             if request.user == identity.user:
                 link = _get_link("contact-change", _("Add and verify email address"), {"pk": identity.pk})
                 message = f'<p class="fw-bold">{message}</p>{link}'
-            messages.add_message(request, messages.WARNING, message, extra_tags="safe")
+            messages.add_message(request, message_level, message + optional_manager_text, extra_tags="safe")
             return
         if requirement.value == "phone_number":
             message = _("The membership requires a verified phone number.")
             if request.user == identity.user:
                 link = _get_link("contact-change", _("Add and verify phone number"), {"pk": identity.pk})
                 message = f'<p class="fw-bold">{message}</p>{link}'
-            messages.add_message(request, messages.WARNING, message, extra_tags="safe")
+            messages.add_message(request, message_level, message + optional_manager_text, extra_tags="safe")
             return
         field = Identity._meta.get_field(requirement.value)
         if hasattr(field, "verbose_name"):
@@ -156,27 +167,35 @@ def add_missing_requirement_messages(
         if request.user == identity.user or request.user.has_perm("kamu.change_restricted_information"):
             link = _get_link("identity-change", _("Add %(name)s") % {"name": name}, {"pk": identity.pk})
             message = f'<p class="fw-bold">{message}</p>{link}'
-        messages.add_message(request, messages.WARNING, message, extra_tags="safe")
+        messages.add_message(request, message_level, message + optional_manager_text, extra_tags="safe")
+
+    def _add_invalid_requirement_message(requirement_type: str) -> None:
+        if request.user == identity.user:
+            message = _("The membership requires a requirement you cannot currently fulfill: %(name)s.") % {
+                "name": requirement.name()
+            }
+        else:
+            message = _("The membership requires a requirement the member cannot currently fulfill: %(name)s.") % {
+                "name": requirement.name()
+            }
+        messages.add_message(request, messages.ERROR, message)
+        logger.error(f"Requirement type without check: {requirement_type}")
 
     for requirement in missing_requirements:
         if requirement.type == Requirement.Type.ASSURANCE:
             level_text = Identity.get_assurance_level_display_by_value(requirement.level)
             messages.add_message(
                 request,
-                messages.WARNING,
-                _("The membership requires higher assurance level: %(level)s." % {"level": level_text}),
+                message_level,
+                _("The membership requires higher assurance level: %(level)s." % {"level": level_text})
+                + optional_manager_text,
             )
         elif requirement.type == Requirement.Type.CONTRACT:
             _add_contract_message()
         elif requirement.type == Requirement.Type.ATTRIBUTE:
             _add_attribute_message()
         else:
-            messages.add_message(
-                request,
-                messages.ERROR,
-                _("The membership requires a requirement you cannot currently fulfill: %(name)s.")
-                % {"name": requirement.name()},
-            )
+            _add_invalid_requirement_message(requirement.type)
 
 
 def get_invitation_session_parameters(request: HttpRequest) -> tuple[str, datetime]:

@@ -686,7 +686,7 @@ msgstr "Begränsat användarkonto"
 #: templates/membership/membership_detail.html:61
 #: templates/membership/membership_expiring_list.html:16
 #: templates/membership/membership_managed_list.html:15
-#: templates/role/role_detail.html:64
+#: templates/role/role_detail.html:67
 msgid "Status"
 msgstr "Status"
 
@@ -1148,7 +1148,7 @@ msgstr "Ogiltigt format för eduPersonPrincipalName."
 #: models/membership.py:56
 #: templates/membership/membership_approval_list.html:24
 #: templates/membership/membership_expiring_list.html:25
-#: templates/role/role_detail.html:73
+#: templates/role/role_detail.html:76
 msgid "Invited"
 msgstr "Inbjuden"
 
@@ -1252,7 +1252,7 @@ msgid "Membership"
 msgstr "Medlemskap"
 
 #: models/membership.py:135 templates/base.html:32
-#: templates/role/role_detail.html:58
+#: templates/role/role_detail.html:61
 msgid "Memberships"
 msgstr "Medlemskap"
 
@@ -1318,7 +1318,7 @@ msgstr "Rollbeskrivning (sv)"
 
 #: models/role.py:50 templates/membership/membership_detail.html:27
 #: templates/membership/membership_invite.html:19
-#: templates/role/role_detail.html:19
+#: templates/role/role_detail.html:22
 msgid "Organisation unit"
 msgstr "Organisationsenhet"
 
@@ -1326,15 +1326,15 @@ msgstr "Organisationsenhet"
 msgid "Notification email address"
 msgstr "E-postadress för aviseringar"
 
-#: models/role.py:57 templates/role/role_detail.html:44
+#: models/role.py:57 templates/role/role_detail.html:47
 msgid "Notification language"
 msgstr "Språk för aviseringar"
 
-#: models/role.py:60 templates/role/role_detail.html:31
+#: models/role.py:60 templates/role/role_detail.html:34
 msgid "Inviter groups"
 msgstr "Inbjudargrupper"
 
-#: models/role.py:63 templates/role/role_detail.html:34
+#: models/role.py:63 templates/role/role_detail.html:37
 msgid "Approver groups"
 msgstr "Godkännargrupper"
 
@@ -1346,6 +1346,7 @@ msgid "Permissions"
 msgstr "Behörigheter"
 
 #: models/role.py:68 models/role.py:309 models/role.py:417
+#: templates/role/role_detail.html:16
 msgid "Requirements"
 msgstr "Krav"
 
@@ -3280,7 +3281,7 @@ msgstr "Nuvarande och framtida medlemskap"
 #: templates/membership/membership_approval_list.html:16
 #: templates/membership/membership_detail.html:63
 #: templates/membership/membership_expiring_list.html:17
-#: templates/role/role_detail.html:65
+#: templates/role/role_detail.html:68
 msgid "Start date"
 msgstr "Startdatum"
 
@@ -3291,7 +3292,7 @@ msgstr "Startdatum"
 #: templates/membership/membership_detail.html:127
 #: templates/membership/membership_detail.html:154
 #: templates/membership/membership_expiring_list.html:18
-#: templates/role/role_detail.html:66
+#: templates/role/role_detail.html:69
 msgid "Expiration date"
 msgstr "Avslutningsdag"
 
@@ -3548,7 +3549,7 @@ msgstr ""
 #: templates/membership/membership_detail.html:152
 #: templates/membership/membership_expiring_list.html:14
 #: templates/membership/membership_managed_list.html:13
-#: templates/role/role_detail.html:63
+#: templates/role/role_detail.html:66
 msgid "Person"
 msgstr "Person"
 
@@ -3581,19 +3582,19 @@ msgstr "Beskrivning"
 
 #: templates/membership/membership_detail.html:25
 #: templates/membership/membership_invite.html:17
-#: templates/role/role_detail.html:16
+#: templates/role/role_detail.html:19
 msgid "Annual costs"
 msgstr "Årliga kostnader"
 
 #: templates/membership/membership_detail.html:29
 #: templates/membership/membership_invite.html:21
-#: templates/role/role_detail.html:22
+#: templates/role/role_detail.html:25
 msgid "Maximum duration"
 msgstr "Maximal varaktighet"
 
 #: templates/membership/membership_detail.html:30
 #: templates/membership/membership_invite.html:22
-#: templates/role/role_detail.html:23
+#: templates/role/role_detail.html:26
 msgid "days"
 msgstr "dagar"
 
@@ -3738,7 +3739,7 @@ msgid "Join role"
 msgstr "Gå med i roll"
 
 #: templates/membership/membership_invite.html:6
-#: templates/role/role_detail.html:49
+#: templates/role/role_detail.html:52
 msgid "Invite a new member"
 msgstr "Bjud in nya medlemmar"
 
@@ -3747,17 +3748,17 @@ msgid "Role information"
 msgstr "Uppgifter om rollen"
 
 #: templates/membership/membership_invite.html:23
-#: templates/role/role_detail.html:37
+#: templates/role/role_detail.html:40
 msgid "SMS verification"
 msgstr "SMS-verifiering"
 
 #: templates/membership/membership_invite.html:24
-#: templates/role/role_detail.html:38
+#: templates/role/role_detail.html:41
 msgid "Yes"
 msgstr "Ja"
 
 #: templates/membership/membership_invite.html:24
-#: templates/role/role_detail.html:38
+#: templates/role/role_detail.html:41
 msgid "No"
 msgstr "Nej"
 
@@ -3895,23 +3896,23 @@ msgstr "Verifieringsnummer"
 msgid "Role details"
 msgstr "Uppgifter om rollen"
 
-#: templates/role/role_detail.html:25
+#: templates/role/role_detail.html:28
 msgid "Parent"
 msgstr "Överordnad"
 
-#: templates/role/role_detail.html:28
+#: templates/role/role_detail.html:31
 msgid "Owner"
 msgstr "Ägare"
 
-#: templates/role/role_detail.html:40
+#: templates/role/role_detail.html:43
 msgid "Notification address"
 msgstr "Aviseringsadress"
 
-#: templates/role/role_detail.html:52
+#: templates/role/role_detail.html:55
 msgid "Join"
 msgstr "Gå med"
 
-#: templates/role/role_detail.html:55
+#: templates/role/role_detail.html:58
 #, python-format
 msgid "Invite multiple members (max %(limit)s)"
 msgstr "Bjud in flera medlemmar (max %(limit)s)"
@@ -4099,7 +4100,11 @@ msgstr "Aktivera konto"
 msgid "Continue to external service to activate account"
 msgstr "Fortsätt till extern tjänst för att aktivera konto"
 
-#: utils/membership.py:84
+#: utils/membership.py:85
+msgid "The member can fulfill this requirement in Kamu."
+msgstr "Medlemmen kan uppfylla detta krav i Kamu."
+
+#: utils/membership.py:93
 msgid ""
 "<p>Membership and privileges (e.g., a user account) activate only after the "
 "required action is completed.</p>"
@@ -4107,16 +4112,21 @@ msgstr ""
 "<p>Medlemskap och privilegier (t.ex. ett användarkonto) aktiveras endast när "
 "den nödvändiga åtgärden är slutförd.</p>"
 
-#: utils/membership.py:102
+#: utils/membership.py:110
 msgid "The membership requires a contract you cannot currently sign."
 msgstr "Medlemskapet kräver ett avtal som du för närvarande inte kan signera."
 
-#: utils/membership.py:105
+#: utils/membership.py:112
+msgid "The membership requires a contract the member cannot currently sign."
+msgstr ""
+"Medlemskapet kräver ett avtal som medlemmen för närvarande inte kan signera."
+
+#: utils/membership.py:116
 #, python-format
 msgid "The membership requires a signed contract: \"%(name)s\"."
 msgstr "Godkännande saknas i avtalet. Öppna och godkänn avtalet: ”%(name)s”."
 
-#: utils/membership.py:107
+#: utils/membership.py:118
 #, python-format
 msgid ""
 "The membership requires a signed contract \"%(name)s\", version %(version)d "
@@ -4125,27 +4135,27 @@ msgstr ""
 "Medlemskapet kräver ett signerat avtal ”%(name)s”, version %(version)d eller "
 "högre."
 
-#: utils/membership.py:113
+#: utils/membership.py:124
 msgid "Review and sign"
 msgstr "Granska och signera"
 
-#: utils/membership.py:126
+#: utils/membership.py:137
 msgid "The membership requires a verified email address."
 msgstr "Medlemskapet kräver en verifierad e-postadress."
 
-#: utils/membership.py:128
+#: utils/membership.py:139
 msgid "Add and verify email address"
 msgstr "Lägg till eller verifiera e-post"
 
-#: utils/membership.py:133
+#: utils/membership.py:144
 msgid "The membership requires a verified phone number."
 msgstr "Medlemskapet kräver ett verifierat telefonnummer."
 
-#: utils/membership.py:135
+#: utils/membership.py:146
 msgid "Add and verify phone number"
 msgstr "Lägg till eller verifiera telefon"
 
-#: utils/membership.py:147
+#: utils/membership.py:158
 #, python-format
 msgid ""
 "The membership requires an attribute \"%(name)s\" of at least verification "
@@ -4154,22 +4164,17 @@ msgstr ""
 "Medlemskapet kräver attributet ”%(name)s” med minst verifieringsnivå: "
 "%(level)d (%(level_text)s)."
 
-#: utils/membership.py:155
+#: utils/membership.py:166
 #, python-format
 msgid "The membership requires an attribute \"%(name)s\"."
 msgstr "Medlemskapet kräver attributet ”%(name)s”."
 
-#: utils/membership.py:157
+#: utils/membership.py:168
 #, python-format
 msgid "Add %(name)s"
 msgstr "Lägg till %(name)s"
 
-#: utils/membership.py:167
-#, python-format
-msgid "The membership requires higher assurance level: %(level)s."
-msgstr "Medlemskapet kräver högre kontrollnivå: %(level)s."
-
-#: utils/membership.py:177
+#: utils/membership.py:174
 #, python-format
 msgid ""
 "The membership requires a requirement you cannot currently fulfill: %(name)s."
@@ -4177,23 +4182,37 @@ msgstr ""
 "Medlemskapet kräver ett krav som du för närvarande inte kan uppfylla: "
 "%(name)s."
 
-#: utils/membership.py:240
+#: utils/membership.py:178
+#, python-format
+msgid ""
+"The membership requires a requirement the member cannot currently fulfill: "
+"%(name)s."
+msgstr ""
+"Medlemskapet kräver ett krav som medlemmen för närvarande inte kan uppfylla: "
+"%(name)s."
+
+#: utils/membership.py:190
+#, python-format
+msgid "The membership requires higher assurance level: %(level)s."
+msgstr "Medlemskapet kräver högre kontrollnivå: %(level)s."
+
+#: utils/membership.py:259
 msgid "Invitation process has taken too long."
 msgstr "Inbjudningsprocessen tog för lång tid."
 
-#: utils/membership.py:246
+#: utils/membership.py:265
 msgid "This invitation has already been used."
 msgstr "Denna inbjudan har redan använts."
 
-#: utils/membership.py:250
+#: utils/membership.py:269
 msgid "This invitation has expired."
 msgstr "Denna inbjudan har gått ut."
 
-#: utils/membership.py:254
+#: utils/membership.py:273
 msgid "Invalid invitation token."
 msgstr "Ogiltig inbjudningstoken."
 
-#: utils/membership.py:257
+#: utils/membership.py:276
 msgid "The membership information has now been created."
 msgstr "Uppgifterna om medlemskapet har nu skapats."
 

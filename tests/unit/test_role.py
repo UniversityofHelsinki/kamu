@@ -208,12 +208,17 @@ class RequirementsTests(BaseRoleTestCase):
         missing = self.membership.get_missing_requirements()
         add_missing_requirement_messages(request, missing, self.identity)
         self.assertEqual(
-            "The membership requires higher assurance level: High.",
+            20,
+            messages._queued_messages[0].level,
+        )
+        self.assertEqual(
+            "The membership requires higher assurance level: High. The member can fulfill this requirement in Kamu.",
             messages._queued_messages[0].message,
         )
         self.assertEqual(
             'The membership requires an attribute "date of birth" of at least verification level: '
-            f"{Identity.VerificationMethod.EXTERNAL} (External source).",
+            f"{Identity.VerificationMethod.EXTERNAL} (External source). The member can fulfill this requirement in "
+            "Kamu.",
             messages._queued_messages[1].message,
         )
         self.assertNotIn(
@@ -225,7 +230,7 @@ class RequirementsTests(BaseRoleTestCase):
             messages._queued_messages[2].message,
         )
         self.assertEqual(
-            "The membership requires a contract you cannot currently sign.",
+            "The membership requires a contract the member cannot currently sign.",
             messages._queued_messages[3].message,
         )
 
@@ -251,6 +256,11 @@ class RequirementsTests(BaseRoleTestCase):
         self.assertIn(
             'The membership requires a signed contract "NDA", version 2 or higher.',
             messages._queued_messages[3].message,
+        )
+        self.assertNotIn("The member can fulfill this requirement in Kamu.", messages._queued_messages[3].message)
+        self.assertEqual(
+            30,
+            messages._queued_messages[3].level,
         )
 
 
