@@ -1003,6 +1003,11 @@ class LinkIdentifierTests(BaseTestCase):
         self.assertEqual(self.identity.date_of_birth_verification, Identity.VerificationMethod.STRONG)
         self.assertEqual(self.identity.fpic, "010181-900C")
         self.assertEqual(self.identity.fpic_verification, Identity.VerificationMethod.STRONG)
+        self.assertTrue(
+            Identifier.objects.filter(identity=self.identity, type=Identifier.Type.FPIC, value="010181-900C")
+            .exclude(verified=None)
+            .exists()
+        )
         audit_logger.log.assert_has_calls(
             [
                 call(
@@ -1021,4 +1026,37 @@ class LinkIdentifierTests(BaseTestCase):
                     extra=ANY,
                 ),
             ]
+        )
+
+    @override_settings(SAML_SUOMIFI_SSN="HTTP_SSN")
+    @override_settings(SAML_SUOMIFI_ASSURANCE="HTTP_ASSURANCE")
+    @override_settings(ALLOW_TEST_FPIC=True)
+    def test_link_suomifi_another_user_has_fpic(self):
+        another_identity = self.create_superidentity()
+        another_identity.fpic = "010181-900C"
+        another_identity.save()
+        url = reverse("login-suomifi")
+        headers = {
+            "SSN": "010181-900C",
+            "ASSURANCE": "http://eidas.europa.eu/LoA/high",
+        }
+        response = self.client.get(url, follow=True, headers=headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Suspected duplicate user", response.content.decode("utf-8"))
+
+    @override_settings(SAML_SUOMIFI_SSN="HTTP_SSN")
+    @override_settings(SAML_SUOMIFI_ASSURANCE="HTTP_ASSURANCE")
+    @override_settings(ALLOW_TEST_FPIC=True)
+    def test_link_suomifi_existing_fpic(self):
+        self.identity.fpic = "010181-999K"
+        self.identity.save()
+        url = reverse("login-suomifi")
+        headers = {
+            "SSN": "010181-900C",
+            "ASSURANCE": "http://eidas.europa.eu/LoA/high",
+        }
+        response = self.client.get(url, follow=True, headers=headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "Please contact support if you need to change your identity code", response.content.decode("utf-8")
         )

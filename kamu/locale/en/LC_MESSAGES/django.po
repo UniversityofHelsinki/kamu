@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 09:12+0300\n"
+"POT-Creation-Date: 2026-06-10 14:53+0300\n"
 "Language: EN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3704,22 +3704,29 @@ msgstr ""
 msgid "Phone number is required."
 msgstr ""
 
-#: utils/identity.py:805
+#: utils/identity.py:808
 msgid ""
 "Suspected duplicate user. Finnish personal identity code already exists in "
 "the database: "
 msgstr ""
 
-#: utils/identity.py:872
+#: utils/identity.py:830
+msgid ""
+"You already have a Finnish personal identity code that differs from the one "
+"you are trying to add. Please contact support if you need to change your "
+"identity code: "
+msgstr ""
+
+#: utils/identity.py:910
 #, python-format
 msgid "You can activate a new user account of type \"%(account_type)s\"."
 msgstr ""
 
-#: utils/identity.py:877
+#: utils/identity.py:915
 msgid "Activate account"
 msgstr ""
 
-#: utils/identity.py:892
+#: utils/identity.py:930
 msgid "Continue to external service to activate account"
 msgstr ""
 

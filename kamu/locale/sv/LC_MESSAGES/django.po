@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 09:12+0300\n"
+"POT-Creation-Date: 2026-06-10 14:53+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -4069,23 +4069,33 @@ msgstr "E-postadress krävs."
 msgid "Phone number is required."
 msgstr "Telefonnummer krävs."
 
-#: utils/identity.py:805
+#: utils/identity.py:808
 msgid ""
 "Suspected duplicate user. Finnish personal identity code already exists in "
 "the database: "
 msgstr ""
 "Misstänkt dubbel användare. Personbeteckningen finns redan i databasen: "
 
-#: utils/identity.py:872
+#: utils/identity.py:830
+msgid ""
+"You already have a Finnish personal identity code that differs from the one "
+"you are trying to add. Please contact support if you need to change your "
+"identity code: "
+msgstr ""
+"Du har redan en finländsk personbeteckning som skiljer sig från den du "
+"försöker lägga till. Kontakta supporten om du behöver ändra din "
+"personbeteckning: "
+
+#: utils/identity.py:910
 #, python-format
 msgid "You can activate a new user account of type \"%(account_type)s\"."
 msgstr "Du kan aktivera ett nytt användarkonto av typen ”%(account_type)s”."
 
-#: utils/identity.py:877
+#: utils/identity.py:915
 msgid "Activate account"
 msgstr "Aktivera konto"
 
-#: utils/identity.py:892
+#: utils/identity.py:930
 msgid "Continue to external service to activate account"
 msgstr "Fortsätt till extern tjänst för att aktivera konto"
 

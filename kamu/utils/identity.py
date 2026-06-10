@@ -787,8 +787,10 @@ def check_and_update_identity_attribute(
                 new_value = "O"
         case "fpic":
             if (
-                Identifier.objects.filter(type=Identifier.Type.FPIC, value=new_value)
-                .exclude(identity=identity)
+                Identity.objects.filter(
+                    Q(identifiers__type=Identifier.Type.FPIC, identifiers__value=new_value) | Q(fpic=new_value)
+                )
+                .exclude(pk=identity.pk)
                 .exists()
             ):
                 audit_log.warning(
@@ -800,9 +802,34 @@ def check_and_update_identity_attribute(
                     objects=[identity],
                     extra={"sensitive": new_value},
                 )
-                messages.error(
+                messages.add_message(
                     request,
+                    messages.ERROR,
                     _("Suspected duplicate user. Finnish personal identity code already exists in the database: ")
+                    + new_value,
+                )
+                return False
+            if (
+                identity.fpic
+                and identity.fpic != new_value
+                or identity.identifiers.filter(type=Identifier.Type.FPIC).exclude(value=new_value).exists()
+            ):
+                audit_log.warning(
+                    "Identity already has different FPIC.",
+                    category="identity",
+                    action="update",
+                    outcome="failure",
+                    request=request,
+                    objects=[identity],
+                    extra={"sensitive": new_value},
+                )
+                messages.add_message(
+                    request,
+                    messages.WARNING,
+                    _(
+                        "You already have a Finnish personal identity code that differs from the one you are trying "
+                        "to add. Please contact support if you need to change your identity code: "
+                    )
                     + new_value,
                 )
                 return False
@@ -819,6 +846,17 @@ def check_and_update_identity_attribute(
     if current_verification_method is not None and current_verification_method < verification_method.value:
         setattr(identity, f"{attribute}_verification", verification_method)
         changed = True
+    if attribute == "fpic":
+        verified = timezone.now() if verification_method >= Identity.VerificationMethod.PHOTO_ID else None
+        fpic, created = Identifier.objects.get_or_create(
+            identity=identity, type=Identifier.Type.FPIC, value=new_value, defaults={"verified": verified}
+        )
+        if not created and verified and not fpic.verified:
+            fpic.verified = verified
+            fpic.save()
+            changed = True
+        if created:
+            changed = True
     return changed
 
 
