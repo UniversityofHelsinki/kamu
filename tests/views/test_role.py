@@ -80,10 +80,16 @@ class RoleViewTests(BaseTestCase):
         self.client.force_login(self.user)
 
     def test_show_role(self):
+        permission = self.create_permission()
+        self.role.permissions.add(permission)
+        requirement = self.create_requirement()
+        permission.requirements.add(requirement)
         url = f"{self.url}{self.role.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.role.name(), response.content.decode("utf-8"))
+        self.assertIn(permission.name(), response.content.decode("utf-8"))
+        self.assertIn(requirement.name(), response.content.decode("utf-8"))
 
     def test_show_role_list(self):
         self.create_superidentity()
