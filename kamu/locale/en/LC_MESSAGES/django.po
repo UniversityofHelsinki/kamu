@@ -4278,3 +4278,18 @@ msgstr ""
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr ""
+
+#: templates/admin/kamu/permission/change_form_object_tools.html:5
+#: templates/admin/kamu/role/change_form_object_tools.html:5
+msgid "Add another based on this"
+msgstr ""
+
+#: templates/admin/kamu/permission/change_form_object_tools.html:10
+#: templates/admin/kamu/role/change_form_object_tools.html:10
+msgid "History"
+msgstr ""
+
+#: templates/admin/kamu/permission/change_form_object_tools.html:12
+#: templates/admin/kamu/role/change_form_object_tools.html:12
+msgid "View on site"
+msgstr ""

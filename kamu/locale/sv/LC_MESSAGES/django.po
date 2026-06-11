@@ -4696,3 +4696,18 @@ msgstr ""
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Följande identiteter har lagts till: {0}"
+
+#: templates/admin/kamu/permission/change_form_object_tools.html:5
+#: templates/admin/kamu/role/change_form_object_tools.html:5
+msgid "Add another based on this"
+msgstr "Lägg till en annan baserad på denna"
+
+#: templates/admin/kamu/permission/change_form_object_tools.html:10
+#: templates/admin/kamu/role/change_form_object_tools.html:10
+msgid "History"
+msgstr "Historik"
+
+#: templates/admin/kamu/permission/change_form_object_tools.html:12
+#: templates/admin/kamu/role/change_form_object_tools.html:12
+msgid "View on site"
+msgstr "Visa på webbplats"

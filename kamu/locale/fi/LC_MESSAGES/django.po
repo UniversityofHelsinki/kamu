@@ -4703,3 +4703,18 @@ msgstr ""
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Lisätty seuraavat henkilöllisyydet: {0}"
+
+#: templates/admin/kamu/permission/change_form_object_tools.html:5
+#: templates/admin/kamu/role/change_form_object_tools.html:5
+msgid "Add another based on this"
+msgstr "Lisää toinen tämän pohjalta"
+
+#: templates/admin/kamu/permission/change_form_object_tools.html:10
+#: templates/admin/kamu/role/change_form_object_tools.html:10
+msgid "History"
+msgstr "Historia"
+
+#: templates/admin/kamu/permission/change_form_object_tools.html:12
+#: templates/admin/kamu/role/change_form_object_tools.html:12
+msgid "View on site"
+msgstr "Näytä sivustolla"
