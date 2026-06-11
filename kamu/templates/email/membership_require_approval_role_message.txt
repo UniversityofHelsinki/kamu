@@ -1,5 +1,7 @@
-{% load i18n %}{% blocktrans %}Hi
+{% load i18n %}{% trans "Hi" %}
 
-Log in to Kamu {{ service_link }} to approve or reject a new membership for the role {{ role }}. You can find it under Memberships pending approval. If there are no memberships on the list, someone else has already processed it.
+{% blocktrans %}{{ inviter }} has sent an invitation from Kamu for the role of {{ role }}. Log in to Kamu {{ service_link }} to approve or reject the new membership for the role.{% endblocktrans %}
 
-Person invited to the role: {{ member }}{% endblocktrans %}
+{% blocktrans %}You can find the membership under Memberships pending approval. If there are no memberships on the list, someone else has already processed it.{% endblocktrans %}
+
+{% blocktrans %}Person invited to the role: {{ member }}{% endblocktrans %}

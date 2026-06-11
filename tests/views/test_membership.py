@@ -624,7 +624,8 @@ class MembershipInviteTests(BaseTestCase):
         )
         self.assertEqual(response.status_code, 200)
         identity = Identity.objects.get(uid="ldapuser")
-        self.assertTrue(Membership.objects.filter(role=self.role, identity=identity).exists())
+        membership = Membership.objects.filter(role=self.role, identity=identity).first()
+        self.assertIsNotNone(membership)
         self.assertEqual(identity.fpic, "010181-900C")
         self.assertEqual(identity.display_name(), "Ldap User")
         self.assertTrue(
@@ -641,7 +642,14 @@ class MembershipInviteTests(BaseTestCase):
             ]
         )
         self.assertIn(f"{self.identity.display_name()} has invited you to join", mail.outbox[0].body)
-        self.assertIn("to approve or reject a new membership", mail.outbox[1].body)
+        self.assertIn(
+            f"{membership.inviter.get_full_name()} has sent an invitation from Kamu for the role of {self.role}",
+            mail.outbox[1].body,
+        )
+        self.assertIn(
+            f"Person invited to the role: {membership.identity.display_name()}",
+            mail.outbox[1].body,
+        )
 
     @mock.patch("kamu.connectors.ldap._get_connection")
     @override_settings(ALLOW_TEST_FPIC=True)

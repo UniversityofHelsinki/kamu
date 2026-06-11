@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-10 14:53+0300\n"
+"POT-Creation-Date: 2026-06-12 14:40+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,114 +18,115 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.8\n"
 
-#: backends.py:148
+#: kamu/backends.py:148
 msgid "Identifier not found."
 msgstr "Identifieraren hittades inte."
 
-#: backends.py:149
+#: kamu/backends.py:149
 msgid "Valid identifier not found. This is probably a configuration error."
 msgstr ""
 "Giltig identifierare hittades inte. Detta är troligen ett konfigurationsfel."
 
-#: backends.py:150
+#: kamu/backends.py:150
 msgid "Identifier is already linked to another user."
 msgstr "Identifieraren är redan länkad till en annan användare."
 
-#: backends.py:151
+#: kamu/backends.py:151
 msgid "Invalid identifier format."
 msgstr "Ogiltigt identifieringsformat."
 
-#: backends.py:152
+#: kamu/backends.py:152
 msgid "Could not authenticate. Please try again."
 msgstr "Autentisering misslyckades. Vänligen försök igen."
 
-#: backends.py:153
+#: kamu/backends.py:153
 msgid "Identity provider is not authorised."
 msgstr "Identitetsleverantören är inte auktoriserad."
 
-#: backends.py:154
+#: kamu/backends.py:154
 msgid "Unexpected error."
 msgstr "Oväntat fel."
 
-#: backends.py:155
+#: kamu/backends.py:155
 msgid "Missing required parameters. Please try again with an another browser."
 msgstr "Obligatoriska parametrar saknas. Försök igen med en annan webbläsare."
 
-#: backends.py:156 forms/auth.py:41 forms/auth.py:106 forms/auth.py:130
+#: kamu/backends.py:156 kamu/forms/auth.py:41 kamu/forms/auth.py:106
+#: kamu/forms/auth.py:130
 msgid "Invalid email address or phone number."
 msgstr "Ogiltig e-postadress eller ogiltigt telefonnummer."
 
-#: backends.py:157 views/auth.py:127
+#: kamu/backends.py:157 kamu/views/auth.py:127
 msgid "You are already logged in."
 msgstr "Du är redan inloggad."
 
-#: backends.py:158
+#: kamu/backends.py:158
 msgid "User must be authenticated to link identifier."
 msgstr "Användaren måste vara autentiserad för att länka identifierare."
 
-#: backends.py:159
+#: kamu/backends.py:159
 msgid ""
 "Staff and Superuser access is not allowed with this authentication method."
 msgstr ""
 "Åtkomst för personal och superanvändare är inte tillåten med denna "
 "autentiseringsmetod."
 
-#: backends.py:160
+#: kamu/backends.py:160
 msgid "Role owner access is not allowed with this authentication method."
 msgstr "Åtkomst för rollägare är inte tillåten med denna autentiseringsmetod."
 
-#: backends.py:161
+#: kamu/backends.py:161
 msgid "Staff and Superuser access is not allowed from this IP address."
 msgstr ""
 "Åtkomst för personal och superanvändare är inte tillåten från denna IP-"
 "adress."
 
-#: backends.py:162
+#: kamu/backends.py:162
 msgid "You belong to a group that is not allowed from this IP address."
 msgstr "Du tillhör en grupp som inte är tillåten från denna IP-adress."
 
-#: backends.py:163
+#: kamu/backends.py:163
 msgid "Configuration error, service administrators have been notified."
 msgstr "Konfigurationsfel, tjänstens administratörer har meddelats."
 
-#: backends.py:165
+#: kamu/backends.py:165
 msgid ""
 "Multiple identities found with the same identifier. Please contact IT "
 "Helpdesk."
 msgstr ""
 "Flera identiteter hittades med samma identifierare. Kontakta IT-Helpdesk."
 
-#: backends.py:850
+#: kamu/backends.py:850
 msgid "Suspected duplicate user. Username already exists in the database: "
 msgstr "Misstänkt dubbel användare. Användarnamnet finns redan i databasen: "
 
-#: backends.py:864
+#: kamu/backends.py:864
 msgid "Suspected duplicate user. Identity already has a different username: "
 msgstr ""
 "Misstänkt dubbel användare. Identiteten har redan ett annat användarnamn: "
 
-#: connectors/email.py:97
+#: kamu/connectors/email.py:97
 #, python-format
 msgid "%(number)s new members"
 msgstr "%(number)s nya medlemmar"
 
-#: forms/account.py:19
+#: kamu/forms/account.py:19
 msgid "Password"
 msgstr "Lösenord"
 
-#: forms/account.py:20
+#: kamu/forms/account.py:20
 msgid "Retype the password"
 msgstr "Upprepa samma lösenord"
 
-#: forms/account.py:37
+#: kamu/forms/account.py:37
 msgid "Passwords do not match."
 msgstr "Lösenorden stämmer inte överens."
 
-#: forms/account.py:47
+#: kamu/forms/account.py:47
 msgid "Select username"
 msgstr "Välj användarnamn"
 
-#: forms/account.py:50
+#: kamu/forms/account.py:50
 msgid ""
 "NB! The username cannot be changed later, so please make your choice "
 "carefully. If necessary, you can create more options."
@@ -133,160 +134,163 @@ msgstr ""
 "Obs! Användarnamnet kan inte ändras senare, så välj med omsorg. Vid behov "
 "kan du skapa fler alternativ."
 
-#: forms/account.py:66
+#: kamu/forms/account.py:66
 msgid "Create limited user account"
 msgstr "Skapa begränsat användarkonto"
 
-#: forms/account.py:80
+#: kamu/forms/account.py:80
 msgid "Change your password"
 msgstr "Byt lösenord"
 
-#: forms/auth.py:33 forms/auth.py:240 models/identity.py:590
-#: models/identity.py:602 models/token.py:304
-#: templates/account/account_create.html:16
-#: templates/identity/contact_address.html:15
-#: templates/identity/identity_detail.html:69
+#: kamu/forms/auth.py:33 kamu/forms/auth.py:240 kamu/models/identity.py:590
+#: kamu/models/identity.py:602 kamu/models/token.py:304
+#: kamu/templates/account/account_create.html:16
+#: kamu/templates/identity/contact_address.html:15
+#: kamu/templates/identity/identity_detail.html:69
 msgid "Email address"
 msgstr "E-postadress"
 
-#: forms/auth.py:35 models/identity.py:664 models/identity.py:676
-#: models/token.py:301 templates/identity/contact_address.html:64
-#: templates/membership/membership_invite.html:42
+#: kamu/forms/auth.py:35 kamu/models/identity.py:664
+#: kamu/models/identity.py:676 kamu/models/token.py:301
+#: kamu/templates/identity/contact_address.html:64
+#: kamu/templates/membership/membership_invite.html:42
 msgid "Phone number"
 msgstr "Telefonnummer"
 
-#: forms/auth.py:37
+#: kamu/forms/auth.py:37
 msgid "Phone number in international format, e.g. +358123456789."
 msgstr "Telefonnummer i internationellt format, t.ex. +358123456789."
 
-#: forms/auth.py:42 views/auth.py:458
+#: kamu/forms/auth.py:42 kamu/views/auth.py:458
 msgid "This account is inactive."
 msgstr "Detta konto är inaktivt."
 
-#: forms/auth.py:51 forms/auth.py:403 templates/auth/invite.html:18
-#: templates/auth/invite.html:20 templates/auth/login.html:7
-#: templates/auth/login_email.html:5 templates/auth/login_local.html:5
-#: templates/base.html:74 templates/front.html:90 templates/front.html:92
+#: kamu/forms/auth.py:51 kamu/forms/auth.py:403
+#: kamu/templates/auth/invite.html:18 kamu/templates/auth/invite.html:20
+#: kamu/templates/auth/login.html:7 kamu/templates/auth/login_email.html:5
+#: kamu/templates/auth/login_local.html:5 kamu/templates/base.html:76
+#: kamu/templates/front.html:90 kamu/templates/front.html:92
 msgid "Login"
 msgstr "Logga in"
 
-#: forms/auth.py:69
+#: kamu/forms/auth.py:69
 msgid "Email address is required to send login verification code."
 msgstr "E-postadress krävs för att skicka verifieringskoden för inloggning."
 
-#: forms/auth.py:71
+#: kamu/forms/auth.py:71
 msgid "Phone number is required to send login verification code."
 msgstr "Telefonnummer krävs för att skicka verifieringskoden för inloggning."
 
-#: forms/auth.py:86
+#: kamu/forms/auth.py:86
 msgid ""
 "Tried to send new login tokens too soon. Please try again in one minute."
 msgstr ""
 "Du försökte skicka nya inloggningstokens för tidigt. Försök igen om en minut."
 
-#: forms/auth.py:90
+#: kamu/forms/auth.py:90
 msgid "Could not send SMS, please try again later."
 msgstr "Textmeddelandet kunde inte skickas, försök igen senare."
 
-#: forms/auth.py:111 forms/auth.py:171
+#: kamu/forms/auth.py:111 kamu/forms/auth.py:171
 msgid "This email address cannot be used to login."
 msgstr "E-postadressen kan inte användas för inloggning."
 
-#: forms/auth.py:116 forms/auth.py:192
+#: kamu/forms/auth.py:116 kamu/forms/auth.py:192
 msgid "This phone number cannot be used to login."
 msgstr "Telefonnumret kan inte användas för inloggning."
 
-#: forms/auth.py:123 forms/auth.py:127
+#: kamu/forms/auth.py:123 kamu/forms/auth.py:127
 msgid "This contact information cannot be used to login."
 msgstr "Dessa kontaktuppgifter kan inte användas för inloggning."
 
-#: forms/auth.py:139
+#: kamu/forms/auth.py:139
 msgid "Email verification code"
 msgstr "E-postbekräftelsekod"
 
-#: forms/auth.py:140
+#: kamu/forms/auth.py:140
 msgid "SMS verification code"
 msgstr "SMS-bekräftelsekod"
 
-#: forms/auth.py:156 templates/identity/contact_address.html:25
-#: templates/identity/contact_address.html:74
+#: kamu/forms/auth.py:156 kamu/templates/identity/contact_address.html:25
+#: kamu/templates/identity/contact_address.html:74
 msgid "Verify"
 msgstr "Verifiera"
 
-#: forms/auth.py:157
+#: kamu/forms/auth.py:157
 msgid "Resend email code"
 msgstr "Skicka e-postkod igen"
 
-#: forms/auth.py:158
+#: kamu/forms/auth.py:158
 msgid "Resend phone code"
 msgstr "Skicka telefonkod igen"
 
-#: forms/auth.py:167 forms/auth.py:179 forms/auth.py:188 forms/auth.py:200
+#: kamu/forms/auth.py:167 kamu/forms/auth.py:179 kamu/forms/auth.py:188
+#: kamu/forms/auth.py:200
 msgid "Invalid verification code."
 msgstr "Felaktig bekräftelsekod."
 
-#: forms/auth.py:209 forms/auth.py:220 forms/auth.py:222
+#: kamu/forms/auth.py:209 kamu/forms/auth.py:220 kamu/forms/auth.py:222
 msgid "Error when logging in, please try again."
 msgstr "Fel vid inloggning, försök igen."
 
-#: forms/auth.py:224
+#: kamu/forms/auth.py:224
 msgid "This account is disabled."
 msgstr "Detta konto är inaktiverat."
 
-#: forms/auth.py:237 templates/identity/identity_combine.html:12
-#: templates/identity/identity_combine.html:69
+#: kamu/forms/auth.py:237 kamu/templates/identity/identity_combine.html:12
+#: kamu/templates/identity/identity_combine.html:69
 msgid "Given names"
 msgstr "Förnamn"
 
-#: forms/auth.py:237
+#: kamu/forms/auth.py:237
 msgid "All official given names."
 msgstr "Alla officiella förnamn."
 
-#: forms/auth.py:239 forms/identity.py:51 models/identity.py:207
-#: templates/account/account_create.html:12
-#: templates/identity/identity_combine.html:13
-#: templates/identity/identity_combine.html:75
+#: kamu/forms/auth.py:239 kamu/forms/identity.py:51 kamu/models/identity.py:207
+#: kamu/templates/account/account_create.html:12
+#: kamu/templates/identity/identity_combine.html:13
+#: kamu/templates/identity/identity_combine.html:75
 msgid "Surname"
 msgstr "Efternamn"
 
-#: forms/auth.py:239
+#: kamu/forms/auth.py:239
 msgid "Official surname(s)."
 msgstr "Officiellt efternamn."
 
-#: forms/auth.py:251
+#: kamu/forms/auth.py:251
 msgid "This email address is already set by the inviter."
 msgstr "Den här e-postadressen är redan angiven av inbjudaren."
 
-#: forms/auth.py:255
+#: kamu/forms/auth.py:255
 msgid "Send verification code"
 msgstr "Skicka bekräftelsekod"
 
-#: forms/auth.py:263
+#: kamu/forms/auth.py:263
 msgid "This email address is already linked to an account."
 msgstr "E-postadressen är redan länkad till ett konto."
 
-#: forms/auth.py:272
+#: kamu/forms/auth.py:272
 msgid "Invalid form data."
 msgstr "Ogiltiga uppgifter i formuläret."
 
-#: forms/auth.py:276
+#: kamu/forms/auth.py:276
 msgid "Either given names or surname must be filled in."
 msgstr "Antingen förnamn eller efternamn måste anges."
 
-#: forms/auth.py:285 forms/identity.py:178
+#: kamu/forms/auth.py:285 kamu/forms/identity.py:178
 msgid "Enter the verification code you received by email"
 msgstr "Ange bekräftelsekoden som du har fått via e-post"
 
-#: forms/auth.py:296
+#: kamu/forms/auth.py:296
 msgid "Verify email address"
 msgstr "Bekräfta e-postadress"
 
-#: forms/auth.py:297 forms/auth.py:371 forms/identity.py:189
-#: forms/identity.py:229
+#: kamu/forms/auth.py:297 kamu/forms/auth.py:371 kamu/forms/identity.py:189
+#: kamu/forms/identity.py:229
 msgid "Send new code"
 msgstr "Skicka ny kod"
 
-#: forms/auth.py:311 forms/identity.py:199
+#: kamu/forms/auth.py:311 kamu/forms/identity.py:199
 msgid ""
 "Invalid verification code. Please note that the verification code is "
 "different from the invitation code. If you have received more than one "
@@ -296,11 +300,11 @@ msgstr ""
 "inbjudningskoden. Om du har skickat flera bekräftelsekoder gäller endast den "
 "senaste."
 
-#: forms/auth.py:325
+#: kamu/forms/auth.py:325
 msgid "Enter your phone number for SMS verification"
 msgstr "Ange ditt telefonnummer för bekräftelse via textmeddelande"
 
-#: forms/auth.py:328
+#: kamu/forms/auth.py:328
 msgid ""
 "Enter the phone number in the international format, e.g. +358123456789. "
 "Please note that we will not forward the phone number."
@@ -308,23 +312,23 @@ msgstr ""
 "Ange telefonnumret i internationellt format, t.ex. +358123456789. Obs! Vi "
 "vidarebefordrar inte telefonnumret."
 
-#: forms/auth.py:342
+#: kamu/forms/auth.py:342
 msgid "This phone number is already set by the inviter."
 msgstr "Det här telefonnumret är redan angivet av inbjudaren."
 
-#: forms/auth.py:345 templates/membership/verification_form.html:21
+#: kamu/forms/auth.py:345 kamu/templates/membership/verification_form.html:21
 msgid "Send verification code by SMS"
 msgstr "Skicka bekräftelsekod via textmeddelande"
 
-#: forms/auth.py:359 forms/identity.py:218
+#: kamu/forms/auth.py:359 kamu/forms/identity.py:218
 msgid "Enter the verification code you received by SMS"
 msgstr "Ange bekräftelsekoden som du har fått via textmeddelande"
 
-#: forms/auth.py:370
+#: kamu/forms/auth.py:370
 msgid "Verify phone number"
 msgstr "Bekräfta telefonnummer"
 
-#: forms/auth.py:385 forms/identity.py:239
+#: kamu/forms/auth.py:385 kamu/forms/identity.py:239
 msgid ""
 "Invalid verification code. If you sent yourself more than one verification "
 "code, only the most recent one will be valid."
@@ -332,59 +336,59 @@ msgstr ""
 "Felaktig bekräftelsekod. Om du har skickat flera bekräftelsekoder gäller "
 "endast den senaste."
 
-#: forms/auth.py:423
+#: kamu/forms/auth.py:423
 msgid "Personal invitation code"
 msgstr "Personlig inbjudningskod"
 
-#: forms/auth.py:446 forms/auth.py:452 forms/auth.py:456 forms/auth.py:458
-#: views/auth.py:133 views/auth.py:154 views/auth.py:240
-#: views/membership.py:965
+#: kamu/forms/auth.py:446 kamu/forms/auth.py:452 kamu/forms/auth.py:456
+#: kamu/forms/auth.py:458 kamu/views/auth.py:133 kamu/views/auth.py:154
+#: kamu/views/auth.py:240 kamu/views/membership.py:965
 msgid "Invalid invitation code."
 msgstr "Ogiltig inbjudningskod."
 
-#: forms/generic.py:21
+#: kamu/forms/generic.py:21
 msgid "Search text"
 msgstr "Söktext"
 
-#: forms/generic.py:30 forms/identity.py:75
+#: kamu/forms/generic.py:30 kamu/forms/identity.py:75
 msgid "Search"
 msgstr "Sök"
 
-#: forms/identity.py:33
+#: kamu/forms/identity.py:33
 msgid "Target primary key"
 msgstr "Målets primärnyckel"
 
-#: forms/identity.py:34
+#: kamu/forms/identity.py:34
 msgid "Source primary key"
 msgstr "Källans primärnyckel"
 
-#: forms/identity.py:42
+#: kamu/forms/identity.py:42
 msgid "Combine"
 msgstr "Kombinera"
 
-#: forms/identity.py:50
+#: kamu/forms/identity.py:50
 msgid "Given name(s)"
 msgstr "Förnamn"
 
-#: forms/identity.py:53 models/identity.py:239
-#: templates/identity/identity_combine.html:94
-#: templates/identity/identity_detail.html:21
-#: templates/identity/identity_verify.html:17
-#: templates/identity/identity_verify.html:63
+#: kamu/forms/identity.py:53 kamu/models/identity.py:239
+#: kamu/templates/identity/identity_combine.html:94
+#: kamu/templates/identity/identity_detail.html:21
+#: kamu/templates/identity/identity_verify.html:17
+#: kamu/templates/identity/identity_verify.html:63
 msgid "Date of birth"
 msgstr "Födelsedatum"
 
-#: forms/identity.py:56
+#: kamu/forms/identity.py:56
 msgid "You may limit name searches by date of birth to improve accuracy."
 msgstr ""
 "Du kan begränsa namnsökningar med födelsedatum för att förbättra "
 "träffsäkerheten."
 
-#: forms/identity.py:59
+#: kamu/forms/identity.py:59
 msgid "Enter the full unique identifier"
 msgstr "Ange hela den unika identifieraren."
 
-#: forms/identity.py:63
+#: kamu/forms/identity.py:63
 msgid ""
 "Email address, phone number in international format, e.g. +358401234567, "
 "Finnish personal identity code or user account name."
@@ -392,11 +396,11 @@ msgstr ""
 "E-postadress, telefonnummer i internationellt format, t.ex. +358401234567, "
 "finskt personbeteckningsnummer eller användarkontonamn."
 
-#: forms/identity.py:76
+#: kamu/forms/identity.py:76
 msgid "Reset"
 msgstr "Återställ"
 
-#: forms/identity.py:80
+#: kamu/forms/identity.py:80
 msgid ""
 "Search for the person you want to invite primarily using a unique "
 "identifier. If the person is found using the identifier you provided, the "
@@ -405,7 +409,7 @@ msgstr ""
 "Sök först efter personen med hjälp av en unik identifierare. Om personen "
 "hittas med identifieraren du angett, hoppas namnsökningen över."
 
-#: forms/identity.py:85
+#: kamu/forms/identity.py:85
 msgid ""
 "If you provide both an identifier and a name, the results from both searches "
 "are combined into a single list."
@@ -413,19 +417,19 @@ msgstr ""
 "Om du anger både en identifierare och ett namn, kombineras resultaten från "
 "båda sökningarna till en enda lista."
 
-#: forms/identity.py:90
+#: kamu/forms/identity.py:90
 msgid "Search by a unique identifier"
 msgstr "Sök med en unik identifierare"
 
-#: forms/identity.py:95
+#: kamu/forms/identity.py:95
 msgid "Search by name"
 msgstr "Sök efter namn"
 
-#: forms/identity.py:114
+#: kamu/forms/identity.py:114
 msgid "Enter new email address or phone number"
 msgstr "Ange ny e-postadress eller nytt telefonnummer"
 
-#: forms/identity.py:116
+#: kamu/forms/identity.py:116
 msgid ""
 "Phone number in international format, e.g. +358123456789. Values containing "
 "@ are treated as email addresses."
@@ -433,90 +437,90 @@ msgstr ""
 "Telefonnummer i internationellt format, t.ex. +358123456789. Värden som "
 "innehåller @ behandlas som e-postadresser."
 
-#: forms/identity.py:133
+#: kamu/forms/identity.py:133
 msgid "Add"
 msgstr "Lägg till"
 
-#: forms/identity.py:138 forms/identity.py:374
-#: templates/account/account_create.html:39
-#: templates/account/account_detail.html:134
-#: templates/account/account_list.html:61
-#: templates/contract/contract_detail.html:26
-#: templates/contract/contract_list.html:64
-#: templates/identity/identifier.html:104
-#: templates/identity/identity_verify.html:88
+#: kamu/forms/identity.py:138 kamu/forms/identity.py:374
+#: kamu/templates/account/account_create.html:39
+#: kamu/templates/account/account_detail.html:134
+#: kamu/templates/account/account_list.html:61
+#: kamu/templates/contract/contract_detail.html:26
+#: kamu/templates/contract/contract_list.html:64
+#: kamu/templates/identity/identifier.html:104
+#: kamu/templates/identity/identity_verify.html:88
 msgid "Return"
 msgstr "Gå tillbaka"
 
-#: forms/identity.py:153
+#: kamu/forms/identity.py:153
 msgid "Email address or phone number is required."
 msgstr "E-postadress eller telefonnummer krävs."
 
-#: forms/identity.py:159
+#: kamu/forms/identity.py:159
 msgid "Email address already exists."
 msgstr "E-postadressen finns redan."
 
-#: forms/identity.py:161
+#: kamu/forms/identity.py:161
 msgid "Maximum number of email addresses reached."
 msgstr "Maximalt antal e-postadresser har uppnåtts."
 
-#: forms/identity.py:167
+#: kamu/forms/identity.py:167
 msgid "Phone number already exists."
 msgstr "Telefonnumret finns redan."
 
-#: forms/identity.py:169
+#: kamu/forms/identity.py:169
 msgid "Maximum number of phone numbers reached."
 msgstr "Maximalt antal telefonnummer har uppnåtts."
 
-#: forms/identity.py:188
+#: kamu/forms/identity.py:188
 msgid "Verify email address and exit"
 msgstr "Bekräfta e-postadress och avsluta"
 
-#: forms/identity.py:228
+#: kamu/forms/identity.py:228
 msgid "Verify phone number and exit"
 msgstr "Bekräfta telefonnummer och avsluta"
 
-#: forms/identity.py:273
+#: kamu/forms/identity.py:273
 msgid "Add nationality"
 msgstr "Lägg till nationalitet"
 
-#: forms/identity.py:276
+#: kamu/forms/identity.py:276
 msgid "Nationality verification method"
 msgstr "Metod för verifiering av nationalitet"
 
-#: forms/identity.py:282
+#: kamu/forms/identity.py:282
 msgid "Remove nationality"
 msgstr "Ta bort nationalitet"
 
-#: forms/identity.py:293
+#: kamu/forms/identity.py:293
 msgid "Basic information"
 msgstr "Allmänna uppgifter"
 
-#: forms/identity.py:321
+#: kamu/forms/identity.py:321
 msgid "Restricted information"
 msgstr "Begränsad information"
 
-#: forms/identity.py:347
+#: kamu/forms/identity.py:347
 msgid "Authentication"
 msgstr "Autentisering"
 
-#: forms/identity.py:369
+#: kamu/forms/identity.py:369
 msgid "Save changes"
 msgstr "Spara ändringarna"
 
-#: forms/identity.py:465
+#: kamu/forms/identity.py:465
 msgid "Cannot remove verified nationality."
 msgstr "Kan inte ta bort verifierad nationalitet."
 
-#: forms/identity.py:477
+#: kamu/forms/identity.py:477
 msgid "Cannot set this high assurance level manually."
 msgstr "Kan inte ställa in denna höga tillitsnivå manuellt."
 
-#: forms/identity.py:498
+#: kamu/forms/identity.py:498
 msgid "Cannot set strong electrical verification manually."
 msgstr "Kan inte ställa in stark elektronisk verifiering manuellt."
 
-#: forms/identity.py:506
+#: kamu/forms/identity.py:506
 msgid ""
 "Cannot allow authentication with unverified contact at this high assurance "
 "level."
@@ -524,17 +528,18 @@ msgstr ""
 "Kan inte tillåta autentisering med overifierad kontakt på denna höga "
 "tillitsnivå."
 
-#: forms/identity.py:514
+#: kamu/forms/identity.py:514
 msgid ""
 "Cannot allow authentication with single contact at this high assurance level."
 msgstr ""
 "Kan inte tillåta autentisering med en enda kontakt på denna höga tillitsnivå."
 
-#: forms/membership.py:27 forms/membership.py:140 forms/membership.py:250
+#: kamu/forms/membership.py:27 kamu/forms/membership.py:140
+#: kamu/forms/membership.py:250
 msgid "Notify approvers"
 msgstr "Meddela godkännare"
 
-#: forms/membership.py:30 forms/membership.py:252
+#: kamu/forms/membership.py:30 kamu/forms/membership.py:252
 msgid ""
 "Send notification to the role notification address about the new invite "
 "requiring approval."
@@ -542,23 +547,23 @@ msgstr ""
 "Skicka en avisering till rollens aviseringsadress om den nya inbjudan som "
 "kräver godkännande."
 
-#: forms/membership.py:43
+#: kamu/forms/membership.py:43
 msgid "Add member"
 msgstr "Lägg till medlem"
 
-#: forms/membership.py:84
+#: kamu/forms/membership.py:84
 msgid "Update membership"
 msgstr "Uppdatera medlemskap"
 
-#: forms/membership.py:102 forms/membership.py:196
+#: kamu/forms/membership.py:102 kamu/forms/membership.py:196
 msgid "Verification phone number is required for this role."
 msgstr "Verifieringsnummer krävs för denna roll."
 
-#: forms/membership.py:130
+#: kamu/forms/membership.py:130
 msgid "Send an email to the invitee right away"
 msgstr "Skicka ett e-postmeddelande till den inbjudna personen omedelbart"
 
-#: forms/membership.py:133
+#: kamu/forms/membership.py:133
 msgid ""
 "The invited person can accept the invitation in Kamu even before approval. "
 "However, membership and services—such as the ability to create a username—"
@@ -571,7 +576,7 @@ msgstr ""
 "ett e-postmeddelande från Kamu till den inbjudna personen först efter "
 "godkännandet."
 
-#: forms/membership.py:143
+#: kamu/forms/membership.py:143
 msgid ""
 "Approvers can accept the invitation as soon as you send it, but you can "
 "choose to send them an email to speed up the process. By default, no email "
@@ -581,27 +586,27 @@ msgstr ""
 "du kan om du vill skicka ett e-postmeddelande till dem för att påskynda "
 "processen. Som standard skickas inget e-postmeddelande."
 
-#: forms/membership.py:167 forms/membership.py:269
+#: kamu/forms/membership.py:167 kamu/forms/membership.py:269
 msgid "Invite"
 msgstr "Inbjudan"
 
-#: forms/membership.py:168 forms/membership.py:270
-#: templates/membership/membership_invite.html:58
+#: kamu/forms/membership.py:168 kamu/forms/membership.py:270
+#: kamu/templates/membership/membership_invite.html:58
 msgid "Preview message"
 msgstr "Förhandsgranska meddelande"
 
-#: forms/membership.py:221
+#: kamu/forms/membership.py:221
 msgid ""
 "This email address already has an invite to the role during this time period."
 msgstr ""
 "Den här e-postadressen har redan en inbjudan till rollen under den här "
 "tidsperioden."
 
-#: forms/membership.py:230
+#: kamu/forms/membership.py:230
 msgid "Invited persons"
 msgstr "Inbjudna personer"
 
-#: forms/membership.py:233
+#: kamu/forms/membership.py:233
 msgid ""
 "Invited persons, one per line. Each line should contain given name, surname, "
 "email address, followed by optional phone number and/or Finnish personal "
@@ -614,11 +619,11 @@ msgstr ""
 "separerade med komma. Telefonnumret ska vara i internationellt format. Till "
 "exempel: \"Test,Person,person@example.org,+358501234567,010181-900C\""
 
-#: forms/membership.py:240
+#: kamu/forms/membership.py:240
 msgid "Send invite email before approval"
 msgstr "Skicka inbjudningsmejl före godkännande"
 
-#: forms/membership.py:243
+#: kamu/forms/membership.py:243
 msgid ""
 "Send the invitation email before approval. The invited person can accept "
 "immediately, but the membership and its permissions, including the ability "
@@ -630,311 +635,315 @@ msgstr ""
 "skapa ett användarkonto, blir aktiva först efter godkännande. Om inte valt "
 "skickas inbjudningsmejlet efter godkännandet."
 
-#: forms/membership.py:305
+#: kamu/forms/membership.py:305
 msgid "No invited persons."
 msgstr "Inga inbjudna personer."
 
-#: forms/membership.py:308
+#: kamu/forms/membership.py:308
 msgid "Too many invited persons."
 msgstr "För många inbjudna personer."
 
-#: forms/membership.py:321
+#: kamu/forms/membership.py:321
 #, python-format
 msgid "Invalid value: \"%(part)s\"."
 msgstr "Ogiltigt värde: \"%(part)s\"."
 
-#: forms/membership.py:324
+#: kamu/forms/membership.py:324
 #, python-format
 msgid "Invalid line: \"%(line)s\"."
 msgstr "Ogiltig rad: \"%(line)s\"."
 
-#: forms/membership.py:327
+#: kamu/forms/membership.py:327
 #, python-format
 msgid ""
 "Line is missing identifiers: \"%(line)s\". First two fields are for names."
 msgstr ""
 "Raden saknar identifierare: \"%(line)s\". De två första fälten är för namn."
 
-#: models/account.py:29
+#: kamu/models/account.py:29
 msgid "Enabled"
 msgstr "Aktiverad"
 
-#: models/account.py:30 models/membership.py:61
+#: kamu/models/account.py:30 kamu/models/membership.py:61
 msgid "Expired"
 msgstr "Utgången"
 
-#: models/account.py:31
+#: kamu/models/account.py:31
 msgid "Disabled"
 msgstr "Deaktiverad"
 
-#: models/account.py:32
+#: kamu/models/account.py:32
 msgid "Locked"
 msgstr "Låst"
 
-#: models/account.py:35
+#: kamu/models/account.py:35
 msgid "Account"
 msgstr "Konto"
 
-#: models/account.py:36
+#: kamu/models/account.py:36
 msgid "Limited user account"
 msgstr "Begränsat användarkonto"
 
-#: models/account.py:38 templates/account/account_detail.html:14
-#: templates/account/account_list.html:18
-#: templates/identity/identity_detail.html:140
-#: templates/membership/membership_approval_list.html:15
-#: templates/membership/membership_detail.html:61
-#: templates/membership/membership_expiring_list.html:16
-#: templates/membership/membership_managed_list.html:15
-#: templates/role/role_detail.html:67
+#: kamu/models/account.py:38 kamu/templates/account/account_detail.html:14
+#: kamu/templates/account/account_list.html:18
+#: kamu/templates/identity/identity_detail.html:140
+#: kamu/templates/membership/membership_approval_list.html:15
+#: kamu/templates/membership/membership_detail.html:61
+#: kamu/templates/membership/membership_expiring_list.html:16
+#: kamu/templates/membership/membership_managed_list.html:15
+#: kamu/templates/role/role_detail.html:67
 msgid "Status"
 msgstr "Status"
 
-#: models/account.py:39
+#: kamu/models/account.py:39
 msgid "Account type"
 msgstr "Typ av konto"
 
-#: models/account.py:41 templates/account/account_detail.html:10
-#: templates/account/account_detail.html:33
-#: templates/account/account_detail.html:57
-#: templates/account/account_detail.html:95
-#: templates/account/account_detail.html:119
-#: templates/account/account_list.html:17
+#: kamu/models/account.py:41 kamu/templates/account/account_detail.html:10
+#: kamu/templates/account/account_detail.html:33
+#: kamu/templates/account/account_detail.html:57
+#: kamu/templates/account/account_detail.html:95
+#: kamu/templates/account/account_detail.html:119
+#: kamu/templates/account/account_list.html:17
 msgid "User ID"
 msgstr "Användar-ID"
 
-#: models/account.py:43 models/identity.py:736
+#: kamu/models/account.py:43 kamu/models/identity.py:736
 msgid "Deactivated at"
 msgstr "Deaktiverat den"
 
-#: models/account.py:44 models/account.py:148 models/contract.py:55
-#: models/contract.py:112 models/identity.py:48 models/identity.py:289
-#: models/identity.py:523 models/identity.py:594 models/identity.py:668
-#: models/identity.py:737 models/membership.py:122 models/organisation.py:31
-#: models/role.py:83 models/role.py:312 models/role.py:408 models/token.py:321
+#: kamu/models/account.py:44 kamu/models/account.py:148
+#: kamu/models/contract.py:55 kamu/models/contract.py:112
+#: kamu/models/identity.py:48 kamu/models/identity.py:289
+#: kamu/models/identity.py:523 kamu/models/identity.py:594
+#: kamu/models/identity.py:668 kamu/models/identity.py:737
+#: kamu/models/membership.py:122 kamu/models/organisation.py:31
+#: kamu/models/role.py:83 kamu/models/role.py:312 kamu/models/role.py:408
+#: kamu/models/token.py:321
 msgid "Created at"
 msgstr "Skapat den"
 
-#: models/account.py:45 models/account.py:149 models/identity.py:49
-#: models/identity.py:290 models/identity.py:524 models/identity.py:595
-#: models/identity.py:669 models/identity.py:738 models/membership.py:123
-#: models/organisation.py:32 models/role.py:84 models/role.py:313
-#: models/role.py:409
+#: kamu/models/account.py:45 kamu/models/account.py:149
+#: kamu/models/identity.py:49 kamu/models/identity.py:290
+#: kamu/models/identity.py:524 kamu/models/identity.py:595
+#: kamu/models/identity.py:669 kamu/models/identity.py:738
+#: kamu/models/membership.py:123 kamu/models/organisation.py:32
+#: kamu/models/role.py:84 kamu/models/role.py:313 kamu/models/role.py:409
 msgid "Updated at"
 msgstr "Uppdaterat den"
 
-#: models/account.py:53 models/role.py:290
-#: templates/account/account_detail.html:8
-#: templates/identity/identity_search.html:18
-#: templates/identity/identity_search.html:67
-#: templates/membership/membership_invite.html:50
-#: templates/membership/membership_invite_identity.html:22
-#: templates/membership/membership_invite_identity.html:81
+#: kamu/models/account.py:53 kamu/models/role.py:290
+#: kamu/templates/account/account_detail.html:8
+#: kamu/templates/identity/identity_search.html:18
+#: kamu/templates/identity/identity_search.html:67
+#: kamu/templates/membership/membership_invite.html:50
+#: kamu/templates/membership/membership_invite_identity.html:22
+#: kamu/templates/membership/membership_invite_identity.html:81
 msgid "User account"
 msgstr "Användarkonto"
 
-#: models/account.py:54 templates/account/account_list.html:10
-#: templates/identity/identity_detail.html:58
-#: templates/identity/identity_detail.html:130
+#: kamu/models/account.py:54 kamu/templates/account/account_list.html:10
+#: kamu/templates/identity/identity_detail.html:58
+#: kamu/templates/identity/identity_detail.html:130
 msgid "User accounts"
 msgstr "Användarkonton"
 
-#: models/account.py:147
+#: kamu/models/account.py:147
 msgid "Number of failures"
 msgstr "Antal fel"
 
-#: models/account.py:152
+#: kamu/models/account.py:152
 msgid "Account synchronisation"
 msgstr "Kontosynkronisering"
 
-#: models/account.py:153
+#: kamu/models/account.py:153
 msgid "Account synchronisations"
 msgstr "Kontosynkroniseringar"
 
-#: models/contract.py:53 templates/contract/contract_list.html:15
+#: kamu/models/contract.py:53 kamu/templates/contract/contract_list.html:15
 msgid "Checksum"
 msgstr "Kontrollsumma"
 
-#: models/contract.py:54
+#: kamu/models/contract.py:54
 msgid "Language"
 msgstr "Språk"
 
-#: models/contract.py:63
+#: kamu/models/contract.py:63
 msgid "Contract"
 msgstr "Avtal"
 
-#: models/contract.py:64 templates/contract/contract_list.html:6
-#: templates/identity/identity_combine.html:20
-#: templates/identity/identity_detail.html:123
+#: kamu/models/contract.py:64 kamu/templates/contract/contract_list.html:6
+#: kamu/templates/identity/identity_combine.html:20
+#: kamu/templates/identity/identity_detail.html:123
 msgid "Contracts"
 msgstr "Avtal"
 
-#: models/contract.py:103
+#: kamu/models/contract.py:103
 msgid "Contract type"
 msgstr "Avtalstyp"
 
-#: models/contract.py:104 templates/contract/contract_detail.html:21
+#: kamu/models/contract.py:104 kamu/templates/contract/contract_detail.html:21
 msgid "Contract version"
 msgstr "Avtalsversion"
 
-#: models/contract.py:105
+#: kamu/models/contract.py:105
 msgid "Contract name (fi)"
 msgstr "Avtalsnamn (fi)"
 
-#: models/contract.py:106
+#: kamu/models/contract.py:106
 msgid "Contract name (en)"
 msgstr "Avtalsnamn (en)"
 
-#: models/contract.py:107
+#: kamu/models/contract.py:107
 msgid "Contract name (sv)"
 msgstr "Avtalsnamn (sv)"
 
-#: models/contract.py:108
+#: kamu/models/contract.py:108
 msgid "Contract text (fi)"
 msgstr "Avtalstext (fi)"
 
-#: models/contract.py:109
+#: kamu/models/contract.py:109
 msgid "Contract text (en)"
 msgstr "Avtalstext (en)"
 
-#: models/contract.py:110
+#: kamu/models/contract.py:110
 msgid "Contract text (sv)"
 msgstr "Avtalstext (sv)"
 
-#: models/contract.py:111
+#: kamu/models/contract.py:111
 msgid "Public"
 msgstr "Offentlig"
 
-#: models/contract.py:118
+#: kamu/models/contract.py:118
 msgid "Contract template"
 msgstr "Avtalsmall"
 
-#: models/contract.py:119
+#: kamu/models/contract.py:119
 msgid "Contract templates"
 msgstr "Avtalsmallar"
 
-#: models/identity.py:43
+#: kamu/models/identity.py:43
 msgid "Country code"
 msgstr "Landskod"
 
-#: models/identity.py:44
+#: kamu/models/identity.py:44
 msgid "Country name (fi)"
 msgstr "Landsnamn (fi)"
 
-#: models/identity.py:45
+#: kamu/models/identity.py:45
 msgid "Country name (en)"
 msgstr "Landsnamn (en)"
 
-#: models/identity.py:46
+#: kamu/models/identity.py:46
 msgid "Country name (sv)"
 msgstr "Landsnamn (sv)"
 
-#: models/identity.py:52
+#: kamu/models/identity.py:52
 msgid "Country"
 msgstr "Land"
 
-#: models/identity.py:53
+#: kamu/models/identity.py:53
 msgid "Countries"
 msgstr "Länder"
 
-#: models/identity.py:138 models/role.py:33
+#: kamu/models/identity.py:138 kamu/models/role.py:33 settings/common.py:141
 msgid "English"
 msgstr "Engelska"
 
-#: models/identity.py:139 models/role.py:34
+#: kamu/models/identity.py:139 kamu/models/role.py:34 settings/common.py:142
 msgid "Finnish"
 msgstr "Finska"
 
-#: models/identity.py:140 models/role.py:35
+#: kamu/models/identity.py:140 kamu/models/role.py:35 settings/common.py:143
 msgid "Swedish"
 msgstr "Svenska"
 
-#: models/identity.py:144
+#: kamu/models/identity.py:144
 msgid "Male"
 msgstr "Man"
 
-#: models/identity.py:145
+#: kamu/models/identity.py:145
 msgid "Female"
 msgstr "Kvinna"
 
-#: models/identity.py:146
+#: kamu/models/identity.py:146
 msgid "Other"
 msgstr "Annat"
 
-#: models/identity.py:150 models/identity.py:157
+#: kamu/models/identity.py:150 kamu/models/identity.py:157
 msgid "No verification"
 msgstr "Ingen verifiering"
 
-#: models/identity.py:151
+#: kamu/models/identity.py:151
 msgid "Low"
 msgstr "Låg"
 
-#: models/identity.py:152
+#: kamu/models/identity.py:152
 msgid "Medium"
 msgstr "Medel"
 
-#: models/identity.py:153
+#: kamu/models/identity.py:153
 msgid "High"
 msgstr "Hög"
 
-#: models/identity.py:154
+#: kamu/models/identity.py:154
 msgid "Very high"
 msgstr "Högsta"
 
-#: models/identity.py:158
+#: kamu/models/identity.py:158
 msgid "Self assurance"
 msgstr "Självangiven verifiering"
 
-#: models/identity.py:159
+#: kamu/models/identity.py:159
 msgid "External source"
 msgstr "Extern källa"
 
-#: models/identity.py:160
+#: kamu/models/identity.py:160
 msgid "User verified"
 msgstr "Användarverifierad"
 
-#: models/identity.py:161
+#: kamu/models/identity.py:161
 msgid "Verified with a government issued photo-ID"
 msgstr "Verifierad med statligt utfärdad fotolegitimation"
 
-#: models/identity.py:162
+#: kamu/models/identity.py:162
 msgid "Strong electrical verification"
 msgstr "Stark elektrisk verifiering"
 
-#: models/identity.py:168
+#: kamu/models/identity.py:168
 msgid "Kamu ID"
 msgstr "Kamu-ID"
 
-#: models/identity.py:169
+#: kamu/models/identity.py:169
 msgid "Unique identifier for this identity."
 msgstr "Unik identifierare för denna identitet."
 
-#: models/identity.py:177
+#: kamu/models/identity.py:177
 msgid "User identifier"
 msgstr "Användaridentifierare"
 
-#: models/identity.py:181 templates/identity/identity_combine.html:57
+#: kamu/models/identity.py:181 kamu/templates/identity/identity_combine.html:57
 msgid "External identity"
 msgstr "Extern identitet"
 
-#: models/identity.py:182
+#: kamu/models/identity.py:182
 msgid "This identity is managed in another registry."
 msgstr "Denna identitet hanteras i ett annat register."
 
-#: models/identity.py:187 templates/identity/identity_combine.html:63
+#: kamu/models/identity.py:187 kamu/templates/identity/identity_combine.html:63
 msgid "Assurance level"
 msgstr "Säkerhetsnivå"
 
-#: models/identity.py:188
+#: kamu/models/identity.py:188
 msgid "How strongly this user identity is identified."
 msgstr "Hur starkt denna användaridentitet är identifierad."
 
-#: models/identity.py:193 templates/identity/identity_detail.html:11
-#: templates/identity/identity_verify.html:58
+#: kamu/models/identity.py:193 kamu/templates/identity/identity_detail.html:11
+#: kamu/templates/identity/identity_verify.html:58
 msgid "Official given names"
 msgstr "Officiella förnamn"
 
-#: models/identity.py:195
+#: kamu/models/identity.py:195
 msgid ""
 "All official given names, as on a passport. Please note that this "
 "information is usually not displayed in applications."
@@ -942,11 +951,11 @@ msgstr ""
 "Alla officiella förnamn som i passet. Obs! Denna information visas "
 "vanligtvis inte i appar."
 
-#: models/identity.py:202
+#: kamu/models/identity.py:202
 msgid "Given names verification method"
 msgstr "Metod för verifiering av förnamn"
 
-#: models/identity.py:209
+#: kamu/models/identity.py:209
 msgid ""
 "All official surname(s), as on a passport. Please note that this information "
 "is usually not displayed in applications."
@@ -954,15 +963,15 @@ msgstr ""
 "Alla officiella efternamn som i passet. Obs! Denna information visas "
 "vanligtvis inte i appar."
 
-#: models/identity.py:216
+#: kamu/models/identity.py:216
 msgid "Surname verification method"
 msgstr "Metod för verifiering av efternamn"
 
-#: models/identity.py:221
+#: kamu/models/identity.py:221
 msgid "Preferred given name"
 msgstr "Tilltalsnamn"
 
-#: models/identity.py:223
+#: kamu/models/identity.py:223
 msgid ""
 "Preferred name, i.e. one of the official given names or, for a justified "
 "reason, another given name. Please note that this information is usually "
@@ -972,11 +981,11 @@ msgstr ""
 "motiverade skäl något annat förnamn. Obs! Denna information visas vanligen i "
 "appar."
 
-#: models/identity.py:230
+#: kamu/models/identity.py:230
 msgid "Preferred surname"
 msgstr "Föredraget efternamn"
 
-#: models/identity.py:232
+#: kamu/models/identity.py:232
 msgid ""
 "As a rule, the official last name or, for a justified reason, part thereof. "
 "Please note that this information is usually displayed in applications."
@@ -984,219 +993,224 @@ msgstr ""
 "I princip det officiella efternamnet eller av motiverade skäl en del av det. "
 "Obs! Denna information visas vanligen i appar."
 
-#: models/identity.py:240 models/identity.py:252
+#: kamu/models/identity.py:240 kamu/models/identity.py:252
 msgid ""
 "Required for the user identification from the official identity documents."
 msgstr "Krävs för användaridentifiering med officiella identitetsbevis."
 
-#: models/identity.py:245
+#: kamu/models/identity.py:245
 msgid "Date of birth verification method"
 msgstr "Metod för verifiering av födelsedatum"
 
-#: models/identity.py:251 templates/identity/identity_combine.html:100
-#: templates/identity/identity_detail.html:24
-#: templates/identity/identity_verify.html:19
+#: kamu/models/identity.py:251
+#: kamu/templates/identity/identity_combine.html:100
+#: kamu/templates/identity/identity_detail.html:24
+#: kamu/templates/identity/identity_verify.html:19
 msgid "Gender"
 msgstr "Kön"
 
-#: models/identity.py:257
+#: kamu/models/identity.py:257
 msgid "Gender verification method"
 msgstr "Metod för verifiering av kön"
 
-#: models/identity.py:264 models/identity.py:719
-#: templates/identity/identity_combine.html:15
-#: templates/identity/identity_combine.html:112
-#: templates/identity/identity_detail.html:29
-#: templates/identity/identity_verify.html:20
+#: kamu/models/identity.py:264 kamu/models/identity.py:719
+#: kamu/templates/identity/identity_combine.html:15
+#: kamu/templates/identity/identity_combine.html:112
+#: kamu/templates/identity/identity_detail.html:29
+#: kamu/templates/identity/identity_verify.html:20
 msgid "Finnish personal identity code"
 msgstr "Personbeteckning"
 
-#: models/identity.py:266
+#: kamu/models/identity.py:266
 msgid "Used for the strong electrical identification."
 msgstr "Används för stark elektronisk identifiering."
 
-#: models/identity.py:271
+#: kamu/models/identity.py:271
 msgid "FPIC verification method"
 msgstr "FPIC-verifieringsmetod"
 
-#: models/identity.py:277 templates/identity/identity_combine.html:106
-#: templates/identity/identity_detail.html:18
-#: templates/membership/membership_detail.html:43
-#: templates/membership/membership_invite.html:32
+#: kamu/models/identity.py:277
+#: kamu/templates/identity/identity_combine.html:106
+#: kamu/templates/identity/identity_detail.html:18
+#: kamu/templates/membership/membership_detail.html:43
+#: kamu/templates/membership/membership_invite.html:32
 msgid "Preferred language"
 msgstr "Föredraget språk"
 
-#: models/identity.py:278
+#: kamu/models/identity.py:278
 msgid "Preferred service language."
 msgstr "Föredraget kontaktspråk."
 
-#: models/identity.py:281
+#: kamu/models/identity.py:281
 msgid "Candour session ID"
 msgstr "ID för Candour-sessionen"
 
-#: models/identity.py:284
+#: kamu/models/identity.py:284
 msgid "Allow login with unverified contact"
 msgstr "Tillåt inloggning med overifierad kontakt"
 
-#: models/identity.py:287
+#: kamu/models/identity.py:287
 msgid "Allow login with single contact"
 msgstr "Tillåt inloggning med en enda kontakt"
 
-#: models/identity.py:312 templates/membership/membership_invite.html:28
-#: templates/membership/membership_invite.html:36
-#: templates/membership/membership_invite.html:46
+#: kamu/models/identity.py:312
+#: kamu/templates/membership/membership_invite.html:28
+#: kamu/templates/membership/membership_invite.html:36
+#: kamu/templates/membership/membership_invite.html:46
 msgid "Identity"
 msgstr "Identitet"
 
-#: models/identity.py:313
+#: kamu/models/identity.py:313
 msgid "Identities"
 msgstr "Identiteter"
 
-#: models/identity.py:520
+#: kamu/models/identity.py:520
 msgid "Verification method"
 msgstr "Verifieringsmetod"
 
-#: models/identity.py:528 templates/identity/identity_combine.html:118
-#: templates/identity/identity_detail.html:27
-#: templates/identity/identity_verify.html:18
+#: kamu/models/identity.py:528
+#: kamu/templates/identity/identity_combine.html:118
+#: kamu/templates/identity/identity_detail.html:27
+#: kamu/templates/identity/identity_verify.html:18
 msgid "Nationality"
 msgstr "Nationalitet"
 
-#: models/identity.py:529
+#: kamu/models/identity.py:529
 msgid "Nationalities"
 msgstr "Nationaliteter"
 
-#: models/identity.py:591 models/identity.py:665
+#: kamu/models/identity.py:591 kamu/models/identity.py:665
 msgid "Priority"
 msgstr "Prioritet"
 
-#: models/identity.py:592 models/identity.py:666 models/identity.py:734
+#: kamu/models/identity.py:592 kamu/models/identity.py:666
+#: kamu/models/identity.py:734
 msgid "Verified at"
 msgstr "Verifierad den"
 
-#: models/identity.py:603 templates/identity/contact_address.html:9
-#: templates/identity/identity_detail.html:64
+#: kamu/models/identity.py:603 kamu/templates/identity/contact_address.html:9
+#: kamu/templates/identity/identity_detail.html:64
 msgid "Email addresses"
 msgstr "E-postadresser"
 
-#: models/identity.py:677 templates/identity/contact_address.html:58
-#: templates/identity/identity_detail.html:66
+#: kamu/models/identity.py:677 kamu/templates/identity/contact_address.html:58
+#: kamu/templates/identity/identity_detail.html:66
 msgid "Phone numbers"
 msgstr "Telefonnummer"
 
-#: models/identity.py:720
+#: kamu/models/identity.py:720
 msgid "eIDAS identifier"
 msgstr "eIDAS-identifierare"
 
-#: models/identity.py:721
+#: kamu/models/identity.py:721
 msgid "User identifier from organisation"
 msgstr "Användaridentifierare från organisation"
 
-#: models/identity.py:722
+#: kamu/models/identity.py:722
 msgid "Google account"
 msgstr "Google-konto"
 
-#: models/identity.py:723
+#: kamu/models/identity.py:723
 msgid "Microsoft account"
 msgstr "Microsoft-konto"
 
-#: models/identity.py:724 templates/identity/identity_combine.html:45
+#: kamu/models/identity.py:724 kamu/templates/identity/identity_combine.html:45
 msgid "Kamu identifier"
 msgstr "Kamu-identifierare"
 
-#: models/identity.py:725
+#: kamu/models/identity.py:725
 msgid "Person identifier"
 msgstr "Personidentifierare"
 
-#: models/identity.py:726
+#: kamu/models/identity.py:726
 msgid "Government issued ID"
 msgstr "Identitetskort utfärdats av en myndighet"
 
-#: models/identity.py:727
+#: kamu/models/identity.py:727
 msgid "Other identifier"
 msgstr "Annan identifierare"
 
-#: models/identity.py:729
+#: kamu/models/identity.py:729
 msgid "Identifier type"
 msgstr "Typ av identifierare"
 
-#: models/identity.py:730
+#: kamu/models/identity.py:730
 msgid "Identifier value"
 msgstr "Identifierarens värde"
 
-#: models/identity.py:731
+#: kamu/models/identity.py:731
 msgid "Identifier name"
 msgstr "Identifierarens namn"
 
-#: models/identity.py:732
+#: kamu/models/identity.py:732
 msgid "Valid until"
 msgstr "Giltig till"
 
-#: models/identity.py:743
+#: kamu/models/identity.py:743
 msgid "Identifier"
 msgstr "Identifierare"
 
-#: models/identity.py:744 templates/identity/identity_detail.html:73
-#: templates/identity/identity_detail.html:120
+#: kamu/models/identity.py:744 kamu/templates/identity/identity_detail.html:73
+#: kamu/templates/identity/identity_detail.html:120
 msgid "Identifiers"
 msgstr "Identifierare"
 
-#: models/identity.py:761
+#: kamu/models/identity.py:761
 msgid "Invalid eduPersonPrincipalName format."
 msgstr "Ogiltigt format för eduPersonPrincipalName."
 
-#: models/membership.py:56
-#: templates/membership/membership_approval_list.html:24
-#: templates/membership/membership_expiring_list.html:25
-#: templates/role/role_detail.html:76
+#: kamu/models/membership.py:56
+#: kamu/templates/membership/membership_approval_list.html:24
+#: kamu/templates/membership/membership_expiring_list.html:25
+#: kamu/templates/role/role_detail.html:76
 msgid "Invited"
 msgstr "Inbjuden"
 
-#: models/membership.py:57
+#: kamu/models/membership.py:57
 msgid "Missing requirements"
 msgstr "Krav saknas"
 
-#: models/membership.py:58
+#: kamu/models/membership.py:58
 msgid "Waiting approval"
 msgstr "Väntar på godkännande"
 
-#: models/membership.py:59
+#: kamu/models/membership.py:59
 msgid "Pending"
 msgstr "Väntar"
 
-#: models/membership.py:60
+#: kamu/models/membership.py:60
 msgid "Active"
 msgstr "Aktiva"
 
-#: models/membership.py:62
+#: kamu/models/membership.py:62
 msgid "Cancelled"
 msgstr "Annullerad"
 
-#: models/membership.py:67
+#: kamu/models/membership.py:67
 msgid "Membership ID"
 msgstr "Medlems-ID"
 
-#: models/membership.py:68
+#: kamu/models/membership.py:68
 msgid "Unique identifier for this membership."
 msgstr "Unik identifierare för detta medlemskap."
 
-#: models/membership.py:73
+#: kamu/models/membership.py:73
 msgid "Given name of the person being invited"
 msgstr "Den inbjudna personens förnamn"
 
-#: models/membership.py:78
+#: kamu/models/membership.py:78
 msgid "Surname of the person being invited"
 msgstr "Den inbjudna personens efternamn"
 
-#: models/membership.py:80
+#: kamu/models/membership.py:80
 msgid "Invite email address"
 msgstr "E-postadress till den inbjudna personen"
 
-#: models/membership.py:84
+#: kamu/models/membership.py:84
 msgid "Invite mobile phone number"
 msgstr "Den inbjudna personens mobilnummer"
 
-#: models/membership.py:86
+#: kamu/models/membership.py:86
 msgid ""
 "Phone number to which the confirmation SMS will be sent, in the "
 "international format, e.g. +358123456789."
@@ -1204,16 +1218,16 @@ msgstr ""
 "Telefonnummer till vilket bekräftelse skickas via textmeddelande, i "
 "internationellt format t.ex. +358123456789."
 
-#: models/membership.py:96
+#: kamu/models/membership.py:96
 msgid "The language used to communicate with the invited person"
 msgstr ""
 "Det språk som används för att skicka meddelanden till den inbjudna personen"
 
-#: models/membership.py:101
+#: kamu/models/membership.py:101
 msgid "Alternative text for the default email invitation"
 msgstr "Eventuell ersättningstext för standardinbjudan via e-post"
 
-#: models/membership.py:103
+#: kamu/models/membership.py:103
 msgid ""
 "If you wish, you can replace the beginning part of the default email invite "
 "with your own text. The invitation code and link are always added at the end "
@@ -1223,263 +1237,264 @@ msgstr ""
 "text. Inbjudningskoden och länken läggs alltid till i slutet av meddelandet. "
 "Förhandsgranska meddelandet för att se det slutgiltiga e-postmeddelandet."
 
-#: models/membership.py:109
+#: kamu/models/membership.py:109
 msgid "Membership status"
 msgstr "Medlemskapsstatus"
 
-#: models/membership.py:116
+#: kamu/models/membership.py:116
 msgid "Reasons for membership"
 msgstr "Motiveringar för medlemskapet"
 
-#: models/membership.py:117
+#: kamu/models/membership.py:117
 msgid "Membership start date"
 msgstr "Medlemskapets startdatum"
 
-#: models/membership.py:118
+#: kamu/models/membership.py:118
 msgid "Membership expiry date"
 msgstr "Medlemskapets utgångsdatum"
 
-#: models/membership.py:119 templates/membership/membership_detail.html:65
+#: kamu/models/membership.py:119
+#: kamu/templates/membership/membership_detail.html:65
 msgid "Cancelled at"
 msgstr "Avslutades den"
 
-#: models/membership.py:121
+#: kamu/models/membership.py:121
 msgid "Requirements failed time"
 msgstr "Tid då kraven inte kunde uppfyllas"
 
-#: models/membership.py:134
+#: kamu/models/membership.py:134
 msgid "Membership"
 msgstr "Medlemskap"
 
-#: models/membership.py:135 templates/base.html:32
-#: templates/role/role_detail.html:61
+#: kamu/models/membership.py:135 kamu/templates/base.html:34
+#: kamu/templates/role/role_detail.html:61
 msgid "Memberships"
 msgstr "Medlemskap"
 
-#: models/organisation.py:21
+#: kamu/models/organisation.py:21
 msgid "Organisation identifier"
 msgstr "Organisationsidentifierare"
 
-#: models/organisation.py:22
+#: kamu/models/organisation.py:22
 msgid "Organisation abbreviation"
 msgstr "Organisationsförkortning"
 
-#: models/organisation.py:23
+#: kamu/models/organisation.py:23
 msgid "Organisation name (fi)"
 msgstr "Organisationens namn (fi)"
 
-#: models/organisation.py:24
+#: kamu/models/organisation.py:24
 msgid "Organisation name (en)"
 msgstr "Organisationens namn (en)"
 
-#: models/organisation.py:25
+#: kamu/models/organisation.py:25
 msgid "Organisation name (sv)"
 msgstr "Organisationens namn (sv)"
 
-#: models/organisation.py:29
+#: kamu/models/organisation.py:29
 msgid "Organisation code"
 msgstr "Organisationskod"
 
-#: models/organisation.py:35
+#: kamu/models/organisation.py:35
 msgid "Organisation"
 msgstr "Organisation"
 
-#: models/organisation.py:36
+#: kamu/models/organisation.py:36
 msgid "Organisations"
 msgstr "Organisationer"
 
-#: models/role.py:38
+#: kamu/models/role.py:38
 msgid "Role identifier"
 msgstr "Rollidentifierare"
 
-#: models/role.py:39
+#: kamu/models/role.py:39
 msgid "Role name (fi)"
 msgstr "Rollens namn (fi)"
 
-#: models/role.py:40
+#: kamu/models/role.py:40
 msgid "Role name (en)"
 msgstr "Rollens namn (en)"
 
-#: models/role.py:41
+#: kamu/models/role.py:41
 msgid "Role name (sv)"
 msgstr "Rollens namn (sv)"
 
-#: models/role.py:42
+#: kamu/models/role.py:42
 msgid "Role description (fi)"
 msgstr "Rollbeskrivning (fi)"
 
-#: models/role.py:43
+#: kamu/models/role.py:43
 msgid "Role description (en)"
 msgstr "Rollbeskrivning (en)"
 
-#: models/role.py:44
+#: kamu/models/role.py:44
 msgid "Role description (sv)"
 msgstr "Rollbeskrivning (sv)"
 
-#: models/role.py:50 templates/membership/membership_detail.html:27
-#: templates/membership/membership_invite.html:19
-#: templates/role/role_detail.html:22
+#: kamu/models/role.py:50 kamu/templates/membership/membership_detail.html:27
+#: kamu/templates/membership/membership_invite.html:19
+#: kamu/templates/role/role_detail.html:22
 msgid "Organisation unit"
 msgstr "Organisationsenhet"
 
-#: models/role.py:52
+#: kamu/models/role.py:52
 msgid "Notification email address"
 msgstr "E-postadress för aviseringar"
 
-#: models/role.py:57 templates/role/role_detail.html:47
+#: kamu/models/role.py:57 kamu/templates/role/role_detail.html:47
 msgid "Notification language"
 msgstr "Språk för aviseringar"
 
-#: models/role.py:60 templates/role/role_detail.html:34
+#: kamu/models/role.py:60 kamu/templates/role/role_detail.html:34
 msgid "Inviter groups"
 msgstr "Inbjudargrupper"
 
-#: models/role.py:63 templates/role/role_detail.html:37
+#: kamu/models/role.py:63 kamu/templates/role/role_detail.html:37
 msgid "Approver groups"
 msgstr "Godkännargrupper"
 
-#: models/role.py:66 models/role.py:318
-#: templates/membership/membership_detail.html:23
-#: templates/membership/membership_invite.html:15
-#: templates/role/role_detail.html:13
+#: kamu/models/role.py:66 kamu/models/role.py:318
+#: kamu/templates/membership/membership_detail.html:23
+#: kamu/templates/membership/membership_invite.html:15
+#: kamu/templates/role/role_detail.html:13
 msgid "Permissions"
 msgstr "Behörigheter"
 
-#: models/role.py:68 models/role.py:309 models/role.py:417
-#: templates/role/role_detail.html:16
+#: kamu/models/role.py:68 kamu/models/role.py:309 kamu/models/role.py:417
+#: kamu/templates/role/role_detail.html:16
 msgid "Requirements"
 msgstr "Krav"
 
-#: models/role.py:71
+#: kamu/models/role.py:71
 msgid "IAM Group"
 msgstr "IAM-grupp"
 
-#: models/role.py:73
+#: kamu/models/role.py:73
 msgid "Requires SMS verification"
 msgstr "Kräver SMS-verifiering"
 
-#: models/role.py:74
+#: kamu/models/role.py:74
 msgid "Maximum duration (days)"
 msgstr "Maximal varaktighet (dagar)"
 
-#: models/role.py:77
+#: kamu/models/role.py:77
 msgid "Purge delay (days)"
 msgstr "Reningsfördröjning (dagar)"
 
-#: models/role.py:78
+#: kamu/models/role.py:78
 msgid "Grace period from membership expiration to purge (days)"
 msgstr "Anstånd från medlemskapets utgång till rensning (dagar)"
 
-#: models/role.py:90 templates/identity/identity_detail.html:139
-#: templates/identity/identity_detail.html:166
-#: templates/membership/membership_approval_list.html:14
-#: templates/membership/membership_detail.html:17
-#: templates/membership/membership_detail.html:93
-#: templates/membership/membership_detail.html:123
-#: templates/membership/membership_detail.html:150
-#: templates/membership/membership_expiring_list.html:15
-#: templates/membership/membership_managed_list.html:14
-#: templates/membership/verification_form.html:9
+#: kamu/models/role.py:90 kamu/templates/identity/identity_detail.html:139
+#: kamu/templates/identity/identity_detail.html:166
+#: kamu/templates/membership/membership_approval_list.html:14
+#: kamu/templates/membership/membership_detail.html:17
+#: kamu/templates/membership/membership_detail.html:93
+#: kamu/templates/membership/membership_detail.html:123
+#: kamu/templates/membership/membership_detail.html:150
+#: kamu/templates/membership/membership_expiring_list.html:15
+#: kamu/templates/membership/membership_managed_list.html:14
+#: kamu/templates/membership/verification_form.html:9
 msgid "Role"
 msgstr "Roll"
 
-#: models/role.py:91 templates/base.html:43
+#: kamu/models/role.py:91 kamu/templates/base.html:45
 msgid "Roles"
 msgstr "Roller"
 
-#: models/role.py:287
+#: kamu/models/role.py:287
 msgid "Permission identifier"
 msgstr "Rättighetsidentifierare"
 
-#: models/role.py:291
+#: kamu/models/role.py:291
 msgid "Generic permission"
 msgstr "Allmän rättighet"
 
-#: models/role.py:292
+#: kamu/models/role.py:292
 msgid "Service"
 msgstr "Tjänst"
 
-#: models/role.py:295
+#: kamu/models/role.py:295
 msgid "Permission type"
 msgstr "Typ av rättighet"
 
-#: models/role.py:298
+#: kamu/models/role.py:298
 msgid "Permission name (fi)"
 msgstr "Rättighetens namn (fi)"
 
-#: models/role.py:299
+#: kamu/models/role.py:299
 msgid "Permission name (en)"
 msgstr "Rättighetens namn (en)"
 
-#: models/role.py:300
+#: kamu/models/role.py:300
 msgid "Permission name (sv)"
 msgstr "Rättighetens namn (sv)"
 
-#: models/role.py:301
+#: kamu/models/role.py:301
 msgid "Permission description (fi)"
 msgstr "Rättighetens beskrivning (fi)"
 
-#: models/role.py:302
+#: kamu/models/role.py:302
 msgid "Permission description (en)"
 msgstr "Rättighetens beskrivning (en)"
 
-#: models/role.py:303
+#: kamu/models/role.py:303
 msgid "Permission description (sv)"
 msgstr "Rättighetens beskrivning (sv)"
 
-#: models/role.py:305
+#: kamu/models/role.py:305
 msgid "Permission cost"
 msgstr "Rättighetens kostnad"
 
-#: models/role.py:306
+#: kamu/models/role.py:306
 msgid "Permission value"
 msgstr "Rättighetens värde"
 
-#: models/role.py:317
+#: kamu/models/role.py:317
 msgid "Permission"
 msgstr "Rättighet"
 
-#: models/role.py:377
+#: kamu/models/role.py:377
 msgid "Requirement name (fi)"
 msgstr "Kravnamn (fi)"
 
-#: models/role.py:378
+#: kamu/models/role.py:378
 msgid "Requirement name (en)"
 msgstr "Kravnamn (en)"
 
-#: models/role.py:379
+#: kamu/models/role.py:379
 msgid "Requirement name (sv)"
 msgstr "Kravnamn (sv)"
 
-#: models/role.py:382
+#: kamu/models/role.py:382
 msgid "Requires a signed contract of type (value)"
 msgstr "Godkännande saknas i avtalet. Öppna och godkänn avtalet. (value)"
 
-#: models/role.py:383
+#: kamu/models/role.py:383
 msgid "User attribute (value) is defined"
 msgstr "Användarattributet (value) är definierat"
 
-#: models/role.py:384
+#: kamu/models/role.py:384
 msgid "Assurance level at least level"
 msgstr "Kontrollnivå minst på nivå"
 
-#: models/role.py:385
+#: kamu/models/role.py:385
 msgid "External requirement"
 msgstr "Externa krav"
 
-#: models/role.py:387
+#: kamu/models/role.py:387
 msgid "Requirement type"
 msgstr "Typ av krav"
 
-#: models/role.py:391
+#: kamu/models/role.py:391
 msgid "Requirement value"
 msgstr "Kravets värde"
 
-#: models/role.py:395
+#: kamu/models/role.py:395
 msgid "Level or version required"
 msgstr "Nivå eller version som krävs"
 
-#: models/role.py:397
+#: kamu/models/role.py:397
 msgid ""
 "Require a minimum level of assurance or attribute verification level, or a "
 "minimum version of contract. Contract level must be a positive integer. "
@@ -1493,110 +1508,110 @@ msgstr ""
 "verifieringsnivåer är från 10 (självangiven) till 40 (stark elektronisk "
 "verifiering)"
 
-#: models/role.py:404
+#: kamu/models/role.py:404
 msgid "Grace period (days)"
 msgstr "Anstånd (dagar)"
 
-#: models/role.py:405
+#: kamu/models/role.py:405
 msgid "Grace period (days) before membership status is changed."
 msgstr "Anstånd (dagar) innan medlemsstatus ändras."
 
-#: models/role.py:416
+#: kamu/models/role.py:416
 msgid "Requirement"
 msgstr "Krav"
 
-#: models/role.py:465
+#: kamu/models/role.py:465
 msgid "Contract requirement needs contract type as a value."
 msgstr "Avtalskrav måste ha avtalstyp som värde."
 
-#: models/role.py:467
+#: kamu/models/role.py:467
 msgid "Contract version must be a positive integer."
 msgstr "Avtalsversionen måste vara ett positivt heltal."
 
-#: models/role.py:479
+#: kamu/models/role.py:479
 #, python-format
 msgid "Allowed assurance levels are: %(choices)s."
 msgstr "Tillåtna kontrollnivåer är: %(choices)s."
 
-#: models/role.py:486
+#: kamu/models/role.py:486
 msgid "Invalid attribute name."
 msgstr "Ogiltigt attributnamn."
 
-#: models/role.py:491
+#: kamu/models/role.py:491
 msgid "Attribute does not have verification level."
 msgstr "Attributet har ingen verifieringsnivå."
 
-#: models/role.py:505
+#: kamu/models/role.py:505
 #, python-format
 msgid "Allowed levels are: %(choices)s."
 msgstr "Tillåtna nivåer är: %(choices)s."
 
-#: models/token.py:308
+#: kamu/models/token.py:308
 msgid "Email login token"
 msgstr "Token för inloggning via e-postadress"
 
-#: models/token.py:309
+#: kamu/models/token.py:309
 msgid "SMS login token"
 msgstr "Token för inloggning via SMS"
 
-#: models/token.py:310
+#: kamu/models/token.py:310
 msgid "Email object verification token"
 msgstr "Verifieringstoken för e-post"
 
-#: models/token.py:311
+#: kamu/models/token.py:311
 msgid "Phone object verification token"
 msgstr "Verifieringstoken för telefon"
 
-#: models/token.py:312
+#: kamu/models/token.py:312
 msgid "Email address verification token"
 msgstr "Token för verifiering med e-postadress"
 
-#: models/token.py:313
+#: kamu/models/token.py:313
 msgid "Phone number verification token"
 msgstr "Token för verifiering med telefonnummer"
 
-#: models/token.py:314
+#: kamu/models/token.py:314
 msgid "Invite token"
 msgstr "Inbjudningstoken"
 
-#: models/token.py:316
+#: kamu/models/token.py:316
 msgid "Token type"
 msgstr "Typ av token"
 
-#: models/token.py:318
+#: kamu/models/token.py:318
 msgid "Salt and a hashed token"
 msgstr "Salt och en hashad token"
 
-#: models/token.py:319
+#: kamu/models/token.py:319
 msgid "Number of tries left"
 msgstr "Antal återstående försök"
 
-#: models/token.py:325
+#: kamu/models/token.py:325
 msgid "Login token"
 msgstr "Inloggningstoken"
 
-#: models/token.py:326
+#: kamu/models/token.py:326
 msgid "Login tokens"
 msgstr "Inloggningstokens"
 
-#: serializers/identity.py:115
+#: kamu/serializers/identity.py:115
 msgid "This identity already has the given email address."
 msgstr "Denna identitet har redan den angivna e-postadressen."
 
-#: serializers/membership.py:51
+#: kamu/serializers/membership.py:51
 #, python-format
 msgid "Field %(attribute)s is required."
 msgstr "Fältet %(attribute)s är obligatoriskt."
 
-#: serializers/role.py:133
+#: kamu/serializers/role.py:133
 msgid "Cannot validate sequence data."
 msgstr "Kan inte validera sekvensdata."
 
-#: templates/accessibility_statement.html:5
+#: kamu/templates/accessibility_statement.html:5
 msgid "Accessibility Statement"
 msgstr "Tillgänglighetsutlåtande"
 
-#: templates/accessibility_statement.html:6
+#: kamu/templates/accessibility_statement.html:6
 msgid ""
 "This accessibility statement concerns the service Kamu and it has been "
 "drafted / updated on 16.05.2025.\n"
@@ -1608,36 +1623,36 @@ msgstr ""
 "Tjänsten omfattas av lagen om tillhandahållande av digitala tjänster och "
 "dess krav på att offentliga webbplatser måste vara tillgängliga."
 
-#: templates/accessibility_statement.html:8
+#: kamu/templates/accessibility_statement.html:8
 msgid "This statement is based on a self-assessment."
 msgstr "Vi har själva granskat hur tillgänglig tjänsten är."
 
-#: templates/accessibility_statement.html:9
+#: kamu/templates/accessibility_statement.html:9
 msgid "Accessibility status of the digital service"
 msgstr "Tillgänglighetsstatus för den digitala tjänsten"
 
-#: templates/accessibility_statement.html:10
+#: kamu/templates/accessibility_statement.html:10
 msgid "Fully compliant with accessibility requirements."
 msgstr "Uppfyller alla tillgänglighetskrav."
 
-#: templates/accessibility_statement.html:11
+#: kamu/templates/accessibility_statement.html:11
 msgid "Did you notice an accessibility issue in our digital service?"
 msgstr "Upptäckte du en tillgänglighetsbrist i vår digitala tjänst?"
 
-#: templates/accessibility_statement.html:12
+#: kamu/templates/accessibility_statement.html:12
 msgid "Tell us and we will do our best to remedy the issue."
 msgstr "Beskriv den för oss och vi ska göra vårt bästa för att åtgärda den."
 
-#: templates/accessibility_statement.html:13
+#: kamu/templates/accessibility_statement.html:13
 #, python-format
 msgid "By email: %(email)s"
 msgstr "Per e-post: %(email)s"
 
-#: templates/accessibility_statement.html:14
+#: kamu/templates/accessibility_statement.html:14
 msgid "Supervisory authority"
 msgstr "Tillsynsmyndigheten"
 
-#: templates/accessibility_statement.html:15
+#: kamu/templates/accessibility_statement.html:15
 msgid ""
 "If you notice any accessibility issues on the site, please provide feedback "
 "to us first, that is, to the site\n"
@@ -1661,27 +1676,27 @@ msgstr ""
 "På Traficoms webbplats finns det beskrivet hur du kan lämna in en anmälan "
 "och hur ärendet behandlas."
 
-#: templates/accessibility_statement.html:22
+#: kamu/templates/accessibility_statement.html:22
 msgid "Supervisory authority contact information"
 msgstr "Tillsynsmyndighetens kontaktuppgifter"
 
-#: templates/accessibility_statement.html:23
+#: kamu/templates/accessibility_statement.html:23
 msgid "Finnish Transport and Communications Agency Traficom"
 msgstr "Transport- och kommunikationsverket Traficom"
 
-#: templates/accessibility_statement.html:24
+#: kamu/templates/accessibility_statement.html:24
 msgid "Digital Accessibility Supervision Unit"
 msgstr "Enheten för tillsyn över digital tillgänglighet"
 
-#: templates/accessibility_statement.html:25
+#: kamu/templates/accessibility_statement.html:25
 msgid "P.BOX 320"
 msgstr "PLB320"
 
-#: templates/accessibility_statement.html:26
+#: kamu/templates/accessibility_statement.html:26
 msgid "FI-00059 TRAFICOM"
 msgstr "00059 TRAFICOM"
 
-#: templates/accessibility_statement.html:27
+#: kamu/templates/accessibility_statement.html:27
 msgid ""
 "<a target=\"_blank\" href=\"https://www.saavutettavuusvaatimukset.fi/"
 "en\">www.saavutettavuusvaatimukset.fi/en</a>"
@@ -1689,141 +1704,142 @@ msgstr ""
 "<a target=\"_blank\" href=\"https://www.saavutettavuusvaatimukset.fi/"
 "sv\">www.saavutettavuusvaatimukset.fi/sv</a>"
 
-#: templates/accessibility_statement.html:28
+#: kamu/templates/accessibility_statement.html:28
 msgid "saavutettavuus(at)traficom.fi"
 msgstr "tillganglighet(at)traficom.fi"
 
-#: templates/accessibility_statement.html:29
+#: kamu/templates/accessibility_statement.html:29
 msgid "Tel. +358 29 534 5000"
 msgstr "Växel: 029 534 5000"
 
-#: templates/account/account_create.html:5
+#: kamu/templates/account/account_create.html:5
 msgid "Creating a new limited user account"
 msgstr "Skapa ett nytt begränsat användarkonto"
 
-#: templates/account/account_create.html:6
+#: kamu/templates/account/account_create.html:6
 msgid ""
 "The limited user account will be created with the following information:"
 msgstr "Ett begränsat användarkonto skapas med följande uppgifter:"
 
-#: templates/account/account_create.html:10
+#: kamu/templates/account/account_create.html:10
 msgid "Given name"
 msgstr "Förnamn"
 
-#: templates/account/account_create.html:14
-#: templates/identity/identity_detail.html:16
+#: kamu/templates/account/account_create.html:14
+#: kamu/templates/identity/identity_detail.html:16
 msgid "Display name"
 msgstr "Namn som visas"
 
-#: templates/account/account_create.html:22
+#: kamu/templates/account/account_create.html:22
 msgid "Allowed services"
 msgstr "Tillåtna tjänster"
 
-#: templates/account/account_create.html:27
+#: kamu/templates/account/account_create.html:27
 msgid "Select username and enter password"
 msgstr "Välj användarnamn och ange lösenord"
 
-#: templates/account/account_create.html:29
-#: templates/account/account_detail.html:72
+#: kamu/templates/account/account_create.html:29
+#: kamu/templates/account/account_detail.html:72
 msgid "Password requirements:"
 msgstr "Lösenordskrav:"
 
-#: templates/account/account_create.html:31
-#: templates/account/account_detail.html:74
+#: kamu/templates/account/account_create.html:31
+#: kamu/templates/account/account_detail.html:74
 #, python-format
 msgid "Minimum %(min_length)s characters."
 msgstr "Minst %(min_length)s tecken."
 
-#: templates/account/account_create.html:32
-#: templates/account/account_detail.html:75
+#: kamu/templates/account/account_create.html:32
+#: kamu/templates/account/account_detail.html:75
 msgid "Not similar to other user attributes."
 msgstr "Liknar inte andra användarattribut."
 
-#: templates/account/account_create.html:36
+#: kamu/templates/account/account_create.html:36
 msgid "If necessary, create new options"
 msgstr "Skapa nya alternativ vid behov"
 
-#: templates/account/account_detail.html:5
+#: kamu/templates/account/account_detail.html:5
 msgid "User account details"
 msgstr "Detaljer för användarkonto"
 
-#: templates/account/account_detail.html:12
-#: templates/account/account_list.html:16
-#: templates/account/account_list.html:43 templates/identity/identifier.html:16
-#: templates/identity/identifier.html:62
+#: kamu/templates/account/account_detail.html:12
+#: kamu/templates/account/account_list.html:16
+#: kamu/templates/account/account_list.html:43
+#: kamu/templates/identity/identifier.html:16
+#: kamu/templates/identity/identifier.html:62
 msgid "Type"
 msgstr "Typ"
 
-#: templates/account/account_detail.html:22
+#: kamu/templates/account/account_detail.html:22
 msgid "Disable user account"
 msgstr "Deaktivera användarkonto"
 
-#: templates/account/account_detail.html:27
+#: kamu/templates/account/account_detail.html:27
 msgid "Confirm disabling user account"
 msgstr "Bekräfta deaktivering av användarkonto"
 
-#: templates/account/account_detail.html:28
-#: templates/account/account_detail.html:52
-#: templates/account/account_detail.html:90
-#: templates/account/account_detail.html:114 templates/front.html:15
-#: templates/front.html:27 templates/identity/identifier.html:35
-#: templates/identity/identity_detail.html:41
-#: templates/identity/identity_detail.html:50
-#: templates/identity/identity_detail.html:87
-#: templates/identity/identity_detail.html:108
-#: templates/membership/membership_detail.html:88
-#: templates/membership/membership_detail.html:118
-#: templates/membership/membership_detail.html:145
+#: kamu/templates/account/account_detail.html:28
+#: kamu/templates/account/account_detail.html:52
+#: kamu/templates/account/account_detail.html:90
+#: kamu/templates/account/account_detail.html:114 kamu/templates/front.html:15
+#: kamu/templates/front.html:27 kamu/templates/identity/identifier.html:35
+#: kamu/templates/identity/identity_detail.html:41
+#: kamu/templates/identity/identity_detail.html:50
+#: kamu/templates/identity/identity_detail.html:87
+#: kamu/templates/identity/identity_detail.html:108
+#: kamu/templates/membership/membership_detail.html:88
+#: kamu/templates/membership/membership_detail.html:118
+#: kamu/templates/membership/membership_detail.html:145
 msgid "Close"
 msgstr "Stäng"
 
-#: templates/account/account_detail.html:31
+#: kamu/templates/account/account_detail.html:31
 msgid "This user account will be disabled immediately."
 msgstr "Detta användarkonto kommer att inaktiveras omedelbart."
 
-#: templates/account/account_detail.html:37
-#: templates/account/account_detail.html:61
-#: templates/account/account_detail.html:99
-#: templates/account/account_detail.html:123
-#: templates/contract/contract_sign.html:19
-#: templates/identity/contact_address.html:42
-#: templates/identity/contact_address.html:91
-#: templates/identity/identifier.html:41
+#: kamu/templates/account/account_detail.html:37
+#: kamu/templates/account/account_detail.html:61
+#: kamu/templates/account/account_detail.html:99
+#: kamu/templates/account/account_detail.html:123
+#: kamu/templates/contract/contract_sign.html:19
+#: kamu/templates/identity/contact_address.html:42
+#: kamu/templates/identity/contact_address.html:91
+#: kamu/templates/identity/identifier.html:41
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: templates/account/account_detail.html:38
-#: templates/account/account_detail.html:62
-#: templates/account/account_detail.html:100
-#: templates/account/account_detail.html:124
+#: kamu/templates/account/account_detail.html:38
+#: kamu/templates/account/account_detail.html:62
+#: kamu/templates/account/account_detail.html:100
+#: kamu/templates/account/account_detail.html:124
 msgid "Confirm"
 msgstr "Bekräfta"
 
-#: templates/account/account_detail.html:46
+#: kamu/templates/account/account_detail.html:46
 msgid "Enable user account"
 msgstr "Aktivera användarkonto"
 
-#: templates/account/account_detail.html:51
+#: kamu/templates/account/account_detail.html:51
 msgid "Confirm enabling user account"
 msgstr "Bekräfta aktivering av användarkonto"
 
-#: templates/account/account_detail.html:55
+#: kamu/templates/account/account_detail.html:55
 msgid "This user account will be enabled immediately."
 msgstr "Detta användarkonto kommer att aktiveras omedelbart."
 
-#: templates/account/account_detail.html:70
+#: kamu/templates/account/account_detail.html:70
 msgid "Change your user account password"
 msgstr "Ändra lösenordet för ditt användarkonto"
 
-#: templates/account/account_detail.html:84
+#: kamu/templates/account/account_detail.html:84
 msgid "Lock user account"
 msgstr "Lås användarkonto"
 
-#: templates/account/account_detail.html:89
+#: kamu/templates/account/account_detail.html:89
 msgid "Confirm locking user account"
 msgstr "Bekräfta låsning av användarkonto"
 
-#: templates/account/account_detail.html:93
+#: kamu/templates/account/account_detail.html:93
 msgid ""
 "This user account will be locked immediately. User cannot modify or update "
 "account information."
@@ -1831,15 +1847,15 @@ msgstr ""
 "Detta användarkonto låses omedelbart. Användaren kan inte ändra eller "
 "uppdatera kontoinformation."
 
-#: templates/account/account_detail.html:108
+#: kamu/templates/account/account_detail.html:108
 msgid "Unlock user account"
 msgstr "Lås upp användarkonto"
 
-#: templates/account/account_detail.html:113
+#: kamu/templates/account/account_detail.html:113
 msgid "Confirm unlocking user account"
 msgstr "Bekräfta upplåsning av användarkonto"
 
-#: templates/account/account_detail.html:117
+#: kamu/templates/account/account_detail.html:117
 msgid ""
 "This user account will be unlocked and set to disabled or expired state, "
 "depending on expiration."
@@ -1847,39 +1863,40 @@ msgstr ""
 "Detta användarkonto låses upp och ställs in som inaktiverat eller utgånget "
 "beroende på utgångsdatum."
 
-#: templates/account/account_list.html:9
+#: kamu/templates/account/account_list.html:9
 msgid "User account information"
 msgstr "Information om användarkonto"
 
-#: templates/account/account_list.html:19
+#: kamu/templates/account/account_list.html:19
 msgid "Manage"
 msgstr "Hantera"
 
-#: templates/account/account_list.html:35
+#: kamu/templates/account/account_list.html:35
 msgid "You do not have any user accounts."
 msgstr "Du har inga användarkonton."
 
-#: templates/account/account_list.html:38
+#: kamu/templates/account/account_list.html:38
 msgid "Allowed user accounts"
 msgstr "Tillåtna användarkonton"
 
-#: templates/account/account_list.html:44
+#: kamu/templates/account/account_list.html:44
 msgid "Action"
 msgstr "Handling"
 
-#: templates/account/account_list.html:51
+#: kamu/templates/account/account_list.html:51
 msgid "Create"
 msgstr "Skapa"
 
-#: templates/account/account_list.html:52 templatetags/account_tags.py:34
+#: kamu/templates/account/account_list.html:52
+#: kamu/templatetags/account_tags.py:34
 msgid "Manage in external service"
 msgstr "Hantera i extern tjänst"
 
-#: templates/auth/invite.html:6
+#: kamu/templates/auth/invite.html:6
 msgid "Accept invite and update information"
 msgstr "Godkänn inbjudan och uppdatera uppgifterna"
 
-#: templates/auth/invite.html:7
+#: kamu/templates/auth/invite.html:7
 msgid ""
 "You have received a personal invitation to become a member of the University "
 "of Helsinki University community."
@@ -1887,7 +1904,7 @@ msgstr ""
 "Du har fått en personlig inbjudan att bli medlem i Helsingfors universitets "
 "universitetsgemenskap."
 
-#: templates/auth/invite.html:13
+#: kamu/templates/auth/invite.html:13
 msgid ""
 "You are already logged in. Claim invite here or log out to claim invite with "
 "another user."
@@ -1895,11 +1912,11 @@ msgstr ""
 "Du är redan inloggad. Acceptera inbjudan här eller logga ut för att "
 "acceptera inbjudan med en annan användare."
 
-#: templates/auth/invite.html:14
+#: kamu/templates/auth/invite.html:14
 msgid "Claim invite"
 msgstr "Acceptera inbjudan"
 
-#: templates/auth/invite.html:19
+#: kamu/templates/auth/invite.html:19
 msgid ""
 "If you already have a University of Helsinki user account or have previously "
 "registered for Kamu, log in here."
@@ -1907,11 +1924,11 @@ msgstr ""
 "Om du redan har ett användarkonto för Helsingfors universitet eller om du "
 "tidigare har registrerat dig i Kamu, logga in här."
 
-#: templates/auth/invite.html:23 templates/auth/invite.html:26
+#: kamu/templates/auth/invite.html:23 kamu/templates/auth/invite.html:26
 msgid "Register as a new user"
 msgstr "Registrera dig som ny användare"
 
-#: templates/auth/invite.html:24
+#: kamu/templates/auth/invite.html:24
 msgid ""
 "If you are a new user, please register here. Registration is required for a "
 "University of\n"
@@ -1920,41 +1937,41 @@ msgstr ""
 "Om du är ny användare, registrera dig här. Registrering krävs för \n"
 "Helsingfors universitets användarkonto och andra nyttjanderätter."
 
-#: templates/auth/login.html:9 templates/identity/identifier.html:85
+#: kamu/templates/auth/login.html:9 kamu/templates/identity/identifier.html:85
 msgid "University of Helsinki account"
 msgstr "Helsingfors universitet-konto"
 
-#: templates/auth/login.html:12
+#: kamu/templates/auth/login.html:12
 msgid "University of Helsinki sign-in"
 msgstr "Helsingfors universitets inloggning"
 
-#: templates/auth/login.html:15
+#: kamu/templates/auth/login.html:15
 msgid "Login with the University of Helsinki single sign-on."
 msgstr "Logga in med Helsingfors universitets enkelinloggning."
 
-#: templates/auth/login.html:16
+#: kamu/templates/auth/login.html:16
 msgid "Use this method, if you have a University of Helsinki user account."
 msgstr ""
 "Använd den här metoden om du har ett användarkonto hos Helsingfors "
 "universitet."
 
-#: templates/auth/login.html:20
+#: kamu/templates/auth/login.html:20
 msgid "Other methods"
 msgstr "Andra metoder"
 
-#: templates/auth/login.html:24 templates/auth/registration.html:15
+#: kamu/templates/auth/login.html:24 kamu/templates/auth/registration.html:15
 msgid "Suomi.fi sign-in"
 msgstr "Suomi.fi-inloggning"
 
-#: templates/auth/login.html:25
+#: kamu/templates/auth/login.html:25
 msgid "Login with a Suomi.fi e-Identification or eIDAS."
 msgstr "Inloggning med Suomi.fi elektronisk Identifiering eller eIDAS."
 
-#: templates/auth/login.html:30 templates/auth/registration.html:21
+#: kamu/templates/auth/login.html:30 kamu/templates/auth/registration.html:21
 msgid "Haka sign-in"
 msgstr "Haka-inloggning"
 
-#: templates/auth/login.html:31
+#: kamu/templates/auth/login.html:31
 msgid ""
 "Haka federation login. Finnish universities, polytechnics and research "
 "institutions accounts."
@@ -1962,46 +1979,46 @@ msgstr ""
 "Haka federation-inloggning. Konton hos finländska universitet, "
 "yrkeshögskolor och forskningsinstitutioner."
 
-#: templates/auth/login.html:36 templates/auth/registration.html:27
+#: kamu/templates/auth/login.html:36 kamu/templates/auth/registration.html:27
 msgid "eduGAIN sign-in"
 msgstr "eduGAIN-inloggning"
 
-#: templates/auth/login.html:37
+#: kamu/templates/auth/login.html:37
 msgid ""
 "eduGAIN federation login. Global research and education institution accounts."
 msgstr ""
 "eduGAIN federation-inloggning. Konton hos globala forsknings- och "
 "utbildningsinstitutioner."
 
-#: templates/auth/login.html:42 templates/auth/registration.html:33
+#: kamu/templates/auth/login.html:42 kamu/templates/auth/registration.html:33
 msgid "Microsoft sign-in"
 msgstr "Microsoft-inloggning"
 
-#: templates/auth/login.html:43
+#: kamu/templates/auth/login.html:43
 msgid "Login with a Microsoft account."
 msgstr "Inloggning med Microsoft-konto."
 
-#: templates/auth/login.html:48 templates/auth/registration.html:39
+#: kamu/templates/auth/login.html:48 kamu/templates/auth/registration.html:39
 msgid "Google sign-in"
 msgstr "Google-inloggning"
 
-#: templates/auth/login.html:49
+#: kamu/templates/auth/login.html:49
 msgid "Login with a Google account."
 msgstr "Inloggning med Google-konto."
 
-#: templates/auth/login.html:54
+#: kamu/templates/auth/login.html:54
 msgid "Email+SMS login"
 msgstr "Inloggning med e-postadress+SMS"
 
-#: templates/auth/login.html:55
+#: kamu/templates/auth/login.html:55
 msgid "Login with an email and SMS verification."
 msgstr "Inloggning med e-post- och SMS-verifiering."
 
-#: templates/auth/login.html:60
+#: kamu/templates/auth/login.html:60
 msgid "Local login"
 msgstr "Lokal inloggning"
 
-#: templates/auth/login.html:61
+#: kamu/templates/auth/login.html:61
 msgid ""
 "Login with a username and password. Only for testing, this will be removed "
 "before production version."
@@ -2009,15 +2026,15 @@ msgstr ""
 "Inloggning med användarnamn och lösenord. Endast för teständamål, kommer att "
 "tas bort före produktionsversion."
 
-#: templates/auth/login_email_verify.html:5
+#: kamu/templates/auth/login_email_verify.html:5
 msgid "Login verification"
 msgstr "Verifiering av inloggning"
 
-#: templates/auth/logout.html:6
+#: kamu/templates/auth/logout.html:6
 msgid "Logout warning"
 msgstr "Utloggningsvarning"
 
-#: templates/auth/logout.html:8
+#: kamu/templates/auth/logout.html:8
 msgid ""
 "You have logged in with multiple sign-in methods. This might happen if you "
 "have been linking external identifiers to your identity."
@@ -2025,7 +2042,7 @@ msgstr ""
 "Du har loggat in med flera inloggningsmetoder. Detta kan hända om du har "
 "länkat externa identifierare till din identitet."
 
-#: templates/auth/logout.html:9
+#: kamu/templates/auth/logout.html:9
 msgid ""
 "Logging out all external methods is not possible. Clear your browser cache "
 "after logging out, if you are using a shared device."
@@ -2033,27 +2050,28 @@ msgstr ""
 "Det går inte att logga ut alla externa metoder. Rensa webbläsarens "
 "cacheminne efter utloggning om du använder en delad enhet."
 
-#: templates/auth/logout.html:11
+#: kamu/templates/auth/logout.html:11
 msgid "Continue to logout"
 msgstr "Fortsätt till utloggning"
 
-#: templates/auth/logout.html:13 templates/base.html:72
+#: kamu/templates/auth/logout.html:13 kamu/templates/base.html:74
 msgid "Logout"
 msgstr "Logga ut"
 
-#: templates/auth/logout.html:14
+#: kamu/templates/auth/logout.html:14
 msgid "You have been logged out."
 msgstr "Du är nu utloggad."
 
-#: templates/auth/logout.html:15
+#: kamu/templates/auth/logout.html:15
 msgid "Return to front page"
 msgstr "Tillbaka till förstasidan"
 
-#: templates/auth/registration.html:8 templates/auth/registration_form.html:6
+#: kamu/templates/auth/registration.html:8
+#: kamu/templates/auth/registration_form.html:6
 msgid "Welcome to register with the University community"
 msgstr "Välkommen att registrera dig i universitetsgemenskapen"
 
-#: templates/auth/registration.html:9
+#: kamu/templates/auth/registration.html:9
 msgid ""
 "\"We recommend that you use the existing authentication methods, which will "
 "also allow you to\n"
@@ -2065,15 +2083,15 @@ msgstr ""
 "kan använda dem för att logga in i Kamu. Om du vill kan du emellertid "
 "registrera dig med bekräftelse som skickas via e-post eller textmeddelande."
 
-#: templates/auth/registration.html:11
+#: kamu/templates/auth/registration.html:11
 msgid "Register with an existing identifier"
 msgstr "Registrera dig med en befintlig identifierare"
 
-#: templates/auth/registration.html:16
+#: kamu/templates/auth/registration.html:16
 msgid "Register with a Suomi.fi e-Identification or eIDAS."
 msgstr "Registrera dig med Suomi.fi elektronisk identifiering eller eIDAS."
 
-#: templates/auth/registration.html:22
+#: kamu/templates/auth/registration.html:22
 msgid ""
 "Register through the Haka trust network. User accounts of Finnish higher "
 "education institutions and research organisations."
@@ -2081,7 +2099,7 @@ msgstr ""
 "Registrera dig via Haka-förtroendenätverket. Användarkonton för finländska "
 "högskolor och forskningsorganisationer."
 
-#: templates/auth/registration.html:28
+#: kamu/templates/auth/registration.html:28
 msgid ""
 "Register via the eduGAIN trust network. User accounts of international "
 "research and educational organisations."
@@ -2089,19 +2107,20 @@ msgstr ""
 "Registrera dig via eduGAIN-förtroendenätverket. Användarkonton för "
 "internationella forsknings- och utbildningsorganisationer."
 
-#: templates/auth/registration.html:34
+#: kamu/templates/auth/registration.html:34
 msgid "Register with a Microsoft account."
 msgstr "Registrera dig med ett Microsoft-konto."
 
-#: templates/auth/registration.html:40
+#: kamu/templates/auth/registration.html:40
 msgid "Register with a Google account."
 msgstr "Registrera dig med ett Google-konto."
 
-#: templates/auth/registration.html:45 templates/auth/registration_form.html:7
+#: kamu/templates/auth/registration.html:45
+#: kamu/templates/auth/registration_form.html:7
 msgid "Register with email and SMS verification"
 msgstr "Registrera dig med e-postadress och SMS-verifiering"
 
-#: templates/auth/registration.html:47
+#: kamu/templates/auth/registration.html:47
 msgid ""
 "It is possible to register with an email address and a phone number with SMS "
 "capability, but we strongly recommend the use of other authentication "
@@ -2111,170 +2130,174 @@ msgstr ""
 "emot och skicka textmeddelanden, men vi rekommenderar starkt andra "
 "identifieringsmetoder."
 
-#: templates/base.html:13 templates/base.html:20 templates/front.html:5
+#: kamu/templates/base.html:13 kamu/templates/base.html:22
+#: kamu/templates/front.html:5
 msgid "Kamu"
 msgstr "Kamu"
 
-#: templates/base.html:19 templates/base.html:20
+#: kamu/templates/base.html:21 kamu/templates/base.html:22
 msgid "Go to Kamu front page"
 msgstr "Gå till Kamus startsida"
 
-#: templates/base.html:20
+#: kamu/templates/base.html:22
 msgid "University of Helsinki"
 msgstr "Helsingfors universitet"
 
-#: templates/base.html:21
+#: kamu/templates/base.html:23
 msgid "Toggle navigation"
 msgstr "Växla navigation"
 
-#: templates/base.html:28 templates/front.html:71 templates/front.html:73
+#: kamu/templates/base.html:30 kamu/templates/front.html:71
+#: kamu/templates/front.html:73
 msgid "My information"
 msgstr "Mina uppgifter"
 
-#: templates/base.html:34 templates/front.html:37
+#: kamu/templates/base.html:36 kamu/templates/front.html:37
 msgid "Pending approval"
 msgstr "Väntar på godkännande"
 
-#: templates/base.html:35 templates/front.html:40 templates/front.html:43
-#: templates/membership/membership_expiring_list.html:5
+#: kamu/templates/base.html:37 kamu/templates/front.html:40
+#: kamu/templates/front.html:43
+#: kamu/templates/membership/membership_expiring_list.html:5
 msgid "Expiring memberships"
 msgstr "Medlemskap som löper ut"
 
-#: templates/base.html:36 templates/front.html:48
+#: kamu/templates/base.html:38 kamu/templates/front.html:48
 msgid "My edits"
 msgstr "Egna ändringar"
 
-#: templates/base.html:37 templates/identity/identity_search.html:7
+#: kamu/templates/base.html:39 kamu/templates/identity/identity_search.html:7
 msgid "People search"
 msgstr "Personsökning"
 
-#: templates/base.html:45 templates/front.html:54
+#: kamu/templates/base.html:47 kamu/templates/front.html:54
 msgid "Invite members"
 msgstr "Bjud in medlemmar"
 
-#: templates/base.html:46 templates/front.html:60
+#: kamu/templates/base.html:48 kamu/templates/front.html:60
 msgid "Approvable roles"
 msgstr "Roller att godkänna"
 
-#: templates/base.html:47 templates/front.html:63 templates/front.html:65
+#: kamu/templates/base.html:49 kamu/templates/front.html:63
+#: kamu/templates/front.html:65
 msgid "Roles I own"
 msgstr "Roller jag äger"
 
-#: templates/base.html:48
+#: kamu/templates/base.html:50
 msgid "Search for roles"
 msgstr "Sök roller"
 
-#: templates/base.html:107
+#: kamu/templates/base.html:109
 msgid "Accessibility"
 msgstr "Tillgänglighet"
 
-#: templates/base.html:108
+#: kamu/templates/base.html:110
 msgid "See the user instructions"
 msgstr "Se bruksanvisningar"
 
-#: templates/contract/contract_detail.html:8
+#: kamu/templates/contract/contract_detail.html:8
 msgid "Contract information"
 msgstr "Avtalsuppgifter"
 
-#: templates/contract/contract_detail.html:11
-#: templates/contract/contract_sign.html:11
+#: kamu/templates/contract/contract_detail.html:11
+#: kamu/templates/contract/contract_sign.html:11
 msgid "Details"
 msgstr "Detaljer"
 
-#: templates/contract/contract_detail.html:13
+#: kamu/templates/contract/contract_detail.html:13
 msgid "Signatory"
 msgstr "Undertecknare"
 
-#: templates/contract/contract_detail.html:15
+#: kamu/templates/contract/contract_detail.html:15
 msgid "Signing time"
 msgstr "Tidpunkt för signering"
 
-#: templates/contract/contract_detail.html:17
+#: kamu/templates/contract/contract_detail.html:17
 msgid "Signing language"
 msgstr "Signeringsspråk"
 
-#: templates/contract/contract_detail.html:19
+#: kamu/templates/contract/contract_detail.html:19
 msgid "Signing checksum"
 msgstr "Signeringens kontrollsumma"
 
-#: templates/contract/contract_detail.html:23
+#: kamu/templates/contract/contract_detail.html:23
 msgid "Validation"
 msgstr "Verifiering"
 
-#: templates/contract/contract_detail.html:24
+#: kamu/templates/contract/contract_detail.html:24
 msgid "Validation was successful"
 msgstr "Verifieringen lyckades"
 
-#: templates/contract/contract_detail.html:24
+#: kamu/templates/contract/contract_detail.html:24
 msgid "Validation failed"
 msgstr "Verifieringen misslyckades"
 
-#: templates/contract/contract_list.html:12
-#: templates/contract/contract_list.html:44
-#: templates/contract/contract_sign.html:13
-#: templates/identity/identity_search.html:17
-#: templates/identity/identity_search.html:44
-#: templates/identity/identity_search.html:66
-#: templates/membership/membership_detail.html:19
-#: templates/membership/membership_detail.html:37
-#: templates/membership/membership_invite.html:11
-#: templates/membership/membership_invite.html:30
-#: templates/membership/membership_invite.html:38
-#: templates/membership/membership_invite.html:48
-#: templates/membership/membership_invite_identity.html:21
-#: templates/membership/membership_invite_identity.html:56
-#: templates/membership/membership_invite_identity.html:80
-#: templates/role/role_detail.html:7
+#: kamu/templates/contract/contract_list.html:12
+#: kamu/templates/contract/contract_list.html:44
+#: kamu/templates/contract/contract_sign.html:13
+#: kamu/templates/identity/identity_search.html:17
+#: kamu/templates/identity/identity_search.html:44
+#: kamu/templates/identity/identity_search.html:66
+#: kamu/templates/membership/membership_detail.html:19
+#: kamu/templates/membership/membership_detail.html:37
+#: kamu/templates/membership/membership_invite.html:11
+#: kamu/templates/membership/membership_invite.html:30
+#: kamu/templates/membership/membership_invite.html:38
+#: kamu/templates/membership/membership_invite.html:48
+#: kamu/templates/membership/membership_invite_identity.html:21
+#: kamu/templates/membership/membership_invite_identity.html:56
+#: kamu/templates/membership/membership_invite_identity.html:80
+#: kamu/templates/role/role_detail.html:7
 msgid "Name"
 msgstr "Namn"
 
-#: templates/contract/contract_list.html:13
-#: templates/contract/contract_list.html:45
+#: kamu/templates/contract/contract_list.html:13
+#: kamu/templates/contract/contract_list.html:45
 msgid "Version"
 msgstr "Version"
 
-#: templates/contract/contract_list.html:14
+#: kamu/templates/contract/contract_list.html:14
 msgid "Sign date"
 msgstr "Datum för signering"
 
-#: templates/contract/contract_list.html:31
+#: kamu/templates/contract/contract_list.html:31
 msgid "You do not have any signed contracts."
 msgstr "Du har inga signerade avtal."
 
-#: templates/contract/contract_list.html:34
+#: kamu/templates/contract/contract_list.html:34
 msgid "Hiding old contract versions by default."
 msgstr "Döljer gamla avtalsversioner som standard."
 
-#: templates/contract/contract_list.html:35
+#: kamu/templates/contract/contract_list.html:35
 msgid "List all versions."
 msgstr "Lista alla versioner."
 
-#: templates/contract/contract_list.html:38
+#: kamu/templates/contract/contract_list.html:38
 msgid "Signable contracts"
 msgstr "Avtal som kan signeras"
 
-#: templates/contract/contract_list.html:46
+#: kamu/templates/contract/contract_list.html:46
 msgid "Sign"
 msgstr "Signera"
 
-#: templates/contract/contract_list.html:54
+#: kamu/templates/contract/contract_list.html:54
 msgid "Open contract"
 msgstr "Öppna avtal"
 
-#: templates/contract/contract_list.html:61
+#: kamu/templates/contract/contract_list.html:61
 msgid "You do not have any signable contracts."
 msgstr "Du har inga avtal att signera."
 
-#: templates/contract/contract_sign.html:8
-#: templates/contract/contract_sign.html:18
+#: kamu/templates/contract/contract_sign.html:8
+#: kamu/templates/contract/contract_sign.html:18
 msgid "Sign contract"
 msgstr "Signera avtal"
 
-#: templates/contract/contract_sign.html:15
+#: kamu/templates/contract/contract_sign.html:15
 msgid "Date"
 msgstr "Datum"
 
-#: templates/email/account_created_message.txt:1
+#: kamu/templates/email/account_created_message.txt:1
 #, python-format
 msgid ""
 "Hello,\n"
@@ -2299,11 +2322,11 @@ msgstr ""
 "Mer information om hur du använder användarnamnet finns i IT-Helpdesks "
 "anvisning %(help_link)s"
 
-#: templates/email/account_created_subject.txt:1
+#: kamu/templates/email/account_created_subject.txt:1
 msgid "Your limited user account is ready"
 msgstr "Ditt begränsade användarkonto är klart"
 
-#: templates/email/account_password_reset_message.txt:1
+#: kamu/templates/email/account_password_reset_message.txt:1
 #, python-format
 msgid ""
 "Hi,\n"
@@ -2328,12 +2351,12 @@ msgstr ""
 "Om du inte har bytt ditt lösenord, kontakta genast Helsingfors universitets "
 "Helpdesk: %(help_link)s"
 
-#: templates/email/account_password_reset_subject.txt:1
+#: kamu/templates/email/account_password_reset_subject.txt:1
 #, python-format
 msgid "Password changed: %(uid)s"
 msgstr "Lösenordet har bytts: %(uid)s"
 
-#: templates/email/expire_notification_member_message.txt:1
+#: kamu/templates/email/expire_notification_member_message.txt:1
 #, python-format
 msgid ""
 "Hi\n"
@@ -2351,21 +2374,21 @@ msgstr ""
 "\n"
 "Kontakta din universitetskontakt om medlemskapet ska fortsätta."
 
-#: templates/email/expire_notification_member_message.txt:7
+#: kamu/templates/email/expire_notification_member_message.txt:7
 #, python-format
 msgid "You were invited by %(inviter)s."
 msgstr "Du fick en inbjudan av %(inviter)s."
 
-#: templates/email/expire_notification_member_message.txt:8
+#: kamu/templates/email/expire_notification_member_message.txt:8
 #, python-format
 msgid "Your membership was approved by %(approver)s."
 msgstr "Ditt medlemskap har godkänts av %(approver)s."
 
-#: templates/email/expire_notification_member_subject.txt:1
+#: kamu/templates/email/expire_notification_member_subject.txt:1
 msgid "Your membership is ending soon"
 msgstr "Ditt medlemskap upphör snart"
 
-#: templates/email/expire_notification_role_message.txt:1
+#: kamu/templates/email/expire_notification_role_message.txt:1
 #, python-format
 msgid ""
 "Hi\n"
@@ -2386,15 +2409,15 @@ msgstr ""
 "\n"
 "Antal medlemskap som snart löper ut: %(number_of_memberships)s"
 
-#: templates/email/expire_notification_role_subject.txt:1
+#: kamu/templates/email/expire_notification_role_subject.txt:1
 msgid "Expiring Kamu memberships"
 msgstr "Medlemskap som löper ut i Kamu"
 
-#: templates/email/invite_email_message.txt:2
+#: kamu/templates/email/invite_email_message.txt:2
 msgid "Hello,"
 msgstr "Hej,"
 
-#: templates/email/invite_email_message.txt:4
+#: kamu/templates/email/invite_email_message.txt:4
 #, python-format
 msgid ""
 "%(inviter)s has invited you to join the University of Helsinki in the role "
@@ -2403,12 +2426,12 @@ msgstr ""
 "%(inviter)s har bjudit in dig till Helsingfors universitet som medlem i "
 "rollen "
 
-#: templates/email/invite_email_message.txt:4
+#: kamu/templates/email/invite_email_message.txt:4
 msgid ""
 "You have been invited to join the University of Helsinki in the role of "
 msgstr "Du har fått en inbjudan till en ny roll vid Helsingfors universitet. "
 
-#: templates/email/invite_email_message.txt:6
+#: kamu/templates/email/invite_email_message.txt:6
 msgid ""
 "Register as a member using the personal link below. After registration, you "
 "will receive the services related to your membership, such as your username."
@@ -2417,15 +2440,15 @@ msgstr ""
 "registreringen får du tillgång till tjänster som anknyter till ditt "
 "medlemskap, till exempel ett användarnamn."
 
-#: templates/email/invite_email_message.txt:10
+#: kamu/templates/email/invite_email_message.txt:10
 msgid "Your personal invitation code is:"
 msgstr "Din personliga inbjudningskod är:"
 
-#: templates/email/invite_email_subject.txt:1
+#: kamu/templates/email/invite_email_subject.txt:1
 msgid "The University of Helsinki welcomes you"
 msgstr "Välkommen till Helsingfors universitet"
 
-#: templates/email/login_verification_email_message.txt:1
+#: kamu/templates/email/login_verification_email_message.txt:1
 #, python-format
 msgid ""
 "Hi\n"
@@ -2444,27 +2467,28 @@ msgstr ""
 "Om du inte har försökt logga in i Helsingfors universitets Kamu-register kan "
 "du ignorera detta e-postmeddelande."
 
-#: templates/email/login_verification_email_subject.txt:1
+#: kamu/templates/email/login_verification_email_subject.txt:1
 msgid "Kamu login verification"
 msgstr "Bekräftelse av Kamu-inloggning"
 
-#: templates/email/membership_add_message.txt:1
+#: kamu/templates/email/membership_add_message.txt:1
+#: kamu/templates/email/membership_require_approval_role_message.txt:1
 msgid "Hi"
 msgstr "Hej"
 
-#: templates/email/membership_add_message.txt:3
+#: kamu/templates/email/membership_add_message.txt:3
 #, python-format
 msgid ""
 "%(inviter)s has invited you to join the University of Helsinki in the role "
 "of %(role)s."
 msgstr "%(inviter)s har bjudit in dig till rollen: %(role)s."
 
-#: templates/email/membership_add_message.txt:3
+#: kamu/templates/email/membership_add_message.txt:3
 msgid ""
 "You have been added to the role of {{ role }} at the University of Helsinki."
 msgstr "Du har lagts till i rollen {{ role }} vid Helsingfors universitet."
 
-#: templates/email/membership_add_message.txt:5
+#: kamu/templates/email/membership_add_message.txt:5
 #, python-format
 msgid ""
 "You can view your information and the services granted to you in the "
@@ -2473,11 +2497,11 @@ msgstr ""
 "Du kan granska dina uppgifter och de tjänster som beviljats dig i "
 "Helsingfors universitets Kamu-register %(service_link)s."
 
-#: templates/email/membership_add_subject.txt:1
+#: kamu/templates/email/membership_add_subject.txt:1
 msgid "You’ve been granted a new role"
 msgstr "Du har beviljats en ny roll"
 
-#: templates/email/membership_approved_member_message.txt:1
+#: kamu/templates/email/membership_approved_member_message.txt:1
 #, python-format
 msgid ""
 "Hi\n"
@@ -2496,11 +2520,11 @@ msgstr ""
 "Du kan granska dina uppgifter och de tjänster som beviljats dig i "
 "Helsingfors universitets Kamu-register %(service_link)s."
 
-#: templates/email/membership_approved_member_subject.txt:1
+#: kamu/templates/email/membership_approved_member_subject.txt:1
 msgid "Your membership has been approved"
 msgstr "Ditt medlemskap har blivit godkänt"
 
-#: templates/email/membership_cancelled_member_message.txt:1
+#: kamu/templates/email/membership_cancelled_member_message.txt:1
 #, python-format
 msgid ""
 "Hi\n"
@@ -2517,11 +2541,11 @@ msgstr ""
 "\n"
 " För mer information, vänligen kontakta %(contact_email)s."
 
-#: templates/email/membership_cancelled_member_subject.txt:1
+#: kamu/templates/email/membership_cancelled_member_subject.txt:1
 msgid "Your role membership has been cancelled"
 msgstr "Ditt medlemskap i rollen vid Helsingfors universitet har annullerats"
 
-#: templates/email/membership_rejected_member_message.txt:1
+#: kamu/templates/email/membership_rejected_member_message.txt:1
 #, python-format
 msgid ""
 "Hi\n"
@@ -2539,36 +2563,39 @@ msgstr ""
 "\n"
 "För mer information, kontakta %(contact_email)s."
 
-#: templates/email/membership_rejected_member_subject.txt:1
+#: kamu/templates/email/membership_rejected_member_subject.txt:1
 msgid "Your role membership has been rejected"
 msgstr "Ditt medlemskap i rollen har avvisats"
 
-#: templates/email/membership_require_approval_role_message.txt:1
+#: kamu/templates/email/membership_require_approval_role_message.txt:3
 #, python-format
 msgid ""
-"Hi\n"
-"\n"
-"Log in to Kamu %(service_link)s to approve or reject a new membership for "
-"the role %(role)s. You can find it under Memberships pending approval. If "
-"there are no memberships on the list, someone else has already processed "
-"it.\n"
-"\n"
-"Person invited to the role: %(member)s"
+"%(inviter)s has sent an invitation from Kamu for the role of %(role)s. Log "
+"in to Kamu %(service_link)s to approve or reject the new membership for the "
+"role."
 msgstr ""
-"Hej\n"
-"\n"
-"Logga in i Kamu %(service_link)s för att godkänna eller avvisa ett nytt "
-"medlemskap i rollen %(role)s. Du hittar det under Medlemskap som väntar på "
-"godkännande. Om det inte finns några medlemskap i listan har någon annan "
-"redan behandlat det.\n"
-"\n"
-"Inbjuden person: %(member)s"
+"%(inviter)s har skickat en inbjudan från Kamu för rollen %(role)s. Logga in i "
+"Kamu %(service_link)s för att godkänna eller avvisa det nya medlemskapet i "
+"rollen."
 
-#: templates/email/membership_require_approval_role_subject.txt:1
+#: kamu/templates/email/membership_require_approval_role_message.txt:5
+msgid ""
+"You can find the membership under Memberships pending approval. If there are "
+"no memberships on the list, someone else has already processed it."
+msgstr ""
+"Du hittar medlemskapet under Medlemskap som väntar på godkännande. Om det inte "
+"finns några medlemskap i listan har någon annan redan behandlat det."
+
+#: kamu/templates/email/membership_require_approval_role_message.txt:7
+#, python-format
+msgid "Person invited to the role: %(member)s"
+msgstr "Person som har bjudits in till rollen: %(member)s"
+
+#: kamu/templates/email/membership_require_approval_role_subject.txt:1
 msgid "New Kamu membership awaits approval"
 msgstr "Nytt Kamu-medlemskap väntar på godkännande"
 
-#: templates/email/primary_email_changed_message.txt:1
+#: kamu/templates/email/primary_email_changed_message.txt:1
 #, python-format
 msgid ""
 "Hi\n"
@@ -2585,7 +2612,7 @@ msgstr ""
 "Framtida säkerhetsmeddelanden (t.ex. återställning av lösenord) kommer att\n"
 "skickas till din nya primära e‑postadress."
 
-#: templates/email/primary_email_changed_message.txt:7
+#: kamu/templates/email/primary_email_changed_message.txt:7
 msgid ""
 "If you did not make this change, update your email address back in Kamu and "
 "contact the IT Helpdesk."
@@ -2593,7 +2620,7 @@ msgstr ""
 "Om du inte gjorde denna ändring, uppdatera din e‑postadress tillbaka i Kamu\n"
 "och kontakta IT-helpdesk."
 
-#: templates/email/primary_email_changed_message.txt:7
+#: kamu/templates/email/primary_email_changed_message.txt:7
 msgid ""
 "If you did not request this change, update your email address back in Kamu "
 "and contact the IT Helpdesk."
@@ -2602,11 +2629,11 @@ msgstr ""
 "Kamu\n"
 "och kontakta IT-helpdesk."
 
-#: templates/email/primary_email_changed_subject.txt:1
+#: kamu/templates/email/primary_email_changed_subject.txt:1
 msgid "Primary email address changed in Kamu"
 msgstr "Primär e‑postadress ändrad i Kamu"
 
-#: templates/email/verification_email_message.txt:1
+#: kamu/templates/email/verification_email_message.txt:1
 #, python-format
 msgid ""
 "Hi\n"
@@ -2625,23 +2652,23 @@ msgstr ""
 "Din bekräftelsekod är:\n"
 "%(token)s"
 
-#: templates/email/verification_email_subject.txt:1
+#: kamu/templates/email/verification_email_subject.txt:1
 msgid "Kamu email verification"
 msgstr "Kamu e-postverifiering"
 
-#: templates/error.html:5 templates/error.html:7
+#: kamu/templates/error.html:5 kamu/templates/error.html:7
 msgid "Error"
 msgstr "Fel"
 
-#: templates/error.html:9 templates/info.html:9
+#: kamu/templates/error.html:9 kamu/templates/info.html:9
 msgid "Return to front page."
 msgstr "Tillbaka till förstasidan."
 
-#: templates/errors/400.html:5
+#: kamu/templates/errors/400.html:5
 msgid "Bad request"
 msgstr "Felaktig begäran"
 
-#: templates/errors/400.html:6
+#: kamu/templates/errors/400.html:6
 msgid ""
 "There is something wrong in the request. Please check the address and "
 "restart your browser if it's correct."
@@ -2649,55 +2676,55 @@ msgstr ""
 "Något är fel med begäran. Kontrollera adressen och starta om webbläsaren om "
 "den är korrekt."
 
-#: templates/errors/400.html:7 templates/errors/403.html:7
-#: templates/errors/404.html:7 templates/errors/500.html:7
+#: kamu/templates/errors/400.html:7 kamu/templates/errors/403.html:7
+#: kamu/templates/errors/404.html:7 kamu/templates/errors/500.html:7
 msgid "Front page"
 msgstr "Förstasidan"
 
-#: templates/errors/403.html:5
+#: kamu/templates/errors/403.html:5
 msgid "Permission denied"
 msgstr "Åtkomst nekad"
 
-#: templates/errors/403.html:6
+#: kamu/templates/errors/403.html:6
 msgid "You have insufficient permissions to access this page."
 msgstr "Du har otillräckliga rättigheter för att komma åt denna sida."
 
-#: templates/errors/404.html:5
+#: kamu/templates/errors/404.html:5
 msgid "Page not found"
 msgstr "Sidan kunde inte hittas"
 
-#: templates/errors/404.html:6
+#: kamu/templates/errors/404.html:6
 msgid ""
 "The page you are looking for does not exist or you have insufficient "
 "permissions for it."
 msgstr "Sidan du söker finns inte eller så har du otillräckliga rättigheter."
 
-#: templates/errors/500.html:5
+#: kamu/templates/errors/500.html:5
 msgid "Internal error"
 msgstr "Internt fel"
 
-#: templates/errors/500.html:6
+#: kamu/templates/errors/500.html:6
 msgid "Something went wrong and the service administrators have been notified."
 msgstr "Något gick fel och tjänstens administratörer har informerats."
 
-#: templates/front.html:6
+#: kamu/templates/front.html:6
 msgid "Membership register of the University of Helsinki community."
 msgstr "Medlemsregister för Helsingfors universitets universitetsgemenskap."
 
-#: templates/front.html:9
+#: kamu/templates/front.html:9
 msgid "Membership and role management"
 msgstr "Medlemskaps- och rolladministration"
 
-#: templates/front.html:9 templates/identity/identity_detail.html:32
-#: templates/identity/identity_detail.html:81
+#: kamu/templates/front.html:9 kamu/templates/identity/identity_detail.html:32
+#: kamu/templates/identity/identity_detail.html:81
 msgid "info"
 msgstr "info"
 
-#: templates/front.html:14
+#: kamu/templates/front.html:14
 msgid "Manage role memberships"
 msgstr "Hantera rollmedlemskap"
 
-#: templates/front.html:18
+#: kamu/templates/front.html:18
 msgid ""
 "All permissions provided to users are based on the active role memberships. "
 "Role membership becomes active when all requirements of the membership are "
@@ -2706,11 +2733,11 @@ msgstr ""
 "Alla rättigheter som tilldelas användare baseras på aktiva rollmedlemskap. "
 "Rollmedlemskapet blir aktivt när alla krav för medlemskapet är uppfyllda:"
 
-#: templates/front.html:20
+#: kamu/templates/front.html:20
 msgid "Membership has been approved"
 msgstr "Medlemskapet har godkänts"
 
-#: templates/front.html:21
+#: kamu/templates/front.html:21
 msgid ""
 "Membership is in active period, i.e. after start date and before expiration "
 "date."
@@ -2718,7 +2745,7 @@ msgstr ""
 "Medlemskapet är i den aktiva perioden, dvs. efter startdagen och före "
 "avslutningsdagen."
 
-#: templates/front.html:22
+#: kamu/templates/front.html:22
 msgid ""
 "Role requirements are fulfilled. This may include signing agreements, giving "
 "certain user information and confirming user identity."
@@ -2726,18 +2753,20 @@ msgstr ""
 "Rollkraven är uppfyllda. Detta kan inkludera signering av avtal, utlämnande "
 "av vissa användaruppgifter och bekräftande av användarens identitet."
 
-#: templates/front.html:24 templates/identity/identity_detail.html:105
+#: kamu/templates/front.html:24
+#: kamu/templates/identity/identity_detail.html:105
 #, python-format
 msgid ""
 "Read more about role management from the <a href=\"%(link)s\">IT Helpdesk</"
 "a>."
 msgstr "Läs mer om rollhantering på <a href=\"%(link)s\">IT-Helpdesk</a>."
 
-#: templates/front.html:34 templates/membership/membership_approval_list.html:5
+#: kamu/templates/front.html:34
+#: kamu/templates/membership/membership_approval_list.html:5
 msgid "Memberships pending approval"
 msgstr "Medlemskap som väntar på godkännande"
 
-#: templates/front.html:35
+#: kamu/templates/front.html:35
 msgid ""
 "Shows memberships pending approval for roles for which you have invitation "
 "or approval\n"
@@ -2746,7 +2775,7 @@ msgstr ""
 "Visar medlemskap som väntar på godkännande för roller för vilka du har "
 "inbjudnings- eller godkännandebehörighet. "
 
-#: templates/front.html:41
+#: kamu/templates/front.html:41
 msgid ""
 "Shows memberships expiring within a month for roles for which you have "
 "invitation or\n"
@@ -2755,19 +2784,20 @@ msgstr ""
 "Visar medlemskap som löper ut inom en månad för roller för vilka du har "
 "inbjudnings- eller godkännandebehörighet. "
 
-#: templates/front.html:46 templates/membership/membership_managed_list.html:5
+#: kamu/templates/front.html:46
+#: kamu/templates/membership/membership_managed_list.html:5
 msgid "My managed memberships"
 msgstr "Medlemskap som jag administrerar"
 
-#: templates/front.html:47
+#: kamu/templates/front.html:47
 msgid "Shows which invitations and/or approvals you have made yourself."
 msgstr "Visar vilka inbjudningar och/eller godkännanden du har gjort."
 
-#: templates/front.html:51 templates/role/role_list_inviter.html:4
+#: kamu/templates/front.html:51 kamu/templates/role/role_list_inviter.html:4
 msgid "Member invitation"
 msgstr "Inbjudan till medlemskap"
 
-#: templates/front.html:52
+#: kamu/templates/front.html:52
 msgid ""
 "Shows the roles to which you can invite new members. You can also start the "
 "invitation\n"
@@ -2776,11 +2806,11 @@ msgstr ""
 "Visar de roller för vilka du kan bjuda in nya medlemmar. Du kan också starta "
 "inbjudningsprocessen för dessa roller. "
 
-#: templates/front.html:57
+#: kamu/templates/front.html:57
 msgid "Roles you can approve"
 msgstr "Roller som du kan godkänna"
 
-#: templates/front.html:58
+#: kamu/templates/front.html:58
 msgid ""
 "Shows the roles for which you can approve members. You can also start the "
 "invitation\n"
@@ -2789,11 +2819,11 @@ msgstr ""
 "Visar de roller för vilka du kan godkänna medlemmar. Du kan också starta "
 "inbjudningsprocessen för dessa roller. "
 
-#: templates/front.html:64
+#: kamu/templates/front.html:64
 msgid "Shows the roles of which you are the owner. "
 msgstr "Visar de roller där du är ägare. "
 
-#: templates/front.html:72
+#: kamu/templates/front.html:72
 msgid ""
 "View and manage your information. This includes name and contact "
 "information, linked identifiers and any agreements."
@@ -2801,15 +2831,15 @@ msgstr ""
 "Visa och administrera dina uppgifter. Dessa inkluderar namn- och "
 "kontaktuppgifter, länkade identifierare samt eventuella avtal."
 
-#: templates/front.html:77
+#: kamu/templates/front.html:77
 msgid "Admin utilities"
 msgstr "Administrativa verktyg"
 
-#: templates/front.html:80 templates/front.html:83
+#: kamu/templates/front.html:80 kamu/templates/front.html:83
 msgid "Admin site"
 msgstr "Administrationssida"
 
-#: templates/front.html:81
+#: kamu/templates/front.html:81
 msgid ""
 "Admin site allows you to manage role and permission information, according "
 "to your\n"
@@ -2819,72 +2849,72 @@ msgstr ""
 "dina\n"
 "            användarrättigheter."
 
-#: templates/front.html:91
+#: kamu/templates/front.html:91
 msgid "Manage your own information and memberships or invite new users."
 msgstr "Administrera dina uppgifter, medlemskap eller bjud in nya användare."
 
-#: templates/front.html:95 templates/front.html:97
+#: kamu/templates/front.html:95 kamu/templates/front.html:97
 msgid "Register"
 msgstr "Registrera"
 
-#: templates/front.html:96
+#: kamu/templates/front.html:96
 msgid ""
 "If you have received a personal invitation code, register for Kamu here."
 msgstr ""
 "Om du har fått en personlig inbjudningskod kan du registrera dig i Kamu här."
 
-#: templates/identity/contact_address.html:8
-#: templates/identity/identity_detail.html:117
+#: kamu/templates/identity/contact_address.html:8
+#: kamu/templates/identity/identity_detail.html:117
 msgid "Contact information"
 msgstr "Kontaktuppgifter"
 
-#: templates/identity/contact_address.html:16
-#: templates/identity/contact_address.html:65
-#: templates/identity/identity_combine.html:125
-#: templates/identity/identity_combine.html:126
-#: templates/identity/identity_combine.html:127
-#: templates/identity/identity_combine.html:128
-#: templates/identity/identity_combine.html:132
-#: templates/identity/identity_combine.html:133
-#: templates/identity/identity_combine.html:134
-#: templates/identity/identity_combine.html:135
+#: kamu/templates/identity/contact_address.html:16
+#: kamu/templates/identity/contact_address.html:65
+#: kamu/templates/identity/identity_combine.html:125
+#: kamu/templates/identity/identity_combine.html:126
+#: kamu/templates/identity/identity_combine.html:127
+#: kamu/templates/identity/identity_combine.html:128
+#: kamu/templates/identity/identity_combine.html:132
+#: kamu/templates/identity/identity_combine.html:133
+#: kamu/templates/identity/identity_combine.html:134
+#: kamu/templates/identity/identity_combine.html:135
 msgid "Verified"
 msgstr "Verifierad"
 
-#: templates/identity/contact_address.html:17
-#: templates/identity/contact_address.html:66
+#: kamu/templates/identity/contact_address.html:17
+#: kamu/templates/identity/contact_address.html:66
 msgid "Priority (if multiple)"
 msgstr "Prioritet (om flera)"
 
-#: templates/identity/contact_address.html:18
-#: templates/identity/contact_address.html:29
-#: templates/identity/contact_address.html:67
-#: templates/identity/contact_address.html:78
+#: kamu/templates/identity/contact_address.html:18
+#: kamu/templates/identity/contact_address.html:29
+#: kamu/templates/identity/contact_address.html:67
+#: kamu/templates/identity/contact_address.html:78
 msgid "Remove"
 msgstr "Ta bort"
 
-#: templates/identity/contact_address.html:26
-#: templates/identity/contact_address.html:75
+#: kamu/templates/identity/contact_address.html:26
+#: kamu/templates/identity/contact_address.html:75
 msgid "Up"
 msgstr "Upp"
 
-#: templates/identity/contact_address.html:27
-#: templates/identity/contact_address.html:76
+#: kamu/templates/identity/contact_address.html:27
+#: kamu/templates/identity/contact_address.html:76
 msgid "Down"
 msgstr "Ner"
 
-#: templates/identity/contact_address.html:34
-#: templates/identity/contact_address.html:43
-#: templates/identity/contact_address.html:83
-#: templates/identity/contact_address.html:92
+#: kamu/templates/identity/contact_address.html:34
+#: kamu/templates/identity/contact_address.html:43
+#: kamu/templates/identity/contact_address.html:83
+#: kamu/templates/identity/contact_address.html:92
 msgid "Confirm removal"
 msgstr "Bekräfta radering"
 
-#: templates/identity/contact_address.html:38
+#: kamu/templates/identity/contact_address.html:38
 msgid "You are removing the email address"
 msgstr "Du håller på att radera e-postadressen"
 
-#: templates/identity/contact_address.html:39
+#: kamu/templates/identity/contact_address.html:39
 msgid ""
 "After deletion, you will no longer be able to use this email address to log "
 "in. "
@@ -2892,7 +2922,7 @@ msgstr ""
 "Efter raderingen kan du inte längre använda denna e-postadress för att logga "
 "in. "
 
-#: templates/identity/contact_address.html:54
+#: kamu/templates/identity/contact_address.html:54
 msgid ""
 "First verified address in the list is used as the default contact address. "
 "Any verified address can be used to log in to Kamu."
@@ -2900,15 +2930,15 @@ msgstr ""
 "Den första verifierade adressen i listan används som standardkontaktadress. "
 "Alla verifierade adresser kan användas för att logga in på Kamu."
 
-#: templates/identity/contact_address.html:56
+#: kamu/templates/identity/contact_address.html:56
 msgid "You have not specified any email addresses."
 msgstr "Du har inte angett några e-postadresser."
 
-#: templates/identity/contact_address.html:87
+#: kamu/templates/identity/contact_address.html:87
 msgid "You are removing the phone number"
 msgstr "Du håller på att radera telefonnumret"
 
-#: templates/identity/contact_address.html:88
+#: kamu/templates/identity/contact_address.html:88
 msgid ""
 "After deletion, you will no longer be able to use this phone number to log "
 "in. "
@@ -2916,7 +2946,7 @@ msgstr ""
 "Efter raderingen kan du inte längre använda detta telefonnummer för att "
 "logga in. "
 
-#: templates/identity/contact_address.html:103
+#: kamu/templates/identity/contact_address.html:103
 msgid ""
 "First verified phone number in the list is used as the default contact "
 "number. Any verified number can be used to log in to Kamu."
@@ -2925,64 +2955,67 @@ msgstr ""
 "standardkontaktnummer. Vilket som helst verifierat nummer kan användas för "
 "att logga in på Kamu."
 
-#: templates/identity/contact_address.html:105
+#: kamu/templates/identity/contact_address.html:105
 msgid "You have not specified any phone numbers."
 msgstr "Du har inte angett några telefonnummer."
 
-#: templates/identity/contact_address.html:108
+#: kamu/templates/identity/contact_address.html:108
 msgid "Add a new contact"
 msgstr "Lägg till ny kontakt"
 
-#: templates/identity/email_address_verification.html:6
+#: kamu/templates/identity/email_address_verification.html:6
 msgid "Email address verification"
 msgstr "Verifiering av e-postadress"
 
-#: templates/identity/identifier.html:9
+#: kamu/templates/identity/identifier.html:9
 msgid "Identifier information"
 msgstr "Identifieraruppgifter"
 
-#: templates/identity/identifier.html:10
+#: kamu/templates/identity/identifier.html:10
 msgid "Active identifiers"
 msgstr "Aktiva identifierare"
 
-#: templates/identity/identifier.html:17 templates/identity/identifier.html:63
+#: kamu/templates/identity/identifier.html:17
+#: kamu/templates/identity/identifier.html:63
 msgid "Creation time"
 msgstr "Upprättad den"
 
-#: templates/identity/identifier.html:18
+#: kamu/templates/identity/identifier.html:18
 msgid "Value"
 msgstr "Värde"
 
-#: templates/identity/identifier.html:19 templates/identity/identifier.html:29
+#: kamu/templates/identity/identifier.html:19
+#: kamu/templates/identity/identifier.html:29
 msgid "Deactivate"
 msgstr "Deaktivera"
 
-#: templates/identity/identifier.html:34 templates/identity/identifier.html:42
+#: kamu/templates/identity/identifier.html:34
+#: kamu/templates/identity/identifier.html:42
 msgid "Confirm deactivation"
 msgstr "Bekräfta deaktivering"
 
-#: templates/identity/identifier.html:38
+#: kamu/templates/identity/identifier.html:38
 #, python-format
 msgid "You are deactivating %(type)s with value %(value)s."
 msgstr "Du deaktiverar %(type)s med värdet %(value)s."
 
-#: templates/identity/identifier.html:54
+#: kamu/templates/identity/identifier.html:54
 msgid "You do not have any linked identifiers."
 msgstr "Du har inga länkade identifierare."
 
-#: templates/identity/identifier.html:57
+#: kamu/templates/identity/identifier.html:57
 msgid "Deactivated identifiers"
 msgstr "Deaktiverade identifierare"
 
-#: templates/identity/identifier.html:64
+#: kamu/templates/identity/identifier.html:64
 msgid "Deactivation time"
 msgstr "Deaktiverat den"
 
-#: templates/identity/identifier.html:80
+#: kamu/templates/identity/identifier.html:80
 msgid "Add a new indentifier to your personal information"
 msgstr "Lägg till en ny identifierare i dina personuppgifter"
 
-#: templates/identity/identifier.html:81
+#: kamu/templates/identity/identifier.html:81
 msgid ""
 "After adding a new identifier, you can use it to manage your information in "
 "Kamu or when using\n"
@@ -2996,32 +3029,32 @@ msgstr ""
 "identifierare du vill lägga till \n"
 "och logga sedan in med identifieraren enligt instruktionerna."
 
-#: templates/identity/identifier.html:88
+#: kamu/templates/identity/identifier.html:88
 msgid "Haka"
 msgstr "Haka"
 
-#: templates/identity/identifier.html:91
+#: kamu/templates/identity/identifier.html:91
 msgid "eduGAIN"
 msgstr "eduGAIN"
 
-#: templates/identity/identifier.html:94
+#: kamu/templates/identity/identifier.html:94
 msgid "Google"
 msgstr "Google"
 
-#: templates/identity/identifier.html:97
+#: kamu/templates/identity/identifier.html:97
 msgid "Microsoft"
 msgstr "Microsoft"
 
-#: templates/identity/identifier.html:100
+#: kamu/templates/identity/identifier.html:100
 msgid "Suomi.fi and eIDAS"
 msgstr "Suomi.fi och eIDAS"
 
-#: templates/identity/identity_combine.html:7
-#: templates/identity/identity_detail.html:184
+#: kamu/templates/identity/identity_combine.html:7
+#: kamu/templates/identity/identity_detail.html:184
 msgid "Combine identities"
 msgstr "Kombinera identiteter"
 
-#: templates/identity/identity_combine.html:9
+#: kamu/templates/identity/identity_combine.html:9
 msgid ""
 "Transfer information from the source identity to the target identity, and "
 "delete the source identity and the corresponding user."
@@ -3029,7 +3062,7 @@ msgstr ""
 "Överför information från källidentiteten till målidentiteten och radera "
 "källidentiteten och motsvarande användare."
 
-#: templates/identity/identity_combine.html:10
+#: kamu/templates/identity/identity_combine.html:10
 msgid ""
 "The following information is transferred if source identity has it defined "
 "and target doesn't."
@@ -3037,94 +3070,94 @@ msgstr ""
 "Följande uppgifter överförs om källidentiteten har dem definierade och målet "
 "inte har."
 
-#: templates/identity/identity_combine.html:14
-#: templates/identity/identity_combine.html:51
-#: templates/membership/membership_detail.html:39
+#: kamu/templates/identity/identity_combine.html:14
+#: kamu/templates/identity/identity_combine.html:51
+#: kamu/templates/membership/membership_detail.html:39
 msgid "Account name"
 msgstr "Kontots namn"
 
-#: templates/identity/identity_combine.html:17
+#: kamu/templates/identity/identity_combine.html:17
 msgid ""
 "The following information is transferred from the source identity to the "
 "target identity."
 msgstr "Följande uppgifter överförs från källidentiteten till målidentiteten."
 
-#: templates/identity/identity_combine.html:19
+#: kamu/templates/identity/identity_combine.html:19
 msgid "Contact information: email addresses and phone numbers."
 msgstr "Kontaktuppgifter: e-postadresser och telefonnummer."
 
-#: templates/identity/identity_combine.html:21
+#: kamu/templates/identity/identity_combine.html:21
 msgid "Linked identifiers."
 msgstr "Länkade identifierare."
 
-#: templates/identity/identity_combine.html:22
+#: kamu/templates/identity/identity_combine.html:22
 msgid "Role memberships."
 msgstr "Rollmedlemskap."
 
-#: templates/identity/identity_combine.html:23
+#: kamu/templates/identity/identity_combine.html:23
 msgid "Kamu identifier is added to target's extra identifiers."
 msgstr "Kamu-identifieraren läggs till målets extra identifierare."
 
-#: templates/identity/identity_combine.html:25
+#: kamu/templates/identity/identity_combine.html:25
 msgid "For other information, target's values are used."
 msgstr "För övriga uppgifter används målets värden."
 
-#: templates/identity/identity_combine.html:31
+#: kamu/templates/identity/identity_combine.html:31
 msgid "Attribute"
 msgstr "Attribut"
 
-#: templates/identity/identity_combine.html:32
+#: kamu/templates/identity/identity_combine.html:32
 msgid "Target"
 msgstr "Mål"
 
-#: templates/identity/identity_combine.html:33
+#: kamu/templates/identity/identity_combine.html:33
 msgid "Source"
 msgstr "Källa"
 
-#: templates/identity/identity_combine.html:34
+#: kamu/templates/identity/identity_combine.html:34
 msgid "Result"
 msgstr "Resultat"
 
-#: templates/identity/identity_combine.html:39
+#: kamu/templates/identity/identity_combine.html:39
 msgid "Internal primary key"
 msgstr "Intern primärnyckel"
 
-#: templates/identity/identity_combine.html:82
+#: kamu/templates/identity/identity_combine.html:82
 msgid "Displayed given name"
 msgstr "Förnamn som visas"
 
-#: templates/identity/identity_combine.html:88
+#: kamu/templates/identity/identity_combine.html:88
 msgid "Displayed surname"
 msgstr "Efternamn som visas"
 
-#: templates/identity/identity_combine.html:124
+#: kamu/templates/identity/identity_combine.html:124
 msgid "Phone numbers, verified"
 msgstr "Telefonnummer, verifierade"
 
-#: templates/identity/identity_combine.html:125
-#: templates/identity/identity_combine.html:126
-#: templates/identity/identity_combine.html:127
-#: templates/identity/identity_combine.html:128
-#: templates/identity/identity_combine.html:132
-#: templates/identity/identity_combine.html:133
-#: templates/identity/identity_combine.html:134
-#: templates/identity/identity_combine.html:135
+#: kamu/templates/identity/identity_combine.html:125
+#: kamu/templates/identity/identity_combine.html:126
+#: kamu/templates/identity/identity_combine.html:127
+#: kamu/templates/identity/identity_combine.html:128
+#: kamu/templates/identity/identity_combine.html:132
+#: kamu/templates/identity/identity_combine.html:133
+#: kamu/templates/identity/identity_combine.html:134
+#: kamu/templates/identity/identity_combine.html:135
 msgid "Unverified"
 msgstr "Ej verifierade"
 
-#: templates/identity/identity_combine.html:131
+#: kamu/templates/identity/identity_combine.html:131
 msgid "Email addresses, verified"
 msgstr "E-postadresser, verifierade"
 
-#: templates/identity/identity_combine.html:138
+#: kamu/templates/identity/identity_combine.html:138
 msgid "Identifiers, deactivated"
 msgstr "Identifierare, deaktiverade"
 
-#: templates/identity/identity_combine.html:146
+#: kamu/templates/identity/identity_combine.html:146
 msgid "Memberships, status"
 msgstr "Medlemskap, status"
 
-#: templates/identity/identity_combine.html:155
+#: kamu/templates/identity/identity_combine.html:155
 msgid ""
 "To prevent accidents, you are required to enter primary keys of the "
 "identities you want to combine."
@@ -3132,29 +3165,29 @@ msgstr ""
 "För att förhindra misstag måste du ange primärnycklar för de identiteter du "
 "vill kombinera."
 
-#: templates/identity/identity_detail.html:6
+#: kamu/templates/identity/identity_detail.html:6
 msgid "Identity information"
 msgstr "Identitetsuppgifter"
 
-#: templates/identity/identity_detail.html:13
+#: kamu/templates/identity/identity_detail.html:13
 msgid "Official surname(s)"
 msgstr "Officiella efternamn"
 
-#: templates/identity/identity_detail.html:31
+#: kamu/templates/identity/identity_detail.html:31
 msgid "Verification level"
 msgstr "Verifieringsnivå"
 
-#: templates/identity/identity_detail.html:40
+#: kamu/templates/identity/identity_detail.html:40
 msgid "Verifiation levels"
 msgstr "Verifieringsnivåer"
 
-#: templates/identity/identity_detail.html:44
+#: kamu/templates/identity/identity_detail.html:44
 msgid ""
 "Low - Self-asserted identity, confirmed via a verified email address or "
 "similar low-friction method."
 msgstr "Låg - Självrapporterad och verifierad via e-postadress eller liknande."
 
-#: templates/identity/identity_detail.html:45
+#: kamu/templates/identity/identity_detail.html:45
 msgid ""
 "Medium - Identity verified against an official ID document by a university "
 "official or another trusted organization. Alternatively, it is verified via "
@@ -3165,7 +3198,7 @@ msgstr ""
 "fotolegitimation. Alternativt, elektroniskt identifierad med hjälp av ett "
 "pass utan chip eller liknande."
 
-#: templates/identity/identity_detail.html:46
+#: kamu/templates/identity/identity_detail.html:46
 msgid ""
 "High - Identity verified electronically via Suomi.fi or eIDAS using bank-"
 "based or mobile strong identification, or via a government-issued biometric "
@@ -3175,7 +3208,7 @@ msgstr ""
 "verifiering med bankkoder eller mobilcertifikat. Alternativt, elektroniskt "
 "identifierad med hjälp av ett biometriskt pass eller liknande dokument."
 
-#: templates/identity/identity_detail.html:47
+#: kamu/templates/identity/identity_detail.html:47
 msgid ""
 "Very high - Identity verified electronically using Suomi.fi or eIDAS e-"
 "identification at the highest level of assurance."
@@ -3183,7 +3216,7 @@ msgstr ""
 "Högsta - Elektroniskt identifierad på högsta nivå, till exempel med högsta "
 "nivå av eIDAS-, Suomi.fi- eller Hightrust ID-verifiering."
 
-#: templates/identity/identity_detail.html:79
+#: kamu/templates/identity/identity_detail.html:79
 msgid ""
 "Information marked with an asterisk <span class=\"text-success\">*</span> "
 "has been confirmed."
@@ -3191,15 +3224,15 @@ msgstr ""
 "Information markerad med en asterisk <span class=\"text-success\">*</span> "
 "har bekräftats."
 
-#: templates/identity/identity_detail.html:81
+#: kamu/templates/identity/identity_detail.html:81
 msgid "Other information and updating information"
 msgstr "Övriga uppgifter och uppdatering av uppgifter"
 
-#: templates/identity/identity_detail.html:86
+#: kamu/templates/identity/identity_detail.html:86
 msgid "View and manage your information"
 msgstr "Visa och hantera dina uppgifter"
 
-#: templates/identity/identity_detail.html:90
+#: kamu/templates/identity/identity_detail.html:90
 msgid ""
 "In this section, you can view and edit your own information. Some\n"
 "              information is mandatory and some is voluntary."
@@ -3207,7 +3240,7 @@ msgstr ""
 "Här kan du se och redigera dina egna uppgifter. \n"
 "En del av uppgifterna är obligatoriska och en del frivilliga."
 
-#: templates/identity/identity_detail.html:92
+#: kamu/templates/identity/identity_detail.html:92
 msgid ""
 "In the Personal information section, you will find your personal\n"
 "              information, such as names, preferred service language, date "
@@ -3216,7 +3249,7 @@ msgstr ""
 "I avsnittet Grunduppgifter anger du dina personliga uppgifter, såsom namn, "
 "önskat kontaktspråk, födelsedatum och nationalitet."
 
-#: templates/identity/identity_detail.html:94
+#: kamu/templates/identity/identity_detail.html:94
 msgid ""
 "The Contact information section contains email addresses and phone\n"
 "              numbers. You can add more than one of each piece of contact "
@@ -3225,7 +3258,7 @@ msgstr ""
 "Avsnittet Kontakter innehåller e-postadresser och telefonnummer. \n"
 "Du kan lägga till flera kontaktuppgifter."
 
-#: templates/identity/identity_detail.html:96
+#: kamu/templates/identity/identity_detail.html:96
 msgid ""
 "The Identifiers section contains external login methods, such as\n"
 "              Google and Microsoft accounts or usernames of other higher "
@@ -3238,7 +3271,7 @@ msgstr ""
 "Om du lägger till flera identifierare i dina uppgifter kan du i "
 "fortsättningen använda dem när du loggar in i Kamu."
 
-#: templates/identity/identity_detail.html:99
+#: kamu/templates/identity/identity_detail.html:99
 msgid ""
 "The Agreements section allows you to approve agreements that are\n"
 "              mandatory for certain roles, such as information system terms "
@@ -3249,7 +3282,7 @@ msgstr ""
 "vissa roller, såsom användningsvillkor för datasystem eller sekretessavtal. "
 "Du kan även se tidigare godkända avtal."
 
-#: templates/identity/identity_detail.html:102
+#: kamu/templates/identity/identity_detail.html:102
 msgid ""
 "In the Verify your identity section, you can verify your identity\n"
 "              using Suomi.fi/eIDAS identification, or with mobile phone and "
@@ -3260,68 +3293,68 @@ msgstr ""
 "fi/eIDAS-identifiering, eller med mobiltelefon och pass eller ID-kort. Vissa "
 "roller kan kräva verifierad identitet."
 
-#: templates/identity/identity_detail.html:114
+#: kamu/templates/identity/identity_detail.html:114
 msgid "Personal information"
 msgstr "Personuppgifter"
 
-#: templates/identity/identity_detail.html:126
+#: kamu/templates/identity/identity_detail.html:126
 msgid "Verify your identity"
 msgstr "Verifiera din identitet"
 
-#: templates/identity/identity_detail.html:131
+#: kamu/templates/identity/identity_detail.html:131
 msgid "Create and manage user accounts"
 msgstr "Skapa och administrera användarkonton"
 
-#: templates/identity/identity_detail.html:133
+#: kamu/templates/identity/identity_detail.html:133
 msgid "Current and upcoming memberships"
 msgstr "Nuvarande och framtida medlemskap"
 
-#: templates/identity/identity_detail.html:141
-#: templates/identity/identity_detail.html:167
-#: templates/membership/membership_approval_list.html:16
-#: templates/membership/membership_detail.html:63
-#: templates/membership/membership_expiring_list.html:17
-#: templates/role/role_detail.html:68
+#: kamu/templates/identity/identity_detail.html:141
+#: kamu/templates/identity/identity_detail.html:167
+#: kamu/templates/membership/membership_approval_list.html:16
+#: kamu/templates/membership/membership_detail.html:63
+#: kamu/templates/membership/membership_expiring_list.html:17
+#: kamu/templates/role/role_detail.html:68
 msgid "Start date"
 msgstr "Startdatum"
 
-#: templates/identity/identity_detail.html:142
-#: templates/identity/identity_detail.html:168
-#: templates/membership/membership_approval_list.html:17
-#: templates/membership/membership_detail.html:97
-#: templates/membership/membership_detail.html:127
-#: templates/membership/membership_detail.html:154
-#: templates/membership/membership_expiring_list.html:18
-#: templates/role/role_detail.html:69
+#: kamu/templates/identity/identity_detail.html:142
+#: kamu/templates/identity/identity_detail.html:168
+#: kamu/templates/membership/membership_approval_list.html:17
+#: kamu/templates/membership/membership_detail.html:97
+#: kamu/templates/membership/membership_detail.html:127
+#: kamu/templates/membership/membership_detail.html:154
+#: kamu/templates/membership/membership_expiring_list.html:18
+#: kamu/templates/role/role_detail.html:69
 msgid "Expiration date"
 msgstr "Avslutningsdag"
 
-#: templates/identity/identity_detail.html:158
+#: kamu/templates/identity/identity_detail.html:158
 msgid "No current or future memberships."
 msgstr "Inga nuvarande eller framtida medlemskap."
 
-#: templates/identity/identity_detail.html:161
+#: kamu/templates/identity/identity_detail.html:161
 msgid "Expired memberships"
 msgstr "Utgångna medlemskap"
 
-#: templates/identity/identity_detail.html:186
+#: kamu/templates/identity/identity_detail.html:186
 msgid "Set as target"
 msgstr "Ange som mål"
 
-#: templates/identity/identity_detail.html:187
+#: kamu/templates/identity/identity_detail.html:187
 msgid "Set as source"
 msgstr "Ange som källa"
 
-#: templates/identity/identity_form.html:5
+#: kamu/templates/identity/identity_form.html:5
 msgid "Change identity information"
 msgstr "Ändra identitetsuppgifter"
 
-#: templates/identity/identity_search.html:10
+#: kamu/templates/identity/identity_search.html:10
 msgid "Kamu results"
 msgstr "Kamu-resultat"
 
-#: templates/identity/identity_search.html:12
-#: templates/membership/membership_invite_identity.html:16
+#: kamu/templates/identity/identity_search.html:12
+#: kamu/templates/membership/membership_invite_identity.html:16
 msgid ""
 "To protect individuals' privacy, unique identifiers are displayed only if "
 "they match exactly the identifier entered in the search."
@@ -3329,36 +3362,36 @@ msgstr ""
 "För att skydda personernas integritet visas identifierande uppgifter endast "
 "om de stämmer exakt överens med den identifierare som angetts i sökningen."
 
-#: templates/identity/identity_search.html:19
-#: templates/identity/identity_search.html:45
-#: templates/identity/identity_search.html:68
-#: templates/membership/membership_invite_identity.html:23
-#: templates/membership/membership_invite_identity.html:57
-#: templates/membership/membership_invite_identity.html:82
+#: kamu/templates/identity/identity_search.html:19
+#: kamu/templates/identity/identity_search.html:45
+#: kamu/templates/identity/identity_search.html:68
+#: kamu/templates/membership/membership_invite_identity.html:23
+#: kamu/templates/membership/membership_invite_identity.html:57
+#: kamu/templates/membership/membership_invite_identity.html:82
 msgid "Attributes"
 msgstr "Attribut"
 
-#: templates/identity/identity_search.html:34
-#: templates/membership/membership_invite_identity.html:40
-#: templates/role/role_search.html:29
+#: kamu/templates/identity/identity_search.html:34
+#: kamu/templates/membership/membership_invite_identity.html:40
+#: kamu/templates/role/role_search.html:29
 msgid "No results with the provided search parameters."
 msgstr "Inga resultat med de angivna sökparametrarna."
 
-#: templates/identity/identity_search.html:39
-#: templates/membership/membership_invite_identity.html:51
+#: kamu/templates/identity/identity_search.html:39
+#: kamu/templates/membership/membership_invite_identity.html:51
 msgid "Person database results"
 msgstr "Resultat från persondatabasen"
 
-#: templates/identity/identity_search.html:61
-#: templates/membership/membership_invite_identity.html:75
+#: kamu/templates/identity/identity_search.html:61
+#: kamu/templates/membership/membership_invite_identity.html:75
 msgid "User directory results"
 msgstr "Användarkatalogresultat"
 
-#: templates/identity/identity_verify.html:4
+#: kamu/templates/identity/identity_verify.html:4
 msgid "Verification of identity and information"
 msgstr "Verifiering av identitet och uppgifter"
 
-#: templates/identity/identity_verify.html:7
+#: kamu/templates/identity/identity_verify.html:7
 msgid ""
 "Your identity and personal information have already been verified. If you "
 "want to update your\n"
@@ -3371,28 +3404,28 @@ msgstr ""
 "identifiera dig igen med hjälp av Suomi.fi eller eIDAS e-"
 "identifieringstjänster. "
 
-#: templates/identity/identity_verify.html:12
+#: kamu/templates/identity/identity_verify.html:12
 msgid "Current verification level:"
 msgstr "Aktuell identifieringsnivå:"
 
-#: templates/identity/identity_verify.html:14
+#: kamu/templates/identity/identity_verify.html:14
 msgid "The following information will be updated or added to your information."
 msgstr ""
 "Följande uppgifter kommer att uppdateras eller läggas till i dina uppgifter."
 
-#: templates/identity/identity_verify.html:16
+#: kamu/templates/identity/identity_verify.html:16
 msgid "Official names"
 msgstr "Officiella namn"
 
-#: templates/identity/identity_verify.html:21
+#: kamu/templates/identity/identity_verify.html:21
 msgid "Identity document type and expiration date"
 msgstr "Typ av identitetshandling och utgångsdatum"
 
-#: templates/identity/identity_verify.html:28
+#: kamu/templates/identity/identity_verify.html:28
 msgid "Suomi.fi e-identification"
 msgstr "Suomi.fi e-identifikation"
 
-#: templates/identity/identity_verify.html:29
+#: kamu/templates/identity/identity_verify.html:29
 msgid ""
 "\"Verify your identity using Suomi.fi e-identification. Suomi.fi e-"
 "identification is a\n"
@@ -3406,23 +3439,23 @@ msgstr ""
 "vilken du kan bekräfta dina personuppgifter med hjälp av till exempel "
 "bankkoder eller mobilcertifikat."
 
-#: templates/identity/identity_verify.html:32
+#: kamu/templates/identity/identity_verify.html:32
 msgid "You can use the service free of charge."
 msgstr "Det kostar inget att använda tjänsterna."
 
-#: templates/identity/identity_verify.html:34
+#: kamu/templates/identity/identity_verify.html:34
 msgid "Verify your identity Suomi.fi e-identification"
 msgstr "Verifiera din identitet med Suomi.fi-identifikation"
 
-#: templates/identity/identity_verify.html:38
+#: kamu/templates/identity/identity_verify.html:38
 msgid "Suomi.fi or eIDAS e-identification"
 msgstr "Suomi.fi- eller eIDAS-identifieringstjänst"
 
-#: templates/identity/identity_verify.html:39
+#: kamu/templates/identity/identity_verify.html:39
 msgid "Verify your identity using Suomi.fi or eIDAS e-identification."
 msgstr "Verifiera din identitet med Suomi.fi- eller eIDAS-identifikation."
 
-#: templates/identity/identity_verify.html:40
+#: kamu/templates/identity/identity_verify.html:40
 msgid ""
 "\"Suomi.fi e-identification is a Finnish identification service that allows "
 "you to verify\n"
@@ -3435,7 +3468,7 @@ msgstr ""
 "dina personuppgifter med hjälp av till exempel bankkoder eller "
 "mobilcertifikat."
 
-#: templates/identity/identity_verify.html:43
+#: kamu/templates/identity/identity_verify.html:43
 msgid ""
 "\"eIDAS is the EU’s strong identification service that enables the use of "
 "your own national\n"
@@ -3444,19 +3477,19 @@ msgstr ""
 "eIDAS-identifikation är EU:s tjänst för stark autentisering som möjliggör "
 "användning av egna nationella identifieringsmedel. "
 
-#: templates/identity/identity_verify.html:45
+#: kamu/templates/identity/identity_verify.html:45
 msgid "You can use the services free of charge."
 msgstr "Det kostar inget att använda tjänsterna."
 
-#: templates/identity/identity_verify.html:47
+#: kamu/templates/identity/identity_verify.html:47
 msgid "Verify your identity Suomi.fi or eIDAS e-identification"
 msgstr "Verifiera din identitet med Suomi.fi- eller eIDAS-identifikation"
 
-#: templates/identity/identity_verify.html:50
+#: kamu/templates/identity/identity_verify.html:50
 msgid "Candour ID"
 msgstr "Candour ID"
 
-#: templates/identity/identity_verify.html:52
+#: kamu/templates/identity/identity_verify.html:52
 msgid ""
 "Persons without eIDAS access can use Candour ID to verify their identity. "
 "For this, you\n"
@@ -3466,7 +3499,7 @@ msgstr ""
 "identifiering. \n"
 "För detta behöver du ett pass eller identitetsbevis och Candour ID-appen."
 
-#: templates/identity/identity_verify.html:54
+#: kamu/templates/identity/identity_verify.html:54
 msgid ""
 "Please check and correct the information below before using Candour ID. The "
 "information\n"
@@ -3479,30 +3512,30 @@ msgstr ""
 "Du kan korrigera uppgifterna genom att gå tillbaka till Mina uppgifter och "
 "där välja Personuppgifter."
 
-#: templates/identity/identity_verify.html:60
+#: kamu/templates/identity/identity_verify.html:60
 msgid "Official surname"
 msgstr "Officiellt efternamn"
 
-#: templates/identity/identity_verify.html:69
+#: kamu/templates/identity/identity_verify.html:69
 msgid "You have unfinished Candour ID identification process."
 msgstr "Du har en oavslutad identifieringsprocess med Candour ID."
 
-#: templates/identity/identity_verify.html:70
+#: kamu/templates/identity/identity_verify.html:70
 msgid "Continue"
 msgstr "Fortsätt"
 
-#: templates/identity/identity_verify.html:72
+#: kamu/templates/identity/identity_verify.html:72
 msgid ""
 "Verify your identity using passport or ID card and a mobile phone "
 "application."
 msgstr ""
 "Verifiera din identitet med pass eller identitetsbevis och en mobilapp."
 
-#: templates/identity/identity_verify.html:74
+#: kamu/templates/identity/identity_verify.html:74
 msgid "Verify your identity using a biometric passport or identity document"
 msgstr "Verifiera din identitet med biometriskt pass eller identitetsbevis"
 
-#: templates/identity/identity_verify.html:76
+#: kamu/templates/identity/identity_verify.html:76
 msgid ""
 "If your passport or ID card does not contain an RFID chip or your phone does "
 "not\n"
@@ -3518,19 +3551,19 @@ msgstr ""
 "dig på en lägre identifieringsnivå. \n"
 "Dessutom behöver du mobilappen eller en webbläsare och en ansluten kamera. "
 
-#: templates/identity/identity_verify.html:81
+#: kamu/templates/identity/identity_verify.html:81
 msgid "Verify your identity at a lower level of identification"
 msgstr "Verifiera din identitet med en lägre identifieringsnivå"
 
-#: templates/identity/phone_number_verification.html:6
+#: kamu/templates/identity/phone_number_verification.html:6
 msgid "Phone number verification"
 msgstr "Verifiering av telefonnummer"
 
-#: templates/info.html:5
+#: kamu/templates/info.html:5
 msgid "For your information"
 msgstr "För din kännedom"
 
-#: templates/membership/membership_approval_list.html:6
+#: kamu/templates/membership/membership_approval_list.html:6
 msgid ""
 "Shows a list of memberships pending approval for roles for which you have\n"
 "    invite or approval permissions. If the list is empty, all memberships "
@@ -3542,144 +3575,145 @@ msgstr ""
 "Om listan är tom har alla medlemskap redan godkänts. \n"
 "Obs! Någon annan person kan nyligen ha godkänt eller avvisat medlemskapet."
 
-#: templates/membership/membership_approval_list.html:13
-#: templates/membership/membership_detail.html:34
-#: templates/membership/membership_detail.html:95
-#: templates/membership/membership_detail.html:125
-#: templates/membership/membership_detail.html:152
-#: templates/membership/membership_expiring_list.html:14
-#: templates/membership/membership_managed_list.html:13
-#: templates/role/role_detail.html:66
+#: kamu/templates/membership/membership_approval_list.html:13
+#: kamu/templates/membership/membership_detail.html:34
+#: kamu/templates/membership/membership_detail.html:95
+#: kamu/templates/membership/membership_detail.html:125
+#: kamu/templates/membership/membership_detail.html:152
+#: kamu/templates/membership/membership_expiring_list.html:14
+#: kamu/templates/membership/membership_managed_list.html:13
+#: kamu/templates/role/role_detail.html:66
 msgid "Person"
 msgstr "Person"
 
-#: templates/membership/membership_detail.html:4
+#: kamu/templates/membership/membership_detail.html:4
 msgid "Agreement on membership of the University community"
 msgstr "Avtal om medlemskap i universitetsgemenskapen"
 
-#: templates/membership/membership_detail.html:7
+#: kamu/templates/membership/membership_detail.html:7
 msgid "Approval required"
 msgstr "Godkännande krävs"
 
-#: templates/membership/membership_detail.html:8
+#: kamu/templates/membership/membership_detail.html:8
 msgid "Please check the information below and accept or reject the membership."
 msgstr "Kontrollera informationen nedan och godkänn eller avvisa medlemskapet."
 
-#: templates/membership/membership_detail.html:10
+#: kamu/templates/membership/membership_detail.html:10
 msgid "Approve"
 msgstr "Godkänn"
 
-#: templates/membership/membership_detail.html:11
+#: kamu/templates/membership/membership_detail.html:11
 msgid "Reject"
 msgstr "Avvisa"
 
-#: templates/membership/membership_detail.html:21
-#: templates/membership/membership_invite.html:13
-#: templates/role/role_detail.html:10 templates/role/role_list.html:13
-#: templates/role/role_search.html:15
+#: kamu/templates/membership/membership_detail.html:21
+#: kamu/templates/membership/membership_invite.html:13
+#: kamu/templates/role/role_detail.html:10
+#: kamu/templates/role/role_list.html:13
+#: kamu/templates/role/role_search.html:15
 msgid "Description"
 msgstr "Beskrivning"
 
-#: templates/membership/membership_detail.html:25
-#: templates/membership/membership_invite.html:17
-#: templates/role/role_detail.html:19
+#: kamu/templates/membership/membership_detail.html:25
+#: kamu/templates/membership/membership_invite.html:17
+#: kamu/templates/role/role_detail.html:19
 msgid "Annual costs"
 msgstr "Årliga kostnader"
 
-#: templates/membership/membership_detail.html:29
-#: templates/membership/membership_invite.html:21
-#: templates/role/role_detail.html:25
+#: kamu/templates/membership/membership_detail.html:29
+#: kamu/templates/membership/membership_invite.html:21
+#: kamu/templates/role/role_detail.html:25
 msgid "Maximum duration"
 msgstr "Maximal varaktighet"
 
-#: templates/membership/membership_detail.html:30
-#: templates/membership/membership_invite.html:22
-#: templates/role/role_detail.html:26
+#: kamu/templates/membership/membership_detail.html:30
+#: kamu/templates/membership/membership_invite.html:22
+#: kamu/templates/role/role_detail.html:26
 msgid "days"
 msgstr "dagar"
 
-#: templates/membership/membership_detail.html:41
-#: templates/membership/membership_invite.html:40
-#: templates/membership/membership_invite.html:52
+#: kamu/templates/membership/membership_detail.html:41
+#: kamu/templates/membership/membership_invite.html:40
+#: kamu/templates/membership/membership_invite.html:52
 msgid "Email"
 msgstr "E-post"
 
-#: templates/membership/membership_detail.html:48
+#: kamu/templates/membership/membership_detail.html:48
 msgid ""
 "The person has not yet registered for Kamu and provided their own "
 "information."
 msgstr ""
 "Personen har ännu inte registrerat sig i Kamu och angett sina uppgifter."
 
-#: templates/membership/membership_detail.html:49
+#: kamu/templates/membership/membership_detail.html:49
 #, python-format
 msgid "An email invitation has been sent to %(address)s."
 msgstr "E-postinbjudan har skickats till adressen %(address)s."
 
-#: templates/membership/membership_detail.html:50
+#: kamu/templates/membership/membership_detail.html:50
 #, python-format
 msgid "An SMS confirmation will be sent to %(number)s."
 msgstr "Bekräftelse skickas via textmeddelande till numret %(number)s."
 
-#: templates/membership/membership_detail.html:53
+#: kamu/templates/membership/membership_detail.html:53
 msgid "Resend email invitation"
 msgstr "Skicka e-postinbjudan igen"
 
-#: templates/membership/membership_detail.html:59
+#: kamu/templates/membership/membership_detail.html:59
 msgid "Membership details"
 msgstr "Medlemskapsuppgifter"
 
-#: templates/membership/membership_detail.html:65
+#: kamu/templates/membership/membership_detail.html:65
 msgid "Expiry date"
 msgstr "Utgångsdatum"
 
-#: templates/membership/membership_detail.html:67
+#: kamu/templates/membership/membership_detail.html:67
 msgid "Approver"
 msgstr "Godkännare"
 
-#: templates/membership/membership_detail.html:69
-#: templates/membership/verification_form.html:13
+#: kamu/templates/membership/membership_detail.html:69
+#: kamu/templates/membership/verification_form.html:13
 msgid "Inviter"
 msgstr "Inbjudare"
 
-#: templates/membership/membership_detail.html:71
+#: kamu/templates/membership/membership_detail.html:71
 msgid "Reasons"
 msgstr "Motiveringar"
 
-#: templates/membership/membership_detail.html:78
-#: templates/membership/membership_edit_form.html:6
+#: kamu/templates/membership/membership_detail.html:78
+#: kamu/templates/membership/membership_edit_form.html:6
 msgid "Continue and edit membership"
 msgstr "Fortsätt och redigera medlemskap"
 
-#: templates/membership/membership_detail.html:82
-#: templates/membership/membership_detail.html:87
+#: kamu/templates/membership/membership_detail.html:82
+#: kamu/templates/membership/membership_detail.html:87
 msgid "End membership to today"
 msgstr "Avsluta medlemskap på detta datum"
 
-#: templates/membership/membership_detail.html:91
+#: kamu/templates/membership/membership_detail.html:91
 msgid ""
 "Please confirm that you want to terminate the membership shown below by the "
 "end of today."
 msgstr ""
 "Bekräfta att du vill avsluta medlemskapet nedan i slutet av detta datum."
 
-#: templates/membership/membership_detail.html:101
-#: templates/membership/membership_detail.html:131
-#: templates/membership/membership_detail.html:158
-#: templates/membership/membership_edit_form.html:17
+#: kamu/templates/membership/membership_detail.html:101
+#: kamu/templates/membership/membership_detail.html:131
+#: kamu/templates/membership/membership_detail.html:158
+#: kamu/templates/membership/membership_edit_form.html:17
 msgid "Back"
 msgstr "Tillbaka"
 
-#: templates/membership/membership_detail.html:102
+#: kamu/templates/membership/membership_detail.html:102
 msgid "Confirm termination of membership"
 msgstr "Bekräfta avslutande av medlemskap"
 
-#: templates/membership/membership_detail.html:112
-#: templates/membership/membership_detail.html:117
+#: kamu/templates/membership/membership_detail.html:112
+#: kamu/templates/membership/membership_detail.html:117
 msgid "Cancel membership effective immediately"
 msgstr "Annullera medlemskapet omedelbart"
 
-#: templates/membership/membership_detail.html:121
+#: kamu/templates/membership/membership_detail.html:121
 msgid ""
 "Please confirm that you want to cancel the membership shown below effective "
 "immediately."
@@ -3687,37 +3721,37 @@ msgstr ""
 "Bekräfta att du vill annullera medlemskapet nedan omedelbart vid denna "
 "tidpunkt."
 
-#: templates/membership/membership_detail.html:132
+#: kamu/templates/membership/membership_detail.html:132
 msgid "Confirm cancellation of membership"
 msgstr "Bekräfta annullering av medlemskap"
 
-#: templates/membership/membership_detail.html:139
-#: templates/membership/membership_detail.html:144
+#: kamu/templates/membership/membership_detail.html:139
+#: kamu/templates/membership/membership_detail.html:144
 msgid "Reject membership"
 msgstr "Avvisa medlemskapet"
 
-#: templates/membership/membership_detail.html:148
+#: kamu/templates/membership/membership_detail.html:148
 msgid "The following membership will be rejected effective immediately."
 msgstr "Följande medlemskap avvisas omedelbart."
 
-#: templates/membership/membership_detail.html:159
+#: kamu/templates/membership/membership_detail.html:159
 msgid "Confirm rejection of membership"
 msgstr "Bekräfta avslag på medlemskap"
 
-#: templates/membership/membership_edit_form.html:9
+#: kamu/templates/membership/membership_edit_form.html:9
 msgid "Membership has been cancelled"
 msgstr "Medlemskapet har avslutats"
 
-#: templates/membership/membership_edit_form.html:10
+#: kamu/templates/membership/membership_edit_form.html:10
 #, python-format
 msgid "This membership has been cancelled at %(cancellation_time)s."
 msgstr "Detta medlemskap avslutades %(cancellation_time)s."
 
-#: templates/membership/membership_edit_form.html:11
+#: kamu/templates/membership/membership_edit_form.html:11
 msgid "Updating membership clears cancellation."
 msgstr "Att uppdatera medlemskapet återställer avbokningen."
 
-#: templates/membership/membership_expiring_list.html:6
+#: kamu/templates/membership/membership_expiring_list.html:6
 #, python-format
 msgid ""
 "Shows a list of memberships expiring within\n"
@@ -3734,63 +3768,63 @@ msgstr ""
 "Obs! Någon annan person kan nyligen ha förlängt eller återkallat "
 "medlemskapet."
 
-#: templates/membership/membership_form.html:6
+#: kamu/templates/membership/membership_form.html:6
 msgid "Join role"
 msgstr "Gå med i roll"
 
-#: templates/membership/membership_invite.html:6
-#: templates/role/role_detail.html:52
+#: kamu/templates/membership/membership_invite.html:6
+#: kamu/templates/role/role_detail.html:52
 msgid "Invite a new member"
 msgstr "Bjud in nya medlemmar"
 
-#: templates/membership/membership_invite.html:9
+#: kamu/templates/membership/membership_invite.html:9
 msgid "Role information"
 msgstr "Uppgifter om rollen"
 
-#: templates/membership/membership_invite.html:23
-#: templates/role/role_detail.html:40
+#: kamu/templates/membership/membership_invite.html:23
+#: kamu/templates/role/role_detail.html:40
 msgid "SMS verification"
 msgstr "SMS-verifiering"
 
-#: templates/membership/membership_invite.html:24
-#: templates/role/role_detail.html:41
+#: kamu/templates/membership/membership_invite.html:24
+#: kamu/templates/role/role_detail.html:41
 msgid "Yes"
 msgstr "Ja"
 
-#: templates/membership/membership_invite.html:24
-#: templates/role/role_detail.html:41
+#: kamu/templates/membership/membership_invite.html:24
+#: kamu/templates/role/role_detail.html:41
 msgid "No"
 msgstr "Nej"
 
-#: templates/membership/membership_invite.html:59
+#: kamu/templates/membership/membership_invite.html:59
 msgid "Subject"
 msgstr "Ämne"
 
-#: templates/membership/membership_invite.html:61
+#: kamu/templates/membership/membership_invite.html:61
 msgid "Message"
 msgstr "Meddelande"
 
-#: templates/membership/membership_invite.html:65
+#: kamu/templates/membership/membership_invite.html:65
 msgid "Multiple invites"
 msgstr "Flera inbjudningar"
 
-#: templates/membership/membership_invite.html:67
+#: kamu/templates/membership/membership_invite.html:67
 msgid "Following identities in Kamu will be added to the role:"
 msgstr "Följande identiteter i Kamu kommer att få rollen:"
 
-#: templates/membership/membership_invite.html:75
+#: kamu/templates/membership/membership_invite.html:75
 msgid "Following email addresses will receive an invitation:"
 msgstr "Följande e-postadresser kommer att få en inbjudan:"
 
-#: templates/membership/membership_invite.html:83
+#: kamu/templates/membership/membership_invite.html:83
 msgid "Membership information"
 msgstr "Uppgifter om medlemskapet"
 
-#: templates/membership/membership_invite_identity.html:7
+#: kamu/templates/membership/membership_invite_identity.html:7
 msgid "Invite new member to role of"
 msgstr "Bjud in en ny medlem i rollen"
 
-#: templates/membership/membership_invite_identity.html:9
+#: kamu/templates/membership/membership_invite_identity.html:9
 msgid ""
 "Start by searching for a person using their identifiers or name. If the "
 "person is already in the university’s personal data register, you can assign "
@@ -3802,7 +3836,7 @@ msgstr ""
 "roll direkt. I annat fall sök vidare med e-postadress och skicka en inbjudan "
 "till personen att registrera sig i Kamu."
 
-#: templates/membership/membership_invite_identity.html:10
+#: kamu/templates/membership/membership_invite_identity.html:10
 #, python-format
 msgid ""
 "You can find more instructions on the <a href=\"%(link)s\">IT-Helpdesk "
@@ -3810,21 +3844,21 @@ msgid ""
 msgstr ""
 "Mer information finns på <a href=\"%(link)s\">IT-Helpdesk support-sidor</a>."
 
-#: templates/membership/membership_invite_identity.html:14
+#: kamu/templates/membership/membership_invite_identity.html:14
 msgid "Search results"
 msgstr "Sökresultat"
 
-#: templates/membership/membership_invite_identity.html:24
-#: templates/membership/membership_invite_identity.html:58
-#: templates/membership/membership_invite_identity.html:83
+#: kamu/templates/membership/membership_invite_identity.html:24
+#: kamu/templates/membership/membership_invite_identity.html:58
+#: kamu/templates/membership/membership_invite_identity.html:83
 msgid "Select"
 msgstr "Välj"
 
-#: templates/membership/membership_invite_identity.html:33
+#: kamu/templates/membership/membership_invite_identity.html:33
 msgid "Add role"
 msgstr "Lägg till roll"
 
-#: templates/membership/membership_invite_identity.html:41
+#: kamu/templates/membership/membership_invite_identity.html:41
 msgid ""
 "If you want to invite someone to a role, try searching again using their "
 "email address. An email address is required for everyone who registers with "
@@ -3834,53 +3868,53 @@ msgstr ""
 "personens e-postadress. E-postadressen är obligatorisk för alla som "
 "registrerar sig på Kamu."
 
-#: templates/membership/membership_invite_identity.html:45
+#: kamu/templates/membership/membership_invite_identity.html:45
 msgid "Email invitation"
 msgstr "E-postinbjudan"
 
-#: templates/membership/membership_invite_identity.html:46
+#: kamu/templates/membership/membership_invite_identity.html:46
 #, python-format
 msgid "The email address you provided was not found in our records: %(email)s"
 msgstr "Den e-postadress du angav finns inte i registret: %(email)s"
 
-#: templates/membership/membership_invite_identity.html:47
+#: kamu/templates/membership/membership_invite_identity.html:47
 msgid "Go to sending the invitation"
 msgstr "Gå till att skicka inbjudan"
 
-#: templates/membership/membership_invite_identity.html:66
-#: templates/membership/membership_invite_identity.html:92
+#: kamu/templates/membership/membership_invite_identity.html:66
+#: kamu/templates/membership/membership_invite_identity.html:92
 msgid "Add to role"
 msgstr "Lägg till i roll"
 
-#: templates/membership/membership_managed_list.html:6
+#: kamu/templates/membership/membership_managed_list.html:6
 msgid "All"
 msgstr "Alla"
 
-#: templates/membership/membership_managed_list.html:7
+#: kamu/templates/membership/membership_managed_list.html:7
 msgid "My approved memberships"
 msgstr "Medlemskap som jag har godkänt"
 
-#: templates/membership/membership_managed_list.html:8
+#: kamu/templates/membership/membership_managed_list.html:8
 msgid "My invited members"
 msgstr "Medlemmar som jag har bjudit in"
 
-#: templates/membership/membership_managed_list.html:16
+#: kamu/templates/membership/membership_managed_list.html:16
 msgid "Validity"
 msgstr "Giltighetstid"
 
-#: templates/membership/membership_managed_list.html:17
+#: kamu/templates/membership/membership_managed_list.html:17
 msgid "Agreement"
 msgstr "Avtal"
 
-#: templates/membership/membership_managed_list.html:27
+#: kamu/templates/membership/membership_managed_list.html:27
 msgid "View agreement"
 msgstr "Granska avtal"
 
-#: templates/membership/verification_form.html:6
+#: kamu/templates/membership/verification_form.html:6
 msgid "Membership verification"
 msgstr "Medlemskapsverifiering"
 
-#: templates/membership/verification_form.html:7
+#: kamu/templates/membership/verification_form.html:7
 msgid ""
 "You are required to verify the membership with the SMS message to phone "
 "number defined by the inviter."
@@ -3888,52 +3922,53 @@ msgstr ""
 "Du måste verifiera medlemskapet med ett SMS till det telefonnummer som "
 "angetts av inbjudaren."
 
-#: templates/membership/verification_form.html:11
+#: kamu/templates/membership/verification_form.html:11
 msgid "Verification phone number"
 msgstr "Verifieringsnummer"
 
-#: templates/role/role_detail.html:5
+#: kamu/templates/role/role_detail.html:5
 msgid "Role details"
 msgstr "Uppgifter om rollen"
 
-#: templates/role/role_detail.html:28
+#: kamu/templates/role/role_detail.html:28
 msgid "Parent"
 msgstr "Överordnad"
 
-#: templates/role/role_detail.html:31
+#: kamu/templates/role/role_detail.html:31
 msgid "Owner"
 msgstr "Ägare"
 
-#: templates/role/role_detail.html:43
+#: kamu/templates/role/role_detail.html:43
 msgid "Notification address"
 msgstr "Aviseringsadress"
 
-#: templates/role/role_detail.html:55
+#: kamu/templates/role/role_detail.html:55
 msgid "Join"
 msgstr "Gå med"
 
-#: templates/role/role_detail.html:58
+#: kamu/templates/role/role_detail.html:58
 #, python-format
 msgid "Invite multiple members (max %(limit)s)"
 msgstr "Bjud in flera medlemmar (max %(limit)s)"
 
-#: templates/role/role_list.html:5
+#: kamu/templates/role/role_list.html:5
 msgid "Role list"
 msgstr "Rollista"
 
-#: templates/role/role_list.html:12 templates/role/role_search.html:14
+#: kamu/templates/role/role_list.html:12
+#: kamu/templates/role/role_search.html:14
 msgid "Role name"
 msgstr "Rollens namn"
 
-#: templates/role/role_list.html:27
+#: kamu/templates/role/role_list.html:27
 msgid "No roles."
 msgstr "Inga roller."
 
-#: templates/role/role_list_approver.html:4
+#: kamu/templates/role/role_list_approver.html:4
 msgid "Roles you have approver permission for"
 msgstr "Roller som du har godkännarrätt för"
 
-#: templates/role/role_list_inviter.html:6
+#: kamu/templates/role/role_list_inviter.html:6
 msgid ""
 "Invite a person to become a member of the University community by first "
 "selecting the role\n"
@@ -3950,15 +3985,15 @@ msgstr ""
 "i rollinformationen. I listan visas endast de roller till vilka du har "
 "behörighet att bjuda in medlemmar. "
 
-#: templates/role/role_list_owner.html:4
+#: kamu/templates/role/role_list_owner.html:4
 msgid "Roles you own"
 msgstr "Roller som du äger"
 
-#: templates/role/role_search.html:6
+#: kamu/templates/role/role_search.html:6
 msgid "Role search"
 msgstr "Rollsökning"
 
-#: templates/role/role_search.html:7
+#: kamu/templates/role/role_search.html:7
 msgid ""
 "Search for roles by name, description or a part of these. All roles found in "
 "the system are included."
@@ -3966,34 +4001,34 @@ msgstr ""
 "Sök efter roller med rollens namn, beskrivning eller en del av dem. Alla "
 "roller som finns i systemet ingår."
 
-#: templates/role/role_search.html:9
+#: kamu/templates/role/role_search.html:9
 msgid "Results"
 msgstr "Resultat"
 
-#: templates/role/role_search.html:31
+#: kamu/templates/role/role_search.html:31
 msgid "Submit a search to get results."
 msgstr "Gör en sökning för att få resultat."
 
-#: templatetags/account_tags.py:26
+#: kamu/templatetags/account_tags.py:26
 msgid "Manage account"
 msgstr "Hantera användarnamn"
 
-#: utils/identity.py:58
+#: kamu/utils/identity.py:58
 msgid "Cannot combine identity with itself."
 msgstr "Kan inte kombinera en identitet med sig själv."
 
-#: utils/identity.py:65
+#: kamu/utils/identity.py:65
 msgid "Source identity cannot have higher assurance level than target."
 msgstr "Källidentiteten kan inte ha en högre kontrollnivå än målidentiteten."
 
-#: utils/identity.py:72
+#: kamu/utils/identity.py:72
 msgid ""
 "Cannot combine two identities with uid. Please remove uid from the source "
 "first."
 msgstr ""
 "Kan inte kombinera två identiteter med uid. Ta först bort uid från källan."
 
-#: utils/identity.py:80
+#: kamu/utils/identity.py:80
 msgid ""
 "Cannot combine two identities with Finnish personal identity code. Please "
 "remove FPIC from the source first."
@@ -4001,16 +4036,16 @@ msgstr ""
 "Kan inte kombinera två identiteter med finländsk personbeteckning. Ta först "
 "bort personbeteckningen från källan."
 
-#: utils/identity.py:89
+#: kamu/utils/identity.py:89
 msgid "Source identity is linked to user and target identity is not."
 msgstr ""
 "Källidentiteten är länkad till användaren, medan målidentiteten inte är det."
 
-#: utils/identity.py:100
+#: kamu/utils/identity.py:100
 msgid "Current user's identity cannot be the source identity."
 msgstr "Den aktuella användarens identitet kan inte vara källidentiteten."
 
-#: utils/identity.py:341
+#: kamu/utils/identity.py:341
 msgid ""
 "Could not import user information from the user directory, please try again "
 "later."
@@ -4018,7 +4053,7 @@ msgstr ""
 "Kunde inte importera användarinformation från användarkatalogen, försök igen "
 "senare."
 
-#: utils/identity.py:555 views/identity.py:711
+#: kamu/utils/identity.py:555 kamu/views/identity.py:711
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again. Please also check your spam folder."
@@ -4026,7 +4061,7 @@ msgstr ""
 "Du försökte skicka en ny kod för fort. Vänta en minut innan du försöker "
 "igen. Kontrollera även skräppostmappen i din e-post."
 
-#: utils/identity.py:565 views/identity.py:724
+#: kamu/utils/identity.py:565 kamu/views/identity.py:724
 msgid ""
 "The verification code has now been sent and should arrive in your email in a "
 "few minutes. If you do not receive a verification code, please check your "
@@ -4036,25 +4071,25 @@ msgstr ""
 "minuter. Om du inte får någon bekräftelsekod, kontrollera även din "
 "skräppostmapp."
 
-#: utils/identity.py:571
+#: kamu/utils/identity.py:571
 msgid "Failed to send verification code."
 msgstr "Det gick inte att skicka bekräftelsekoden."
 
-#: utils/identity.py:583 views/auth.py:638 views/auth.py:661
+#: kamu/utils/identity.py:583 kamu/views/auth.py:638 kamu/views/auth.py:661
 msgid "Tried to send a new code too soon. Please try again in one minute."
 msgstr ""
 "Försökte skicka en ny kod för tidigt. Vänligen försök igen om en minut."
 
-#: utils/identity.py:589 views/identity.py:773
+#: kamu/utils/identity.py:589 kamu/views/identity.py:773
 #, python-format
 msgid "Your personal Kamu verification code is: %(token)s"
 msgstr "Din personliga Kamu-bekräftelsekod är: %(token)s"
 
-#: utils/identity.py:592 views/auth.py:664 views/identity.py:776
+#: kamu/utils/identity.py:592 kamu/views/auth.py:664 kamu/views/identity.py:776
 msgid "Could not send an SMS message."
 msgstr "Det gick inte att skicka SMS."
 
-#: utils/identity.py:597 views/identity.py:781
+#: kamu/utils/identity.py:597 kamu/views/identity.py:781
 msgid ""
 "The verification code has now been sent and should arrive in your phone in a "
 "few minutes."
@@ -4062,22 +4097,22 @@ msgstr ""
 "Bekräftelsekoden har nu skickats och bör komma till din telefon inom några "
 "minuter."
 
-#: utils/identity.py:637
+#: kamu/utils/identity.py:637
 msgid "Email address is required."
 msgstr "E-postadress krävs."
 
-#: utils/identity.py:688
+#: kamu/utils/identity.py:688
 msgid "Phone number is required."
 msgstr "Telefonnummer krävs."
 
-#: utils/identity.py:808
+#: kamu/utils/identity.py:808
 msgid ""
 "Suspected duplicate user. Finnish personal identity code already exists in "
 "the database: "
 msgstr ""
 "Misstänkt dubbel användare. Personbeteckningen finns redan i databasen: "
 
-#: utils/identity.py:830
+#: kamu/utils/identity.py:830
 msgid ""
 "You already have a Finnish personal identity code that differs from the one "
 "you are trying to add. Please contact support if you need to change your "
@@ -4087,24 +4122,24 @@ msgstr ""
 "försöker lägga till. Kontakta supporten om du behöver ändra din "
 "personbeteckning: "
 
-#: utils/identity.py:910
+#: kamu/utils/identity.py:910
 #, python-format
 msgid "You can activate a new user account of type \"%(account_type)s\"."
 msgstr "Du kan aktivera ett nytt användarkonto av typen ”%(account_type)s”."
 
-#: utils/identity.py:915
+#: kamu/utils/identity.py:915
 msgid "Activate account"
 msgstr "Aktivera konto"
 
-#: utils/identity.py:930
+#: kamu/utils/identity.py:930
 msgid "Continue to external service to activate account"
 msgstr "Fortsätt till extern tjänst för att aktivera konto"
 
-#: utils/membership.py:85
+#: kamu/utils/membership.py:85
 msgid "The member can fulfill this requirement in Kamu."
 msgstr "Medlemmen kan uppfylla detta krav i Kamu."
 
-#: utils/membership.py:93
+#: kamu/utils/membership.py:93
 msgid ""
 "<p>Membership and privileges (e.g., a user account) activate only after the "
 "required action is completed.</p>"
@@ -4112,21 +4147,21 @@ msgstr ""
 "<p>Medlemskap och privilegier (t.ex. ett användarkonto) aktiveras endast när "
 "den nödvändiga åtgärden är slutförd.</p>"
 
-#: utils/membership.py:110
+#: kamu/utils/membership.py:110
 msgid "The membership requires a contract you cannot currently sign."
 msgstr "Medlemskapet kräver ett avtal som du för närvarande inte kan signera."
 
-#: utils/membership.py:112
+#: kamu/utils/membership.py:112
 msgid "The membership requires a contract the member cannot currently sign."
 msgstr ""
 "Medlemskapet kräver ett avtal som medlemmen för närvarande inte kan signera."
 
-#: utils/membership.py:116
+#: kamu/utils/membership.py:116
 #, python-format
 msgid "The membership requires a signed contract: \"%(name)s\"."
 msgstr "Godkännande saknas i avtalet. Öppna och godkänn avtalet: ”%(name)s”."
 
-#: utils/membership.py:118
+#: kamu/utils/membership.py:118
 #, python-format
 msgid ""
 "The membership requires a signed contract \"%(name)s\", version %(version)d "
@@ -4135,27 +4170,27 @@ msgstr ""
 "Medlemskapet kräver ett signerat avtal ”%(name)s”, version %(version)d eller "
 "högre."
 
-#: utils/membership.py:124
+#: kamu/utils/membership.py:124
 msgid "Review and sign"
 msgstr "Granska och signera"
 
-#: utils/membership.py:137
+#: kamu/utils/membership.py:137
 msgid "The membership requires a verified email address."
 msgstr "Medlemskapet kräver en verifierad e-postadress."
 
-#: utils/membership.py:139
+#: kamu/utils/membership.py:139
 msgid "Add and verify email address"
 msgstr "Lägg till eller verifiera e-post"
 
-#: utils/membership.py:144
+#: kamu/utils/membership.py:144
 msgid "The membership requires a verified phone number."
 msgstr "Medlemskapet kräver ett verifierat telefonnummer."
 
-#: utils/membership.py:146
+#: kamu/utils/membership.py:146
 msgid "Add and verify phone number"
 msgstr "Lägg till eller verifiera telefon"
 
-#: utils/membership.py:158
+#: kamu/utils/membership.py:158
 #, python-format
 msgid ""
 "The membership requires an attribute \"%(name)s\" of at least verification "
@@ -4164,17 +4199,17 @@ msgstr ""
 "Medlemskapet kräver attributet ”%(name)s” med minst verifieringsnivå: "
 "%(level)d (%(level_text)s)."
 
-#: utils/membership.py:166
+#: kamu/utils/membership.py:166
 #, python-format
 msgid "The membership requires an attribute \"%(name)s\"."
 msgstr "Medlemskapet kräver attributet ”%(name)s”."
 
-#: utils/membership.py:168
+#: kamu/utils/membership.py:168
 #, python-format
 msgid "Add %(name)s"
 msgstr "Lägg till %(name)s"
 
-#: utils/membership.py:174
+#: kamu/utils/membership.py:174
 #, python-format
 msgid ""
 "The membership requires a requirement you cannot currently fulfill: %(name)s."
@@ -4182,7 +4217,7 @@ msgstr ""
 "Medlemskapet kräver ett krav som du för närvarande inte kan uppfylla: "
 "%(name)s."
 
-#: utils/membership.py:178
+#: kamu/utils/membership.py:178
 #, python-format
 msgid ""
 "The membership requires a requirement the member cannot currently fulfill: "
@@ -4191,92 +4226,92 @@ msgstr ""
 "Medlemskapet kräver ett krav som medlemmen för närvarande inte kan uppfylla: "
 "%(name)s."
 
-#: utils/membership.py:190
+#: kamu/utils/membership.py:190
 #, python-format
 msgid "The membership requires higher assurance level: %(level)s."
 msgstr "Medlemskapet kräver högre kontrollnivå: %(level)s."
 
-#: utils/membership.py:259
+#: kamu/utils/membership.py:259
 msgid "Invitation process has taken too long."
 msgstr "Inbjudningsprocessen tog för lång tid."
 
-#: utils/membership.py:265
+#: kamu/utils/membership.py:265
 msgid "This invitation has already been used."
 msgstr "Denna inbjudan har redan använts."
 
-#: utils/membership.py:269
+#: kamu/utils/membership.py:269
 msgid "This invitation has expired."
 msgstr "Denna inbjudan har gått ut."
 
-#: utils/membership.py:273
+#: kamu/utils/membership.py:273
 msgid "Invalid invitation token."
 msgstr "Ogiltig inbjudningstoken."
 
-#: utils/membership.py:276
+#: kamu/utils/membership.py:276
 msgid "The membership information has now been created."
 msgstr "Uppgifterna om medlemskapet har nu skapats."
 
-#: validators/identity.py:30
+#: kamu/validators/identity.py:30
 msgid "Personal identity code length should be 11 characters."
 msgstr "Personbeteckningens längd ska vara 11 tecken."
 
-#: validators/identity.py:35
+#: kamu/validators/identity.py:35
 msgid "Incorrect date part."
 msgstr "Felaktig datumdel."
 
-#: validators/identity.py:38
+#: kamu/validators/identity.py:38
 msgid "Incorrect intermediate character."
 msgstr "Felaktigt mellanliggande tecken."
 
-#: validators/identity.py:42
+#: kamu/validators/identity.py:42
 msgid "Incorrect numeric part."
 msgstr "Felaktig numerisk del."
 
-#: validators/identity.py:46
+#: kamu/validators/identity.py:46
 msgid "Incorrect checksum."
 msgstr "Felaktig kontrollsumma."
 
-#: validators/identity.py:73
+#: kamu/validators/identity.py:73
 msgid "Phone number is too short."
 msgstr "Telefonnumret är för kort."
 
-#: validators/identity.py:76
+#: kamu/validators/identity.py:76
 msgid "Phone number must start with a plus sign."
 msgstr "Telefonnumret måste börja med ett plustecken."
 
-#: validators/identity.py:79
+#: kamu/validators/identity.py:79
 msgid "Phone number contains invalid characters."
 msgstr "Telefonnumret innehåller ogiltiga tecken."
 
-#: validators/identity.py:110
+#: kamu/validators/identity.py:110
 msgid "Invalid eIDAS identifier format."
 msgstr "Ogiltigt format för eIDAS-identifierare."
 
-#: validators/membership.py:34
+#: kamu/validators/membership.py:34
 msgid "Invalid start date format."
 msgstr "Ogiltigt format för startdatum."
 
-#: validators/membership.py:36
+#: kamu/validators/membership.py:36
 msgid "Invalid expiry date format."
 msgstr "Ogiltigt format för utgångsdatum."
 
-#: validators/membership.py:38
+#: kamu/validators/membership.py:38
 msgid "Membership expiry date cannot be earlier than start date."
 msgstr "Medlemskapets utgångsdatum kan inte vara tidigare än startdatumet."
 
-#: validators/membership.py:40
+#: kamu/validators/membership.py:40
 msgid "Membership expiry date cannot be in the past."
 msgstr "Medlemskapets utgångsdatum kan inte vara i det förflutna."
 
-#: validators/membership.py:42
+#: kamu/validators/membership.py:42
 msgid "Membership start date cannot be in the past."
 msgstr "Medlemskapets startdatum kan inte vara i det förflutna."
 
-#: validators/membership.py:44
+#: kamu/validators/membership.py:44
 msgid "Past membership start date cannot be changed."
 msgstr "Ett passerat startdatum för medlemskapet kan inte ändras."
 
-#: validators/membership.py:52
+#: kamu/validators/membership.py:52
 #, python-format
 msgid ""
 "Maximum membership duration for this role is %(max_duration)s days. Last "
@@ -4285,27 +4320,27 @@ msgstr ""
 "Den maximala medlemskapstiden för denna roll är %(max_duration)s dagar. "
 "Sista möjliga datum för detta medlemskap är %(last_date)s."
 
-#: validators/organisation.py:32
+#: kamu/validators/organisation.py:32
 msgid "Organisation hierarchy cannot be deeper than maximum depth."
 msgstr "Organisationshierarkin kan inte vara större än det maximala djupet."
 
-#: validators/organisation.py:34
+#: kamu/validators/organisation.py:34
 msgid "Organisation cannot be in its own hierarchy."
 msgstr "Organisation kan inte vara i sin egen hierarki."
 
-#: validators/role.py:32
+#: kamu/validators/role.py:32
 msgid "Role hierarchy cannot be more than maximum depth."
 msgstr "Rollhierarkin kan inte vara större än det maximala djupet."
 
-#: validators/role.py:34
+#: kamu/validators/role.py:34
 msgid "Role cannot be in its own hierarchy."
 msgstr "Rollen kan inte vara i sin egen hierarki."
 
-#: views/account.py:153
+#: kamu/views/account.py:153
 msgid "Could not load user ID choices, please try again later."
 msgstr "Kunde inte ladda användar-ID-val, försök igen senare."
 
-#: views/account.py:209
+#: kamu/views/account.py:209
 msgid ""
 "Creation of limited user account failed, please try again later. If the "
 "problem persists for several days, please contact IT-Helpdesk."
@@ -4313,51 +4348,52 @@ msgstr ""
 "Skapandet av ett begränsat användarkonto misslyckades, vänligen försök igen "
 "senare. Om problemet kvarstår i flera dagar, kontakta IT-Helpdesk"
 
-#: views/account.py:223
+#: kamu/views/account.py:223
 msgid "Account created."
 msgstr "Konto skapat."
 
-#: views/account.py:310
+#: kamu/views/account.py:310
 msgid "This account has been locked by IT services."
 msgstr "Detta konto har låsts av IT-tjänster."
 
-#: views/account.py:312 views/account.py:356 views/account.py:510
+#: kamu/views/account.py:312 kamu/views/account.py:356
+#: kamu/views/account.py:510
 msgid "Your permission to this account has expired."
 msgstr "Din behörighet till detta konto har löpt ut."
 
-#: views/account.py:373
+#: kamu/views/account.py:373
 msgid "Account enabling failed, please try again later."
 msgstr "Kontoaktiveringen misslyckades, försök igen senare."
 
-#: views/account.py:385
+#: kamu/views/account.py:385
 msgid "Account enabled."
 msgstr "Konto aktiverat."
 
-#: views/account.py:412
+#: kamu/views/account.py:412
 msgid "Account disabling failed, please try again later."
 msgstr "Deaktiveringen av kontot misslyckades, försök igen senare."
 
-#: views/account.py:424
+#: kamu/views/account.py:424
 msgid "Account disabled."
 msgstr "Konto deaktiverat."
 
-#: views/account.py:445
+#: kamu/views/account.py:445
 msgid "Account locking failed, please try again later."
 msgstr "Låsning av konto misslyckades, försök igen senare."
 
-#: views/account.py:458
+#: kamu/views/account.py:458
 msgid "Account locked."
 msgstr "Konto låst."
 
-#: views/account.py:484
+#: kamu/views/account.py:484
 msgid "Account unlocked."
 msgstr "Konto upplåst."
 
-#: views/account.py:502
+#: kamu/views/account.py:502
 msgid "Cannot modify locked account."
 msgstr "Det går inte att ändra ett låst konto."
 
-#: views/account.py:545
+#: kamu/views/account.py:545
 msgid ""
 "Password change failed. Your new password must differ from your past "
 "passwords."
@@ -4365,35 +4401,35 @@ msgstr ""
 "Lösenordsändringen misslyckades. Ditt nya lösenord måste skilja sig från "
 "dina tidigare lösenord."
 
-#: views/account.py:557
+#: kamu/views/account.py:557
 msgid "Password reset."
 msgstr "Lösenordet återställdes."
 
-#: views/auth.py:371
+#: kamu/views/auth.py:371
 msgid "Link identifier not found."
 msgstr "Länkidentifierare hittades inte."
 
-#: views/auth.py:376
+#: kamu/views/auth.py:376
 msgid "Link identifier time not valid."
 msgstr "Länkidentifierarens tid är ogiltig."
 
-#: views/auth.py:378
+#: kamu/views/auth.py:378
 msgid "Link identifier expired."
 msgstr "Länkidentifieraren har gått ut."
 
-#: views/auth.py:438
+#: kamu/views/auth.py:438
 msgid "Identifier linking failed: "
 msgstr "Länkningen av identifierare misslyckades: "
 
-#: views/auth.py:444
+#: kamu/views/auth.py:444
 msgid "Invitation claiming failed: "
 msgstr "Inbjudan kunde inte accepteras: "
 
-#: views/auth.py:447
+#: kamu/views/auth.py:447
 msgid "Login failed: "
 msgstr "Inloggningen misslyckades: "
 
-#: views/auth.py:462
+#: kamu/views/auth.py:462
 msgid ""
 "Redirection loop for authenticated user detected. Please contact service "
 "admins."
@@ -4401,47 +4437,47 @@ msgstr ""
 "Omdirigeringsslinga för autentiserad användare upptäckt. Kontakta tjänstens "
 "administratörer."
 
-#: views/auth.py:633
+#: kamu/views/auth.py:633
 msgid "Could not send verification email."
 msgstr "Kunde inte skicka verifieringsmejlet."
 
-#: views/auth.py:737
+#: kamu/views/auth.py:737
 msgid "See the pending memberships here."
 msgstr "Se de väntande medlemskapen här."
 
-#: views/auth.py:741
+#: kamu/views/auth.py:741
 msgid "You have memberships pending approval."
 msgstr "Du har medlemskap som väntar på godkännande."
 
-#: views/auth.py:744
+#: kamu/views/auth.py:744
 msgid "List here"
 msgstr "Lista här"
 
-#: views/auth.py:748
+#: kamu/views/auth.py:748
 msgid "Memberships are ending soon in roles you have approval rights."
 msgstr ""
 "Medlemskap upphör snart för roller som du har godkännanderättigheter för."
 
-#: views/identity.py:157
+#: kamu/views/identity.py:157
 #, python-format
 msgid "You have new membership in the role %(role)s."
 msgstr "Du har ett nytt medlemskap i rollen %(role)s."
 
-#: views/identity.py:209
+#: kamu/views/identity.py:209
 msgid "Selected as the target identity for identity combining."
 msgstr "Vald som målidentitet för identitetskombination."
 
-#: views/identity.py:215
+#: kamu/views/identity.py:215
 msgid "Selected as the source identity for identity combining."
 msgstr "Vald som källidentitet för identitetskombination."
 
-#: views/identity.py:374
+#: kamu/views/identity.py:374
 msgid "Failed to verify Candour ID verification status, please try again."
 msgstr ""
 "Det gick inte att verifiera Candour ID-verifieringsstatus, försök igen "
 "senare."
 
-#: views/identity.py:400
+#: kamu/views/identity.py:400
 msgid ""
 "Your identity has been verified and personal information updated with "
 "Candour ID identification service."
@@ -4449,25 +4485,25 @@ msgstr ""
 "Din identitet har verifierats och personuppgifter uppdaterats med hjälp av "
 "identifieringstjänsten Candour ID."
 
-#: views/identity.py:420
+#: kamu/views/identity.py:420
 msgid "Candour ID verification failed, please try again."
 msgstr "Verifieringen med Candour ID misslyckades. Försök igen."
 
-#: views/identity.py:456
+#: kamu/views/identity.py:456
 msgid "Failed to create Candour ID verification session, please try again."
 msgstr ""
 "Det gick inte att skapa en Candour ID-verifieringssession, försök igen "
 "senare."
 
-#: views/identity.py:463
+#: kamu/views/identity.py:463
 msgid "Could not start Candour ID process, please try again later."
 msgstr "Kunde inte starta Candours ID‑process, försök igen senare."
 
-#: views/identity.py:516
+#: kamu/views/identity.py:516
 msgid "Authentication with single contact has been disabled."
 msgstr "Autentisering med en enda kontakt har inaktiverats."
 
-#: views/identity.py:534
+#: kamu/views/identity.py:534
 msgid ""
 "Authentication with a single contact has been enabled. User can authenticate "
 "with a code sent to either an email address or a phone number."
@@ -4476,24 +4512,24 @@ msgstr ""
 "med en kod som skickats antingen till en e-postadress eller till ett "
 "telefonnummer."
 
-#: views/identity.py:553
+#: kamu/views/identity.py:553
 msgid "Authentication with unverified contact has been enabled."
 msgstr "Autentisering med overifierad kontakt har aktiverats."
 
-#: views/identity.py:570
+#: kamu/views/identity.py:570
 msgid "Authentication with unverified contact has been disabled."
 msgstr "Autentisering med overifierad kontakt har inaktiverats."
 
-#: views/identity.py:716
+#: kamu/views/identity.py:716
 msgid "Kamu: email address verification"
 msgstr "Kamu: verifiering av e-postadress"
 
-#: views/identity.py:717
+#: kamu/views/identity.py:717
 #, python-format
 msgid "Your verification code is: %(token)s"
 msgstr "Din bekräftelsekod är: %(token)s"
 
-#: views/identity.py:767
+#: kamu/views/identity.py:767
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again."
@@ -4501,47 +4537,48 @@ msgstr ""
 "Du försökte skicka en ny bekräftelsekod för fort. Vänta en minut innan du "
 "försöker igen."
 
-#: views/identity.py:1150
+#: kamu/views/identity.py:1150
 msgid "Contract already signed."
 msgstr "Avtalet har redan signerats."
 
-#: views/identity.py:1156
+#: kamu/views/identity.py:1156
 msgid "Contract version has changed. Please try again."
 msgstr "Avtalsversionen har ändrats. Vänligen försök igen."
 
-#: views/identity.py:1159
+#: kamu/views/identity.py:1159
 msgid "Contract signed."
 msgstr "Avtal signerat."
 
-#: views/identity.py:1381
+#: kamu/views/identity.py:1381
 msgid "New identity created."
 msgstr "Ny identitet skapad."
 
-#: views/identity.py:1405
+#: kamu/views/identity.py:1405
 msgid "Invalid verification session."
 msgstr "Ogiltig verifieringssession."
 
-#: views/identity.py:1418
+#: kamu/views/identity.py:1418
 msgid "Identity verification has been cancelled."
 msgstr "Identitetsverifieringen har avbrutits."
 
-#: views/identity.py:1485
+#: kamu/views/identity.py:1485
 msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr "LDAP-sökningen gav för många resultat, förfina sökparametrarna."
 
-#: views/identity.py:1611
+#: kamu/views/identity.py:1611
 msgid "Too many results, please refine your search parameters."
 msgstr "För många resultat, förfina sökparametrarna."
 
-#: views/identity.py:1618
+#: kamu/views/identity.py:1618
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 "Partiella namnträffar gav för många resultat. Återger endast exakta träffar."
 
-#: views/identity.py:1694 views/identity.py:1708 views/identity.py:1735
-#: views/membership.py:813 views/membership.py:822
+#: kamu/views/identity.py:1694 kamu/views/identity.py:1708
+#: kamu/views/identity.py:1735 kamu/views/membership.py:813
+#: kamu/views/membership.py:822
 msgid ""
 "PersonDB connection failed, could not load person information. Please try "
 "again later."
@@ -4549,7 +4586,7 @@ msgstr ""
 "Anslutningen till PersonDB misslyckades, personinformationen kunde inte "
 "hämtas. Försök igen senare."
 
-#: views/identity.py:1725
+#: kamu/views/identity.py:1725
 msgid ""
 "Name search returned too many results from the person database, and was "
 "skipped. Please refine your search parameters."
@@ -4557,38 +4594,38 @@ msgstr ""
 "Namnsökningen i persondatabasen returnerade för många resultat och hoppades "
 "över. Förfina dina sökparametrar."
 
-#: views/identity.py:1815
+#: kamu/views/identity.py:1815
 msgid "LDAP search failed, could not search existing accounts."
 msgstr ""
 "LDAP-sökningen misslyckades, det gick inte att söka efter befintliga konton."
 
-#: views/identity.py:1825
+#: kamu/views/identity.py:1825
 msgid "Identifier match found, skipping name search."
 msgstr "Identifierarträff hittades, skippar namnsökning."
 
-#: views/identity.py:1941
+#: kamu/views/identity.py:1941
 msgid "Incorrect primary keys."
 msgstr "Felaktiga primärnycklar."
 
-#: views/identity.py:1947
+#: kamu/views/identity.py:1947
 msgid "Identities combined."
 msgstr "Identiteter kombinerade."
 
-#: views/membership.py:92
+#: kamu/views/membership.py:92
 msgid "You need to create an identity first."
 msgstr "Du måste först skapa en identitet."
 
-#: views/membership.py:96
+#: kamu/views/membership.py:96
 msgid "You are already a member of this role."
 msgstr "Du är redan medlem i den här rollen."
 
-#: views/membership.py:253
+#: kamu/views/membership.py:253
 msgid ""
 "You have approved the membership below. The member has been notified by "
 "email."
 msgstr "Du har godkänt medlemskapet nedan. Medlemmen har meddelats via e-post."
 
-#: views/membership.py:271
+#: kamu/views/membership.py:271
 msgid ""
 "You have approved the membership below. An invitation email has been sent to "
 "the member."
@@ -4596,19 +4633,19 @@ msgstr ""
 "Du har godkänt medlemskapet nedan. Ett inbjudningsmejl har skickats till "
 "medlemmen."
 
-#: views/membership.py:277
+#: kamu/views/membership.py:277
 msgid "You have approved the membership below."
 msgstr "Du har godkänt medlemskapet nedan."
 
-#: views/membership.py:300 views/membership.py:916
+#: kamu/views/membership.py:300 kamu/views/membership.py:916
 msgid "The email invitation has been sent."
 msgstr "E-postinbjudan har skickats."
 
-#: views/membership.py:302
+#: kamu/views/membership.py:302
 msgid "Could not send invite email."
 msgstr "Kunde inte skicka e-postmeddelande med inbjudan."
 
-#: views/membership.py:307
+#: kamu/views/membership.py:307
 msgid ""
 "You tried to send a new email invitation too soon. Please wait one minute "
 "before trying again."
@@ -4616,32 +4653,32 @@ msgstr ""
 "Du försökte skicka en ny e-postinbjudan för fort. Vänta en minut innan du "
 "försöker igen."
 
-#: views/membership.py:332
+#: kamu/views/membership.py:332
 msgid "Membership set to end today."
 msgstr "Medlemskapet upphör idag."
 
-#: views/membership.py:354
+#: kamu/views/membership.py:354
 msgid "Membership cancelled."
 msgstr "Medlemskap avslutat."
 
-#: views/membership.py:433
+#: kamu/views/membership.py:433
 msgid "Membership updated."
 msgstr "Medlemskap uppdaterat."
 
-#: views/membership.py:797 views/membership.py:838
+#: kamu/views/membership.py:797 kamu/views/membership.py:838
 msgid "Multiple identities found, please contact IT-Helpdesk."
 msgstr "Flera identiteter hittades, kontakta IT-helpdesk."
 
-#: views/membership.py:921 views/membership.py:1215
+#: kamu/views/membership.py:921 kamu/views/membership.py:1215
 msgid ""
 "The email invitation will be sent when the membership has been approved."
 msgstr "E-postinbjudan skickas när medlemskapet har godkänts."
 
-#: views/membership.py:968
+#: kamu/views/membership.py:968
 msgid "This invitation is already claimed."
 msgstr "Den här inbjudan är redan använd."
 
-#: views/membership.py:1077
+#: kamu/views/membership.py:1077
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and email address {email} are "
@@ -4650,7 +4687,7 @@ msgstr ""
 "Personbeteckningen {fpic} och e-postadressen {email} är registrerade för "
 "olika identiteter."
 
-#: views/membership.py:1087
+#: kamu/views/membership.py:1087
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and phone number {phone} are "
@@ -4659,7 +4696,7 @@ msgstr ""
 "Personbeteckningen {fpic} och telefonnumret {phone} är registrerade för "
 "olika identiteter."
 
-#: views/membership.py:1096
+#: kamu/views/membership.py:1096
 #, python-brace-format
 msgid ""
 "Email address {email} and phone number {phone} are registered to different "
@@ -4668,22 +4705,22 @@ msgstr ""
 "E-postadressen {email} och telefonnumret {phone} är registrerade för olika "
 "identiteter."
 
-#: views/membership.py:1134
+#: kamu/views/membership.py:1134
 #, python-format
 msgid "Email address is required. Invalid line: \"%(line)s\"."
 msgstr "E-postadress krävs. Ogiltig rad: \"%(line)s\"."
 
-#: views/membership.py:1140
+#: kamu/views/membership.py:1140
 #, python-format
 msgid "Phone number is required for this role. Invalid line: \"%(line)s\"."
 msgstr "Telefonnummer krävs för den här rollen. Ogiltig rad: \"%(line)s\"."
 
-#: views/membership.py:1223
+#: kamu/views/membership.py:1223
 #, python-brace-format
 msgid "The email invitation has been sent to following addresses: {0}"
 msgstr "E-postinbjudan har skickats till följande e-postadresser: {0}"
 
-#: views/membership.py:1232
+#: kamu/views/membership.py:1232
 #, python-brace-format
 msgid ""
 "The email invitation will be sent to following addresses when the membership "
@@ -4692,7 +4729,7 @@ msgstr ""
 "E-postinbjudan skickas till följande adresser när medlemskapet har godkänts: "
 "{0}"
 
-#: views/membership.py:1238
+#: kamu/views/membership.py:1238
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Följande identiteter har lagts till: {0}"
