@@ -13,8 +13,9 @@
       <tr>
         <th scope="col">{% trans "Person" %}</th>
         <th scope="col">{% trans "Role" %}</th>
-        <th scope="col">{% trans "Status" %}</th>
-        <th scope="col" class="d-none d-xl-block">{% trans "Start date" %}</th>
+        <th scope="col" class="d-none d-lg-table-cell">{% trans "Inviter" %}</th>
+        <th scope="col" class="d-none d-xl-table-cell">{% trans "Status" %}</th>
+        <th scope="col" class="d-none d-xl-table-cell">{% trans "Start date" %}</th>
         <th scope="col">{% trans "Expiration date" %}</th>
       </tr>
       </thead>
@@ -24,7 +25,8 @@
           <th scope="row"><a href="{% url 'membership-detail' membership.pk %}">{% if membership.identity %}{{ membership.identity }}{% else %}
             {% trans "Invited" %}: {{ membership.invite_email_address }}{% if membership.invite_name %} ({{ membership.invite_name }}){% endif %}{% endif %}</a></th>
           <td>{{ membership.role }}</td>
-          <td>{{ membership.get_status_display }}</td>
+          <td class="d-none d-lg-table-cell">{{ membership.inviter.get_full_name }}</td>
+          <td class="d-none d-xl-table-cell">{{ membership.get_status_display }}</td>
           <td class="d-none d-xl-table-cell">{{ membership.start_date|date:"SHORT_DATE_FORMAT" }}</td>
           <td>{{ membership.expire_date|date:"SHORT_DATE_FORMAT" }}</td>
         </tr>
