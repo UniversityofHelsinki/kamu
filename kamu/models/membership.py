@@ -49,8 +49,8 @@ class Membership(models.Model):
     related to :class:`django.contrib.auth.models.User`.
     """
 
-    identity = models.ForeignKey("kamu.Identity", blank=True, null=True, on_delete=models.CASCADE)
-    role = models.ForeignKey(Role, on_delete=models.CASCADE)
+    identity = models.ForeignKey("kamu.Identity", blank=True, null=True, on_delete=models.PROTECT)
+    role = models.ForeignKey(Role, on_delete=models.PROTECT)
 
     class Status(models.TextChoices):
         INVITED = ("invited", _("Invited"))
