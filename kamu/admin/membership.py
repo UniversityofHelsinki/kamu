@@ -2,11 +2,24 @@
 Django admin site configuration for the membership models.
 """
 
+from typing import Any
+
+from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
+
 from kamu.admin.customization import AuditModelAdmin
 
 
+@admin.action(description=_("Name or invite email"))
+def name_or_invite_email(obj: Any) -> str:
+    if obj.identity:
+        return obj.identity.display_name()
+    return obj.invite_email_address
+
+
 class MembershipAdmin(AuditModelAdmin):
-    list_display = ["identity", "role", "start_date", "expire_date"]
+    list_display = [name_or_invite_email, "role", "start_date", "expire_date"]
+    list_filter = ["role__identifier", ("identity", admin.EmptyFieldListFilter)]
     search_fields = [
         "identity__surname",
         "identity__given_names",
