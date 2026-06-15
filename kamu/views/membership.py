@@ -1131,15 +1131,13 @@ class MembershipMassInviteView(BaseMembershipInviteView):
             elif not email:
                 form.add_error(
                     "invited",
-                    _('Email address is required. Invalid line: "%(line)s".' % {"line": ",".join(invited.values())}),
+                    _('Email address is required. Invalid line: "%(line)s".') % {"line": ",".join(invited.values())},
                 )
             elif form.instance.role.require_sms_verification and not phone:
                 form.add_error(
                     "invited",
-                    _(
-                        'Phone number is required for this role. Invalid line: "%(line)s".'
-                        % {"line": ",".join(invited.values())}
-                    ),
+                    _('Phone number is required for this role. Invalid line: "%(line)s".')
+                    % {"line": ",".join(invited.values())},
                 )
             else:
                 to_be_invited.append((given_name, surname, email, phone))

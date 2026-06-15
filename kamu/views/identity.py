@@ -154,7 +154,7 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
             messages.add_message(
                 self.request,
                 messages.INFO,
-                _("You have new membership in the role %(role)s." % {"role": membership.role.name()}),
+                _("You have new membership in the role %(role)s.") % {"role": membership.role.name()},
             )
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:

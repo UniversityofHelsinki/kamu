@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-15 08:28+0300\n"
+"POT-Creation-Date: 2026-06-15 14:09+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -4681,7 +4681,7 @@ msgstr "Jäsenyys päivitetty."
 msgid "Multiple identities found, please contact IT-Helpdesk."
 msgstr "Useita identiteettejä löytyi, ota yhteyttä IT-helpdeskiin."
 
-#: kamu/views/membership.py:921 kamu/views/membership.py:1215
+#: kamu/views/membership.py:921 kamu/views/membership.py:1213
 msgid ""
 "The email invitation will be sent when the membership has been approved."
 msgstr "Sähköpostikutsu lähetetään, kun jäsenyys on hyväksytty."
@@ -4722,18 +4722,18 @@ msgstr ""
 msgid "Email address is required. Invalid line: \"%(line)s\"."
 msgstr "Sähköpostiosoite vaaditaan. Virheellinen rivi \"%(line)s\"."
 
-#: kamu/views/membership.py:1140
+#: kamu/views/membership.py:1139
 #, python-format
 msgid "Phone number is required for this role. Invalid line: \"%(line)s\"."
 msgstr ""
 "Puhelinnumero vaaditaan tähän rooliin. Virheellinen rivi: \"%(line)s\"."
 
-#: kamu/views/membership.py:1223
+#: kamu/views/membership.py:1221
 #, python-brace-format
 msgid "The email invitation has been sent to following addresses: {0}"
 msgstr "Sähköpostikutsu on lähetetty seuraaviin osoitteisiin: {0}"
 
-#: kamu/views/membership.py:1232
+#: kamu/views/membership.py:1230
 #, python-brace-format
 msgid ""
 "The email invitation will be sent to following addresses when the membership "
@@ -4742,7 +4742,7 @@ msgstr ""
 "Sähkökutsu lähetetään seuraaviin osoitteisiin, kun jäsenyys on hyväksytty: "
 "{0}"
 
-#: kamu/views/membership.py:1238
+#: kamu/views/membership.py:1236
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Lisätty seuraavat henkilöllisyydet: {0}"
