@@ -1,54 +1,53 @@
-image: python:3.10
-
 variables:
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-  runStages: prepare lint test dependency-check sonarqube-check
+  UV_VERSION: "0.12.1"
+  PYTHON_VERSION: "3.10"
+  BASE_LAYER: trixie
+  UV_LINK_MODE: copy
+  UV_CACHE_DIR: .uv-cache
+  runStages: prepare lint test analyse
+
+image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER
 
 cache:
+  key:
+    files:
+      - uv.lock
   paths:
-    - .cache/pip
-  key: pip
+    - $UV_CACHE_DIR
 
 before_script:
   - python -V
-  - pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
-  - test -n "$SKIP_PIP_INSTALL" || find .wheels -name '*.whl' -print0 | xargs -0 --no-run-if-empty pip --require-virtualenv install
-  - test -n "$SKIP_PIP_INSTALL" || pip --require-virtualenv install -r requirements_dev.txt
+  - |
+    if [ -f "$UV_CACHE_DIR/.uv-cache-ready" ]; then
+      echo "Skipping apt install"
+    else
+      apt update && apt install -y libldap-dev python3-dev libsasl2-dev
+      mkdir -p "$UV_CACHE_DIR"
+      touch "$UV_CACHE_DIR/.uv-cache-ready"
+    fi
+  - uv sync --frozen
+
+after_script:
+  - uv cache prune --ci
 
 stages:
   - prepare
   - lint
   - test
   - docs
-  - dependency-check
-  - sonarqube-check
+  - analyse
 
-build-ldap:
+prepare-cache:
   stage: prepare
-  variables:
-    SKIP_PIP_INSTALL: "yes"
   script:
-  - apt update && apt install -y libldap-dev python3-dev libsasl2-dev
-  - grep python-ldap requirements.txt > requirements_ldap.txt
-  - pip install -r requirements_ldap.txt
-  - mkdir .wheels
-  - find .cache/pip -name 'python_ldap*.whl' -print0 | xargs -0 -i cp -v "{}" .wheels/
-  artifacts:
-    expire_in: 2 days
-    paths:
-    - .wheels
-  rules:
-    - if: $runStages =~ /(prepare|test|lint|sonarqube-check)/
-      when: always
+    - uv tree
 
 test:
   script:
     - printf "[run]\nconcurrency = multiprocessing" > .coveragerc
-    - coverage run ./manage.py test --parallel
-    - coverage combine
-    - coverage xml
+    - uv run coverage run ./manage.py test --parallel
+    - uv run coverage combine
+    - uv run coverage xml
   artifacts:
     expire_in: 2 days
     paths:
@@ -60,7 +59,7 @@ test:
 migrations-check:
   stage: test
   script:
-    - ./manage.py makemigrations --no-input --check -v0 ||
+    - uv run ./manage.py makemigrations --no-input --check -v0 ||
       ( RET=$?; echo "makemigrations failed with code $?, dry-run follows:" 1>&2;
         ./manage.py makemigrations --no-input --dry-run; exit $RET )
   rules:
@@ -70,7 +69,7 @@ migrations-check:
 black:
   stage: lint
   script:
-    - black . --check
+    - uv run black . --check
   rules:
     - if: $runStages =~ /lint/
       when: always
@@ -78,7 +77,7 @@ black:
 flake8:
   stage: lint
   script:
-    - flake8
+    - uv run flake8
   rules:
     - if: $runStages =~ /lint/
       when: always
@@ -86,7 +85,7 @@ flake8:
 isort:
   stage: lint
   script:
-    - isort . --check
+    - uv run isort . --check
   rules:
     - if: $runStages =~ /lint/
       when: always
@@ -94,13 +93,13 @@ isort:
 mypy:
   stage: lint
   script:
-    - mypy .
+    - uv run mypy .
   rules:
     - if: $runStages =~ /lint/
       when: always
 
 sonarqube-check:
-  stage: sonarqube-check
+  stage: analyse
   image:
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
@@ -119,49 +118,27 @@ sonarqube-check:
       -Dsonar.qualitygate.wait=true
       -Dsonar.host.url=${CI_SONAR_HOST}
       -Dsonar.token=${CI_SONAR_TOKEN}
-      -Dsonar.dependencyCheck.jsonReportPath=dependency-check-report.json
-      -Dsonar.dependencyCheck.htmlReportPath=dependency-check-report.html
-      -Dsonar.dependencyCheck.severity.high=7.0
-      -Dsonar.dependencyCheck.severity.medium=4.0
-      -Dsonar.dependencyCheck.severity.low=0.0
   allow_failure: true
   needs:
     - job: test
       artifacts: true
-    - job: dependency-check
-      artifacts: true
   rules:
-    - if: $runStages =~ /sonarqube-check/
+    - if: $runStages =~ /analyse/
       when: always
 
-dependency-check:
-  stage: dependency-check
-  image:
-    name: owasp/dependency-check-action:latest
-    entrypoint: [""]
-  before_script:
-    - apt update && apt install -y python3
+uv-audit:
+  stage: analyse
   script:
-    - >
-      /usr/share/dependency-check/bin/dependency-check.sh
-      --project Kamu --scan . --enableExperimental
-      --format HTML --format JSON
+    - uv audit
   allow_failure: true
-  artifacts:
-    when: always
-    expire_in: 1 week
-    paths:
-      - dependency-check-report.html
-      - dependency-check-report.json
-  needs: []
   rules:
-    - if: $runStages =~ /(dependency-check|sonarqube-check)/
+    - if: $runStages =~ /analyse/
       when: always
 
 pages:
   stage: docs
   script:
-    - make -C docs html
+    - uv run make -C docs html
     - mv docs/_build/html public
   artifacts:
     expire_in: 1 week
@@ -173,7 +150,7 @@ pages:
 pages-test:
   stage: docs
   script:
-    - make -C docs html
+    - uv run make -C docs html
     - mv docs/_build/html test
   artifacts:
     expire_in: 1 week

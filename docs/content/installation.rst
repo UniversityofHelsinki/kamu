@@ -5,7 +5,7 @@ Requirements
 ------------
 
 - Python 3.10 or later
-- MariaDB 10.4 or later
+- MariaDB 10.4+ or PostgreSQL 14+
    - Any database supported by Django can be used, just install the appropriate database driver and update local_settings.py accordingly.
 
 Some system libraries are required to install necessary Python dependencies:
@@ -13,16 +13,26 @@ Some system libraries are required to install necessary Python dependencies:
 - mariadb-devel
 - openldap-devel
 
+uv is used for requirements management with following settings:
+
+- Cooldown of 7 days is used for packages, excluding Django. If some other package require a security update, it must also be excluded in pyproject.toml uv settings.
+- Malware check is enabled.
+
 Development environment
 -----------------------
+
+Install uv: https://docs.astral.sh/uv/getting-started/installation/ (i.e. "pipx install uv")
 
 Clone the repository and install the dependencies::
 
     git clone <url>  # Clone url
     cd kamu  # Change to the project directory
-    python3 -m venv venv  # Create Python virtual environment
-    source venv/bin/activate  # Activate the virtual environment
-    pip install -r requirements_dev.txt  # Install the dependencies
+    uv sync
+      # Install dependencies using uv, creating .venv directory for the virtual environment.
+      # Use --extra mysql or --extra postgresql to install database driver.
+    source .venv/bin/activate
+      # Activate the virtual environment,
+      # or use "uv run <command>" to run commands in the virtual environment
 
 Run tests using local SQLite database::
 

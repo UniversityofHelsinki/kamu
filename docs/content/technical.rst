@@ -32,9 +32,13 @@ Packages required for production use:
 - drf-spectacular
    - OpenAPI 3 schema generation.
    - https://drf-spectacular.readthedocs.io/en/latest/
-- mysqlclient
-   - MySQL database connector. Could be replaced with another database connector.
+- mysqlclient or psycopg2
+   - MySQL or PostgreSQL database connector.
    - https://pypi.org/project/mysqlclient/
+   - https://www.psycopg.org/
+- pycountry
+   - Country information used for country selection in forms.
+   - https://pypi.org/project/pycountry/
 - python-json-logger
    - JSON logging for Python, user for audit log.
    - https://pypi.org/project/python-json-logger/

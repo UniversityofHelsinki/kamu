@@ -1,6 +1,5 @@
 # Changelog
 ## [1.0.0] - upcoming
-Requirement updates.
 Added external user account management.
 Added mass invites.
 Added info links.
@@ -9,6 +8,8 @@ Added Finnish and Swedish translations.
 Improved UI texts.
 Refactored admin site audit log with customised ModelAdmin.
 Various smaller fixes.
+Requirement updates.
+Changed requirements management to uv.
 
 ### Updating notes
 Includes database changes, run migrations.

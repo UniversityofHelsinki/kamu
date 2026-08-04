@@ -1,3 +1,34 @@
+[project]
+name = "kamu"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "crispy-bootstrap5==2026.3",
+    "django==5.2.17",
+    "django-crispy-forms==2.6",
+    "django-filter==25.2",
+    "django-stubs-ext==5.2.9",
+    "djangorestframework==3.17.1",
+    "drf-spectacular==0.29.0",
+    "pycountry==26.2.16",
+    "python-json-logger==4.1.0",
+    "python-ldap==3.4.7",
+    "requests==2.34.2",
+]
+
+[project.optional-dependencies]
+mysql = [
+    "mysqlclient==2.2.8",
+]
+postgresql = [
+    "psycopg==3.3.4",
+]
+
+[tool.uv]
+audit.malware-check = true
+exclude-newer = "7 days"
+exclude-newer-package = { django = false }
+
 [tool.isort]
 profile = "black"
 skip_gitignore = true
@@ -31,3 +62,23 @@ warn_no_return = true
 
 [tool.django-stubs]
 django_settings_module = "settings.test"
+
+[dependency-groups]
+dev = [
+    "black==26.5.1",
+    "coverage==7.15.2",
+    "django-stubs==5.2.9",
+    "djangorestframework-stubs==3.16.9",
+    "faker==40.36.0",
+    "flake8==7.3.0",
+    "isort==7.0.0",
+    "mypy==1.19.1",
+    "sphinx==8.1.3",
+    "sphinxcontrib-django==2.5",
+    "tblib==3.2.2",
+    "types-requests==2.33.0.20260712",
+]
+graph = [
+    "django-extensions==4.1",
+    "pygraphviz==1.14",
+]
