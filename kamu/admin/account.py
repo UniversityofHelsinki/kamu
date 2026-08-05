@@ -7,6 +7,7 @@ from kamu.admin.customization import AuditModelAdmin
 
 class AccountAdmin(AuditModelAdmin):
     list_display = ["uid", "type", "status"]
+    list_filter = ["type", "status"]
     search_fields = [
         "identity__given_names",
         "identity__surname",

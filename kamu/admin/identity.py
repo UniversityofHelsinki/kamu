@@ -46,6 +46,7 @@ class EmailAddressAdmin(AuditModelAdmin):
 
 class IdentifierAdmin(AuditModelAdmin):
     list_display = ["identity", "type"]
+    list_filter = ["type"]
     search_fields = [
         "identity__given_names",
         "identity__surname",

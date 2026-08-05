@@ -19,7 +19,7 @@ def name_or_invite_email(obj: Any) -> str:
 
 class MembershipAdmin(AuditModelAdmin):
     list_display = [name_or_invite_email, "role", "start_date", "expire_date"]
-    list_filter = ["role__identifier", ("identity", admin.EmptyFieldListFilter)]
+    list_filter = ["role__identifier", ("identity", admin.EmptyFieldListFilter), "status"]
     search_fields = [
         "identity__surname",
         "identity__given_names",
