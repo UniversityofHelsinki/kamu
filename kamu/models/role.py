@@ -161,15 +161,13 @@ class Role(models.Model):
         Role modification is validated against a circular hierarchy, but preparing for it anyway.
         """
         role = self
-        roles = Role.objects.filter(pk=role.pk)
-        n = 1
-        while role.parent:
-            n += 1
-            if n > settings.ROLE_HIERARCHY_MAXIMUM_DEPTH:
-                break
+        all_role_ids = {self.pk}
+        depth = 1
+        while role.parent and depth < settings.ROLE_HIERARCHY_MAXIMUM_DEPTH:
             role = role.parent
-            roles = roles | Role.objects.filter(pk=role.pk)
-        return roles
+            all_role_ids.add(role.pk)
+            depth += 1
+        return Role.objects.filter(pk__in=all_role_ids)
 
     def get_role_hierarchy_subroles(self) -> models.QuerySet:
         """
@@ -177,20 +175,14 @@ class Role(models.Model):
 
         Role modification is validated against a circular hierarchy, but preparing for it anyway.
         """
-        role = self
-        roles = Role.objects.filter(pk=role.pk)
-
-        def get_sub_roles(parent_role: Role, all_roles: models.QuerySet[Role], n: int = 1) -> models.QuerySet[Role]:
-            if n >= settings.ROLE_HIERARCHY_MAXIMUM_DEPTH:
-                return all_roles
-            subroles = Role.objects.filter(parent=parent_role)
-            all_roles = all_roles | subroles
-            for subrole in subroles:
-                all_roles = all_roles | get_sub_roles(subrole, all_roles, n + 1)
-            return all_roles
-
-        roles = get_sub_roles(role, roles, 1)
-        return roles
+        all_role_ids = {self.pk}
+        current_ids = {self.pk}
+        depth = 1
+        while current_ids and depth < settings.ROLE_HIERARCHY_MAXIMUM_DEPTH:
+            current_ids = set(Role.objects.filter(parent_id__in=current_ids).values_list("pk", flat=True))
+            all_role_ids.update(current_ids)
+            depth += 1
+        return Role.objects.filter(pk__in=all_role_ids)
 
     def get_permissions(self) -> models.QuerySet:
         """
