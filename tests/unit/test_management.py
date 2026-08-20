@@ -661,6 +661,9 @@ class MembershipStatisticsTests(TestData, ManagementCommandTestCase):
 
     def setUp(self):
         super().setUp()
+        org = self.create_organisation()
+        sub_org = self.create_organisation(name="research", parent=org)
+        self.create_organisation(name="external", parent=sub_org)
         self.role = self.create_role(name="ext_employee")
         self.role_guest = self.create_role(name="ext_research", parent=self.role)
         self.create_identity(user=True, email=True)
@@ -673,6 +676,25 @@ class MembershipStatisticsTests(TestData, ManagementCommandTestCase):
         )
 
     def test_membership_statistics(self):
-        out, _ = self.call_command()
-        self.assertIn("External employee (ext_employee) direct members: 1 (including subrole members: 2)", out)
-        self.assertIn("(ext_research) direct members: 1 (including subrole members: 1)", out)
+        out, _ = self.call_command("-r")
+        self.assertIn(
+            "      |      1 |      2 | External employee                                  | ext_employee", out
+        )
+        self.assertIn(
+            ">     |      1 |      1 | Research group external member                     | ext_research", out
+        )
+
+    def test_organisation_membership_statistics(self):
+        out, _ = self.call_command("-o")
+        self.assertIn(
+            "      | orgmain         |      0 |      2 | Test organisation                                  | testorg",
+            out,
+        )
+        self.assertIn(
+            ">     | orgresearch     |      1 |      2 | Research                                           | res",
+            out,
+        )
+        self.assertIn(
+            ">>    | orgexternal     |      1 |      1 | External organisation                              | ext",
+            out,
+        )
