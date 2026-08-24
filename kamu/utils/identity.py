@@ -621,13 +621,13 @@ def create_or_verify_email_address(
                 log_to_db=True,
             )
         elif email_address:
-            email_object = EmailAddress.objects.create(
-                address=email_address, identity=identity, verified=timezone.now()
+            email_object, created = EmailAddress.objects.update_or_create(
+                address=email_address, identity=identity, defaults={"verified": timezone.now()}
             )
             audit_log.info(
-                f"Verified email address added to identity {identity}",
+                f"Verified email address {'added' if created else 'updated'} to identity {identity}",
                 category="email_address",
-                action="create",
+                action="create" if created else "update",
                 outcome="success",
                 request=request,
                 objects=[email_object, identity],
@@ -674,11 +674,13 @@ def create_or_verify_phone_number(
                 log_to_db=True,
             )
         elif phone_number:
-            phone_object = PhoneNumber.objects.create(number=phone_number, identity=identity, verified=timezone.now())
+            phone_object, created = PhoneNumber.objects.update_or_create(
+                number=phone_number, identity=identity, defaults={"verified": timezone.now()}
+            )
             audit_log.info(
-                f"Verified phone number added to identity {identity}",
+                f"Verified phone number {'added' if created else 'updated'} to identity {identity}",
                 category="phone_number",
-                action="create",
+                action="create" if created else "update",
                 outcome="success",
                 request=request,
                 objects=[phone_object, identity],

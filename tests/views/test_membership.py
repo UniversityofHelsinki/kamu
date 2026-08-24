@@ -13,7 +13,7 @@ from django.core import mail
 from django.test import Client, override_settings
 from django.utils import timezone
 
-from kamu.models.identity import Identifier, Identity
+from kamu.models.identity import Identifier, Identity, PhoneNumber
 from kamu.models.membership import Membership
 from kamu.models.token import Token
 from kamu.utils.auth import set_default_permissions
@@ -1062,3 +1062,22 @@ class MembershipClaimViewTests(BaseTestCase):
         self.membership.refresh_from_db()
         self.assertIsNotNone(self.membership.identity)
         self.assertEqual(self.membership.identity, self.user.identity)
+
+    @mock.patch("kamu.utils.identity.SmsConnector")
+    @patch("kamu.utils.audit.logger_audit")
+    def test_claim_membership_with_sms_verification_existing_phone_number(self, mock_logger, mock_connector):
+        self.client.force_login(self.user)
+        self.membership.verify_phone_number = "+1234567890"
+        self.membership.save()
+        identity = self.create_identity(user=self.user)
+        PhoneNumber.objects.create(identity=identity, number="+1234567890", verified=None)
+        self.client.post(self.url, {"resend_phone_code": True}, follow=True)
+        code = mock_connector.return_value.send_sms.call_args.args[1].split(" ")[-1]
+        self.client.post(self.url, {"code": code}, follow=True)
+        self.membership.refresh_from_db()
+        self.assertEqual(self.membership.identity, self.user.identity)
+        mock_logger.log.assert_has_calls(
+            [
+                call(20, "Verified phone number updated to identity Tester Mc.", extra=ANY),
+            ]
+        )
