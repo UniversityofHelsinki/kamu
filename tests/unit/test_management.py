@@ -685,3 +685,8 @@ class MembershipStatisticsTests(TestData, ManagementCommandTestCase):
         self.assertIn("      | orgmain     |      0 |      2 | Test organisation     | testorg", out)
         self.assertIn(">     | orgresearch |      1 |      2 | Research              | research", out)
         self.assertIn(">>    | orgexternal |      1 |      1 | External organisation | external", out)
+
+    def test_organisation_membership_statistics_extended(self):
+        out, _ = self.call_command("-o", "-e")
+        self.assertIn(">>    | orgexternal |      1 |      1 | External organisation            | external", out)
+        self.assertIn("---   |             |      1 |        |   External employee              |   ext_employee", out)

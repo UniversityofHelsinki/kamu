@@ -7,7 +7,7 @@ Usage help: ./manage.py get_emails -h
 from typing import Any
 
 from django.core.management.base import BaseCommand
-from django.db.models import Max
+from django.db.models import Count, Max, Q
 from django.db.models.functions import Length
 from django.utils import timezone
 
@@ -18,9 +18,12 @@ from kamu.models.role import Role
 
 class Command(BaseCommand):
 
+    extended_statistics: bool = False
     org_name_len: int = 0
     org_code_len: int = 0
+    org_identifier_len: int = 0
     role_name_len: int = 0
+    role_identifier_len: int = 0
     lang: str = "en"
 
     def add_arguments(self, parser: Any) -> None:
@@ -47,6 +50,14 @@ class Command(BaseCommand):
             default="en",
             dest="lang",
             help="Language: en/fi/sv.",
+        )
+        parser.add_argument(
+            "-e",
+            "--extended",
+            default=False,
+            action="store_true",
+            dest="extended_statistics",
+            help="Extended statistics.",
         )
 
     def print_role_members(self, role: Role, counter: int = 0) -> None:
@@ -91,12 +102,35 @@ class Command(BaseCommand):
             start_date__lte=timezone.now(),
             expire_date__gte=timezone.now(),
         ).count()
+        if self.extended_statistics:
+            roles = (
+                Role.objects.filter(organisation=organisation)
+                .annotate(
+                    membership_count=Count(
+                        "membership",
+                        filter=Q(
+                            membership__status=Membership.Status.ACTIVE,
+                            membership__start_date__lte=timezone.now(),
+                            membership__expire_date__gte=timezone.now(),
+                        ),
+                    )
+                )
+                .filter(membership_count__gt=0)
+                .order_by("-membership_count")
+            )
         if membership_count or sub_membership_count:
             self.stdout.write(
                 f"{('>' * counter).ljust(5)} | {organisation.code.ljust(self.org_code_len)} | "
                 f"{str(membership_count).rjust(6)} | {str(sub_membership_count + membership_count).rjust(6)} | "
                 f"{organisation.name(self.lang).ljust(self.org_name_len)} | {organisation.identifier}"
             )
+        if self.extended_statistics:
+            for role in roles:
+                self.stdout.write(
+                    f"{('-' * (counter + 1)).ljust(5)} | {'':{self.org_code_len}} | "
+                    f"{str(role.membership_count).rjust(6)} | {'':6} | "
+                    f"{('  ' + role.name(self.lang)).ljust(self.org_name_len)} | {('  ' + role.identifier)}"
+                )
         if sub_membership_count:
             for sub_org in Organisation.objects.filter(parent=organisation):
                 self.print_organisation_members(sub_org, counter + 1)
@@ -105,21 +139,31 @@ class Command(BaseCommand):
         if options.get("extended_statistics"):
             self.extended_statistics = True
         self.lang = options.get("lang", "en") if options.get("lang", "en") in ["en", "fi", "sv"] else "en"
+        self.role_name_len = Role.objects.aggregate(max_len=Max(Length(f"name_{self.lang}")))["max_len"]
+        self.role_identifier_len = max(Role.objects.aggregate(max_len=Max(Length("identifier")))["max_len"], 10)
+        self.org_name_len = Organisation.objects.aggregate(max_len=Max(Length(f"name_{self.lang}")))["max_len"]
+        self.org_identifier_len = max(Organisation.objects.aggregate(max_len=Max(Length("identifier")))["max_len"], 10)
+        self.org_code_len = Organisation.objects.aggregate(max_len=Max(Length("code")))["max_len"]
+
         if options.get("role_memberships"):
             roles = Role.objects.filter(parent=None)
-            self.role_name_len = Role.objects.aggregate(max_len=Max(Length(f"name_{self.lang}")))["max_len"]
-            role_identifier_len = Role.objects.aggregate(max_len=Max(Length("identifier")))["max_len"]
             self.stdout.write("Membership counts for role hierarchy")
             self.stdout.write(f"LEVEL | DIRECT | TOTAL  | {'NAME'.ljust(self.role_name_len)} | IDENTIFIER")
-            self.stdout.write(f"------+--------+--------+-{'-' * self.role_name_len}-+-{'-' * role_identifier_len}")
+            self.stdout.write(
+                f"------+--------+--------+-{'-' * self.role_name_len}-+-{'-' * self.role_identifier_len}"
+            )
             for role in roles:
                 self.print_role_members(role, 0)
 
         if options.get("organisation_memberships"):
             organisations = Organisation.objects.filter(parent=None)
-            self.org_name_len = Organisation.objects.aggregate(max_len=Max(Length(f"name_{self.lang}")))["max_len"]
-            org_identifier_len = max(Organisation.objects.aggregate(max_len=Max(Length("identifier")))["max_len"], 10)
-            self.org_code_len = Organisation.objects.aggregate(max_len=Max(Length("code")))["max_len"]
+            if self.extended_statistics:
+                self.org_name_len = max(
+                    self.org_name_len, Role.objects.aggregate(max_len=Max(Length(f"name_{self.lang}")))["max_len"] + 2
+                )
+                self.org_identifier_len = max(
+                    self.org_identifier_len, Role.objects.aggregate(max_len=Max(Length("identifier")))["max_len"] + 2
+                )
             self.stdout.write("Membership counts for organisation hierarchy")
             self.stdout.write(
                 f"LEVEL | {'CODE'.ljust(self.org_code_len)} | DIRECT | TOTAL  | {'NAME'.ljust(self.org_name_len)} | "
@@ -127,7 +171,7 @@ class Command(BaseCommand):
             )
             self.stdout.write(
                 f"------+-{'-' * self.org_code_len}-+--------+--------+-{'-' * self.org_name_len}-+-"
-                f"{'-' * org_identifier_len}"
+                f"{'-' * self.org_identifier_len}"
             )
             for organisation in organisations:
                 self.print_organisation_members(organisation, 0)
