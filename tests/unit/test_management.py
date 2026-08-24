@@ -677,24 +677,11 @@ class MembershipStatisticsTests(TestData, ManagementCommandTestCase):
 
     def test_membership_statistics(self):
         out, _ = self.call_command("-r")
-        self.assertIn(
-            "      |      1 |      2 | External employee                                  | ext_employee", out
-        )
-        self.assertIn(
-            ">     |      1 |      1 | Research group external member                     | ext_research", out
-        )
+        self.assertIn("      |      1 |      2 | External employee              | ext_employee", out)
+        self.assertIn(">     |      1 |      1 | Research group external member | ext_research", out)
 
     def test_organisation_membership_statistics(self):
         out, _ = self.call_command("-o")
-        self.assertIn(
-            "      | orgmain         |      0 |      2 | Test organisation                                  | testorg",
-            out,
-        )
-        self.assertIn(
-            ">     | orgresearch     |      1 |      2 | Research                                           | res",
-            out,
-        )
-        self.assertIn(
-            ">>    | orgexternal     |      1 |      1 | External organisation                              | ext",
-            out,
-        )
+        self.assertIn("      | orgmain     |      0 |      2 | Test organisation     | testorg", out)
+        self.assertIn(">     | orgresearch |      1 |      2 | Research              | research", out)
+        self.assertIn(">>    | orgexternal |      1 |      1 | External organisation | external", out)
