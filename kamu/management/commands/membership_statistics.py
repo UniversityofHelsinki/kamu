@@ -77,13 +77,15 @@ class Command(BaseCommand):
             start_date__lte=timezone.now(),
             expire_date__gte=timezone.now(),
         ).count()
-        self.stdout.write(
-            f"{('>' * counter).ljust(5)} | {organisation.code.ljust(15)} | {str(membership_count).rjust(6)} | "
-            f"{str(sub_membership_count + membership_count).rjust(6)} | {organisation.name().ljust(50)} | "
-            f"{organisation.identifier}"
-        )
-        for sub_org in Organisation.objects.filter(parent=organisation):
-            self.print_organisation_members(sub_org, counter + 1)
+        if membership_count or sub_membership_count:
+            self.stdout.write(
+                f"{('>' * counter).ljust(5)} | {organisation.code.ljust(15)} | {str(membership_count).rjust(6)} | "
+                f"{str(sub_membership_count + membership_count).rjust(6)} | {organisation.name().ljust(50)} | "
+                f"{organisation.identifier}"
+            )
+        if sub_membership_count:
+            for sub_org in Organisation.objects.filter(parent=organisation):
+                self.print_organisation_members(sub_org, counter + 1)
 
     def handle(self, **options: Any) -> None:
         if options.get("role_memberships"):
