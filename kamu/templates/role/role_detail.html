@@ -8,7 +8,7 @@
     <dd class="col-sm-8">{{ object.name }}</dd>
 
     <dt class="col-sm-4">{% trans "Description" %}</dt>
-    <dd class="col-sm-8">{{ object.description }}</dd>
+    <dd class="col-sm-8">{{ object.description|linebreaks }}</dd>
 
     <dt class="col-sm-4">{% trans "Permissions" %}</dt>
     <dd class="col-sm-8">{% for permission in object.get_permissions %}{{ permission }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>

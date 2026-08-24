@@ -19,7 +19,7 @@
       {% for role in object_list %}
         <tr>
           <th scope="row"><a href="{% url 'role-detail' role.pk %}">{{ role.name }}</a></th>
-          <td>{{ role.description }}</td>
+          <td>{{ role.description|linebreaks }}</td>
         </tr>
       {% endfor %}
       </tbody>
