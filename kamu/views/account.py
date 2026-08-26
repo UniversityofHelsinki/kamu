@@ -45,7 +45,7 @@ from kamu.utils.audit import AuditLog
 audit_log = AuditLog()
 
 
-class AccountCreateView(LoginRequiredMixin, FormView):
+class AccountCreateView(LoginRequiredMixin, FormView[AccountCreateForm]):
     """
     View to create a user account.
     """
@@ -288,7 +288,7 @@ class AccountListView(LoginRequiredMixin, ListView[Account]):
         return queryset
 
 
-class AccountDetailView(LoginRequiredMixin, FormMixin, DetailView[Account]):
+class AccountDetailView(LoginRequiredMixin, FormMixin[PasswordResetForm], DetailView[Account]):
     """
     View and manage account information.
     """

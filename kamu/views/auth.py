@@ -79,7 +79,7 @@ logger = logging.getLogger(__name__)
 UserModel = get_user_model()
 
 
-class InviteView(FormView):
+class InviteView(FormView[InviteTokenForm]):
     """
     View to check invite token and select registration process.
     """
@@ -135,7 +135,7 @@ class BaseRegistrationView(View):
         return super().dispatch(request, *args, **kwargs)
 
 
-class RegistrationView(BaseRegistrationView, FormView):
+class RegistrationView(BaseRegistrationView, FormView[RegistrationForm]):
     """
     Registration view. Start Email and SMS registration process or forward to external methods.
     """
@@ -170,7 +170,9 @@ class RegistrationView(BaseRegistrationView, FormView):
         return redirect("login-register-email-verify")
 
 
-class RegistrationEmailAddressVerificationView(BaseRegistrationView, FormView):
+class RegistrationEmailAddressVerificationView(
+    BaseRegistrationView, FormView[RegistrationEmailAddressVerificationForm]
+):
     """
     Registration view for verifying email address.
     """
@@ -213,7 +215,7 @@ class RegistrationEmailAddressVerificationView(BaseRegistrationView, FormView):
         return redirect("login-register-phone")
 
 
-class RegistrationPhoneNumberView(BaseRegistrationView, FormView):
+class RegistrationPhoneNumberView(BaseRegistrationView, FormView[RegistrationPhoneNumberForm]):
     """
     Registration view for asking a phone number.
     """
@@ -252,7 +254,7 @@ class RegistrationPhoneNumberView(BaseRegistrationView, FormView):
         return redirect("login-register-phone-verify")
 
 
-class RegistrationPhoneNumberVerificationView(BaseRegistrationView, FormView):
+class RegistrationPhoneNumberVerificationView(BaseRegistrationView, FormView[RegistrationPhoneNumberVerificationForm]):
     """
     Registration view for verifying phone number.
     """
@@ -548,7 +550,7 @@ class LoginMicrosoftView(BaseRemoteLoginView):
     backend_class = MicrosoftBackend
 
 
-class LoginEmailPhoneView(FormView):
+class LoginEmailPhoneView(FormView[LoginEmailPhoneForm]):
     """
     View to ask email address and phone number for login.
     """

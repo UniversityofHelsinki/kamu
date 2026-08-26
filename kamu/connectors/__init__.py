@@ -79,7 +79,7 @@ class ApiConnector:
             return self.api_settings.get(setting, default)
         return default
 
-    def api_call_get(self, url: str, headers: dict | None = None) -> requests.Response:
+    def api_call_get(self, url: str, headers: dict[str, str] | None = None) -> requests.Response:
         """
         Makes a GET request to the API.
         """
@@ -93,7 +93,7 @@ class ApiConnector:
         )
 
     def api_call_post(
-        self, url: str, data: dict | str | bytes | None = None, headers: dict | None = None
+        self, url: str, data: dict[str, Any] | str | bytes | None = None, headers: dict[str, str] | None = None
     ) -> requests.Response:
         """
         Makes a POST request to the API.
@@ -109,7 +109,11 @@ class ApiConnector:
         )
 
     def api_call(
-        self, http_method: str, path: str, data: dict | str | bytes | None = None, headers: dict | None = None
+        self,
+        http_method: str,
+        path: str,
+        data: dict[str, Any] | str | bytes | None = None,
+        headers: dict[str, str] | None = None,
     ) -> Any:
         """
         Makes a call to the API and returns either response content or raises an exception.

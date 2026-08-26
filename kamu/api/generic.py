@@ -36,7 +36,7 @@ class CustomDjangoModelPermissions(permissions.DjangoModelPermissions):
     }
 
 
-class AuditLogReadModelViewSet(viewsets.ReadOnlyModelViewSet):
+class AuditLogReadModelViewSet(viewsets.ReadOnlyModelViewSet[_MT]):
     """
     Custom ModelViewSet to add audit logging for get actions
     """
@@ -73,7 +73,7 @@ class AuditLogReadModelViewSet(viewsets.ReadOnlyModelViewSet):
         return response
 
 
-class AuditLogModelViewSet(AuditLogReadModelViewSet, viewsets.ModelViewSet):
+class AuditLogModelViewSet(AuditLogReadModelViewSet[_MT], viewsets.ModelViewSet[_MT]):
     """
     Custom ModelViewSet to add audit logging for post actions
     """

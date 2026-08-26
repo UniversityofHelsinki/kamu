@@ -7,8 +7,9 @@ See https://docs.djangoproject.com/en/dev/topics/logging/ for more information.
 """
 
 import os
+from typing import Any
 
-LOGGING: dict = {
+LOGGING: dict[str, Any] = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {

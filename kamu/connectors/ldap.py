@@ -110,7 +110,7 @@ def ldap_search(
     ldap_attributes: list[str] | None = None,
     search_base: str | None = None,
     ignore_local_size_limit: bool = False,
-) -> list | None:
+) -> list[dict[str, str]] | None:
     """
     Search LDAP
 
@@ -139,7 +139,7 @@ def ldap_search(
         return None
     except ldap.SIZELIMIT_EXCEEDED as e:
         raise LDAP_SIZELIMIT_EXCEEDED from e
-    result_list: list = []
+    result_list: list[dict[str, str]] = []
     if not result:
         return result_list
     if not ignore_local_size_limit and len(result) > getattr(settings, "LDAP_SEARCH_LIMIT", 50):

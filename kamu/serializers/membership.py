@@ -8,7 +8,6 @@ from typing import Any
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
-from rest_framework.fields import Field
 
 from kamu.models.membership import Membership
 from kamu.models.role import Role
@@ -87,7 +86,7 @@ class MembershipLimitedIdentitySerializer(serializers.ModelSerializer[Membership
     Limited read only serializer for :class:`kamu.models.membership.Membership` to use with IdentitySerializer.
     """
 
-    role: Field = serializers.SlugRelatedField(read_only=True, slug_field="identifier")
+    role: serializers.SlugRelatedField[Role] = serializers.SlugRelatedField(read_only=True, slug_field="identifier")
 
     class Meta:
         model = Membership

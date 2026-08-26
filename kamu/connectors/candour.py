@@ -136,7 +136,7 @@ class CandourApiConnector(ApiConnector):
         return payload
 
     def create_candour_session(
-        self, identity: Identity, valid_hours: int | None = None, verification_methods: list | None = None
+        self, identity: Identity, valid_hours: int | None = None, verification_methods: list[str] | None = None
     ) -> dict[str, Any]:
         """
         Create a Candour session for identity verification.

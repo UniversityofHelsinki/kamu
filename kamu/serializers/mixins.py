@@ -2,7 +2,12 @@
 Serializer mixins
 """
 
+from typing import TypeVar
+
 from django.db.models import QuerySet
+from django.db.models.base import Model
+
+_ModelT = TypeVar("_ModelT", bound=Model)
 
 
 class EagerLoadingMixin:
@@ -12,7 +17,7 @@ class EagerLoadingMixin:
     """
 
     @classmethod
-    def setup_eager_loading(cls, queryset: QuerySet) -> QuerySet:
+    def setup_eager_loading(cls, queryset: QuerySet[_ModelT]) -> QuerySet[_ModelT]:
         """
         Sets select_related and prefetch_related attributes to queryset if specified in serializer.
         """

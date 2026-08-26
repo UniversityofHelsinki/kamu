@@ -13,7 +13,7 @@ class OrganisationApiConnector(ApiConnector):
     api_name: str = "Organisation API"
     settings_dict_name: str = "ORGANISATION_API"
 
-    def get_organisation_data(self, path: str) -> list:
+    def get_organisation_data(self, path: str) -> list[dict[str, str]]:
         """
         Loads organisation data from a specific path.
         """

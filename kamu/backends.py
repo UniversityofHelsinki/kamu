@@ -398,7 +398,7 @@ class LocalBaseBackend(ModelBackend):
         return True
 
     @staticmethod
-    def update_groups(user: UserType, groups: list, prefixes: list[str] | None = None) -> None:
+    def update_groups(user: UserType, groups: list[str], prefixes: list[str] | None = None) -> None:
         """
         Set users groups to provided groups.
         If list of prefixes is given, only groups with those prefixes are updated.

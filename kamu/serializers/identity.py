@@ -6,7 +6,6 @@ from django.conf import settings
 from django.core.validators import EmailValidator
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
-from rest_framework.fields import Field
 from rest_framework.validators import UniqueTogetherValidator
 
 from kamu.models.contract import Contract, ContractTemplate
@@ -24,7 +23,7 @@ from kamu.serializers.mixins import EagerLoadingMixin
 from kamu.validators.identity import FpicValidator
 
 
-class ContractTemplateSerializer(serializers.ModelSerializer[Contract]):
+class ContractTemplateSerializer(serializers.ModelSerializer[ContractTemplate]):
     """
     Serializer for :class:`kamu.models.contract.ContractTemplate`.
     """
@@ -76,7 +75,9 @@ class ContractLimitedSerializer(serializers.ModelSerializer[Contract]):
     Limited read only serializer for :class:`kamu.models.contract.Contract` to use with IdentitySerializer.
     """
 
-    template: Field = serializers.SlugRelatedField(read_only=True, slug_field="type")
+    template: "serializers.SlugRelatedField[ContractTemplate]" = serializers.SlugRelatedField(
+        read_only=True, slug_field="type"
+    )
 
     class Meta:
         model = Contract
@@ -225,7 +226,9 @@ class NationalitySerializer(serializers.ModelSerializer[Nationality]):
     Serializer for :class:`kamu.models.identity.Nationality`.
     """
 
-    country: Field = serializers.SlugRelatedField(queryset=Country.objects.all(), slug_field="code")
+    country: serializers.SlugRelatedField[Country] = serializers.SlugRelatedField(
+        queryset=Country.objects.all(), slug_field="code"
+    )
 
     class Meta:
         model = Nationality
@@ -249,7 +252,9 @@ class NationalityLimitedSerializer(serializers.ModelSerializer[Nationality]):
     Limited read only serializer for :class:`kamu.models.identity.Nationality` to use with IdentitySerializer.
     """
 
-    country: Field = serializers.SlugRelatedField(queryset=Country.objects.all(), slug_field="code")
+    country: serializers.SlugRelatedField[Country] = serializers.SlugRelatedField(
+        queryset=Country.objects.all(), slug_field="code"
+    )
 
     class Meta:
         model = Nationality
@@ -265,13 +270,15 @@ class IdentitySerializer(serializers.ModelSerializer[Identity], EagerLoadingMixi
     Serializer for :class:`kamu.models.identity.Identity`.
     """
 
-    accounts: Field = AccountLimitedSerializer(source="useraccount", many=True, read_only=True)
-    contracts: Field = ContractLimitedSerializer(many=True, read_only=True)
-    email_addresses: Field = EmailAddressLimitedSerializer(many=True, read_only=True)
-    identifiers: Field = IdentifierLimitedSerializer(many=True, read_only=True)
-    memberships: Field = MembershipLimitedIdentitySerializer(source="membership_set", many=True, read_only=True)
-    nationalities: Field = NationalityLimitedSerializer(many=True, read_only=True)
-    phone_numbers: Field = PhoneNumberLimitedSerializer(many=True, read_only=True)
+    accounts: AccountLimitedSerializer = AccountLimitedSerializer(source="useraccount", many=True, read_only=True)
+    contracts: ContractLimitedSerializer = ContractLimitedSerializer(many=True, read_only=True)
+    email_addresses: EmailAddressLimitedSerializer = EmailAddressLimitedSerializer(many=True, read_only=True)
+    identifiers: IdentifierLimitedSerializer = IdentifierLimitedSerializer(many=True, read_only=True)
+    memberships: MembershipLimitedIdentitySerializer = MembershipLimitedIdentitySerializer(
+        source="membership_set", many=True, read_only=True
+    )
+    nationalities: NationalityLimitedSerializer = NationalityLimitedSerializer(many=True, read_only=True)
+    phone_numbers: PhoneNumberLimitedSerializer = PhoneNumberLimitedSerializer(many=True, read_only=True)
 
     @staticmethod
     def get_prefetch_fields() -> list[str]:

@@ -21,6 +21,7 @@ from kamu.validators.role import validate_role_hierarchy
 
 if TYPE_CHECKING:
     from kamu.models.identity import Identity as IdentityType
+    from kamu.models.membership import Membership as MembershipType
 
 
 class Role(models.Model):
@@ -154,7 +155,7 @@ class Role(models.Model):
         """
         return reverse("role-detail", kwargs={"pk": self.pk})
 
-    def get_role_hierarchy(self) -> models.QuerySet:
+    def get_role_hierarchy(self) -> models.QuerySet[Role]:
         """
         Returns a hierarchy of all roles, following parents until maximum depth is reached.
 
@@ -169,7 +170,7 @@ class Role(models.Model):
             depth += 1
         return Role.objects.filter(pk__in=all_role_ids)
 
-    def get_role_hierarchy_subroles(self) -> models.QuerySet:
+    def get_role_hierarchy_subroles(self) -> models.QuerySet[Role]:
         """
         Returns a hierarchy of all roles, following subroles until maximum depth is reached.
 
@@ -184,14 +185,14 @@ class Role(models.Model):
             depth += 1
         return Role.objects.filter(pk__in=all_role_ids)
 
-    def get_permissions(self) -> models.QuerySet:
+    def get_permissions(self) -> models.QuerySet[Permission]:
         """
         Returns combined permissions of all distinct roles in hierarchy.
         """
         roles = self.get_role_hierarchy()
         return Permission.objects.filter(role__in=roles).distinct()
 
-    def get_requirements(self) -> models.QuerySet:
+    def get_requirements(self) -> models.QuerySet[Requirement]:
         """
         Returns combined requirements of all distinct roles and permissions in hierarchy.
         """
@@ -209,7 +210,7 @@ class Role(models.Model):
         cost = Permission.objects.filter(role__in=roles).distinct().aggregate(models.Sum("cost"))["cost__sum"]
         return cost if cost else 0
 
-    def get_role_memberships(self, roles: models.QuerySet[Role]) -> models.QuerySet:
+    def get_role_memberships(self, roles: models.QuerySet[Role]) -> models.QuerySet[MembershipType]:
         """
         Returns combined Active memberships for all roles in given role queryset.
         """
@@ -222,14 +223,14 @@ class Role(models.Model):
             status=Membership.Status.ACTIVE,
         )
 
-    def get_hierarchy_memberships(self) -> models.QuerySet:
+    def get_hierarchy_memberships(self) -> models.QuerySet[MembershipType]:
         """
         Returns all active memberships in the role hierarchy. Including current role and all parent roles.
         """
         roles = self.get_role_hierarchy()
         return self.get_role_memberships(roles)
 
-    def get_hierarchy_memberships_subroles(self) -> models.QuerySet:
+    def get_hierarchy_memberships_subroles(self) -> models.QuerySet[MembershipType]:
         """
         Returns all active memberships in the role hierarchy, starting from the current role and finding subroles.
         """

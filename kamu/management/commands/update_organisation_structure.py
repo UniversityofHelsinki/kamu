@@ -32,7 +32,7 @@ class Command(BaseCommand):
         self.code_key = self.organisation_api.get("CODE_KEY", "code")
         self.abbreviation_key = self.organisation_api.get("ABBREVIATION_KEY", "abbreviation")
 
-    def get_parent(self, organisation: dict) -> Organisation | None:
+    def get_parent(self, organisation: dict[str, str]) -> Organisation | None:
         """
         Get the parent organisation from the model or store it for later update if parent organisation has not yet
         been created.

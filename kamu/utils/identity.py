@@ -253,7 +253,7 @@ def combine_identities(request: HttpRequest, primary_identity: Identity, seconda
     secondary_identity.delete()
 
 
-def _parse_fpic(user: dict) -> str | None:
+def _parse_fpic(user: dict[str, str]) -> str | None:
     """
     Parse fpic from user.
     """
@@ -267,7 +267,7 @@ def _parse_fpic(user: dict) -> str | None:
     return None
 
 
-def _check_existing_identity(user: dict) -> Identity | None:
+def _check_existing_identity(user: dict[str, str]) -> Identity | None:
     """
     Check if identity already exists.
     - uid or fpic
@@ -302,7 +302,7 @@ def _check_existing_identity(user: dict) -> Identity | None:
     return None
 
 
-def get_user_from_ldap(uid: str) -> dict | None:
+def get_user_from_ldap(uid: str) -> dict[str, str] | None:
     """
     Get user from LDAP by uid.
     """

@@ -41,7 +41,7 @@ from tests.data import (
 
 fake = Faker()
 
-ROLE_ADDONS: dict = {
+ROLE_ADDONS: dict[str, dict[str, Any]] = {
     "ext_employee": {
         "sub_roles": ["HY247", "HY+", "Unigrafia"],
         "permissions": ["account-id"],

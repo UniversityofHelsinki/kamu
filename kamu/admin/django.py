@@ -6,14 +6,14 @@ from typing import Any
 
 from django import forms
 from django.contrib.auth.admin import GroupAdmin, UserAdmin
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.http import HttpRequest
 from rest_framework.authtoken.admin import TokenAdmin
 
 from kamu.admin.customization import AuditModelAdmin
 
 
-class GroupCreationForm(forms.ModelForm):
+class GroupCreationForm(forms.ModelForm[Group]):
     """
     A form that creates a group, with no privileges.
     """
@@ -23,7 +23,7 @@ class GroupCreationForm(forms.ModelForm):
         fields = ("name",)
 
 
-class AuditUserAdmin(AuditModelAdmin, UserAdmin):
+class AuditUserAdmin(AuditModelAdmin, UserAdmin[User]):
     """
     Customized class for Django UserAdmin that adds Kamu auditing.
     """
@@ -40,7 +40,7 @@ class AuditGroupAdmin(AuditModelAdmin, GroupAdmin):
 
     def get_form(
         self, request: HttpRequest, obj: Any | None = None, change: bool = False, **kwargs: Any
-    ) -> type[forms.ModelForm]:
+    ) -> type[forms.ModelForm[Group]]:
         """
         Use special form during user creation
         """

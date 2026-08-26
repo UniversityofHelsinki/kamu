@@ -9,7 +9,7 @@ from kamu.models.membership import Membership
 from kamu.serializers.membership import MembershipSerializer
 
 
-class MembershipViewSet(AuditLogModelViewSet):
+class MembershipViewSet(AuditLogModelViewSet[Membership]):
     """
     API endpoint for role memberships.
     """
@@ -18,7 +18,7 @@ class MembershipViewSet(AuditLogModelViewSet):
     permission_classes = [CustomDjangoModelPermissions]
     serializer_class = MembershipSerializer
 
-    def get_queryset(self) -> QuerySet:
+    def get_queryset(self) -> QuerySet[Membership]:
         """
         Setup eager loading of related fields.
         """

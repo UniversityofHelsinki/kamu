@@ -825,7 +825,7 @@ class Command(BaseCommand):
             if ldap_result is None:
                 self.message("LDAP search failed.", level=1, error=True)
                 sys.exit(2)
-            account_uids = [entry.get("uid") for entry in ldap_result if entry.get("uid")]
+            account_uids = [entry["uid"] for entry in ldap_result if entry.get("uid")]
             self.message(f"Found {len(account_uids)} results from LDAP", level=1, error=False)
         else:
             account_uids = [uid.strip() for uid in accounts.split(",") if uid.strip()]

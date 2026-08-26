@@ -633,7 +633,7 @@ class BaseMembershipInviteView(LoginRequiredMixin, CreateView[Membership, Member
         return kwargs
 
 
-class MembershipInviteView(BaseMembershipInviteView):
+class MembershipInviteView(BaseMembershipInviteView[MembershipCreateForm]):
     """
     Invite view for identities found in the registry.
     """
@@ -648,7 +648,7 @@ class MembershipInviteView(BaseMembershipInviteView):
         context["identity"] = get_object_or_404(Identity, pk=self.kwargs.get("identity_pk"))
         return context
 
-    def form_valid(self, form: MembershipFormType) -> HttpResponse:
+    def form_valid(self, form: MembershipCreateForm) -> HttpResponse:
         """
         Set role and other data to the membership.
         """
@@ -677,7 +677,7 @@ class MembershipInviteView(BaseMembershipInviteView):
         return valid
 
 
-class BaseMembershipInviteExternalView(BaseMembershipInviteView):
+class BaseMembershipInviteExternalView(BaseMembershipInviteView[MembershipCreateForm]):
     """
     Base invite view for external identities.
     """
@@ -700,7 +700,7 @@ class BaseMembershipInviteExternalView(BaseMembershipInviteView):
         """
         return None
 
-    def form_valid(self, form: MembershipFormType) -> HttpResponse:
+    def form_valid(self, form: MembershipCreateForm) -> HttpResponse:
         """
         Create identity and membership.
 
@@ -840,7 +840,7 @@ class MembershipInvitePersonDBView(BaseMembershipInviteExternalView):
             return None
 
 
-class MembershipInviteEmailView(BaseMembershipInviteView):
+class MembershipInviteEmailView(BaseMembershipInviteView[MembershipEmailCreateForm]):
     """
     View for inviting a user to a role with an email-address.
     """
@@ -865,7 +865,7 @@ class MembershipInviteEmailView(BaseMembershipInviteView):
         kwargs["email"] = self.request.session.get("invitation_email_address")
         return kwargs
 
-    def form_valid(self, form: MembershipFormType) -> HttpResponse:
+    def form_valid(self, form: MembershipEmailCreateForm) -> HttpResponse:
         """
         Set role and other data to the membership.
         """
@@ -925,7 +925,7 @@ class MembershipInviteEmailView(BaseMembershipInviteView):
         return redirect("membership-detail", pk=membership.pk)
 
 
-class MembershipClaimView(LoginRequiredMixin, FormView):
+class MembershipClaimView(LoginRequiredMixin, FormView[RegistrationPhoneNumberVerificationForm]):
     """
     Claim an invitation to a role membership.
     """
@@ -1024,7 +1024,7 @@ class MembershipClaimView(LoginRequiredMixin, FormView):
         return redirect("identity-detail", pk=self.identity.pk)
 
 
-class MembershipMassInviteView(BaseMembershipInviteView):
+class MembershipMassInviteView(BaseMembershipInviteView[MembershipMassCreateForm]):
     """
     Invite multiple members.
     """
@@ -1100,7 +1100,7 @@ class MembershipMassInviteView(BaseMembershipInviteView):
             return None
         return fpic_identity or email_identity or phone_identity
 
-    def form_valid(self, form: MembershipFormType) -> HttpResponse:
+    def form_valid(self, form: MembershipMassCreateForm) -> HttpResponse:
         """
         Parse invited users, role parameters.
         Either show preview or add memberships and send invites.

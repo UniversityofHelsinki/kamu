@@ -13,7 +13,7 @@ from kamu.serializers.role import (
 )
 
 
-class PermissionViewSet(AuditLogModelViewSet):
+class PermissionViewSet(AuditLogModelViewSet[Permission]):
     """
     API endpoint for Kamu permissions.
     """
@@ -23,7 +23,7 @@ class PermissionViewSet(AuditLogModelViewSet):
     serializer_class = PermissionSerializer
 
 
-class RequirementViewSet(AuditLogModelViewSet):
+class RequirementViewSet(AuditLogModelViewSet[Requirement]):
     """
     API endpoint for requirements.
     """
@@ -33,7 +33,7 @@ class RequirementViewSet(AuditLogModelViewSet):
     serializer_class = RequirementSerializer
 
 
-class RoleViewSet(AuditLogModelViewSet):
+class RoleViewSet(AuditLogModelViewSet[Role]):
     """
     API endpoint for roles.
     """
@@ -42,7 +42,7 @@ class RoleViewSet(AuditLogModelViewSet):
     permission_classes = [CustomDjangoModelPermissions]
     serializer_class = RoleSerializer
 
-    def get_queryset(self) -> QuerySet:
+    def get_queryset(self) -> QuerySet[Role]:
         """
         Setup eager loading of related fields.
         """

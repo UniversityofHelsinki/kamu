@@ -3,6 +3,7 @@ Data used in tests and test data generation.
 """
 
 import datetime
+from typing import Any
 
 from kamu.connectors.persondb import (
     Person,
@@ -14,7 +15,7 @@ from kamu.connectors.persondb import (
 from kamu.models.identity import Identifier, Identity
 from kamu.models.role import Permission, Requirement
 
-CONTRACT_TEMPLATES: dict = {
+CONTRACT_TEMPLATES: dict[str, Any] = {
     "nda": {
         "type": "nda",
         "name_en": "Non-disclosure agreement",
@@ -50,7 +51,7 @@ CONTRACT_TEMPLATES: dict = {
     },
 }
 
-COUNTRIES: dict = {
+COUNTRIES: dict[str, Any] = {
     "FI": {"code": "FI", "name_fi": "Suomi", "name_en": "Finland", "name_sv": "Finland"},
     "SE": {
         "code": "SE",
@@ -60,7 +61,7 @@ COUNTRIES: dict = {
     },
 }
 
-ORGANISATIONS: dict = {
+ORGANISATIONS: dict[str, Any] = {
     "testorg": {
         "identifier": "testorg",
         "abbreviation": "TO",
@@ -99,7 +100,7 @@ ORGANISATIONS: dict = {
     },
 }
 
-PERMISSIONS: dict = {
+PERMISSIONS: dict[str, Any] = {
     "account": {
         "type": Permission.Type.ACCOUNT,
         "identifier": "account-id",
@@ -150,7 +151,7 @@ PERMISSIONS: dict = {
     },
 }
 
-REQUIREMENTS: dict = {
+REQUIREMENTS: dict[str, Any] = {
     "contract_nda": {
         "name_en": "NDA signed",
         "name_fi": "Salassapitositoumus allekirjoitettu",
@@ -186,7 +187,7 @@ REQUIREMENTS: dict = {
     },
 }
 
-ROLES: dict = {
+ROLES: dict[str, Any] = {
     "ext_employee": {
         "identifier": "ext_employee",
         "name_en": "External employee",
@@ -254,7 +255,7 @@ ROLES: dict = {
     },
 }
 
-USERS: dict = {
+USERS: dict[str, Any] = {
     "user": {"username": "user", "password": "user_pass", "first_name": "Tester", "last_name": "Mc. User"},
     "superuser": {
         "username": "superuser",
@@ -282,7 +283,7 @@ USERS: dict = {
     "owner": {"username": "owner", "password": "owner_pass", "first_name": "Prof. O", "last_name": "Owner"},
 }
 
-PERSONS: dict = {
+PERSONS: dict[str, Any] = {
     "tester": Person(
         person_uuid="12345678-1234-1234-1234-123456789012",
         given_names="Tester",

@@ -101,7 +101,7 @@ WSGI_APPLICATION: str = "wsgi.application"
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS: list[dict[str, str | dict]] = [
+AUTH_PASSWORD_VALIDATORS: list[dict[str, str | dict[str, Any]]] = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
@@ -116,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS: list[dict[str, str | dict]] = [
     },
 ]
 
-ACCOUNT_PASSWORD_VALIDATORS: list[dict[str, str | dict]] = [
+ACCOUNT_PASSWORD_VALIDATORS: list[dict[str, str | dict[str, Any]]] = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },

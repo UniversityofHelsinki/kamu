@@ -7,7 +7,7 @@ from kamu.models.account import Account
 from kamu.serializers.account import AccountSerializer
 
 
-class AccountViewSet(AuditLogModelViewSet):
+class AccountViewSet(AuditLogModelViewSet[Account]):
     """
     API endpoint for role memberships.
     """

@@ -16,7 +16,7 @@ _Model = TypeVar("_Model", bound=Model, covariant=True)
 audit_log = AuditLog()
 
 
-class OrderByNameMixin(ModelAdmin):
+class OrderByNameMixin(ModelAdmin[Any]):
     """
     A mixin for Django ModelAdmin that orders by language specific name.
     """
@@ -34,7 +34,7 @@ class OrderByNameMixin(ModelAdmin):
             return super().get_ordering(request)
 
 
-class CopyAsTemplateMixin(ModelAdmin):
+class CopyAsTemplateMixin(ModelAdmin[Any]):
     """
     A mixin for Django ModelAdmin that allows copying an existing object as a template for a new object.
 
@@ -71,7 +71,7 @@ class CopyAsTemplateMixin(ModelAdmin):
         return initial
 
 
-class AuditModelAdmin(ModelAdmin):
+class AuditModelAdmin(ModelAdmin[Any]):
     """
     A base class for Django ModelAdmin that adds Kamu auditing.
     """

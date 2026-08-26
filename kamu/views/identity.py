@@ -4,7 +4,7 @@ Identity views for the UI.
 
 import string
 from datetime import date, datetime
-from typing import Any
+from typing import Any, TypeVar
 from urllib.parse import quote_plus
 from uuid import UUID
 
@@ -18,7 +18,6 @@ from django.core.mail import send_mail
 from django.core.validators import validate_email
 from django.db import IntegrityError
 from django.db.models import OuterRef, Q, QuerySet, Subquery
-from django.forms import BaseForm
 from django.http import (
     HttpRequest,
     HttpResponse,
@@ -73,10 +72,13 @@ from kamu.utils.membership import add_missing_requirement_messages
 from kamu.validators.identity import validate_fpic, validate_phone_number
 from settings.common import LdapSearchAttributeType
 
+VerificationModelType = TypeVar("VerificationModelType", EmailAddress, PhoneNumber)
+VerificationFormType = TypeVar("VerificationFormType", EmailAddressVerificationForm, PhoneNumberVerificationForm)
+
 audit_log = AuditLog()
 
 
-class IdentityDetailView(LoginRequiredMixin, DetailView):
+class IdentityDetailView(LoginRequiredMixin, DetailView[Identity]):
     """
     View for the identity details.
     """
@@ -231,7 +233,7 @@ class IdentityDetailView(LoginRequiredMixin, DetailView):
         return redirect("identity-detail", pk=self.object.pk)
 
 
-class IdentityVerifyView(LoginRequiredMixin, DetailView):
+class IdentityVerifyView(LoginRequiredMixin, DetailView[Identity]):
     """
     Verify identity.
     """
@@ -478,7 +480,7 @@ class IdentityVerifyView(LoginRequiredMixin, DetailView):
         return redirect("identity-verify", pk=self.object.pk)
 
 
-class IdentityUpdateView(LoginRequiredMixin, UpdateView):
+class IdentityUpdateView(LoginRequiredMixin, UpdateView[Identity, IdentityForm]):
     model = Identity
     form_class = IdentityForm
     template_name = "identity/identity_form.html"
@@ -643,6 +645,8 @@ class IdentityUpdateView(LoginRequiredMixin, UpdateView):
         Restrict update to user's own information, unless user has permission to modify all basic information.
         """
         queryset = super().get_queryset()
+        if not self.request.user.is_authenticated:
+            return queryset.none()
         if not self.request.user.has_perms(["kamu.change_basic_information"]):
             return queryset.filter(user=self.request.user)
         return queryset
@@ -652,7 +656,7 @@ class IdentityUpdateView(LoginRequiredMixin, UpdateView):
         return reverse("identity-detail", kwargs={"pk": pk})
 
 
-class BaseVerificationView(LoginRequiredMixin, UpdateView):
+class BaseVerificationView(LoginRequiredMixin, UpdateView[VerificationModelType, VerificationFormType]):
     """
     A base view for verifying contacts
     """
@@ -675,7 +679,7 @@ class BaseVerificationView(LoginRequiredMixin, UpdateView):
             return redirect(self.post_redirect, pk=self.object.pk)
         return super().post(request, *args, **kwargs)
 
-    def get_queryset(self) -> QuerySet[EmailAddress | PhoneNumber]:
+    def get_queryset(self) -> QuerySet[VerificationModelType]:
         """
         Restrict update to user's own contacts.
         """
@@ -687,7 +691,7 @@ class BaseVerificationView(LoginRequiredMixin, UpdateView):
         return reverse("contact-change", kwargs={"pk": self.object.identity.pk})
 
 
-class EmailAddressVerificationView(BaseVerificationView):
+class EmailAddressVerificationView(BaseVerificationView[EmailAddress, EmailAddressVerificationForm]):
     """
     A view for verifying an email address
     """
@@ -736,7 +740,7 @@ class EmailAddressVerificationView(BaseVerificationView):
             self._create_verification_token()
         return get
 
-    def form_valid(self, form: BaseForm) -> HttpResponse:
+    def form_valid(self, form: EmailAddressVerificationForm) -> HttpResponse:
         """
         Verify a contact if code was correct.
         """
@@ -744,7 +748,7 @@ class EmailAddressVerificationView(BaseVerificationView):
         return super().form_valid(form)
 
 
-class PhoneNumberVerificationView(BaseVerificationView):
+class PhoneNumberVerificationView(BaseVerificationView[PhoneNumber, PhoneNumberVerificationForm]):
     """
     A view for verifying a phone number.
     """
@@ -791,7 +795,7 @@ class PhoneNumberVerificationView(BaseVerificationView):
             self._create_verification_token()
         return get
 
-    def form_valid(self, form: BaseForm) -> HttpResponse:
+    def form_valid(self, form: PhoneNumberVerificationForm) -> HttpResponse:
         """
         Verify a contact if code was correct.
         """
@@ -799,7 +803,7 @@ class PhoneNumberVerificationView(BaseVerificationView):
         return super().form_valid(form)
 
 
-class ContactView(LoginRequiredMixin, FormView):
+class ContactView(LoginRequiredMixin, FormView[ContactForm]):
     """
     List contact addresses and add new contact addresses.
     """
@@ -1161,7 +1165,7 @@ class ContractSignView(LoginRequiredMixin, TemplateView):
         return redirect("contract-list", pk=identity.pk)
 
 
-class ContractDetailView(LoginRequiredMixin, DetailView):
+class ContractDetailView(LoginRequiredMixin, DetailView[Contract]):
     """
     View for the contract details.
     """
@@ -1184,11 +1188,13 @@ class ContractDetailView(LoginRequiredMixin, DetailView):
         )
         return get
 
-    def get_queryset(self) -> QuerySet[Identity]:
+    def get_queryset(self) -> QuerySet[Contract]:
         """
         Restrict access to user's own contracts, unless user has permission to view all contracts,
         """
         queryset = super().get_queryset()
+        if not self.request.user.is_authenticated:
+            return queryset.none()
         if not self.request.user.has_perms(["kamu.view_contracts"]):
             queryset = queryset.filter(identity__user=self.request.user)
         return queryset
@@ -1451,7 +1457,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         self.check_view_permissions()
         return super().dispatch(request, *args, **kwargs)
 
-    def _ldap_search_attribute(self, attribute: dict[str, LdapSearchAttributeType]) -> list | None:
+    def _ldap_search_attribute(self, attribute: dict[str, LdapSearchAttributeType]) -> list[dict[str, Any]] | None:
         """
         Search LDAP for attribute(s).
 
@@ -1487,7 +1493,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
             return []
         return ldap_result if isinstance(ldap_result, list) else None
 
-    def _get_ldap_results(self) -> list | None:
+    def _get_ldap_results(self) -> list[dict[str, Any]] | None:
         """
         Search LDAP based on URL parameters.
 
@@ -1496,7 +1502,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         Return empty list if no results are found.
         Return None if LDAP search does not succeed.
         """
-        results: set = set()
+        results: set[frozenset[tuple[str, Any]]] = set()
         search_attributes = settings.LDAP_SEARCH_ATTRIBUTES
         for key, value in search_attributes.items():
             if key == "names" and self.exact_match_skip and self.exact_match_found:
@@ -1511,7 +1517,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         return [dict(res) for res in results]
 
     @staticmethod
-    def _filter_ldap_list(object_list: QuerySet[Identity], ldap_results: list) -> list:
+    def _filter_ldap_list(object_list: QuerySet[Identity], ldap_results: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """
         Filter out LDAP results where uid does not exist or is already in object_list, and sort results.
         """
@@ -1745,7 +1751,7 @@ class IdentitySearchView(LoginRequiredMixin, ListView[Identity]):
         result_uids = set(object_list.values_list("uid", flat=True))
         result_fpic = set(object_list.values_list("fpic", flat=True))
         if object_list:
-            result_person_uuid: QuerySet[Identifier, str] | set = Identifier.objects.filter(
+            result_person_uuid: QuerySet[Identifier, str] | set[str] = Identifier.objects.filter(
                 identity__in=object_list, type=Identifier.Type.PERSON
             ).values_list("value", flat=True)
         else:

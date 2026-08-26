@@ -170,7 +170,7 @@ class ContactForm(forms.Form):
         return contact
 
 
-class EmailAddressVerificationForm(forms.ModelForm):
+class EmailAddressVerificationForm(forms.ModelForm[EmailAddress]):
     """
     Verify an email address
     """
@@ -210,7 +210,7 @@ class EmailAddressVerificationForm(forms.ModelForm):
         ]
 
 
-class PhoneNumberVerificationForm(forms.ModelForm):
+class PhoneNumberVerificationForm(forms.ModelForm[PhoneNumber]):
     """
     Verify a phone number
     """
@@ -264,7 +264,7 @@ class CheckboxSelectMultipleWithDisable(forms.CheckboxSelectMultiple):
         return option
 
 
-class IdentityForm(forms.ModelForm):
+class IdentityForm(forms.ModelForm[Identity]):
     """
     Create or update user identity
     """

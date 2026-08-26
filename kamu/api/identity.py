@@ -29,7 +29,7 @@ from kamu.serializers.identity import (
 )
 
 
-class ContractViewSet(AuditLogReadModelViewSet):
+class ContractViewSet(AuditLogReadModelViewSet[Contract]):
     """
     API endpoint for contracts.
     """
@@ -38,7 +38,7 @@ class ContractViewSet(AuditLogReadModelViewSet):
     permission_classes = [CustomDjangoModelPermissions]
     serializer_class = ContractSerializer
 
-    def get_queryset(self) -> QuerySet:
+    def get_queryset(self) -> QuerySet[Contract]:
         """
         Setup eager loading of related fields.
         """
@@ -47,7 +47,7 @@ class ContractViewSet(AuditLogReadModelViewSet):
         return queryset
 
 
-class ContractTemplateViewSet(AuditLogModelViewSet):
+class ContractTemplateViewSet(AuditLogModelViewSet[ContractTemplate]):
     """
     API endpoint for contracts.
     """
@@ -57,7 +57,7 @@ class ContractTemplateViewSet(AuditLogModelViewSet):
     serializer_class = ContractTemplateSerializer
 
 
-class EmailAddressViewSet(AuditLogModelViewSet):
+class EmailAddressViewSet(AuditLogModelViewSet[EmailAddress]):
     """
     API endpoint for email addresses.
     """
@@ -67,7 +67,7 @@ class EmailAddressViewSet(AuditLogModelViewSet):
     serializer_class = EmailAddressSerializer
 
 
-class NationalityViewSet(AuditLogModelViewSet):
+class NationalityViewSet(AuditLogModelViewSet[Nationality]):
     """
     API endpoint for nationalities.
     """
@@ -77,7 +77,7 @@ class NationalityViewSet(AuditLogModelViewSet):
     serializer_class = NationalitySerializer
 
 
-class PhoneNumberViewSet(AuditLogModelViewSet):
+class PhoneNumberViewSet(AuditLogModelViewSet[PhoneNumber]):
     """
     API endpoint for phone numbers.
     """
@@ -87,7 +87,7 @@ class PhoneNumberViewSet(AuditLogModelViewSet):
     serializer_class = PhoneNumberSerializer
 
 
-class IdentifierViewSet(AuditLogModelViewSet):
+class IdentifierViewSet(AuditLogModelViewSet[Identifier]):
     """
     API endpoint for unique identifiers.
     """
@@ -110,7 +110,7 @@ class IdentityFilter(filters.FilterSet):
         fields = ["kamu_id", "uid", "fpic"]
 
 
-class IdentityViewSet(AuditLogModelViewSet):
+class IdentityViewSet(AuditLogModelViewSet[Identity]):
     """
     API endpoint for identities.
     """
@@ -120,7 +120,7 @@ class IdentityViewSet(AuditLogModelViewSet):
     permission_classes = [CustomDjangoModelPermissions]
     serializer_class = IdentitySerializer
 
-    def get_queryset(self) -> QuerySet:
+    def get_queryset(self) -> QuerySet[Identity]:
         """
         Setup eager loading of related fields.
         """

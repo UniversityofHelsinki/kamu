@@ -9,7 +9,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
-from rest_framework.fields import Field
 
 from kamu.models.organisation import Organisation
 from kamu.models.role import Permission, Requirement, Role
@@ -90,7 +89,9 @@ class RoleSerializer(serializers.ModelSerializer[Role], EagerLoadingMixin):
     organisation = serializers.SlugRelatedField(
         slug_field="identifier", required=False, queryset=Organisation.objects.all()
     )
-    organisation_code: Field = serializers.SlugRelatedField(slug_field="code", read_only=True, source="organisation")
+    organisation_code: serializers.SlugRelatedField[Organisation] = serializers.SlugRelatedField(
+        slug_field="code", read_only=True, source="organisation"
+    )
 
     _PREFETCH_RELATED_FIELDS = ["inviters", "approvers", "permissions", "organisation"]
     _SELECT_RELATED_FIELDS = ["owner", "parent"]

@@ -4,7 +4,7 @@ from uuid import UUID
 from django.db import models
 
 
-class Char32UUIDField(models.UUIDField):
+class Char32UUIDField(models.UUIDField[UUID, str]):
     """
     Use CHAR(32) to store UUID values to fix storing UUID in MariaDB 10.7+.
     """

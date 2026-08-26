@@ -79,7 +79,7 @@ class AccountApiConnector(ApiConnector):
         self.api_call(path=self._self_get_path("UPDATE_PATH", "update"), http_method="post", data=data)
         account.save()
 
-    def get_uid_choices(self, number: int = 5, exclude_chars: str = "", exclude_string: str = "") -> list:
+    def get_uid_choices(self, number: int = 5, exclude_chars: str = "", exclude_string: str = "") -> list[str]:
         """
         Gets the account uid choices.
         """

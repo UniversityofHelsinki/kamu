@@ -44,7 +44,7 @@ exclude = [
     '^tests/$',
 ]
 check_untyped_defs = true
-#disallow_any_generics = true
+disallow_any_generics = true
 disallow_untyped_defs = true
 disallow_untyped_calls = true
 disallow_untyped_decorators = true
