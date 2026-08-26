@@ -8,6 +8,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from kamu.models.organisation import Organisation
 from kamu.models.role import Role
 from tests.setup import BaseAPITestCase
 
@@ -35,6 +36,14 @@ class RoleAPITests(BaseAPITestCase):
         response = self.client.get(f"{self.url}roles/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
+
+    def test_get_role_organisation(self):
+        self.create_superuser()
+        self.client.force_authenticate(user=self.superuser)
+        Organisation.objects.filter(pk=1).update(code="testcode")
+        response = self.client.get(f"{self.url}roles/1/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["organisation_code"], "testcode")
 
     def test_change_role_circular_hierarchy(self):
         self.create_superuser()
