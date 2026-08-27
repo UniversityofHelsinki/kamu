@@ -497,13 +497,17 @@ class Requirement(models.Model):
                         {"level": [_("Allowed levels are: %(choices)s.") % {"choices": verification_levels}]}
                     )
 
-    def test(self, identity: IdentityType) -> bool:
+    def test(self, identity: IdentityType | None) -> bool:
         """
         Test if the requirement is met by the identity.
+
+        Fail if the identity is None, or if the requirement type is not recogned.
         """
 
         from kamu.models.identity import Identity
 
+        if not identity:
+            return False
         if self.type == Requirement.Type.CONTRACT:
             return identity.has_contract(self.value, self.level)
         if self.type == Requirement.Type.ATTRIBUTE:
