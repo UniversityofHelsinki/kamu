@@ -192,6 +192,28 @@ class Role(models.Model):
         roles = self.get_role_hierarchy()
         return Permission.objects.filter(role__in=roles).distinct()
 
+    @property
+    def allows_kamu_creatable_account(self) -> bool:
+        """
+        Returns True if the role allows account creatable in Kamu.
+        """
+        account_actions = getattr(settings, "ACCOUNT_ACTIONS", {})
+        kamu_account_types = [acc for acc in account_actions.keys() if account_actions[acc] == "create"]
+        if self.get_permissions().filter(type=Permission.Type.ACCOUNT, value__in=kamu_account_types).exists():
+            return True
+        return False
+
+    @property
+    def allows_external_account(self) -> bool:
+        """
+        Returns True if the role allows external account.
+        """
+        account_actions = getattr(settings, "ACCOUNT_ACTIONS", {})
+        external_account_types = [ext for ext in account_actions.keys() if account_actions[ext] != "create"]
+        if self.get_permissions().filter(type=Permission.Type.ACCOUNT, value__in=external_account_types).exists():
+            return True
+        return False
+
     def get_requirements(self) -> models.QuerySet[Requirement]:
         """
         Returns combined requirements of all distinct roles and permissions in hierarchy.

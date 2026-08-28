@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load crispy_forms_tags %}
+{% load role_tags %}
+
 
 {% block content %}
   <h1 class="mb-5">{% trans "Invite a new member" %}</h1>
@@ -24,6 +26,31 @@
         <dd class="col-sm-8 mb-5">{% if role.require_sms_verification %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</dd>
       </dl>
     </div>
+    {% role_allows_permission role=role identifier="licence:microsoft:a5e" as licence_microsoft_a5e %}
+    {% if role.allows_external_account and licence_microsoft_a5e %}
+    <div class="alert alert-info" role="alert">
+      <h3>{% trans "Allows registration of ordinary AD user account with A5e licence" %}</h3>
+      <p>{% trans "This role enables the user to register a standard AD user account equivalent to those used by university employees and students. The account provides full access to university Windows computers, Microsoft 365 services, and other resources available through a normal university user account." %}</p>
+      <p>{% trans "If the user only needs access to limited web services and does not need to use university-managed Windows computers, please consider assigning a more limited user account instead." %}</p>
+    </div>
+    {% elif role.allows_external_account %}
+    <div class="alert alert-info" role="alert">
+      <h3>{% trans "Allows registration of ordinary AD user account without A5e licence" %}</h3>
+      <p>{% trans "This role enables the user to register a standard AD user account and access Microsoft 365 services. The user cannot access university-managed Windows computers and may not be able to use certain services unless a separate A5e licence is assigned." %}</p>
+      <p>{% trans "If the user only needs access to limited web services and does not need to use university-managed Windows computers, please consider assigning a more limited user account instead." %}</p>
+    </div>
+    {% elif role.allows_kamu_creatable_account %}
+    <div class="alert alert-info" role="alert">
+      <h3>{% trans "Allows registration of limited user account" %}</h3>
+      <p>{% trans "This role allows the user to register a limited user account. This account grants access solely to the limited web services defined by the assigned role." %}</p>
+      <p>{% trans "If the user requires access to university computers, a university email address, or Microsoft 365 services, please select a role that provides a standard AD account." %}</p>
+    </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+      <h3>{% trans "No user account allowed" %}</h3>
+      <p>{% trans "This role does not permit the user to register a University of Helsinki user account. If the user needs an account, please select the appropriate role that allows for registration." %}</p>
+    </div>
+    {% endif %}
     {% if identity %}<div class="col-xl-6">
       <h2>{% trans "Identity" %}</h2>
       <dl class="row">

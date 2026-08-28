@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-28 11:37+0300\n"
+"POT-Creation-Date: 2026-08-28 14:09+0300\n"
 "Language: EN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -97,7 +97,7 @@ msgstr ""
 msgid "Suspected duplicate user. Identity already has a different username: "
 msgstr ""
 
-#: kamu/connectors/email.py:97
+#: kamu/connectors/email.py:106
 #, python-format
 msgid "%(number)s new members"
 msgstr ""
@@ -143,7 +143,7 @@ msgstr ""
 #: kamu/forms/auth.py:35 kamu/models/identity.py:672
 #: kamu/models/identity.py:684 kamu/models/token.py:301
 #: kamu/templates/identity/contact_address.html:64
-#: kamu/templates/membership/membership_invite.html:42
+#: kamu/templates/membership/membership_invite.html:69
 msgid "Phone number"
 msgstr ""
 
@@ -550,7 +550,7 @@ msgid "Invite"
 msgstr ""
 
 #: kamu/forms/membership.py:168 kamu/forms/membership.py:270
-#: kamu/templates/membership/membership_invite.html:58
+#: kamu/templates/membership/membership_invite.html:85
 msgid "Preview message"
 msgstr ""
 
@@ -666,7 +666,7 @@ msgstr ""
 #: kamu/models/identity.py:531 kamu/models/identity.py:602
 #: kamu/models/identity.py:676 kamu/models/identity.py:745
 #: kamu/models/membership.py:122 kamu/models/organisation.py:31
-#: kamu/models/role.py:84 kamu/models/role.py:305 kamu/models/role.py:401
+#: kamu/models/role.py:84 kamu/models/role.py:327 kamu/models/role.py:423
 #: kamu/models/token.py:321
 msgid "Created at"
 msgstr ""
@@ -676,15 +676,15 @@ msgstr ""
 #: kamu/models/identity.py:532 kamu/models/identity.py:603
 #: kamu/models/identity.py:677 kamu/models/identity.py:746
 #: kamu/models/membership.py:123 kamu/models/organisation.py:32
-#: kamu/models/role.py:85 kamu/models/role.py:306 kamu/models/role.py:402
+#: kamu/models/role.py:85 kamu/models/role.py:328 kamu/models/role.py:424
 msgid "Updated at"
 msgstr ""
 
-#: kamu/models/account.py:53 kamu/models/role.py:283
+#: kamu/models/account.py:53 kamu/models/role.py:305
 #: kamu/templates/account/account_detail.html:8
 #: kamu/templates/identity/identity_search.html:18
 #: kamu/templates/identity/identity_search.html:67
-#: kamu/templates/membership/membership_invite.html:50
+#: kamu/templates/membership/membership_invite.html:77
 #: kamu/templates/membership/membership_invite_identity.html:22
 #: kamu/templates/membership/membership_invite_identity.html:81
 msgid "User account"
@@ -972,7 +972,7 @@ msgstr ""
 #: kamu/templates/identity/identity_combine.html:106
 #: kamu/templates/identity/identity_detail.html:18
 #: kamu/templates/membership/membership_detail.html:43
-#: kamu/templates/membership/membership_invite.html:32
+#: kamu/templates/membership/membership_invite.html:59
 msgid "Preferred language"
 msgstr ""
 
@@ -993,9 +993,9 @@ msgid "Allow login with single contact"
 msgstr ""
 
 #: kamu/models/identity.py:312
-#: kamu/templates/membership/membership_invite.html:28
-#: kamu/templates/membership/membership_invite.html:36
-#: kamu/templates/membership/membership_invite.html:46
+#: kamu/templates/membership/membership_invite.html:55
+#: kamu/templates/membership/membership_invite.html:63
+#: kamu/templates/membership/membership_invite.html:73
 msgid "Identity"
 msgstr ""
 
@@ -1265,7 +1265,7 @@ msgid "Role description (sv)"
 msgstr ""
 
 #: kamu/models/role.py:51 kamu/templates/membership/membership_detail.html:27
-#: kamu/templates/membership/membership_invite.html:19
+#: kamu/templates/membership/membership_invite.html:21
 #: kamu/templates/role/role_detail.html:22
 msgid "Organisation unit"
 msgstr ""
@@ -1286,14 +1286,14 @@ msgstr ""
 msgid "Approver groups"
 msgstr ""
 
-#: kamu/models/role.py:67 kamu/models/role.py:311
+#: kamu/models/role.py:67 kamu/models/role.py:333
 #: kamu/templates/membership/membership_detail.html:23
-#: kamu/templates/membership/membership_invite.html:15
+#: kamu/templates/membership/membership_invite.html:17
 #: kamu/templates/role/role_detail.html:13
 msgid "Permissions"
 msgstr ""
 
-#: kamu/models/role.py:69 kamu/models/role.py:302 kamu/models/role.py:410
+#: kamu/models/role.py:69 kamu/models/role.py:324 kamu/models/role.py:432
 #: kamu/templates/role/role_detail.html:16
 msgid "Requirements"
 msgstr ""
@@ -1335,99 +1335,99 @@ msgstr ""
 msgid "Roles"
 msgstr ""
 
-#: kamu/models/role.py:280
+#: kamu/models/role.py:302
 msgid "Permission identifier"
 msgstr ""
 
-#: kamu/models/role.py:284
+#: kamu/models/role.py:306
 msgid "Generic permission"
 msgstr ""
 
-#: kamu/models/role.py:285
+#: kamu/models/role.py:307
 msgid "Service"
 msgstr ""
 
-#: kamu/models/role.py:288
+#: kamu/models/role.py:310
 msgid "Permission type"
 msgstr ""
 
-#: kamu/models/role.py:291
+#: kamu/models/role.py:313
 msgid "Permission name (fi)"
 msgstr ""
 
-#: kamu/models/role.py:292
+#: kamu/models/role.py:314
 msgid "Permission name (en)"
 msgstr ""
 
-#: kamu/models/role.py:293
+#: kamu/models/role.py:315
 msgid "Permission name (sv)"
 msgstr ""
 
-#: kamu/models/role.py:294
+#: kamu/models/role.py:316
 msgid "Permission description (fi)"
 msgstr ""
 
-#: kamu/models/role.py:295
+#: kamu/models/role.py:317
 msgid "Permission description (en)"
 msgstr ""
 
-#: kamu/models/role.py:296
+#: kamu/models/role.py:318
 msgid "Permission description (sv)"
 msgstr ""
 
-#: kamu/models/role.py:298
+#: kamu/models/role.py:320
 msgid "Permission cost"
 msgstr ""
 
-#: kamu/models/role.py:299
+#: kamu/models/role.py:321
 msgid "Permission value"
 msgstr ""
 
-#: kamu/models/role.py:310
+#: kamu/models/role.py:332
 msgid "Permission"
 msgstr ""
 
-#: kamu/models/role.py:370
+#: kamu/models/role.py:392
 msgid "Requirement name (fi)"
 msgstr ""
 
-#: kamu/models/role.py:371
+#: kamu/models/role.py:393
 msgid "Requirement name (en)"
 msgstr ""
 
-#: kamu/models/role.py:372
+#: kamu/models/role.py:394
 msgid "Requirement name (sv)"
 msgstr ""
 
-#: kamu/models/role.py:375
+#: kamu/models/role.py:397
 msgid "Requires a signed contract of type (value)"
 msgstr ""
 
-#: kamu/models/role.py:376
+#: kamu/models/role.py:398
 msgid "User attribute (value) is defined"
 msgstr ""
 
-#: kamu/models/role.py:377
+#: kamu/models/role.py:399
 msgid "Assurance level at least level"
 msgstr ""
 
-#: kamu/models/role.py:378
+#: kamu/models/role.py:400
 msgid "External requirement"
 msgstr ""
 
-#: kamu/models/role.py:380
+#: kamu/models/role.py:402
 msgid "Requirement type"
 msgstr ""
 
-#: kamu/models/role.py:384
+#: kamu/models/role.py:406
 msgid "Requirement value"
 msgstr ""
 
-#: kamu/models/role.py:388
+#: kamu/models/role.py:410
 msgid "Level or version required"
 msgstr ""
 
-#: kamu/models/role.py:390
+#: kamu/models/role.py:412
 msgid ""
 "Require a minimum level of assurance or attribute verification level, or a "
 "minimum version of contract. Contract level must be a positive integer. "
@@ -1436,40 +1436,40 @@ msgid ""
 "verification)"
 msgstr ""
 
-#: kamu/models/role.py:397
+#: kamu/models/role.py:419
 msgid "Grace period (days)"
 msgstr ""
 
-#: kamu/models/role.py:398
+#: kamu/models/role.py:420
 msgid "Grace period (days) before membership status is changed."
 msgstr ""
 
-#: kamu/models/role.py:409
+#: kamu/models/role.py:431
 msgid "Requirement"
 msgstr ""
 
-#: kamu/models/role.py:458
+#: kamu/models/role.py:480
 msgid "Contract requirement needs contract type as a value."
 msgstr ""
 
-#: kamu/models/role.py:460
+#: kamu/models/role.py:482
 msgid "Contract version must be a positive integer."
 msgstr ""
 
-#: kamu/models/role.py:472
+#: kamu/models/role.py:494
 #, python-format
 msgid "Allowed assurance levels are: %(choices)s."
 msgstr ""
 
-#: kamu/models/role.py:479
+#: kamu/models/role.py:501
 msgid "Invalid attribute name."
 msgstr ""
 
-#: kamu/models/role.py:484
+#: kamu/models/role.py:506
 msgid "Attribute does not have verification level."
 msgstr ""
 
-#: kamu/models/role.py:498
+#: kamu/models/role.py:520
 #, python-format
 msgid "Allowed levels are: %(choices)s."
 msgstr ""
@@ -2118,10 +2118,10 @@ msgstr ""
 #: kamu/templates/identity/identity_search.html:66
 #: kamu/templates/membership/membership_detail.html:19
 #: kamu/templates/membership/membership_detail.html:37
-#: kamu/templates/membership/membership_invite.html:11
-#: kamu/templates/membership/membership_invite.html:30
-#: kamu/templates/membership/membership_invite.html:38
-#: kamu/templates/membership/membership_invite.html:48
+#: kamu/templates/membership/membership_invite.html:13
+#: kamu/templates/membership/membership_invite.html:57
+#: kamu/templates/membership/membership_invite.html:65
+#: kamu/templates/membership/membership_invite.html:75
 #: kamu/templates/membership/membership_invite_identity.html:21
 #: kamu/templates/membership/membership_invite_identity.html:56
 #: kamu/templates/membership/membership_invite_identity.html:80
@@ -3298,7 +3298,7 @@ msgid "Reject"
 msgstr ""
 
 #: kamu/templates/membership/membership_detail.html:21
-#: kamu/templates/membership/membership_invite.html:13
+#: kamu/templates/membership/membership_invite.html:15
 #: kamu/templates/role/role_detail.html:10
 #: kamu/templates/role/role_list.html:13
 #: kamu/templates/role/role_search.html:15
@@ -3306,26 +3306,26 @@ msgid "Description"
 msgstr ""
 
 #: kamu/templates/membership/membership_detail.html:25
-#: kamu/templates/membership/membership_invite.html:17
+#: kamu/templates/membership/membership_invite.html:19
 #: kamu/templates/role/role_detail.html:19
 msgid "Annual costs"
 msgstr ""
 
 #: kamu/templates/membership/membership_detail.html:29
-#: kamu/templates/membership/membership_invite.html:21
+#: kamu/templates/membership/membership_invite.html:23
 #: kamu/templates/role/role_detail.html:25
 msgid "Maximum duration"
 msgstr ""
 
 #: kamu/templates/membership/membership_detail.html:30
-#: kamu/templates/membership/membership_invite.html:22
+#: kamu/templates/membership/membership_invite.html:24
 #: kamu/templates/role/role_detail.html:26
 msgid "days"
 msgstr ""
 
 #: kamu/templates/membership/membership_detail.html:41
-#: kamu/templates/membership/membership_invite.html:40
-#: kamu/templates/membership/membership_invite.html:52
+#: kamu/templates/membership/membership_invite.html:67
+#: kamu/templates/membership/membership_invite.html:79
 msgid "Email"
 msgstr ""
 
@@ -3448,51 +3448,112 @@ msgstr ""
 msgid "Join role"
 msgstr ""
 
-#: kamu/templates/membership/membership_invite.html:6
+#: kamu/templates/membership/membership_invite.html:8
 #: kamu/templates/role/role_detail.html:52
 msgid "Invite a new member"
 msgstr ""
 
-#: kamu/templates/membership/membership_invite.html:9
+#: kamu/templates/membership/membership_invite.html:11
 msgid "Role information"
 msgstr ""
 
-#: kamu/templates/membership/membership_invite.html:23
+#: kamu/templates/membership/membership_invite.html:25
 #: kamu/templates/role/role_detail.html:40
 msgid "SMS verification"
 msgstr ""
 
-#: kamu/templates/membership/membership_invite.html:24
+#: kamu/templates/membership/membership_invite.html:26
 #: kamu/templates/role/role_detail.html:41
 msgid "Yes"
 msgstr ""
 
-#: kamu/templates/membership/membership_invite.html:24
+#: kamu/templates/membership/membership_invite.html:26
 #: kamu/templates/role/role_detail.html:41
 msgid "No"
 msgstr ""
 
-#: kamu/templates/membership/membership_invite.html:59
+#: kamu/templates/membership/membership_invite.html:32
+msgid "Allows registration of ordinary AD user account with A5e licence"
+msgstr ""
+
+#: kamu/templates/membership/membership_invite.html:33
+msgid ""
+"This role enables the user to register a standard AD user account equivalent "
+"to those used by university employees and students. The account provides "
+"full access to university Windows computers, Microsoft 365 services, and "
+"other resources available through a normal university user account."
+msgstr ""
+
+#: kamu/templates/membership/membership_invite.html:34
+#: kamu/templates/membership/membership_invite.html:40
+msgid ""
+"If the user only needs access to limited web services and does not need to "
+"use university-managed Windows computers, please consider assigning a more "
+"limited user account instead."
+msgstr ""
+
+#: kamu/templates/membership/membership_invite.html:38
+msgid "Allows registration of ordinary AD user account without A5e licence"
+msgstr ""
+
+#: kamu/templates/membership/membership_invite.html:39
+msgid ""
+"This role enables the user to register a standard AD user account and access "
+"Microsoft 365 services. The user cannot access university-managed Windows "
+"computers and may not be able to use certain services unless a separate A5e "
+"licence is assigned."
+msgstr ""
+
+#: kamu/templates/membership/membership_invite.html:44
+msgid "Allows registration of limited user account"
+msgstr ""
+
+#: kamu/templates/membership/membership_invite.html:45
+msgid ""
+"This role allows the user to register a limited user account. This account "
+"grants access solely to the limited web services defined by the assigned "
+"role."
+msgstr ""
+
+#: kamu/templates/membership/membership_invite.html:46
+msgid ""
+"If the user requires access to university computers, a university email "
+"address, or Microsoft 365 services, please select a role that provides a "
+"standard AD account."
+msgstr ""
+
+#: kamu/templates/membership/membership_invite.html:50
+msgid "No user account allowed"
+msgstr ""
+
+#: kamu/templates/membership/membership_invite.html:51
+msgid ""
+"This role does not permit the user to register a University of Helsinki user "
+"account. If the user needs an account, please select the appropriate role "
+"that allows for registration."
+msgstr ""
+
+#: kamu/templates/membership/membership_invite.html:86
 msgid "Subject"
 msgstr ""
 
-#: kamu/templates/membership/membership_invite.html:61
+#: kamu/templates/membership/membership_invite.html:88
 msgid "Message"
 msgstr ""
 
-#: kamu/templates/membership/membership_invite.html:65
+#: kamu/templates/membership/membership_invite.html:92
 msgid "Multiple invites"
 msgstr ""
 
-#: kamu/templates/membership/membership_invite.html:67
+#: kamu/templates/membership/membership_invite.html:94
 msgid "Following identities in Kamu will be added to the role:"
 msgstr ""
 
-#: kamu/templates/membership/membership_invite.html:75
+#: kamu/templates/membership/membership_invite.html:102
 msgid "Following email addresses will receive an invitation:"
 msgstr ""
 
-#: kamu/templates/membership/membership_invite.html:83
+#: kamu/templates/membership/membership_invite.html:110
 msgid "Membership information"
 msgstr ""
 

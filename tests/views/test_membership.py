@@ -15,6 +15,7 @@ from django.utils import timezone
 
 from kamu.models.identity import Identifier, Identity, PhoneNumber
 from kamu.models.membership import Membership
+from kamu.models.role import Permission as KamuPermission
 from kamu.models.token import Token
 from kamu.utils.auth import set_default_permissions
 from tests.data import PERSONS
@@ -760,6 +761,30 @@ class MembershipInviteTests(BaseTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Notify approvers", response.content.decode("utf-8"))
+
+    def test_invite_account_alerts(self):
+        url = f"{self.url}email/"
+        self.session = self.client.session
+        self.session["invitation_email_address"] = "invite@example.org"
+        self.session.save()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("No user account allowed", response.content.decode("utf-8"))
+        self.role.permissions.create(
+            type=KamuPermission.Type.ACCOUNT, identifier="lightaccount", value="lightaccount", cost=0
+        )
+        response = self.client.get(url)
+        self.assertIn("Allows registration of limited user account", response.content.decode("utf-8"))
+        self.role.permissions.create(type=KamuPermission.Type.ACCOUNT, identifier="account", value="account", cost=0)
+        response = self.client.get(url)
+        self.assertIn(
+            "Allows registration of ordinary AD user account without A5e licence", response.content.decode("utf-8")
+        )
+        self.role.permissions.create(type=KamuPermission.Type.GENERIC, identifier="licence:microsoft:a5e", cost=0)
+        response = self.client.get(url)
+        self.assertIn(
+            "Allows registration of ordinary AD user account with A5e licence", response.content.decode("utf-8")
+        )
 
     def _test_join_role_send_email_invite(
         self, preview=False, verify_phone_number="", send_invite_before_approval=True
