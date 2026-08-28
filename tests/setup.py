@@ -54,6 +54,8 @@ class TestData(TestCase):
     def create_identity(self, user=False, email=False, phone=False):
         if user and not self.user:
             self.create_user()
+        elif not hasattr(self, "user"):
+            self.user = None
         self.identity = Identity.objects.create(
             user=self.user, given_names=USERS["user"]["first_name"], surname=USERS["user"]["last_name"]
         )
@@ -70,6 +72,8 @@ class TestData(TestCase):
     def create_superidentity(self, user=True, email=False, phone=False):
         if user and not self.superuser:
             self.create_superuser()
+        elif not hasattr(self, "superuser"):
+            self.superuser = None
         self.superidentity = Identity.objects.create(
             user=self.superuser, given_names=USERS["superuser"]["first_name"], surname=USERS["superuser"]["last_name"]
         )
