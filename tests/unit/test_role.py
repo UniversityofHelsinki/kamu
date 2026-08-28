@@ -152,6 +152,7 @@ class RequirementsTests(BaseRoleTestCase):
         )
         self.assertTrue(self.parent_membership.test_requirements())
 
+    @override_settings(INTERNAL_EMAIL_DOMAINS=["example.com", "example.org"])
     def test_missing_requirements(self):
         self.assertFalse(self.membership.test_requirements())
         self.membership.refresh_from_db()
@@ -181,6 +182,12 @@ class RequirementsTests(BaseRoleTestCase):
         self.assertEqual(self.identity.get_missing_requirements().count(), 0)
         self.assertTrue(self.membership.test_requirements())
         self.assertIsNone(self.membership.requirements_failed_at)
+        self.external_email = self.service_permission.requirements.create(
+            name_en="Email", type=Requirement.Type.ATTRIBUTE, value="external_email_address", grace=0
+        )
+        self.assertEqual(self.membership.get_missing_requirements().count(), 1)
+        self.identity.email_addresses.create(address="test@example.nett", verified=timezone.now())
+        self.assertEqual(self.membership.get_missing_requirements().count(), 0)
 
     def test_missing_requirements_with_grace(self):
         self.assurance.grace = 2

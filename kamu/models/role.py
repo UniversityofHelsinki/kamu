@@ -516,6 +516,8 @@ class Requirement(models.Model):
                 return identity.has_phone_number()
             if self.value == "email_address":
                 return identity.has_email_address()
+            if self.value == "external_email_address":
+                return identity.has_email_address(external=True)
             return identity.has_attribute(self.value, self.level)
         if self.type == Requirement.Type.ASSURANCE:
             return identity.has_assurance(Identity.AssuranceLevel(self.level))

@@ -140,6 +140,13 @@ def add_missing_requirement_messages(
                 message = f'<p class="fw-bold">{message}</p>{link}'
             messages.add_message(request, message_level, message + optional_manager_text, extra_tags="safe")
             return
+        if requirement.value == "external_email_address":
+            message = _("The membership requires a verified external email address.")
+            if request.user == identity.user:
+                link = _get_link("contact-change", _("Add and verify external email address"), {"pk": identity.pk})
+                message = f'<p class="fw-bold">{message}</p>{link}'
+            messages.add_message(request, message_level, message + optional_manager_text, extra_tags="safe")
+            return
         if requirement.value == "phone_number":
             message = _("The membership requires a verified phone number.")
             if request.user == identity.user:

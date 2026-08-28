@@ -446,10 +446,18 @@ class Identity(models.Model):
         """
         return self.contracts.filter(template__type=contract_type, template__version__gte=version).exists()
 
-    def has_email_address(self) -> bool:
+    def has_email_address(self, external: bool = False) -> bool:
         """
         Returns True if the identity has at least one verified email address.
+
+        Optionally require external address, where INTERNAL_EMAIL_DOMAINS are excluded.
         """
+        if external:
+            internal_email_domains = getattr(settings, "INTERNAL_EMAIL_DOMAINS", [])
+            addresses = self.email_addresses.filter(verified__isnull=False)
+            for domain in internal_email_domains:
+                addresses = addresses.exclude(address__iendswith=f"@{domain}")
+            return addresses.exists()
         return self.email_addresses.filter(verified__isnull=False).exists()
 
     def has_phone_number(self) -> bool:

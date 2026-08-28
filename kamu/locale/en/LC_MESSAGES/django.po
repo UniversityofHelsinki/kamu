@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-15 14:09+0300\n"
+"POT-Creation-Date: 2026-08-28 11:37+0300\n"
 "Language: EN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -132,16 +132,16 @@ msgstr ""
 msgid "Change your password"
 msgstr ""
 
-#: kamu/forms/auth.py:33 kamu/forms/auth.py:240 kamu/models/identity.py:590
-#: kamu/models/identity.py:602 kamu/models/token.py:304
+#: kamu/forms/auth.py:33 kamu/forms/auth.py:240 kamu/models/identity.py:598
+#: kamu/models/identity.py:610 kamu/models/token.py:304
 #: kamu/templates/account/account_create.html:16
 #: kamu/templates/identity/contact_address.html:15
 #: kamu/templates/identity/identity_detail.html:69
 msgid "Email address"
 msgstr ""
 
-#: kamu/forms/auth.py:35 kamu/models/identity.py:664
-#: kamu/models/identity.py:676 kamu/models/token.py:301
+#: kamu/forms/auth.py:35 kamu/models/identity.py:672
+#: kamu/models/identity.py:684 kamu/models/token.py:301
 #: kamu/templates/identity/contact_address.html:64
 #: kamu/templates/membership/membership_invite.html:42
 msgid "Phone number"
@@ -151,7 +151,7 @@ msgstr ""
 msgid "Phone number in international format, e.g. +358123456789."
 msgstr ""
 
-#: kamu/forms/auth.py:42 kamu/views/auth.py:458
+#: kamu/forms/auth.py:42 kamu/views/auth.py:460
 msgid "This account is inactive."
 msgstr ""
 
@@ -324,7 +324,7 @@ msgstr ""
 
 #: kamu/forms/auth.py:446 kamu/forms/auth.py:452 kamu/forms/auth.py:456
 #: kamu/forms/auth.py:458 kamu/views/auth.py:133 kamu/views/auth.py:154
-#: kamu/views/auth.py:240 kamu/views/membership.py:965
+#: kamu/views/auth.py:242 kamu/views/membership.py:965
 msgid "Invalid invitation code."
 msgstr ""
 
@@ -656,31 +656,31 @@ msgstr ""
 msgid "User ID"
 msgstr ""
 
-#: kamu/models/account.py:43 kamu/models/identity.py:736
+#: kamu/models/account.py:43 kamu/models/identity.py:744
 msgid "Deactivated at"
 msgstr ""
 
 #: kamu/models/account.py:44 kamu/models/account.py:148
 #: kamu/models/contract.py:55 kamu/models/contract.py:112
 #: kamu/models/identity.py:48 kamu/models/identity.py:289
-#: kamu/models/identity.py:523 kamu/models/identity.py:594
-#: kamu/models/identity.py:668 kamu/models/identity.py:737
+#: kamu/models/identity.py:531 kamu/models/identity.py:602
+#: kamu/models/identity.py:676 kamu/models/identity.py:745
 #: kamu/models/membership.py:122 kamu/models/organisation.py:31
-#: kamu/models/role.py:83 kamu/models/role.py:312 kamu/models/role.py:408
+#: kamu/models/role.py:84 kamu/models/role.py:305 kamu/models/role.py:401
 #: kamu/models/token.py:321
 msgid "Created at"
 msgstr ""
 
 #: kamu/models/account.py:45 kamu/models/account.py:149
 #: kamu/models/identity.py:49 kamu/models/identity.py:290
-#: kamu/models/identity.py:524 kamu/models/identity.py:595
-#: kamu/models/identity.py:669 kamu/models/identity.py:738
+#: kamu/models/identity.py:532 kamu/models/identity.py:603
+#: kamu/models/identity.py:677 kamu/models/identity.py:746
 #: kamu/models/membership.py:123 kamu/models/organisation.py:32
-#: kamu/models/role.py:84 kamu/models/role.py:313 kamu/models/role.py:409
+#: kamu/models/role.py:85 kamu/models/role.py:306 kamu/models/role.py:402
 msgid "Updated at"
 msgstr ""
 
-#: kamu/models/account.py:53 kamu/models/role.py:290
+#: kamu/models/account.py:53 kamu/models/role.py:283
 #: kamu/templates/account/account_detail.html:8
 #: kamu/templates/identity/identity_search.html:18
 #: kamu/templates/identity/identity_search.html:67
@@ -794,15 +794,15 @@ msgstr ""
 msgid "Countries"
 msgstr ""
 
-#: kamu/models/identity.py:138 kamu/models/role.py:33 settings/common.py:141
+#: kamu/models/identity.py:138 kamu/models/role.py:34 settings/common.py:141
 msgid "English"
 msgstr ""
 
-#: kamu/models/identity.py:139 kamu/models/role.py:34 settings/common.py:142
+#: kamu/models/identity.py:139 kamu/models/role.py:35 settings/common.py:142
 msgid "Finnish"
 msgstr ""
 
-#: kamu/models/identity.py:140 kamu/models/role.py:35 settings/common.py:143
+#: kamu/models/identity.py:140 kamu/models/role.py:36 settings/common.py:143
 msgid "Swedish"
 msgstr ""
 
@@ -952,7 +952,7 @@ msgstr ""
 msgid "Gender verification method"
 msgstr ""
 
-#: kamu/models/identity.py:264 kamu/models/identity.py:719
+#: kamu/models/identity.py:264 kamu/models/identity.py:727
 #: kamu/templates/identity/identity_combine.html:15
 #: kamu/templates/identity/identity_combine.html:112
 #: kamu/templates/identity/identity_detail.html:29
@@ -1003,98 +1003,98 @@ msgstr ""
 msgid "Identities"
 msgstr ""
 
-#: kamu/models/identity.py:520
+#: kamu/models/identity.py:528
 msgid "Verification method"
 msgstr ""
 
-#: kamu/models/identity.py:528
+#: kamu/models/identity.py:536
 #: kamu/templates/identity/identity_combine.html:118
 #: kamu/templates/identity/identity_detail.html:27
 #: kamu/templates/identity/identity_verify.html:18
 msgid "Nationality"
 msgstr ""
 
-#: kamu/models/identity.py:529
+#: kamu/models/identity.py:537
 msgid "Nationalities"
 msgstr ""
 
-#: kamu/models/identity.py:591 kamu/models/identity.py:665
+#: kamu/models/identity.py:599 kamu/models/identity.py:673
 msgid "Priority"
 msgstr ""
 
-#: kamu/models/identity.py:592 kamu/models/identity.py:666
-#: kamu/models/identity.py:734
+#: kamu/models/identity.py:600 kamu/models/identity.py:674
+#: kamu/models/identity.py:742
 msgid "Verified at"
 msgstr ""
 
-#: kamu/models/identity.py:603 kamu/templates/identity/contact_address.html:9
+#: kamu/models/identity.py:611 kamu/templates/identity/contact_address.html:9
 #: kamu/templates/identity/identity_detail.html:64
 msgid "Email addresses"
 msgstr ""
 
-#: kamu/models/identity.py:677 kamu/templates/identity/contact_address.html:58
+#: kamu/models/identity.py:685 kamu/templates/identity/contact_address.html:58
 #: kamu/templates/identity/identity_detail.html:66
 msgid "Phone numbers"
 msgstr ""
 
-#: kamu/models/identity.py:720
+#: kamu/models/identity.py:728
 msgid "eIDAS identifier"
 msgstr ""
 
-#: kamu/models/identity.py:721
+#: kamu/models/identity.py:729
 msgid "User identifier from organisation"
 msgstr ""
 
-#: kamu/models/identity.py:722
+#: kamu/models/identity.py:730
 msgid "Google account"
 msgstr ""
 
-#: kamu/models/identity.py:723
+#: kamu/models/identity.py:731
 msgid "Microsoft account"
 msgstr ""
 
-#: kamu/models/identity.py:724 kamu/templates/identity/identity_combine.html:45
+#: kamu/models/identity.py:732 kamu/templates/identity/identity_combine.html:45
 msgid "Kamu identifier"
 msgstr ""
 
-#: kamu/models/identity.py:725
+#: kamu/models/identity.py:733
 msgid "Person identifier"
 msgstr ""
 
-#: kamu/models/identity.py:726
+#: kamu/models/identity.py:734
 msgid "Government issued ID"
 msgstr ""
 
-#: kamu/models/identity.py:727
+#: kamu/models/identity.py:735
 msgid "Other identifier"
 msgstr ""
 
-#: kamu/models/identity.py:729
+#: kamu/models/identity.py:737
 msgid "Identifier type"
 msgstr ""
 
-#: kamu/models/identity.py:730
+#: kamu/models/identity.py:738
 msgid "Identifier value"
 msgstr ""
 
-#: kamu/models/identity.py:731
+#: kamu/models/identity.py:739
 msgid "Identifier name"
 msgstr ""
 
-#: kamu/models/identity.py:732
+#: kamu/models/identity.py:740
 msgid "Valid until"
 msgstr ""
 
-#: kamu/models/identity.py:743
+#: kamu/models/identity.py:751
 msgid "Identifier"
 msgstr ""
 
-#: kamu/models/identity.py:744 kamu/templates/identity/identity_detail.html:73
+#: kamu/models/identity.py:752 kamu/templates/identity/identity_detail.html:73
 #: kamu/templates/identity/identity_detail.html:120
 msgid "Identifiers"
 msgstr ""
 
-#: kamu/models/identity.py:761
+#: kamu/models/identity.py:769
 msgid "Invalid eduPersonPrincipalName format."
 msgstr ""
 
@@ -1236,89 +1236,89 @@ msgstr ""
 msgid "Organisations"
 msgstr ""
 
-#: kamu/models/role.py:38
+#: kamu/models/role.py:39
 msgid "Role identifier"
 msgstr ""
 
-#: kamu/models/role.py:39
+#: kamu/models/role.py:40
 msgid "Role name (fi)"
 msgstr ""
 
-#: kamu/models/role.py:40
+#: kamu/models/role.py:41
 msgid "Role name (en)"
 msgstr ""
 
-#: kamu/models/role.py:41
+#: kamu/models/role.py:42
 msgid "Role name (sv)"
 msgstr ""
 
-#: kamu/models/role.py:42
+#: kamu/models/role.py:43
 msgid "Role description (fi)"
 msgstr ""
 
-#: kamu/models/role.py:43
+#: kamu/models/role.py:44
 msgid "Role description (en)"
 msgstr ""
 
-#: kamu/models/role.py:44
+#: kamu/models/role.py:45
 msgid "Role description (sv)"
 msgstr ""
 
-#: kamu/models/role.py:50 kamu/templates/membership/membership_detail.html:27
+#: kamu/models/role.py:51 kamu/templates/membership/membership_detail.html:27
 #: kamu/templates/membership/membership_invite.html:19
 #: kamu/templates/role/role_detail.html:22
 msgid "Organisation unit"
 msgstr ""
 
-#: kamu/models/role.py:52
+#: kamu/models/role.py:53
 msgid "Notification email address"
 msgstr ""
 
-#: kamu/models/role.py:57 kamu/templates/role/role_detail.html:47
+#: kamu/models/role.py:58 kamu/templates/role/role_detail.html:47
 msgid "Notification language"
 msgstr ""
 
-#: kamu/models/role.py:60 kamu/templates/role/role_detail.html:34
+#: kamu/models/role.py:61 kamu/templates/role/role_detail.html:34
 msgid "Inviter groups"
 msgstr ""
 
-#: kamu/models/role.py:63 kamu/templates/role/role_detail.html:37
+#: kamu/models/role.py:64 kamu/templates/role/role_detail.html:37
 msgid "Approver groups"
 msgstr ""
 
-#: kamu/models/role.py:66 kamu/models/role.py:318
+#: kamu/models/role.py:67 kamu/models/role.py:311
 #: kamu/templates/membership/membership_detail.html:23
 #: kamu/templates/membership/membership_invite.html:15
 #: kamu/templates/role/role_detail.html:13
 msgid "Permissions"
 msgstr ""
 
-#: kamu/models/role.py:68 kamu/models/role.py:309 kamu/models/role.py:417
+#: kamu/models/role.py:69 kamu/models/role.py:302 kamu/models/role.py:410
 #: kamu/templates/role/role_detail.html:16
 msgid "Requirements"
 msgstr ""
 
-#: kamu/models/role.py:71
+#: kamu/models/role.py:72
 msgid "IAM Group"
 msgstr ""
 
-#: kamu/models/role.py:73
+#: kamu/models/role.py:74
 msgid "Requires SMS verification"
 msgstr ""
 
-#: kamu/models/role.py:74
+#: kamu/models/role.py:75
 msgid "Maximum duration (days)"
 msgstr ""
 
-#: kamu/models/role.py:77
+#: kamu/models/role.py:78
 msgid "Purge delay (days)"
 msgstr ""
 
-#: kamu/models/role.py:78
+#: kamu/models/role.py:79
 msgid "Grace period from membership expiration to purge (days)"
 msgstr ""
 
-#: kamu/models/role.py:90 kamu/templates/identity/identity_detail.html:139
+#: kamu/models/role.py:91 kamu/templates/identity/identity_detail.html:139
 #: kamu/templates/identity/identity_detail.html:166
 #: kamu/templates/membership/membership_approval_list.html:14
 #: kamu/templates/membership/membership_detail.html:17
@@ -1331,103 +1331,103 @@ msgstr ""
 msgid "Role"
 msgstr ""
 
-#: kamu/models/role.py:91 kamu/templates/base.html:45
+#: kamu/models/role.py:92 kamu/templates/base.html:45
 msgid "Roles"
 msgstr ""
 
-#: kamu/models/role.py:287
+#: kamu/models/role.py:280
 msgid "Permission identifier"
 msgstr ""
 
-#: kamu/models/role.py:291
+#: kamu/models/role.py:284
 msgid "Generic permission"
 msgstr ""
 
-#: kamu/models/role.py:292
+#: kamu/models/role.py:285
 msgid "Service"
 msgstr ""
 
-#: kamu/models/role.py:295
+#: kamu/models/role.py:288
 msgid "Permission type"
 msgstr ""
 
-#: kamu/models/role.py:298
+#: kamu/models/role.py:291
 msgid "Permission name (fi)"
 msgstr ""
 
-#: kamu/models/role.py:299
+#: kamu/models/role.py:292
 msgid "Permission name (en)"
 msgstr ""
 
-#: kamu/models/role.py:300
+#: kamu/models/role.py:293
 msgid "Permission name (sv)"
 msgstr ""
 
-#: kamu/models/role.py:301
+#: kamu/models/role.py:294
 msgid "Permission description (fi)"
 msgstr ""
 
-#: kamu/models/role.py:302
+#: kamu/models/role.py:295
 msgid "Permission description (en)"
 msgstr ""
 
-#: kamu/models/role.py:303
+#: kamu/models/role.py:296
 msgid "Permission description (sv)"
 msgstr ""
 
-#: kamu/models/role.py:305
+#: kamu/models/role.py:298
 msgid "Permission cost"
 msgstr ""
 
-#: kamu/models/role.py:306
+#: kamu/models/role.py:299
 msgid "Permission value"
 msgstr ""
 
-#: kamu/models/role.py:317
+#: kamu/models/role.py:310
 msgid "Permission"
 msgstr ""
 
-#: kamu/models/role.py:377
+#: kamu/models/role.py:370
 msgid "Requirement name (fi)"
 msgstr ""
 
-#: kamu/models/role.py:378
+#: kamu/models/role.py:371
 msgid "Requirement name (en)"
 msgstr ""
 
-#: kamu/models/role.py:379
+#: kamu/models/role.py:372
 msgid "Requirement name (sv)"
 msgstr ""
 
-#: kamu/models/role.py:382
+#: kamu/models/role.py:375
 msgid "Requires a signed contract of type (value)"
 msgstr ""
 
-#: kamu/models/role.py:383
+#: kamu/models/role.py:376
 msgid "User attribute (value) is defined"
 msgstr ""
 
-#: kamu/models/role.py:384
+#: kamu/models/role.py:377
 msgid "Assurance level at least level"
 msgstr ""
 
-#: kamu/models/role.py:385
+#: kamu/models/role.py:378
 msgid "External requirement"
 msgstr ""
 
-#: kamu/models/role.py:387
+#: kamu/models/role.py:380
 msgid "Requirement type"
 msgstr ""
 
-#: kamu/models/role.py:391
+#: kamu/models/role.py:384
 msgid "Requirement value"
 msgstr ""
 
-#: kamu/models/role.py:395
+#: kamu/models/role.py:388
 msgid "Level or version required"
 msgstr ""
 
-#: kamu/models/role.py:397
+#: kamu/models/role.py:390
 msgid ""
 "Require a minimum level of assurance or attribute verification level, or a "
 "minimum version of contract. Contract level must be a positive integer. "
@@ -1436,40 +1436,40 @@ msgid ""
 "verification)"
 msgstr ""
 
-#: kamu/models/role.py:404
+#: kamu/models/role.py:397
 msgid "Grace period (days)"
 msgstr ""
 
-#: kamu/models/role.py:405
+#: kamu/models/role.py:398
 msgid "Grace period (days) before membership status is changed."
 msgstr ""
 
-#: kamu/models/role.py:416
+#: kamu/models/role.py:409
 msgid "Requirement"
 msgstr ""
 
-#: kamu/models/role.py:465
+#: kamu/models/role.py:458
 msgid "Contract requirement needs contract type as a value."
 msgstr ""
 
-#: kamu/models/role.py:467
+#: kamu/models/role.py:460
 msgid "Contract version must be a positive integer."
 msgstr ""
 
-#: kamu/models/role.py:479
+#: kamu/models/role.py:472
 #, python-format
 msgid "Allowed assurance levels are: %(choices)s."
 msgstr ""
 
-#: kamu/models/role.py:486
+#: kamu/models/role.py:479
 msgid "Invalid attribute name."
 msgstr ""
 
-#: kamu/models/role.py:491
+#: kamu/models/role.py:484
 msgid "Attribute does not have verification level."
 msgstr ""
 
-#: kamu/models/role.py:505
+#: kamu/models/role.py:498
 #, python-format
 msgid "Allowed levels are: %(choices)s."
 msgstr ""
@@ -1522,16 +1522,16 @@ msgstr ""
 msgid "Login tokens"
 msgstr ""
 
-#: kamu/serializers/identity.py:115
+#: kamu/serializers/identity.py:116
 msgid "This identity already has the given email address."
 msgstr ""
 
-#: kamu/serializers/membership.py:51
+#: kamu/serializers/membership.py:50
 #, python-format
 msgid "Field %(attribute)s is required."
 msgstr ""
 
-#: kamu/serializers/role.py:133
+#: kamu/serializers/role.py:138
 msgid "Cannot validate sequence data."
 msgstr ""
 
@@ -3705,13 +3705,13 @@ msgid ""
 "later."
 msgstr ""
 
-#: kamu/utils/identity.py:555 kamu/views/identity.py:711
+#: kamu/utils/identity.py:555 kamu/views/identity.py:715
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again. Please also check your spam folder."
 msgstr ""
 
-#: kamu/utils/identity.py:565 kamu/views/identity.py:724
+#: kamu/utils/identity.py:565 kamu/views/identity.py:728
 msgid ""
 "The verification code has now been sent and should arrive in your email in a "
 "few minutes. If you do not receive a verification code, please check your "
@@ -3722,20 +3722,20 @@ msgstr ""
 msgid "Failed to send verification code."
 msgstr ""
 
-#: kamu/utils/identity.py:583 kamu/views/auth.py:638 kamu/views/auth.py:661
+#: kamu/utils/identity.py:583 kamu/views/auth.py:640 kamu/views/auth.py:663
 msgid "Tried to send a new code too soon. Please try again in one minute."
 msgstr ""
 
-#: kamu/utils/identity.py:589 kamu/views/identity.py:773
+#: kamu/utils/identity.py:589 kamu/views/identity.py:777
 #, python-format
 msgid "Your personal Kamu verification code is: %(token)s"
 msgstr ""
 
-#: kamu/utils/identity.py:592 kamu/views/auth.py:664 kamu/views/identity.py:776
+#: kamu/utils/identity.py:592 kamu/views/auth.py:666 kamu/views/identity.py:780
 msgid "Could not send an SMS message."
 msgstr ""
 
-#: kamu/utils/identity.py:597 kamu/views/identity.py:781
+#: kamu/utils/identity.py:597 kamu/views/identity.py:785
 msgid ""
 "The verification code has now been sent and should arrive in your phone in a "
 "few minutes."
@@ -3745,33 +3745,33 @@ msgstr ""
 msgid "Email address is required."
 msgstr ""
 
-#: kamu/utils/identity.py:688
+#: kamu/utils/identity.py:690
 msgid "Phone number is required."
 msgstr ""
 
-#: kamu/utils/identity.py:808
+#: kamu/utils/identity.py:810
 msgid ""
 "Suspected duplicate user. Finnish personal identity code already exists in "
 "the database: "
 msgstr ""
 
-#: kamu/utils/identity.py:830
+#: kamu/utils/identity.py:832
 msgid ""
 "You already have a Finnish personal identity code that differs from the one "
 "you are trying to add. Please contact support if you need to change your "
 "identity code: "
 msgstr ""
 
-#: kamu/utils/identity.py:910
+#: kamu/utils/identity.py:912
 #, python-format
 msgid "You can activate a new user account of type \"%(account_type)s\"."
 msgstr ""
 
-#: kamu/utils/identity.py:915
+#: kamu/utils/identity.py:917
 msgid "Activate account"
 msgstr ""
 
-#: kamu/utils/identity.py:930
+#: kamu/utils/identity.py:932
 msgid "Continue to external service to activate account"
 msgstr ""
 
@@ -3818,65 +3818,73 @@ msgid "Add and verify email address"
 msgstr ""
 
 #: kamu/utils/membership.py:144
-msgid "The membership requires a verified phone number."
+msgid "The membership requires a verified external email address."
 msgstr ""
 
 #: kamu/utils/membership.py:146
+msgid "Add and verify external email address"
+msgstr ""
+
+#: kamu/utils/membership.py:151
+msgid "The membership requires a verified phone number."
+msgstr ""
+
+#: kamu/utils/membership.py:153
 msgid "Add and verify phone number"
 msgstr ""
 
-#: kamu/utils/membership.py:158
+#: kamu/utils/membership.py:165
 #, python-format
 msgid ""
 "The membership requires an attribute \"%(name)s\" of at least verification "
 "level: %(level)d (%(level_text)s)."
 msgstr ""
 
-#: kamu/utils/membership.py:166
+#: kamu/utils/membership.py:173
 #, python-format
 msgid "The membership requires an attribute \"%(name)s\"."
 msgstr ""
 
-#: kamu/utils/membership.py:168
+#: kamu/utils/membership.py:175
 #, python-format
 msgid "Add %(name)s"
 msgstr ""
 
-#: kamu/utils/membership.py:174
+#: kamu/utils/membership.py:181
 #, python-format
 msgid ""
 "The membership requires a requirement you cannot currently fulfill: %(name)s."
 msgstr ""
 
-#: kamu/utils/membership.py:178
+#: kamu/utils/membership.py:185
 #, python-format
 msgid ""
 "The membership requires a requirement the member cannot currently fulfill: "
 "%(name)s."
 msgstr ""
 
-#: kamu/utils/membership.py:190
+#: kamu/utils/membership.py:197
 #, python-format
 msgid "The membership requires higher assurance level: %(level)s."
 msgstr ""
 
-#: kamu/utils/membership.py:259
+#: kamu/utils/membership.py:266
 msgid "Invitation process has taken too long."
 msgstr ""
 
-#: kamu/utils/membership.py:265
+#: kamu/utils/membership.py:272
 msgid "This invitation has already been used."
 msgstr ""
 
-#: kamu/utils/membership.py:269
+#: kamu/utils/membership.py:276
 msgid "This invitation has expired."
 msgstr ""
 
-#: kamu/utils/membership.py:273
+#: kamu/utils/membership.py:280
 msgid "Invalid invitation token."
 msgstr ""
 
-#: kamu/utils/membership.py:276
+#: kamu/utils/membership.py:283
 msgid "The membership information has now been created."
 msgstr ""
 
@@ -4028,189 +4036,189 @@ msgstr ""
 msgid "Password reset."
 msgstr ""
 
-#: kamu/views/auth.py:371
+#: kamu/views/auth.py:373
 msgid "Link identifier not found."
 msgstr ""
 
-#: kamu/views/auth.py:376
+#: kamu/views/auth.py:378
 msgid "Link identifier time not valid."
 msgstr ""
 
-#: kamu/views/auth.py:378
+#: kamu/views/auth.py:380
 msgid "Link identifier expired."
 msgstr ""
 
-#: kamu/views/auth.py:438
+#: kamu/views/auth.py:440
 msgid "Identifier linking failed: "
 msgstr ""
 
-#: kamu/views/auth.py:444
+#: kamu/views/auth.py:446
 msgid "Invitation claiming failed: "
 msgstr ""
 
-#: kamu/views/auth.py:447
+#: kamu/views/auth.py:449
 msgid "Login failed: "
 msgstr ""
 
-#: kamu/views/auth.py:462
+#: kamu/views/auth.py:464
 msgid ""
 "Redirection loop for authenticated user detected. Please contact service "
 "admins."
 msgstr ""
 
-#: kamu/views/auth.py:633
+#: kamu/views/auth.py:635
 msgid "Could not send verification email."
 msgstr ""
 
-#: kamu/views/auth.py:737
+#: kamu/views/auth.py:739
 msgid "See the pending memberships here."
 msgstr ""
 
-#: kamu/views/auth.py:741
+#: kamu/views/auth.py:743
 msgid "You have memberships pending approval."
 msgstr ""
 
-#: kamu/views/auth.py:744
+#: kamu/views/auth.py:746
 msgid "List here"
 msgstr ""
 
-#: kamu/views/auth.py:748
+#: kamu/views/auth.py:750
 msgid "Memberships are ending soon in roles you have approval rights."
 msgstr ""
 
-#: kamu/views/identity.py:157
+#: kamu/views/identity.py:159
 #, python-format
 msgid "You have new membership in the role %(role)s."
 msgstr ""
 
-#: kamu/views/identity.py:209
+#: kamu/views/identity.py:211
 msgid "Selected as the target identity for identity combining."
 msgstr ""
 
-#: kamu/views/identity.py:215
+#: kamu/views/identity.py:217
 msgid "Selected as the source identity for identity combining."
 msgstr ""
 
-#: kamu/views/identity.py:374
+#: kamu/views/identity.py:376
 msgid "Failed to verify Candour ID verification status, please try again."
 msgstr ""
 
-#: kamu/views/identity.py:400
+#: kamu/views/identity.py:402
 msgid ""
 "Your identity has been verified and personal information updated with "
 "Candour ID identification service."
 msgstr ""
 
-#: kamu/views/identity.py:420
+#: kamu/views/identity.py:422
 msgid "Candour ID verification failed, please try again."
 msgstr ""
 
-#: kamu/views/identity.py:456
+#: kamu/views/identity.py:458
 msgid "Failed to create Candour ID verification session, please try again."
 msgstr ""
 
-#: kamu/views/identity.py:463
+#: kamu/views/identity.py:465
 msgid "Could not start Candour ID process, please try again later."
 msgstr ""
 
-#: kamu/views/identity.py:516
+#: kamu/views/identity.py:518
 msgid "Authentication with single contact has been disabled."
 msgstr ""
 
-#: kamu/views/identity.py:534
+#: kamu/views/identity.py:536
 msgid ""
 "Authentication with a single contact has been enabled. User can authenticate "
 "with a code sent to either an email address or a phone number."
 msgstr ""
 
-#: kamu/views/identity.py:553
+#: kamu/views/identity.py:555
 msgid "Authentication with unverified contact has been enabled."
 msgstr ""
 
-#: kamu/views/identity.py:570
+#: kamu/views/identity.py:572
 msgid "Authentication with unverified contact has been disabled."
 msgstr ""
 
-#: kamu/views/identity.py:716
+#: kamu/views/identity.py:720
 msgid "Kamu: email address verification"
 msgstr ""
 
-#: kamu/views/identity.py:717
+#: kamu/views/identity.py:721
 #, python-format
 msgid "Your verification code is: %(token)s"
 msgstr ""
 
-#: kamu/views/identity.py:767
+#: kamu/views/identity.py:771
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again."
 msgstr ""
 
-#: kamu/views/identity.py:1150
+#: kamu/views/identity.py:1154
 msgid "Contract already signed."
 msgstr ""
 
-#: kamu/views/identity.py:1156
+#: kamu/views/identity.py:1160
 msgid "Contract version has changed. Please try again."
 msgstr ""
 
-#: kamu/views/identity.py:1159
+#: kamu/views/identity.py:1163
 msgid "Contract signed."
 msgstr ""
 
-#: kamu/views/identity.py:1381
+#: kamu/views/identity.py:1387
 msgid "New identity created."
 msgstr ""
 
-#: kamu/views/identity.py:1405
+#: kamu/views/identity.py:1411
 msgid "Invalid verification session."
 msgstr ""
 
-#: kamu/views/identity.py:1418
+#: kamu/views/identity.py:1424
 msgid "Identity verification has been cancelled."
 msgstr ""
 
-#: kamu/views/identity.py:1485
+#: kamu/views/identity.py:1491
 msgid ""
 "LDAP search returned too many results, please refine your search parameters."
 msgstr ""
 
-#: kamu/views/identity.py:1611
+#: kamu/views/identity.py:1617
 msgid "Too many results, please refine your search parameters."
 msgstr ""
 
-#: kamu/views/identity.py:1618
+#: kamu/views/identity.py:1624
 msgid ""
 "Partial name matches returned too many results. Returning only exact matches."
 msgstr ""
 
-#: kamu/views/identity.py:1694 kamu/views/identity.py:1708
-#: kamu/views/identity.py:1735 kamu/views/membership.py:813
+#: kamu/views/identity.py:1700 kamu/views/identity.py:1714
+#: kamu/views/identity.py:1741 kamu/views/membership.py:813
 #: kamu/views/membership.py:822
 msgid ""
 "PersonDB connection failed, could not load person information. Please try "
 "again later."
 msgstr ""
 
-#: kamu/views/identity.py:1725
+#: kamu/views/identity.py:1731
 msgid ""
 "Name search returned too many results from the person database, and was "
 "skipped. Please refine your search parameters."
 msgstr ""
 
-#: kamu/views/identity.py:1815
+#: kamu/views/identity.py:1821
 msgid "LDAP search failed, could not search existing accounts."
 msgstr ""
 
-#: kamu/views/identity.py:1825
+#: kamu/views/identity.py:1831
 msgid "Identifier match found, skipping name search."
 msgstr ""
 
-#: kamu/views/identity.py:1941
+#: kamu/views/identity.py:1947
 msgid "Incorrect primary keys."
 msgstr ""
 
-#: kamu/views/identity.py:1947
+#: kamu/views/identity.py:1953
 msgid "Identities combined."
 msgstr ""
 
