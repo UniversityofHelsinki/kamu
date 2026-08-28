@@ -2,15 +2,19 @@ import dataclasses
 import datetime
 from unittest import mock
 
+from django.core import mail
 from django.test import TestCase, override_settings
+from django.utils import timezone
 from requests.models import Response
 
 from kamu.connectors import ApiError
 from kamu.connectors.candour import CandourApiConnector
+from kamu.connectors.email import send_add_email
 from kamu.connectors.organisation import OrganisationApiConnector
 from kamu.connectors.persondb import PersonDBApiConnector
 from kamu.models.identity import Country, Identity
 from tests.data import PERSONS
+from tests.setup import BaseTestCase
 
 
 class GenericConnectorTests(TestCase):
@@ -128,3 +132,40 @@ class PersonDBConnectorTests(TestCase):
         for field in [f.name for f in dataclasses.fields(person)]:
             if field not in ["person_uuid", "preferred_language", "identifiers"]:
                 self.assertIn(getattr(person, field), [None, frozenset(), "", Identity.VerificationMethod.UNVERIFIED])
+
+
+class EmailConnectorTests(BaseTestCase):
+    def setUp(self):
+        role = self.create_role()
+        self.identity = self.create_identity()
+        self.membership = self.create_membership(role=role, identity=self.identity)
+
+    def test_add_role_notification_email(self):
+        send_add_email(self.membership)
+        self.assertEqual(0, len(mail.outbox))
+        self.identity.email_addresses.create(address="test@example.org")
+        send_add_email(self.membership)
+        self.assertEqual(1, len(mail.outbox))
+        self.identity.email_addresses.create(address="test2@example.org", verified=timezone.now())
+        mail.outbox = []
+        send_add_email(self.membership)
+        self.assertEqual(1, len(mail.outbox))
+        self.assertEqual(mail.outbox[0].to, ["test2@example.org"])
+
+    @override_settings(NEW_MEMBERSHIP_NOTIFICATION_RECIPIENTS="verified")
+    def test_add_role_notification_email_to_verified(self):
+        self.identity.email_addresses.create(address="test@example.org")
+        send_add_email(self.membership)
+        self.assertEqual(0, len(mail.outbox))
+        self.identity.email_addresses.create(address="test2@example.org", verified=timezone.now())
+        send_add_email(self.membership)
+        self.assertEqual(1, len(mail.outbox))
+        self.assertEqual(mail.outbox[0].to, ["test2@example.org"])
+
+    @override_settings(NEW_MEMBERSHIP_NOTIFICATION_RECIPIENTS="all")
+    def test_add_role_notification_email_to_all(self):
+        self.identity.email_addresses.create(address="test@example.org")
+        self.identity.email_addresses.create(address="test2@example.org", verified=timezone.now())
+        send_add_email(self.membership)
+        self.assertEqual(1, len(mail.outbox))
+        self.assertEqual(2, len(mail.outbox[0].to))

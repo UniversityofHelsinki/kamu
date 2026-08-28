@@ -61,8 +61,17 @@ def send_add_email(membership: Membership) -> bool:
     cur_language = translation.get_language()
     if not membership or not membership.identity:
         return False
-    address = membership.identity.email_addresses.first()
-    if not address:
+    send_membership_add_email_to = getattr(settings, "NEW_MEMBERSHIP_NOTIFICATION_RECIPIENTS", "primary")
+    if send_membership_add_email_to == "primary":
+        address = membership.identity.email_address(unverified=True)
+        addresses = [address] if address else []
+    elif send_membership_add_email_to == "verified":
+        addresses = [address.address for address in membership.identity.email_addresses.filter(verified__isnull=False)]
+    elif send_membership_add_email_to == "all":
+        addresses = [address.address for address in membership.identity.email_addresses.all()]
+    else:
+        addresses = []
+    if not addresses:
         return False
     lang = membership.identity.preferred_language
     inviter = membership.inviter.get_full_name() if membership.inviter else None
@@ -79,7 +88,7 @@ def send_add_email(membership: Membership) -> bool:
         )
     finally:
         translation.activate(cur_language)
-    return _send_email(subject, wrap_message(message), recipient_list=[address.address])
+    return _send_email(subject, wrap_message(message), recipient_list=addresses)
 
 
 def send_notify_approvers_email(membership: Membership, member_list: list[str] | None = None) -> bool:

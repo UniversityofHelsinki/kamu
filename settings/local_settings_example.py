@@ -349,3 +349,9 @@ MIGRATION_LDAP_CUSTOM_SEARCH_FILTER: str = (
 )
 MIGRATION_SKIP_CURRENT_ACCOUNT_RIGHT_SUBTYPES: list[str] = ["1000"]
 ACCOUNT_RIGHTS_API_URL: str = "https://localhost/accountrights/current"
+
+# Change which email addresses are used to send membership add emails.
+# Options are "primary", "verified", "all" and "none".
+# If "primary", the first verified, or first unverified if no verified addresses exist, email address is used.
+# If "verified", all verified addresses are used, and if "all", all verified or unverified addresses are used.
+# NEW_MEMBERSHIP_NOTIFICATION_RECIPIENTS: str = "primary"
