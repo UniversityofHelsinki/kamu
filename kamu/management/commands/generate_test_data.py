@@ -258,13 +258,13 @@ class Command(BaseCommand):
         user_inviter = get_user_model().objects.get(username="inviter")
         user_owner = get_user_model().objects.get(username="owner")
 
-        start_time = datetime.datetime.now()
+        start_time = timezone.now()
         finland = Country.objects.get(code="FI")
         contract_template = ContractTemplate.objects.filter(type="nda").order_by("-version").first()
         number_of_countries = Country.objects.count()
         for n in range(number_of_identities):
             if not self.silent and n > 0 and n % 100 == 0:
-                time_elapsed = datetime.datetime.now() - start_time
+                time_elapsed = timezone.now() - start_time
                 time_expected = (number_of_identities / n) * time_elapsed
                 seconds_remaining = (time_expected - time_elapsed).total_seconds()
                 if seconds_remaining > 300:
@@ -375,14 +375,12 @@ class Command(BaseCommand):
             def add_membership() -> None:
                 role = Role.objects.exclude(parent=None).order_by("?").first()
                 if role:
-                    start_date = datetime.datetime.today() - datetime.timedelta(
+                    start_date = timezone.localdate() - datetime.timedelta(
                         days=random.randint(0, role.maximum_duration)
                     )
                     expire_date = start_date + datetime.timedelta(days=random.randint(0, role.maximum_duration))
                     status = (
-                        Membership.Status.EXPIRED
-                        if expire_date < datetime.datetime.today()
-                        else Membership.Status.ACTIVE
+                        Membership.Status.EXPIRED if expire_date < timezone.localdate() else Membership.Status.ACTIVE
                     )
                     approver = None
                     if random.randint(0, 100) < 90:
@@ -399,8 +397,8 @@ class Command(BaseCommand):
                         reason="Because",
                         inviter=inviter,
                         approver=approver,
-                        start_date=start_date.date(),
-                        expire_date=expire_date.date(),
+                        start_date=start_date,
+                        expire_date=expire_date,
                         status=status,
                     )
 

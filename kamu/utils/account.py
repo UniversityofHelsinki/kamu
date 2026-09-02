@@ -3,9 +3,9 @@ Helper functions for accounts
 """
 
 import unicodedata
-from datetime import date
 
 from django.conf import settings
+from django.utils import timezone
 from django_stubs_ext import StrOrPromise
 
 from kamu.models.account import Account
@@ -145,7 +145,7 @@ def get_account_data(identity: Identity, account_type: Account.Type) -> dict[str
             membership.role.organisation.code if membership and membership.role.organisation else None
         ),
         settings.ACCOUNT_ATTRIBUTES["schacExpiryDate"]: (
-            membership.expire_date.isoformat() if membership else date.today().isoformat()
+            membership.expire_date.isoformat() if membership else timezone.localdate().isoformat()
         ),
         settings.ACCOUNT_ATTRIBUTES["sn"]: identity.surname_display,
     }

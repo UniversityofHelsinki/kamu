@@ -560,7 +560,7 @@ class Command(BaseCommand):
 
         # Create new identity if no existing identity is found.
         if not identity:
-            if expire_date < date.today():
+            if expire_date < timezone.localdate():
                 created_at = timezone.make_aware(datetime.combine(expire_date, time()))
             else:
                 created_at = timezone.now()
@@ -616,8 +616,8 @@ class Command(BaseCommand):
             return None
         membership = Membership.objects.filter(identity=identity, role=self.role).first()
         if not membership:
-            if expire_date > date.today():
-                start_date = date.today()
+            if expire_date > timezone.localdate():
+                start_date = timezone.localdate()
             else:
                 start_date = expire_date
             membership = Membership.objects.create(
@@ -666,7 +666,7 @@ class Command(BaseCommand):
                     error=False,
                 )
                 return None
-            if expire_date >= date.today():
+            if expire_date >= timezone.localdate():
                 status = Account.Status.ENABLED
             else:
                 status = Account.Status.EXPIRED

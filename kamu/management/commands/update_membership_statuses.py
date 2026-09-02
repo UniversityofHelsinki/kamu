@@ -4,11 +4,12 @@ Update membership statuses.
 Usage help: ./manage.py update_membership_statuses -h
 """
 
-from datetime import date, timedelta
+from datetime import timedelta
 from typing import Any
 
 from django.core.management.base import BaseCommand
 from django.db.models import Q
+from django.utils import timezone
 
 from kamu.models.membership import Membership
 from kamu.utils.audit import AuditLog
@@ -42,10 +43,13 @@ class Command(BaseCommand):
             Membership.objects.all()
             if update_all
             else Membership.objects.filter(
-                (Q(start_date__lte=date.today()) & Q(start_date__gte=date.today() - timedelta(days=days)))
+                (
+                    Q(start_date__lte=timezone.localdate())
+                    & Q(start_date__gte=timezone.localdate() - timedelta(days=days))
+                )
                 | (
-                    Q(expire_date__lte=date.today() - timedelta(days=1))
-                    & Q(expire_date__gte=date.today() - timedelta(days=days + 1))
+                    Q(expire_date__lte=timezone.localdate() - timedelta(days=1))
+                    & Q(expire_date__gte=timezone.localdate() - timedelta(days=days + 1))
                 )
             )
         )
