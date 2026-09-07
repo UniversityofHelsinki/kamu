@@ -324,3 +324,11 @@ class AdminSiteTests(BaseTestCase):
             "Allowed assurance levels are: 10 (low), 20 (medium), 30 (high), 40 (very high).",
             response.content.decode("utf-8"),
         )
+
+    def test_add_external_email_address(self):
+        response = self._test_add_requirement("attribute", "external_email_address", 0)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "Select this object for an action - Test requirement",
+            response.content.decode("utf-8"),
+        )

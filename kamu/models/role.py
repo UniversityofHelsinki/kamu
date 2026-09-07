@@ -494,7 +494,7 @@ class Requirement(models.Model):
                     {"level": [_("Allowed assurance levels are: %(choices)s.") % {"choices": assurance_levels}]}
                 )
         if self.type == Requirement.Type.ATTRIBUTE:
-            if self.value not in ["phone_number", "email_address"]:
+            if self.value not in ["phone_number", "email_address", "external_email_address"]:
                 try:
                     Identity._meta.get_field(self.value)
                 except FieldDoesNotExist:
