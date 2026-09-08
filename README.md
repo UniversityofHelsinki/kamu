@@ -24,5 +24,11 @@ You are welcome to contribute to the project by creating issues or pull
 requests. Check [style and commit guidelines](https://kamu.pages.helsinki.fi/kamu/content/contributing.html)
 before creating any pull requests.
 
-## Versioning
-We use [Semantic Versioning](https://semver.org/).
+## Versioning policy
+New versions are released to introduce new features or to fix issues within this product.
+
+New versions are generally not released for supply chain security fixes. We recommend that
+production users follow updates to main branch and have their own update strategy to ensure
+security.
+
+This project follows [Semantic Versioning](https://semver.org/) for version numbering. 

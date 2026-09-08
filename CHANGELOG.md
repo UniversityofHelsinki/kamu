@@ -1,5 +1,5 @@
 # Changelog
-## [1.0.0] - upcoming
+## [1.0.0] - 8.9.2026
 Added external user account management.
 Added mass invites.
 Added info links.
@@ -13,6 +13,6 @@ Changed requirements management to uv.
 
 ### Updating notes
 Includes database changes, run migrations.
-
+ 
 ## [0.1.0] - 2024-04-23
 Initial public release.
