@@ -514,6 +514,43 @@ class Identity(models.Model):
                 missing |= Requirement.objects.filter(pk=requirement.pk)
         return missing
 
+    def has_attributes_for_verification(self, level: int = 0) -> bool:
+        """
+        Returns True if the identity has attributes required for strong identification.
+
+        This means either official names and date of birth, or FPIC. Either of the official names can be
+        replaced with display name as not everyone has multiple official names.
+
+        OBS. FPIC as linked identifier does not have verification level, only verified status. Any verified
+        FPIC identifier is considered to pass required verification level.
+        """
+
+        if (
+            self.fpic
+            and self.fpic_verification >= level
+            or (
+                self.identifiers.filter(type="fpic").exists()
+                if not level
+                else self.identifiers.filter(type="fpic", verified__isnull=False).exists()
+            )
+        ):
+            return True
+
+        date_of_birth_ok = self.date_of_birth and self.date_of_birth_verification >= level
+        given_names_ok = self.given_names and self.given_names_verification >= level
+        surname_ok = self.surname and self.surname_verification >= level
+
+        if not date_of_birth_ok:
+            return False
+        if given_names_ok and surname_ok:
+            return True
+        if given_names_ok and self.surname_display:
+            return True
+        if surname_ok and self.given_name_display:
+            return True
+
+        return False
+
 
 class Nationality(models.Model):
     """

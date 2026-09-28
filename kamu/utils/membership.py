@@ -154,6 +154,17 @@ def add_missing_requirement_messages(
                 message = f'<p class="fw-bold">{message}</p>{link}'
             messages.add_message(request, message_level, message + optional_manager_text, extra_tags="safe")
             return
+        if requirement.value == "attributes_for_verification":
+            message = _(
+                "The membership requires either Finnish personal identity code for Suomi.fi e-Identification, "
+                "or date of birth and official names for identification with either an eIDAS-compatible e-ID "
+                "or an official identity document."
+            )
+            if request.user == identity.user:
+                link = _get_link("identity-change", _("Add attributes for identity verification"), {"pk": identity.pk})
+                message = f'<p class="fw-bold">{message}</p>{link}'
+            messages.add_message(request, message_level, message + optional_manager_text, extra_tags="safe")
+            return
         field = Identity._meta.get_field(requirement.value)
         if hasattr(field, "verbose_name"):
             name = field.verbose_name.lower()

@@ -11,7 +11,7 @@ from django.test import RequestFactory, override_settings
 from django.utils import timezone
 
 from kamu.models.contract import Contract, ContractTemplate
-from kamu.models.identity import Identity
+from kamu.models.identity import Identifier, Identity
 from kamu.models.membership import Membership
 from kamu.models.role import Permission, Requirement, Role
 from kamu.utils.membership import add_missing_requirement_messages
@@ -161,11 +161,13 @@ class RequirementsTests(BaseRoleTestCase):
         self.assertEqual(self.membership.get_missing_requirements().count(), 4)
         self.assertEqual(self.identity.get_missing_requirements().count(), 4)
         self.assertEqual(self.parent_membership.get_missing_requirements().count(), 2)
+        # Test verified email requirement
         email_address = self.identity.email_addresses.create(address="test@example.org")
         self.assertEqual(self.membership.get_missing_requirements().count(), 4)
         email_address.verified = timezone.now()
         email_address.save()
         self.assertEqual(self.membership.get_missing_requirements().count(), 3)
+        # Test verified date_of_birth requirement
         self.identity.date_of_birth = timezone.now().date() - datetime.timedelta(days=365 * 18)
         self.identity.save()
         self.assertEqual(self.membership.get_missing_requirements().count(), 3)
@@ -173,8 +175,10 @@ class RequirementsTests(BaseRoleTestCase):
         self.identity.save()
         self.membership.refresh_from_db()
         self.assertEqual(self.membership.get_missing_requirements().count(), 2)
+        # Test contract requirement
         self._create_contract()
         self.assertEqual(self.membership.get_missing_requirements().count(), 1)
+        # Test assurance requirement
         self.identity.assurance_level = Identity.AssuranceLevel.HIGH
         self.identity.save()
         self.membership.refresh_from_db()
@@ -182,11 +186,45 @@ class RequirementsTests(BaseRoleTestCase):
         self.assertEqual(self.identity.get_missing_requirements().count(), 0)
         self.assertTrue(self.membership.test_requirements())
         self.assertIsNone(self.membership.requirements_failed_at)
+        # Test external email requirement
         self.external_email = self.service_permission.requirements.create(
             name_en="Email", type=Requirement.Type.ATTRIBUTE, value="external_email_address", grace=0
         )
         self.assertEqual(self.membership.get_missing_requirements().count(), 1)
         self.identity.email_addresses.create(address="test@example.nett", verified=timezone.now())
+        self.assertEqual(self.membership.get_missing_requirements().count(), 0)
+        # Test attributes for verification requirement
+        self.external_email = self.service_permission.requirements.create(
+            name_en="Verification",
+            type=Requirement.Type.ATTRIBUTE,
+            value="attributes_for_verification",
+            grace=0,
+            level=Identity.VerificationMethod.STRONG,
+        )
+        self.assertEqual(self.membership.get_missing_requirements().count(), 1)
+        self.identity.given_names_verification = Identity.VerificationMethod.STRONG
+        self.identity.surname_verification = Identity.VerificationMethod.STRONG
+        self.identity.date_of_birth_verification = Identity.VerificationMethod.STRONG
+        self.identity.save()
+        self.membership.refresh_from_db()
+        self.assertEqual(self.membership.get_missing_requirements().count(), 0)
+        self.identity.date_of_birth_verification = Identity.VerificationMethod.EXTERNAL
+        self.identity.save()
+        self.membership.refresh_from_db()
+        self.assertEqual(self.membership.get_missing_requirements().count(), 1)
+        identifier = Identifier.objects.create(
+            identity=self.identity, type=Identifier.Type.FPIC, value="010181-900C", verified=None
+        )
+        self.assertEqual(self.membership.get_missing_requirements().count(), 1)
+        identifier.verified = timezone.now()
+        identifier.save()
+        self.membership.refresh_from_db()
+        self.assertEqual(self.membership.get_missing_requirements().count(), 0)
+        identifier.delete()
+        self.identity.fpic = "010181-900C"
+        self.identity.fpic_verification = Identity.VerificationMethod.STRONG
+        self.identity.save()
+        self.membership.refresh_from_db()
         self.assertEqual(self.membership.get_missing_requirements().count(), 0)
 
     def test_missing_requirements_with_grace(self):

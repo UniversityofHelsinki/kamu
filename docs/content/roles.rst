@@ -66,8 +66,12 @@ Supported requirement types are:
    - Require a signed contract of contract template type specified in the requirement value.
    - If level is given, require at least that version of contract.
 - attribute
-   - identity is required to have attribute of the name "value". email_address and phone_number are supported values.
+   - identity is required to have attribute of the name "value".
    - If level is given, require at least that verification level for the attribute.
+   - Some special values are defined:
+      - email_address and phone_number require that the identity has a verified email address or phone number respectively.
+      - external_email_address requires an email address whose domain is not in the INTERNAL_EMAIL_DOMAINS list.
+      - attributes_for_verification requires that the identity has either the FPIC attribute or the given_names, surname, and date_of_birth attributes.
 - assurance
    - identity must have assurance_level of the level or higher.
 - external

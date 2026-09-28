@@ -540,6 +540,8 @@ class Requirement(models.Model):
                 return identity.has_email_address()
             if self.value == "external_email_address":
                 return identity.has_email_address(external=True)
+            if self.value == "attributes_for_verification":
+                return identity.has_attributes_for_verification(self.level)
             return identity.has_attribute(self.value, self.level)
         if self.type == Requirement.Type.ASSURANCE:
             return identity.has_assurance(Identity.AssuranceLevel(self.level))
