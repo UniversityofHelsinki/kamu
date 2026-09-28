@@ -16,7 +16,7 @@ from kamu.models.account import AccountSynchronization
 from kamu.models.identity import EmailAddress, Identifier, Identity
 from kamu.models.membership import Membership
 from kamu.models.organisation import Organisation
-from kamu.models.role import Role
+from kamu.models.role import Requirement, Role
 from tests.setup import ManagementCommandTestCase, TestData
 from tests.views.test_account import AccountApiResponseMock
 
@@ -690,3 +690,53 @@ class MembershipStatisticsTests(TestData, ManagementCommandTestCase):
         out, _ = self.call_command("-o", "-e")
         self.assertIn(">>    | orgexternal |      1 |      1 | External organisation            | external", out)
         self.assertIn("---   |             |      1 |        |   External employee              |   ext_employee", out)
+
+
+class MissingRequirementNotificationTests(TestData, ManagementCommandTestCase):
+    command = "notify_missing_requirements"
+
+    def setUp(self):
+        super().setUp()
+        self.role = self.create_role(name="ext_employee")
+        self.another_role = self.create_role(name="ext_research")
+        self.create_identity(user=False, email=True)
+        self.create_superidentity(user=True, email=True)
+        self.assurance_requirement = self.role.requirements.create(
+            name_en="High assurance required",
+            type=Requirement.Type.ASSURANCE,
+            level=Identity.AssuranceLevel.HIGH,
+            grace=0,
+        )
+        self.phone_requirement = self.role.requirements.create(
+            name_en="Phone number required", type=Requirement.Type.ATTRIBUTE, value="phone_number", grace=0
+        )
+        self.another_role.requirements.add(self.assurance_requirement)
+        self.create_membership(
+            self.role,
+            identity=self.identity,
+            start_delta_days=0,
+            expire_delta_days=10,
+        )
+        self.membership_future = self.create_membership(
+            self.another_role, identity=self.superidentity, start_delta_days=5, expire_delta_days=10
+        )
+        self.create_membership(self.another_role, identity=self.identity, start_delta_days=0, expire_delta_days=8)
+        self.create_membership(self.role, identity=self.superidentity, start_delta_days=-1, expire_delta_days=-1)
+
+    def test_notification_send_for_missing_requirements(self):
+        self.call_command("-v 0")
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("\n\n- High assurance required\n- Phone number required\n\n", mail.outbox[0].body)
+        mail.outbox = []
+        self.call_command("-v 0", "-d 5")
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertNotIn("Phone number required", mail.outbox[1].body)
+        self.assertIn("High assurance required", mail.outbox[1].body)
+
+    def test_notification_fulfilled_requirements(self):
+        self.identity.assurance_level = Identity.AssuranceLevel.HIGH
+        self.identity.save()
+        self.call_command("-v 0")
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Phone number required", mail.outbox[0].body)
+        self.assertNotIn("High assurance required", mail.outbox[0].body)

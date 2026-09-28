@@ -1,0 +1,7 @@
+{% load i18n %}{% trans "Hi" %}
+
+{% trans "You have mandatory information missing in the University of Helsinki's Kamu register. You will not be able to activate a new user account, or the validity and access rights associated with your old user account will not continue, until you have logged into Kamu to fulfil these missing requirements:" %}
+
+{% for requirement in requirements %}- {{ requirement.name }}
+{% endfor %}
+{% trans "For more information about Kamu, search for guide 5016 on the Helpdesk's website." %}

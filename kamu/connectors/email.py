@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from kamu.models.account import Account
 from kamu.models.identity import Identity
 from kamu.models.membership import Membership
-from kamu.models.role import Role
+from kamu.models.role import Requirement, Role
 from kamu.utils.generic import create_help_link
 
 
@@ -393,3 +393,26 @@ def send_account_password_reset_notification(account: Account) -> bool:
             translation.activate(cur_language)
         return _send_email(subject, wrap_message(message), recipient_list=[email_address])
     return False
+
+
+def send_missing_requirement_notification(
+    requirements: QuerySet[Requirement], email_address: str, lang: str = "en"
+) -> bool:
+    """
+    Send a missing requirements email.
+    """
+    cur_language = translation.get_language()
+    try:
+        translation.activate(lang)
+        subject = render_to_string("email/missing_requirement_subject.txt")
+        message = render_to_string(
+            "email/missing_requirement_message.txt",
+            {
+                "requirements": requirements,
+            },
+        )
+    except TemplateDoesNotExist:
+        return False
+    finally:
+        translation.activate(cur_language)
+    return _send_email(subject, wrap_message(message), recipient_list=[email_address])

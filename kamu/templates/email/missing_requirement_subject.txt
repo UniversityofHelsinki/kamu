@@ -1,0 +1,1 @@
+{% load i18n %}{% trans "Update your information in the University's Kamu register" %}

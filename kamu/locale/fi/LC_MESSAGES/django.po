@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-23 12:19+0300\n"
+"POT-Creation-Date: 2026-09-28 12:47+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -152,16 +152,16 @@ msgstr "Luo kevyttunnus"
 msgid "Change your password"
 msgstr "Vaihda salasana"
 
-#: kamu/forms/auth.py:33 kamu/forms/auth.py:240 kamu/models/identity.py:634
-#: kamu/models/identity.py:646 kamu/models/token.py:304
+#: kamu/forms/auth.py:33 kamu/forms/auth.py:240 kamu/models/identity.py:635
+#: kamu/models/identity.py:647 kamu/models/token.py:304
 #: kamu/templates/account/account_create.html:16
 #: kamu/templates/identity/contact_address.html:15
 #: kamu/templates/identity/identity_detail.html:69
 msgid "Email address"
 msgstr "Sähköpostiosoite"
 
-#: kamu/forms/auth.py:35 kamu/models/identity.py:708
-#: kamu/models/identity.py:720 kamu/models/token.py:301
+#: kamu/forms/auth.py:35 kamu/models/identity.py:709
+#: kamu/models/identity.py:721 kamu/models/token.py:301
 #: kamu/templates/identity/contact_address.html:64
 #: kamu/templates/membership/membership_invite.html:69
 msgid "Phone number"
@@ -718,15 +718,15 @@ msgstr "Tunnuksen tyyppi"
 msgid "User ID"
 msgstr "Käyttäjätunnus"
 
-#: kamu/models/account.py:43 kamu/models/identity.py:780
+#: kamu/models/account.py:43 kamu/models/identity.py:781
 msgid "Deactivated at"
 msgstr "Suljettu"
 
 #: kamu/models/account.py:44 kamu/models/account.py:148
 #: kamu/models/contract.py:55 kamu/models/contract.py:112
 #: kamu/models/identity.py:48 kamu/models/identity.py:289
-#: kamu/models/identity.py:567 kamu/models/identity.py:638
-#: kamu/models/identity.py:712 kamu/models/identity.py:781
+#: kamu/models/identity.py:568 kamu/models/identity.py:639
+#: kamu/models/identity.py:713 kamu/models/identity.py:782
 #: kamu/models/membership.py:122 kamu/models/organisation.py:31
 #: kamu/models/role.py:84 kamu/models/role.py:327 kamu/models/role.py:423
 #: kamu/models/token.py:321
@@ -735,8 +735,8 @@ msgstr "Luotu"
 
 #: kamu/models/account.py:45 kamu/models/account.py:149
 #: kamu/models/identity.py:49 kamu/models/identity.py:290
-#: kamu/models/identity.py:568 kamu/models/identity.py:639
-#: kamu/models/identity.py:713 kamu/models/identity.py:782
+#: kamu/models/identity.py:569 kamu/models/identity.py:640
+#: kamu/models/identity.py:714 kamu/models/identity.py:783
 #: kamu/models/membership.py:123 kamu/models/organisation.py:32
 #: kamu/models/role.py:85 kamu/models/role.py:328 kamu/models/role.py:424
 msgid "Updated at"
@@ -1023,7 +1023,7 @@ msgstr "Sukupuoli"
 msgid "Gender verification method"
 msgstr "Sukupuolen vahvistusmenetelmä"
 
-#: kamu/models/identity.py:264 kamu/models/identity.py:763
+#: kamu/models/identity.py:264 kamu/models/identity.py:764
 #: kamu/templates/identity/identity_combine.html:15
 #: kamu/templates/identity/identity_combine.html:112
 #: kamu/templates/identity/identity_detail.html:29
@@ -1074,98 +1074,98 @@ msgstr "Henkilöllisyys"
 msgid "Identities"
 msgstr "Henkilöllisyydet"
 
-#: kamu/models/identity.py:564
+#: kamu/models/identity.py:565
 msgid "Verification method"
 msgstr "Vahvistusmenetelmä"
 
-#: kamu/models/identity.py:572
+#: kamu/models/identity.py:573
 #: kamu/templates/identity/identity_combine.html:118
 #: kamu/templates/identity/identity_detail.html:27
 #: kamu/templates/identity/identity_verify.html:18
 msgid "Nationality"
 msgstr "Kansalaisuus"
 
-#: kamu/models/identity.py:573
+#: kamu/models/identity.py:574
 msgid "Nationalities"
 msgstr "Kansalaisuudet"
 
-#: kamu/models/identity.py:635 kamu/models/identity.py:709
+#: kamu/models/identity.py:636 kamu/models/identity.py:710
 msgid "Priority"
 msgstr "Prioriteetti"
 
-#: kamu/models/identity.py:636 kamu/models/identity.py:710
-#: kamu/models/identity.py:778
+#: kamu/models/identity.py:637 kamu/models/identity.py:711
+#: kamu/models/identity.py:779
 msgid "Verified at"
 msgstr "Vahvistettu"
 
-#: kamu/models/identity.py:647 kamu/templates/identity/contact_address.html:9
+#: kamu/models/identity.py:648 kamu/templates/identity/contact_address.html:9
 #: kamu/templates/identity/identity_detail.html:64
 msgid "Email addresses"
 msgstr "Sähköpostiosoitteet"
 
-#: kamu/models/identity.py:721 kamu/templates/identity/contact_address.html:58
+#: kamu/models/identity.py:722 kamu/templates/identity/contact_address.html:58
 #: kamu/templates/identity/identity_detail.html:66
 msgid "Phone numbers"
 msgstr "Puhelinnumerot"
 
-#: kamu/models/identity.py:764
+#: kamu/models/identity.py:765
 msgid "eIDAS identifier"
 msgstr "eIDAS-tunniste"
 
-#: kamu/models/identity.py:765
+#: kamu/models/identity.py:766
 msgid "User identifier from organisation"
 msgstr "Organisaatiotunniste"
 
-#: kamu/models/identity.py:766
+#: kamu/models/identity.py:767
 msgid "Google account"
 msgstr "Google-tili"
 
-#: kamu/models/identity.py:767
+#: kamu/models/identity.py:768
 msgid "Microsoft account"
 msgstr "Microsoft-tili"
 
-#: kamu/models/identity.py:768 kamu/templates/identity/identity_combine.html:45
+#: kamu/models/identity.py:769 kamu/templates/identity/identity_combine.html:45
 msgid "Kamu identifier"
 msgstr "Kamu-tunniste"
 
-#: kamu/models/identity.py:769
+#: kamu/models/identity.py:770
 msgid "Person identifier"
 msgstr "Henkilön tunniste"
 
-#: kamu/models/identity.py:770
+#: kamu/models/identity.py:771
 msgid "Government issued ID"
 msgstr "Viranomaisen myöntämä henkilöllisyystodistus"
 
-#: kamu/models/identity.py:771
+#: kamu/models/identity.py:772
 msgid "Other identifier"
 msgstr "Muu tunniste"
 
-#: kamu/models/identity.py:773
+#: kamu/models/identity.py:774
 msgid "Identifier type"
 msgstr "Tunnisteen tyyppi"
 
-#: kamu/models/identity.py:774
+#: kamu/models/identity.py:775
 msgid "Identifier value"
 msgstr "Tunnisteen arvo"
 
-#: kamu/models/identity.py:775
+#: kamu/models/identity.py:776
 msgid "Identifier name"
 msgstr "Tunnisteen nimi"
 
-#: kamu/models/identity.py:776
+#: kamu/models/identity.py:777
 msgid "Valid until"
 msgstr "Voimassa"
 
-#: kamu/models/identity.py:787
+#: kamu/models/identity.py:788
 msgid "Identifier"
 msgstr "Tunniste"
 
-#: kamu/models/identity.py:788 kamu/templates/identity/identity_detail.html:73
+#: kamu/models/identity.py:789 kamu/templates/identity/identity_detail.html:73
 #: kamu/templates/identity/identity_detail.html:120
 msgid "Identifiers"
 msgstr "Tunnisteet"
 
-#: kamu/models/identity.py:805
+#: kamu/models/identity.py:806
 msgid "Invalid eduPersonPrincipalName format."
 msgstr "Virheellinen eduPersonPrincipalNamen muoto."
 
@@ -2479,6 +2479,7 @@ msgstr "Kamu-kirjautumisen vahvistus"
 
 #: kamu/templates/email/membership_add_message.txt:1
 #: kamu/templates/email/membership_require_approval_role_message.txt:1
+#: kamu/templates/email/missing_requirement_message.txt:1
 msgid "Hi"
 msgstr "Hei"
 
@@ -2598,6 +2599,30 @@ msgstr "Rooliin kutsuttu henkilö: %(member)s"
 #: kamu/templates/email/membership_require_approval_role_subject.txt:1
 msgid "New Kamu membership awaits approval"
 msgstr "Uusi Kamu-jäsenyys odottaa hyväksyntää"
+
+#: kamu/templates/email/missing_requirement_message.txt:3
+msgid ""
+"You have mandatory information missing in the University of Helsinki's Kamu "
+"register. You will not be able to activate a new user account, or the "
+"validity and access rights associated with your old user account will not "
+"continue, until you have logged into Kamu to fulfil these missing "
+"requirements:"
+msgstr ""
+"Sinulta puuttuu pakollisia tietoa Helsingin yliopiston Kamu-rekisteristä. Et "
+"saa aktivoitua uutta käyttäjätunnusta tai vanhan käyttäjätunnuksesi "
+"voimassaolo ja käyttövaltuudet eivät jatku, ennen kuin olet käynyt Kamussa "
+"täyttämässä nämä puuttuvat vaatimukset:"
+
+#: kamu/templates/email/missing_requirement_message.txt:7
+msgid ""
+"For more information about Kamu, search for guide 5016 on the Helpdesk's "
+"website."
+msgstr ""
+"Lisätietoja Kamusta saat etsimällä ohjetta 5016 Helpdeskin ohjesivustolta."
+
+#: kamu/templates/email/missing_requirement_subject.txt:1
+msgid "Update your information in the University's Kamu register"
+msgstr "Täydennä tietojasi yliopiston Kamu-rekisterissä"
 
 #: kamu/templates/email/primary_email_changed_message.txt:1
 #, python-format
