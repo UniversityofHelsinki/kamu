@@ -16,7 +16,7 @@ from django_stubs_ext import StrOrPromise
 from kamu.models.contract import ContractTemplate
 from kamu.models.identity import Identity
 from kamu.models.membership import Membership
-from kamu.models.role import Requirement
+from kamu.models.role import CustomAttributeRequirement, Requirement
 from kamu.models.token import Token
 from kamu.utils.audit import AuditLog
 
@@ -133,38 +133,15 @@ def add_missing_requirement_messages(
         Add link if the user is the identity owner or has identity change permissions.
         """
         message: StrOrPromise = ""
-        if requirement.value == "email_address":
-            message = _("The membership requires a verified email address.")
-            if request.user == identity.user:
-                link = _get_link("contact-change", _("Add and verify email address"), {"pk": identity.pk})
-                message = f'<p class="fw-bold">{message}</p>{link}'
-            messages.add_message(request, message_level, message + optional_manager_text, extra_tags="safe")
-            return
-        if requirement.value == "external_email_address":
-            message = _("The membership requires a verified external email address.")
-            if request.user == identity.user:
-                link = _get_link("contact-change", _("Add and verify external email address"), {"pk": identity.pk})
-                message = f'<p class="fw-bold">{message}</p>{link}'
-            messages.add_message(request, message_level, message + optional_manager_text, extra_tags="safe")
-            return
-        if requirement.value == "phone_number":
-            message = _("The membership requires a verified phone number.")
-            if request.user == identity.user:
-                link = _get_link("contact-change", _("Add and verify phone number"), {"pk": identity.pk})
-                message = f'<p class="fw-bold">{message}</p>{link}'
-            messages.add_message(request, message_level, message + optional_manager_text, extra_tags="safe")
-            return
-        if requirement.value == "attributes_for_verification":
-            message = _(
-                "The membership requires either Finnish personal identity code for Suomi.fi e-Identification, "
-                "or date of birth and official names for identification with either an eIDAS-compatible e-ID "
-                "or an official identity document."
-            )
-            if request.user == identity.user:
-                link = _get_link("identity-change", _("Add attributes for identity verification"), {"pk": identity.pk})
-                message = f'<p class="fw-bold">{message}</p>{link}'
-            messages.add_message(request, message_level, message + optional_manager_text, extra_tags="safe")
-            return
+
+        for choice in CustomAttributeRequirement:
+            if requirement.value == choice.attribute:
+                message = choice.help_text
+                if request.user == identity.user:
+                    link = _get_link(choice.link_target, choice.link_text, {"pk": identity.pk})
+                    message = f'<p class="fw-bold">{message}</p>{link}'
+                messages.add_message(request, message_level, message + optional_manager_text, extra_tags="safe")
+                return
         field = Identity._meta.get_field(requirement.value)
         if hasattr(field, "verbose_name"):
             name = field.verbose_name.lower()

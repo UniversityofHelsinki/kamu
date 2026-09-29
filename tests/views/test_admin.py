@@ -332,3 +332,11 @@ class AdminSiteTests(BaseTestCase):
             "Select this object for an action - Test requirement",
             response.content.decode("utf-8"),
         )
+
+    def test_add_attributes_for_verification(self):
+        response = self._test_add_requirement("attribute", "attributes_for_verification", 0)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "Select this object for an action - Test requirement",
+            response.content.decode("utf-8"),
+        )

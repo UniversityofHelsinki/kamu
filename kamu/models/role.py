@@ -4,6 +4,7 @@ Role models.
 
 from __future__ import annotations
 
+from enum import Enum, EnumMeta
 from typing import TYPE_CHECKING
 
 from django.conf import settings
@@ -15,6 +16,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
+from django_stubs_ext import StrOrPromise
 
 from kamu.models.organisation import Organisation
 from kamu.validators.role import validate_role_hierarchy
@@ -384,6 +386,59 @@ class Permission(models.Model):
         }
 
 
+class CustomAttributeRequirement(Enum, metaclass=EnumMeta):
+    """
+    Custom attribute requirements for membership.
+
+    New custom attribute requirements must be defined here and the requirement test must be implemented in the
+    Requirement.test() method.
+    """
+
+    EMAIL_ADDRESS = (
+        "email_address",
+        _("The membership requires a verified email address."),
+        "contact-change",
+        _("Add and verify email address"),
+    )
+    EXTERNAL_EMAIL_ADDRESS = (
+        "external_email_address",
+        _("The membership requires a verified external email address."),
+        "contact-change",
+        _("Add and verify external email address"),
+    )
+    PHONE_NUMBER = (
+        "phone_number",
+        _("The membership requires a verified phone number."),
+        "contact-change",
+        _("Add and verify phone number"),
+    )
+    ATTRIBUTES_FOR_VERIFICATION = (
+        "attributes_for_verification",
+        _(
+            "The membership requires either Finnish personal identity code for Suomi.fi e-Identification, "
+            "or date of birth and official names for identification with either an eIDAS-compatible e-ID "
+            "or an official identity document."
+        ),
+        "identity-change",
+        _("Add attributes for identity verification"),
+    )
+
+    def __new__(cls, *args: StrOrPromise, **kwds: StrOrPromise) -> CustomAttributeRequirement:
+        obj = object.__new__(cls)
+        obj._value_ = args[0]
+        return obj
+
+    def __init__(self, attribute: str, help_text: StrOrPromise, link_target: str, link_text: StrOrPromise):
+        self.attribute: str = attribute
+        self.help_text: StrOrPromise = help_text
+        self.link_target: str = link_target
+        self.link_text: StrOrPromise = link_text
+
+    @classmethod
+    def attributes(cls) -> list[str]:
+        return [member.attribute for member in cls]
+
+
 class Requirement(models.Model):
     """
     Stores a requirement.
@@ -494,7 +549,7 @@ class Requirement(models.Model):
                     {"level": [_("Allowed assurance levels are: %(choices)s.") % {"choices": assurance_levels}]}
                 )
         if self.type == Requirement.Type.ATTRIBUTE:
-            if self.value not in ["phone_number", "email_address", "external_email_address"]:
+            if self.value not in CustomAttributeRequirement.attributes():
                 try:
                     Identity._meta.get_field(self.value)
                 except FieldDoesNotExist:
@@ -524,7 +579,7 @@ class Requirement(models.Model):
         """
         Test if the requirement is met by the identity.
 
-        Fail if the identity is None, or if the requirement type is not recogned.
+        Fail if the identity is None, or if the requirement type is not recognised.
         """
 
         from kamu.models.identity import Identity
@@ -534,13 +589,13 @@ class Requirement(models.Model):
         if self.type == Requirement.Type.CONTRACT:
             return identity.has_contract(self.value, self.level)
         if self.type == Requirement.Type.ATTRIBUTE:
-            if self.value == "phone_number":
+            if self.value == CustomAttributeRequirement.PHONE_NUMBER.attribute:
                 return identity.has_phone_number()
-            if self.value == "email_address":
+            if self.value == CustomAttributeRequirement.EMAIL_ADDRESS.attribute:
                 return identity.has_email_address()
-            if self.value == "external_email_address":
+            if self.value == CustomAttributeRequirement.EXTERNAL_EMAIL_ADDRESS.attribute:
                 return identity.has_email_address(external=True)
-            if self.value == "attributes_for_verification":
+            if self.value == CustomAttributeRequirement.ATTRIBUTES_FOR_VERIFICATION.attribute:
                 return identity.has_attributes_for_verification(self.level)
             return identity.has_attribute(self.value, self.level)
         if self.type == Requirement.Type.ASSURANCE:
