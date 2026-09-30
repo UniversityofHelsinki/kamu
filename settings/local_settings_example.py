@@ -356,3 +356,7 @@ ACCOUNT_RIGHTS_API_URL: str = "https://localhost/accountrights/current"
 # If "primary", the first verified, or first unverified if no verified addresses exist, email address is used.
 # If "verified", all verified addresses are used, and if "all", all verified or unverified addresses are used.
 # NEW_MEMBERSHIP_NOTIFICATION_RECIPIENTS: str = "primary"
+
+# Allow merging identities when both have username defined. Default is False which means only identities
+# without username can be combined with identities with username defined.
+# MERGE_IDENTITIES_WITH_UID_CLASH: bool = False

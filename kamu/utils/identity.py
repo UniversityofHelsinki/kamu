@@ -66,7 +66,9 @@ def combine_identities_requirements(
             _("Source identity cannot have higher assurance level than target."),
         )
         error = True
-    if primary_identity.uid and secondary_identity.uid:
+    if (primary_identity.uid and secondary_identity.uid) and not getattr(
+        settings, "MERGE_IDENTITIES_WITH_UID_CLASH", False
+    ):
         messages.add_message(
             request,
             messages.ERROR,

@@ -1310,6 +1310,15 @@ class IdentityCombineTests(BaseTestCase):
         response = self.client.post(self.url, self.data, follow=True)
         self.assertIn("Cannot combine two identities with uid", response.content.decode("utf-8"))
 
+    @override_settings(MERGE_IDENTITIES_WITH_UID_CLASH=True)
+    def test_combine_two_uid_allowed(self):
+        self.identity.uid = "test"
+        self.identity.save()
+        self.superidentity.uid = "super"
+        self.superidentity.save()
+        response = self.client.post(self.url, self.data, follow=True)
+        self.assertNotIn("Cannot combine two identities with uid", response.content.decode("utf-8"))
+
     @override_settings(ALLOW_TEST_FPIC=True)
     def test_combine_two_fpic(self):
         self.identity.fpic = "010181-900C"
