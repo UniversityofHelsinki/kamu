@@ -25,6 +25,7 @@ from kamu.connectors.email import send_verification_email
 from kamu.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_search
 from kamu.connectors.persondb import Person, PersonAccount
 from kamu.connectors.sms import SmsConnector
+from kamu.models.account import Account
 from kamu.models.contract import Contract
 from kamu.models.identity import (
     Country,
@@ -144,7 +145,7 @@ def _combine_identity_attributes(
 
 def _move_objects_to_primary_identity(
     request: HttpRequest,
-    cls: type[EmailAddress | PhoneNumber | Contract | Identifier | Membership],
+    cls: type[EmailAddress | PhoneNumber | Contract | Identifier | Membership | Account],
     primary_identity: Identity,
     secondary_identity: Identity,
     log_category: "CategoryTypes",
@@ -221,6 +222,15 @@ def combine_identities(request: HttpRequest, primary_identity: Identity, seconda
         primary_identity=primary_identity,
         secondary_identity=secondary_identity,
         log_category="membership",
+        allow_integrity_error=False,
+    )
+    # Move accounts
+    _move_objects_to_primary_identity(
+        request=request,
+        cls=Account,
+        primary_identity=primary_identity,
+        secondary_identity=secondary_identity,
+        log_category="account",
         allow_integrity_error=False,
     )
     # Copy kamu_id as identifier to primary identity

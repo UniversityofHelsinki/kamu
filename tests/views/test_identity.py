@@ -17,6 +17,7 @@ from django.test import Client, override_settings
 from django.utils import timezone
 from requests import Response
 
+from kamu.models.account import Account
 from kamu.models.contract import Contract, ContractTemplate
 from kamu.models.identity import (
     EmailAddress,
@@ -1176,6 +1177,16 @@ class IdentityCombineTests(BaseTestCase):
             start_date=timezone.now().date(),
             expire_date=timezone.now().date() + datetime.timedelta(days=5),
         )
+        Account.objects.create(
+            identity=self.identity,
+            type=Account.Type.LIGHT,
+            uid="useraccount",
+        )
+        Account.objects.create(
+            identity=self.superidentity,
+            type=Account.Type.ACCOUNT,
+            uid="superuseraccount",
+        )
 
     def test_view_combine_identities_without_access(self):
         self.client.force_login(self.user)
@@ -1224,6 +1235,7 @@ class IdentityCombineTests(BaseTestCase):
         self.assertEqual(self.superidentity.email_addresses.all().count(), 3)
         self.assertEqual(self.superidentity.contracts.all().count(), 3)
         self.assertEqual(self.superidentity.identifiers.all().count(), 3)
+        self.assertEqual(self.superidentity.useraccount.all().count(), 2)
         self.assertTrue(
             Identifier.objects.filter(identity=self.superidentity, type=Identifier.Type.KAMU, value=kamu_id).exists()
         )
