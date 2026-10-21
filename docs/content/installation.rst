@@ -4,8 +4,8 @@ Installation and configuration
 Requirements
 ------------
 
-- Python 3.10 or later
-- MariaDB 10.4+ or PostgreSQL 14+
+- Python 3.11 or later
+- MariaDB 10.5+ or PostgreSQL 14+
    - Any database supported by Django can be used, just install the appropriate database driver and update local_settings.py accordingly.
 
 Some system libraries are required to install necessary Python dependencies:
