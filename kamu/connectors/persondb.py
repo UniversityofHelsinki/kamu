@@ -181,6 +181,9 @@ class PersonDBApiConnector(ApiConnector):
         for address_field in ["email", "extEmail"]:
             address = result.get(address_field)
             if address:
+                if not isinstance(address, str):
+                    logger.error(f"Invalid email address format received from PersonDB: {address}.")
+                    continue
                 try:
                     validate_email(address)
                 except ValidationError:
@@ -201,6 +204,9 @@ class PersonDBApiConnector(ApiConnector):
         for number_field in ["mobilePhoneWork", "mobilePhonePersonal"]:
             data = result.get(number_field, "")
             if not data:
+                continue
+            if not isinstance(data, str):
+                logger.error(f"Invalid phone number format received from PersonDB: {data}.")
                 continue
             number = data.strip().replace(" ", "")
             try:
@@ -279,7 +285,7 @@ class PersonDBApiConnector(ApiConnector):
             return None
         try:
             return date.fromisoformat(date_string)
-        except ValueError:
+        except (ValueError, TypeError):
             logger.error(f"Invalid date format received from PersonDB: {date_string}.")
             return None
 
@@ -288,6 +294,9 @@ class PersonDBApiConnector(ApiConnector):
         Parse nationality string to Country.
         """
         if not nationality:
+            return None
+        if not isinstance(nationality, str) or len(nationality) != 2:
+            logger.error(f"Invalid nationality code received from PersonDB: {nationality}.")
             return None
         try:
             return Country.objects.get(code=nationality.upper())
