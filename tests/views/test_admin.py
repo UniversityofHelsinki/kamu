@@ -166,6 +166,24 @@ class AdminSiteTests(BaseTestCase):
             ]
         )
 
+    @override_settings(ROLE_IAM_GROUP_MAX_LENGTH=15)
+    def test_role_iam_group_validation(self):
+        url = f"{self.url}role/add/"
+        role_data = ROLES["guest_student"]
+        role_data.pop("organisation", None)
+        role_data.update(self.created_at)
+        role_data.update({"iam_group": "invalid_group"})
+        response = self.client.post(url, role_data, follow=True)
+        self.assertIn(
+            "IAM Group must contain only lowercase letters, numbers and hyphens", response.content.decode("utf-8")
+        )
+        role_data.update({"iam_group": "0123456789-abcde"})
+        response = self.client.post(url, role_data, follow=True)
+        self.assertIn("IAM Group must be at most 15 characters long", response.content.decode("utf-8"))
+        role_data.update({"iam_group": "0123456789-abcd"})
+        response = self.client.post(url, role_data, follow=True)
+        self.assertNotIn("IAM Group must", response.content.decode("utf-8"))
+
     @patch("kamu.utils.audit.logger_audit.log")
     def test_admin_logging_modify(self, mock_audit_logger):
         self.create_identity(email=True)

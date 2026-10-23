@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 14:25+0300\n"
+"POT-Creation-Date: 2026-10-23 13:23+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -728,7 +728,7 @@ msgstr "Suljettu"
 #: kamu/models/identity.py:568 kamu/models/identity.py:639
 #: kamu/models/identity.py:713 kamu/models/identity.py:782
 #: kamu/models/membership.py:122 kamu/models/organisation.py:31
-#: kamu/models/role.py:86 kamu/models/role.py:329 kamu/models/role.py:475
+#: kamu/models/role.py:86 kamu/models/role.py:348 kamu/models/role.py:497
 #: kamu/models/token.py:321
 msgid "Created at"
 msgstr "Luotu"
@@ -738,11 +738,11 @@ msgstr "Luotu"
 #: kamu/models/identity.py:569 kamu/models/identity.py:640
 #: kamu/models/identity.py:714 kamu/models/identity.py:783
 #: kamu/models/membership.py:123 kamu/models/organisation.py:32
-#: kamu/models/role.py:87 kamu/models/role.py:330 kamu/models/role.py:476
+#: kamu/models/role.py:87 kamu/models/role.py:349 kamu/models/role.py:498
 msgid "Updated at"
 msgstr "Päivitetty"
 
-#: kamu/models/account.py:53 kamu/models/role.py:307
+#: kamu/models/account.py:53 kamu/models/role.py:326
 #: kamu/templates/account/account_detail.html:8
 #: kamu/templates/identity/identity_search.html:18
 #: kamu/templates/identity/identity_search.html:67
@@ -1362,14 +1362,14 @@ msgstr "Kutsujaryhmät"
 msgid "Approver groups"
 msgstr "Hyväksyjäryhmät"
 
-#: kamu/models/role.py:69 kamu/models/role.py:335
+#: kamu/models/role.py:69 kamu/models/role.py:354
 #: kamu/templates/membership/membership_detail.html:23
 #: kamu/templates/membership/membership_invite.html:17
 #: kamu/templates/role/role_detail.html:13
 msgid "Permissions"
 msgstr "Valtuudet"
 
-#: kamu/models/role.py:71 kamu/models/role.py:326 kamu/models/role.py:484
+#: kamu/models/role.py:71 kamu/models/role.py:345 kamu/models/role.py:506
 #: kamu/templates/role/role_detail.html:16
 msgid "Requirements"
 msgstr "Vaatimukset"
@@ -1411,83 +1411,93 @@ msgstr "Rooli"
 msgid "Roles"
 msgstr "Roolit"
 
-#: kamu/models/role.py:304
+#: kamu/models/role.py:164
+msgid "IAM Group must be at most %(max_length)d characters long."
+msgstr "IAM-ryhmän nimen on oltava enintään %(max_length)d merkkiä pitkä."
+
+#: kamu/models/role.py:170
+msgid "IAM Group must contain only lowercase letters, numbers and hyphens."
+msgstr ""
+"IAM-ryhmän nimen on sisältää vain pieniä kirjaimia, numeroita ja "
+"yhdysmerkkejä."
+
+#: kamu/models/role.py:323
 msgid "Permission identifier"
 msgstr "Oikeuden tunniste"
 
-#: kamu/models/role.py:308
+#: kamu/models/role.py:327
 msgid "Generic permission"
 msgstr "Yleinen oikeus"
 
-#: kamu/models/role.py:309
+#: kamu/models/role.py:328
 msgid "Service"
 msgstr "Palvelu"
 
-#: kamu/models/role.py:312
+#: kamu/models/role.py:331
 msgid "Permission type"
 msgstr "Oikeuden tyyppi"
 
-#: kamu/models/role.py:315
+#: kamu/models/role.py:334
 msgid "Permission name (fi)"
 msgstr "Oikeuden nimi (fi)"
 
-#: kamu/models/role.py:316
+#: kamu/models/role.py:335
 msgid "Permission name (en)"
 msgstr "Oikeuden nimi (en)"
 
-#: kamu/models/role.py:317
+#: kamu/models/role.py:336
 msgid "Permission name (sv)"
 msgstr "Oikeuden nimi (se)"
 
-#: kamu/models/role.py:318
+#: kamu/models/role.py:337
 msgid "Permission description (fi)"
 msgstr "Oikeuden kuvaus (fi)"
 
-#: kamu/models/role.py:319
+#: kamu/models/role.py:338
 msgid "Permission description (en)"
 msgstr "Oikeuden kuvaus (en)"
 
-#: kamu/models/role.py:320
+#: kamu/models/role.py:339
 msgid "Permission description (sv)"
 msgstr "Oikeuden kuvaus (se)"
 
-#: kamu/models/role.py:322
+#: kamu/models/role.py:341
 msgid "Permission cost"
 msgstr "Oikeuden hinta"
 
-#: kamu/models/role.py:323
+#: kamu/models/role.py:342
 msgid "Permission value"
 msgstr "Oikeuden arvo"
 
-#: kamu/models/role.py:334
+#: kamu/models/role.py:353
 msgid "Permission"
 msgstr "Oikeus"
 
-#: kamu/models/role.py:396
+#: kamu/models/role.py:418
 msgid "The membership requires a verified email address."
 msgstr "Jäsenyys vaatii vahvistetun sähköpostiosoitteen."
 
-#: kamu/models/role.py:398
+#: kamu/models/role.py:420
 msgid "Add and verify email address"
 msgstr "Lisää ja vahvista sähköpostiosoite"
 
-#: kamu/models/role.py:402
+#: kamu/models/role.py:424
 msgid "The membership requires a verified external email address."
 msgstr "Jäsenyys vaatii vahvistetun ulkoisen sähköpostiosoitteen."
 
-#: kamu/models/role.py:404
+#: kamu/models/role.py:426
 msgid "Add and verify external email address"
 msgstr "Lisää ja vahvista ulkoinen sähköpostiosoite"
 
-#: kamu/models/role.py:408
+#: kamu/models/role.py:430
 msgid "The membership requires a verified phone number."
 msgstr "Jäsenyys vaatii vahvistetun puhelinnumeron."
 
-#: kamu/models/role.py:410
+#: kamu/models/role.py:432
 msgid "Add and verify phone number"
 msgstr "Lisää ja vahvista puhelinnumero"
 
-#: kamu/models/role.py:415
+#: kamu/models/role.py:437
 msgid ""
 "The membership requires either Finnish personal identity code for Suomi.fi e-"
 "Identification, or date of birth and official names for identification with "
@@ -1497,51 +1507,51 @@ msgstr ""
 "varten, tai syntymäajan ja viralliset nimet tunnistautumiseen joko eIDAS-"
 "tunnistuksella tai virallisella henkilöllisyystodistuksella."
 
-#: kamu/models/role.py:420
+#: kamu/models/role.py:442
 msgid "Add attributes for identity verification"
 msgstr "Lisää käyttäjätiedot henkilöllisyyden vahvistusta varten."
 
-#: kamu/models/role.py:444
+#: kamu/models/role.py:466
 msgid "Requirement name (fi)"
 msgstr "Vaatimuksen nimi (fi)"
 
-#: kamu/models/role.py:445
+#: kamu/models/role.py:467
 msgid "Requirement name (en)"
 msgstr "Vaatimuksen nimi (en)"
 
-#: kamu/models/role.py:446
+#: kamu/models/role.py:468
 msgid "Requirement name (sv)"
 msgstr "Vaatimuksen nimi (se)"
 
-#: kamu/models/role.py:449
+#: kamu/models/role.py:471
 msgid "Requires a signed contract of type (value)"
 msgstr "Vaatii allekirjoitetun sopimuksen tyypistä (arvo)"
 
-#: kamu/models/role.py:450
+#: kamu/models/role.py:472
 msgid "User attribute (value) is defined"
 msgstr "Käyttäjätiedon (arvo) on määritetty"
 
-#: kamu/models/role.py:451
+#: kamu/models/role.py:473
 msgid "Assurance level at least level"
 msgstr "Varmuustason minimitaso"
 
-#: kamu/models/role.py:452
+#: kamu/models/role.py:474
 msgid "External requirement"
 msgstr "Ulkoinen vaatimus"
 
-#: kamu/models/role.py:454
+#: kamu/models/role.py:476
 msgid "Requirement type"
 msgstr "Vaatimuksen tyyppi"
 
-#: kamu/models/role.py:458
+#: kamu/models/role.py:480
 msgid "Requirement value"
 msgstr "Vaatimuksen arvo"
 
-#: kamu/models/role.py:462
+#: kamu/models/role.py:484
 msgid "Level or version required"
 msgstr "Vaadittu taso tai versio"
 
-#: kamu/models/role.py:464
+#: kamu/models/role.py:486
 msgid ""
 "Require a minimum level of assurance or attribute verification level, or a "
 "minimum version of contract. Contract level must be a positive integer. "
@@ -1555,40 +1565,40 @@ msgstr ""
 "käyttäjätiedon vahvistustasot ovat välillä 10 (itse vakuutettu) – 40 (vahva "
 "sähköinen tunnistautuminen)"
 
-#: kamu/models/role.py:471
+#: kamu/models/role.py:493
 msgid "Grace period (days)"
 msgstr "Armonaika (päivissä)"
 
-#: kamu/models/role.py:472
+#: kamu/models/role.py:494
 msgid "Grace period (days) before membership status is changed."
 msgstr "Armonaika (päivissä) ennen kuin jäsenyyden tila vaihdetaan."
 
-#: kamu/models/role.py:483
+#: kamu/models/role.py:505
 msgid "Requirement"
 msgstr "Vaatimus"
 
-#: kamu/models/role.py:532
+#: kamu/models/role.py:554
 msgid "Contract requirement needs contract type as a value."
 msgstr "Vaadittu sopimus vaatii sopimustyypin arvoksi."
 
-#: kamu/models/role.py:534
+#: kamu/models/role.py:556
 msgid "Contract version must be a positive integer."
 msgstr "Sopimuksen version tulee olla positiivinen kokonaisluku."
 
-#: kamu/models/role.py:546
+#: kamu/models/role.py:568
 #, python-format
 msgid "Allowed assurance levels are: %(choices)s."
 msgstr "Sallitut varmuustasot ovat: %(choices)s."
 
-#: kamu/models/role.py:553
+#: kamu/models/role.py:575
 msgid "Invalid attribute name."
 msgstr "Virheellinen käyttäjätiedon nimi."
 
-#: kamu/models/role.py:558
+#: kamu/models/role.py:580
 msgid "Attribute does not have verification level."
 msgstr "Käyttäjätiedolla ei ole vahvistustasoa."
 
-#: kamu/models/role.py:572
+#: kamu/models/role.py:594
 #, python-format
 msgid "Allowed levels are: %(choices)s."
 msgstr "Sallitut tasot ovat: %(choices)s."
@@ -4158,16 +4168,16 @@ msgstr "Suorita haku saadaksesi tuloksia."
 msgid "Manage account"
 msgstr "Hallinnoi tunnusta"
 
-#: kamu/utils/identity.py:58
+#: kamu/utils/identity.py:59
 msgid "Cannot combine identity with itself."
 msgstr "Et voi yhdistää henkilöllisyyttä siihen itseensä."
 
-#: kamu/utils/identity.py:65
+#: kamu/utils/identity.py:66
 msgid "Source identity cannot have higher assurance level than target."
 msgstr ""
 "Lähdehenkilöllisyydellä ei voi olla korkeampaa varmuustasoa kuin kohteella."
 
-#: kamu/utils/identity.py:72
+#: kamu/utils/identity.py:75
 msgid ""
 "Cannot combine two identities with uid. Please remove uid from the source "
 "first."
@@ -4175,7 +4185,7 @@ msgstr ""
 "Et voi yhdistää kahta henkilöllisyyttä UID:n kanssa. Poista UID ensin "
 "lähteestä."
 
-#: kamu/utils/identity.py:80
+#: kamu/utils/identity.py:83
 msgid ""
 "Cannot combine two identities with Finnish personal identity code. Please "
 "remove FPIC from the source first."
@@ -4183,16 +4193,16 @@ msgstr ""
 "Et voi yhdistää kahta henkilöllisyyttä suomalaisella henkilötunnuksella. "
 "Poista henkilötunnus ensin lähteestä."
 
-#: kamu/utils/identity.py:89
+#: kamu/utils/identity.py:92
 msgid "Source identity is linked to user and target identity is not."
 msgstr ""
 "Lähdehenkilöllisyys on liitetty käyttäjään ja kohdehenkilöllisyyttä ei ole."
 
-#: kamu/utils/identity.py:100
+#: kamu/utils/identity.py:103
 msgid "Current user's identity cannot be the source identity."
 msgstr "Nykyisen käyttäjän henkilöllisyys ei voi olla lähdehenkilöllisyys."
 
-#: kamu/utils/identity.py:341
+#: kamu/utils/identity.py:353
 msgid ""
 "Could not import user information from the user directory, please try again "
 "later."
@@ -4200,7 +4210,7 @@ msgstr ""
 "Käyttäjätietoja ei voitu tuoda käyttäjähakemistosta, yritä myöhemmin "
 "uudelleen."
 
-#: kamu/utils/identity.py:555 kamu/views/identity.py:715
+#: kamu/utils/identity.py:567 kamu/views/identity.py:715
 msgid ""
 "You tried to send a new code too soon. Please wait one minute before trying "
 "again. Please also check your spam folder."
@@ -4208,7 +4218,7 @@ msgstr ""
 "Yritit lähettää uuden koodin liian pian. Ole hyvä ja odota yksi minuutti "
 "ennen uutta yritystä. Tarkista myös sähköpostisi roskapostikansio."
 
-#: kamu/utils/identity.py:565 kamu/views/identity.py:728
+#: kamu/utils/identity.py:577 kamu/views/identity.py:728
 msgid ""
 "The verification code has now been sent and should arrive in your email in a "
 "few minutes. If you do not receive a verification code, please check your "
@@ -4218,26 +4228,26 @@ msgstr ""
 "muutamassa minuutissa. Mikäli et saa vahvistuskoodia, tarkista myös "
 "roskapostikansiosi."
 
-#: kamu/utils/identity.py:571
+#: kamu/utils/identity.py:583
 msgid "Failed to send verification code."
 msgstr "Vahvistuskoodin lähetys epäonnistui."
 
-#: kamu/utils/identity.py:583 kamu/views/auth.py:640 kamu/views/auth.py:663
+#: kamu/utils/identity.py:595 kamu/views/auth.py:640 kamu/views/auth.py:663
 msgid "Tried to send a new code too soon. Please try again in one minute."
 msgstr ""
 "Yritit lähettää uuden koodin liian pian. Ole hyvä ja odota yksi minuutti "
 "ennen uutta yritystä."
 
-#: kamu/utils/identity.py:589 kamu/views/identity.py:777
+#: kamu/utils/identity.py:601 kamu/views/identity.py:777
 #, python-format
 msgid "Your personal Kamu verification code is: %(token)s"
 msgstr "Henkilökohtainen Kamu-vahvistuskoodisi on: %(token)s"
 
-#: kamu/utils/identity.py:592 kamu/views/auth.py:666 kamu/views/identity.py:780
+#: kamu/utils/identity.py:604 kamu/views/auth.py:666 kamu/views/identity.py:780
 msgid "Could not send an SMS message."
 msgstr "Tekstiviestin lähetys epäonnistui."
 
-#: kamu/utils/identity.py:597 kamu/views/identity.py:785
+#: kamu/utils/identity.py:609 kamu/views/identity.py:785
 msgid ""
 "The verification code has now been sent and should arrive in your phone in a "
 "few minutes."
@@ -4245,15 +4255,15 @@ msgstr ""
 "Vahvistuskoodi on nyt lähetetty ja sen pitäisi saapua puhelimeesi muutamassa "
 "minuutissa."
 
-#: kamu/utils/identity.py:637
+#: kamu/utils/identity.py:649
 msgid "Email address is required."
 msgstr "Sähköpostiosoite vaaditaan."
 
-#: kamu/utils/identity.py:690
+#: kamu/utils/identity.py:702
 msgid "Phone number is required."
 msgstr "Puhelinnumero vaaditaan."
 
-#: kamu/utils/identity.py:810
+#: kamu/utils/identity.py:822
 msgid ""
 "Suspected duplicate user. Finnish personal identity code already exists in "
 "the database: "
@@ -4261,7 +4271,7 @@ msgstr ""
 "Mahdollinen duplikaattikäyttäjä. Suomalainen henkilötunnus on jo olemassa "
 "tietokannassa: "
 
-#: kamu/utils/identity.py:832
+#: kamu/utils/identity.py:844
 msgid ""
 "You already have a Finnish personal identity code that differs from the one "
 "you are trying to add. Please contact support if you need to change your "
@@ -4270,16 +4280,16 @@ msgstr ""
 "Sinulla on jo suomalainen henkilötunnus, joka poikkeaa siitä, jota yrität "
 "lisätä. Ota yhteyttä tukeen, jos sinun tarvitsee muuttaa henkilötunnustasi: "
 
-#: kamu/utils/identity.py:912
+#: kamu/utils/identity.py:924
 #, python-format
 msgid "You can activate a new user account of type \"%(account_type)s\"."
 msgstr "Voit aktivoida uuden käyttäjätunnuksen tyyppiä \"%(account_type)s\"."
 
-#: kamu/utils/identity.py:917
+#: kamu/utils/identity.py:929
 msgid "Activate account"
 msgstr "Aktivoi käyttäjätunnus"
 
-#: kamu/utils/identity.py:932
+#: kamu/utils/identity.py:944
 msgid "Continue to external service to activate account"
 msgstr "Jatka ulkoiseen palveluun tunnuksen aktivoimiseksi"
 

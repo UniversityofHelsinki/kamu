@@ -4,6 +4,7 @@ Role models.
 
 from __future__ import annotations
 
+import re
 from enum import Enum, EnumMeta
 from typing import TYPE_CHECKING
 
@@ -71,7 +72,7 @@ class Role(models.Model):
         "kamu.Requirement", related_name="role_requirements", verbose_name=_("Requirements"), blank=True
     )
 
-    iam_group = models.CharField(max_length=20, blank=True, verbose_name=_("IAM Group"))
+    iam_group = models.CharField(max_length=100, blank=True, verbose_name=_("IAM Group"))
 
     require_sms_verification = models.BooleanField(default=False, verbose_name=_("Requires SMS verification"))
     maximum_duration = models.IntegerField(verbose_name=_("Maximum duration (days)"))
@@ -150,6 +151,28 @@ class Role(models.Model):
         """
         if self.parent:
             validate_role_hierarchy(ValidationError, self, self.parent)
+        self.clean_iam_group()
+
+    def clean_iam_group(self) -> None:
+        """
+        Checks maximum length for IAM group name and that is alphanumeric and contains only
+        lowercase letters, numbers and hyphens.
+        """
+        if not self.iam_group:
+            return
+        iam_group_max_length = getattr(settings, "ROLE_IAM_GROUP_MAX_LENGTH", 32)
+        if len(self.iam_group) > iam_group_max_length:
+            raise ValidationError(
+                {
+                    "iam_group": _("IAM Group must be at most %(max_length)d characters long.")
+                    % {"max_length": iam_group_max_length}
+                }
+            )
+        disallowed_character_regex = getattr(settings, "ROLE_IAM_GROUP_DISALLOWED_CHARACTER_REGEX", r"[^-0-9a-z]")
+        if re.search(disallowed_character_regex, self.iam_group):
+            raise ValidationError(
+                {"iam_group": _("IAM Group must contain only lowercase letters, numbers and hyphens.")}
+            )
 
     def get_absolute_url(self) -> str:
         """

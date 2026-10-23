@@ -85,6 +85,11 @@ MASS_INVITE_PERMISSION_GROUPS: dict[str, int] = {
 # Role hierarchy maximum depth, 1 = no hierarchy, 2 = parent and child, etc.
 ROLE_HIERARCHY_MAXIMUM_DEPTH: int = 4
 
+# Maximum length for group name in role.
+ROLE_IAM_GROUP_MAX_LENGTH: int = 32
+# Disallowed characters search regex for group name in role. Characters matching this regex cause rejection.
+ROLE_IAM_GROUP_DISALLOWED_CHARACTER_REGEX: str = r"[^-0-9a-z]"
+
 # Path to static files for collection
 STATIC_ROOT: str = "/path/to/rr/static/"
 
