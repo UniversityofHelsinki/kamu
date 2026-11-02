@@ -1109,8 +1109,9 @@ msgstr ""
 msgid "Missing requirements"
 msgstr ""
 
-#: kamu/models/membership.py:58
-msgid "Waiting approval"
+#: kamu/models/membership.py:58 kamu/templates/base.html:36
+#: kamu/templates/front.html:37
+msgid "Pending approval"
 msgstr ""
 
 #: kamu/models/membership.py:59
@@ -2072,10 +2073,6 @@ msgstr ""
 #: kamu/templates/base.html:30 kamu/templates/front.html:71
 #: kamu/templates/front.html:73
 msgid "My information"
-msgstr ""
-
-#: kamu/templates/base.html:36 kamu/templates/front.html:37
-msgid "Pending approval"
 msgstr ""
 
 #: kamu/templates/base.html:37 kamu/templates/front.html:40
@@ -3343,15 +3340,14 @@ msgstr ""
 #: kamu/templates/membership/membership_detail.html:152
 #: kamu/templates/membership/membership_expiring_list.html:22
 #: kamu/templates/membership/membership_managed_list.html:13
-#: kamu/templates/role/role_detail.html:66
-msgid "Person"
+msgid "Member"
 msgstr ""
 
 #: kamu/templates/membership/membership_approval_list.html:22
 #: kamu/templates/membership/membership_detail.html:69
 #: kamu/templates/membership/membership_expiring_list.html:24
 #: kamu/templates/membership/verification_form.html:13
-msgid "Inviter"
+msgid "Invited by"
 msgstr ""
 
 #: kamu/templates/membership/membership_approval_list.html:45
@@ -3439,7 +3435,7 @@ msgid "Expiry date"
 msgstr ""
 
 #: kamu/templates/membership/membership_detail.html:67
-msgid "Approver"
+msgid "Approved by"
 msgstr ""
 
 #: kamu/templates/membership/membership_detail.html:71
@@ -3768,6 +3764,10 @@ msgstr ""
 #: kamu/templates/role/role_detail.html:58
 #, python-format
 msgid "Invite multiple members (max %(limit)s)"
+msgstr ""
+
+#: kamu/templates/role/role_detail.html:66
+msgid "Person"
 msgstr ""
 
 #: kamu/templates/role/role_list.html:5

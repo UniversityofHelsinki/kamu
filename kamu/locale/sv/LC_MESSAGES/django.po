@@ -1174,8 +1174,9 @@ msgstr "Inbjuden"
 msgid "Missing requirements"
 msgstr "Krav saknas"
 
-#: kamu/models/membership.py:58
-msgid "Waiting approval"
+#: kamu/models/membership.py:58 kamu/templates/base.html:36
+#: kamu/templates/front.html:37
+msgid "Pending approval"
 msgstr "Väntar på godkännande"
 
 #: kamu/models/membership.py:59
@@ -2202,10 +2203,6 @@ msgstr "Växla navigation"
 #: kamu/templates/front.html:73
 msgid "My information"
 msgstr "Mina uppgifter"
-
-#: kamu/templates/base.html:36 kamu/templates/front.html:37
-msgid "Pending approval"
-msgstr "Väntar på godkännande"
 
 #: kamu/templates/base.html:37 kamu/templates/front.html:40
 #: kamu/templates/front.html:43
@@ -3671,16 +3668,15 @@ msgstr "Inkludera medlemskap i roller som jag endast kan bjuda in till"
 #: kamu/templates/membership/membership_detail.html:152
 #: kamu/templates/membership/membership_expiring_list.html:22
 #: kamu/templates/membership/membership_managed_list.html:13
-#: kamu/templates/role/role_detail.html:66
-msgid "Person"
-msgstr "Person"
+msgid "Member"
+msgstr "Medlem"
 
 #: kamu/templates/membership/membership_approval_list.html:22
 #: kamu/templates/membership/membership_detail.html:69
 #: kamu/templates/membership/membership_expiring_list.html:24
 #: kamu/templates/membership/verification_form.html:13
-msgid "Inviter"
-msgstr "Inbjudare"
+msgid "Invited by"
+msgstr "Inbjuden av"
 
 #: kamu/templates/membership/membership_approval_list.html:45
 msgid "No pending memberships. All requests have been processed."
@@ -3768,8 +3764,8 @@ msgid "Expiry date"
 msgstr "Utgångsdatum"
 
 #: kamu/templates/membership/membership_detail.html:67
-msgid "Approver"
-msgstr "Godkännare"
+msgid "Approved by"
+msgstr "Godkänd av"
 
 #: kamu/templates/membership/membership_detail.html:71
 msgid "Reasons"
@@ -4138,6 +4134,10 @@ msgstr "Gå med"
 #, python-format
 msgid "Invite multiple members (max %(limit)s)"
 msgstr "Bjud in flera medlemmar (max %(limit)s)"
+
+#: kamu/templates/role/role_detail.html:66
+msgid "Person"
+msgstr "Person"
 
 #: kamu/templates/role/role_list.html:5
 msgid "Role list"

@@ -10,7 +10,7 @@
     <dd class="col-sm-8">{{ membership.role }}</dd>
     <dt class="col-sm-4">{% trans "Verification phone number" %}</dt>
     <dd class="col-sm-8">{{ membership.verify_phone_number }}</dd>
-    <dt class="col-sm-4">{% trans "Inviter" %}</dt>
+    <dt class="col-sm-4">{% trans "Invited by" %}</dt>
     <dd class="col-sm-8">{{ membership.inviter.get_full_name|default:"&nbsp;" }}</dd>
   </dl>
   {% if code_sent %}

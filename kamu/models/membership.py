@@ -55,7 +55,7 @@ class Membership(models.Model):
     class Status(models.TextChoices):
         INVITED = ("invited", _("Invited"))
         REQUIRE = ("require", _("Missing requirements"))
-        APPROVAL = ("approval", _("Waiting approval"))
+        APPROVAL = ("approval", _("Pending approval"))
         PENDING = ("pending", _("Pending"))
         ACTIVE = ("active", _("Active"))
         EXPIRED = ("expired", _("Expired"))

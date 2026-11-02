@@ -31,7 +31,7 @@
       </dl>
     </div>
     <div class="col-xl-6">
-      <h2>{% trans "Person" %}</h2>
+      <h2>{% trans "Member" %}</h2>
       {% if object.identity %}
         <dl class="row">
           <dt class="col-sm-4">{% trans "Name" %}</dt>
@@ -64,9 +64,9 @@
         <dd class="col-sm-8">{{ object.start_date }}</dd>
         <dt class="col-sm-4">{% if object.cancelled_at %}{% trans "Cancelled at" %}{% else %}{% trans "Expiry date" %}{% endif %}</dt>
         <dd class="col-sm-8">{% if object.cancelled_at %}{{ object.cancelled_at }}{% else %}{{ object.expire_date }}{% endif %}</dd>
-        <dt class="col-sm-4">{% trans "Approver" %}</dt>
+        <dt class="col-sm-4">{% trans "Approved by" %}</dt>
         <dd class="col-sm-8">{{ object.approver.get_full_name|default:"&nbsp;" }}</dd>
-        <dt class="col-sm-4">{% trans "Inviter" %}</dt>
+        <dt class="col-sm-4">{% trans "Invited by" %}</dt>
         <dd class="col-sm-8">{{ object.inviter.get_full_name|default:"&nbsp;" }}</dd>
         <dt class="col-sm-4">{% trans "Reasons" %}</dt>
         <dd class="col-sm-8">{{ object.reason }}</dd>
@@ -92,7 +92,7 @@
                         <dl class="row">
                           <dt class="col-sm-4">{% trans "Role" %}</dt>
                           <dd class="col-sm-8">{{ object.role }}</dd>
-                          <dt class="col-sm-4">{% trans "Person" %}</dt>
+                          <dt class="col-sm-4">{% trans "Member" %}</dt>
                           <dd class="col-sm-8">{{ object.identity }}</dd>
                           <dt class="col-sm-4">{% trans "Expiration date" %}</dt>
                           <dd class="col-sm-8">{% now "DATE_FORMAT" %}</dd>
@@ -122,7 +122,7 @@
                         <dl class="row">
                           <dt class="col-sm-4">{% trans "Role" %}</dt>
                           <dd class="col-sm-8">{{ object.role }}</dd>
-                          <dt class="col-sm-4">{% trans "Person" %}</dt>
+                          <dt class="col-sm-4">{% trans "Member" %}</dt>
                           <dd class="col-sm-8">{{ object.identity }}</dd>
                           <dt class="col-sm-4">{% trans "Expiration date" %}</dt>
                           <dd class="col-sm-8">{% now "DATE_FORMAT" %}</dd>
@@ -149,7 +149,7 @@
                         <dl class="row">
                           <dt class="col-sm-4">{% trans "Role" %}</dt>
                           <dd class="col-sm-8">{{ object.role }}</dd>
-                          <dt class="col-sm-4">{% trans "Person" %}</dt>
+                          <dt class="col-sm-4">{% trans "Member" %}</dt>
                           <dd class="col-sm-8">{{ object.identity }}</dd>
                           <dt class="col-sm-4">{% trans "Expiration date" %}</dt>
                           <dd class="col-sm-8">{% now "DATE_FORMAT" %}</dd>

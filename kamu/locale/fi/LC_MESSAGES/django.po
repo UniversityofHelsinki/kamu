@@ -1180,8 +1180,9 @@ msgstr "Kutsuttu"
 msgid "Missing requirements"
 msgstr "Puuttuvia vaatimuksia"
 
-#: kamu/models/membership.py:58
-msgid "Waiting approval"
+#: kamu/models/membership.py:58 kamu/templates/base.html:36
+#: kamu/templates/front.html:37
+msgid "Pending approval"
 msgstr "Odottaa hyväksyntää"
 
 #: kamu/models/membership.py:59
@@ -2207,10 +2208,6 @@ msgstr "Valikko"
 #: kamu/templates/front.html:73
 msgid "My information"
 msgstr "Omat tietoni"
-
-#: kamu/templates/base.html:36 kamu/templates/front.html:37
-msgid "Pending approval"
-msgstr "Odottaa hyväksyntää"
 
 #: kamu/templates/base.html:37 kamu/templates/front.html:40
 #: kamu/templates/front.html:43
@@ -3671,15 +3668,14 @@ msgstr "Näytä jäsenyydet myös rooleihin, joihin voin vain kutsua"
 #: kamu/templates/membership/membership_detail.html:152
 #: kamu/templates/membership/membership_expiring_list.html:22
 #: kamu/templates/membership/membership_managed_list.html:13
-#: kamu/templates/role/role_detail.html:66
-msgid "Person"
-msgstr "Henkilö"
+msgid "Member"
+msgstr "Jäsen"
 
 #: kamu/templates/membership/membership_approval_list.html:22
 #: kamu/templates/membership/membership_detail.html:69
 #: kamu/templates/membership/membership_expiring_list.html:24
 #: kamu/templates/membership/verification_form.html:13
-msgid "Inviter"
+msgid "Invited by"
 msgstr "Kutsuja"
 
 #: kamu/templates/membership/membership_approval_list.html:45
@@ -3769,7 +3765,7 @@ msgid "Expiry date"
 msgstr "Päättymispäivä"
 
 #: kamu/templates/membership/membership_detail.html:67
-msgid "Approver"
+msgid "Approved by"
 msgstr "Hyväksyjä"
 
 #: kamu/templates/membership/membership_detail.html:71
@@ -4137,6 +4133,10 @@ msgstr "Liity"
 #, python-format
 msgid "Invite multiple members (max %(limit)s)"
 msgstr "Kutsu useita jäseniä (enintään %(limit)s)"
+
+#: kamu/templates/role/role_detail.html:66
+msgid "Person"
+msgstr "Henkilö"
 
 #: kamu/templates/role/role_list.html:5
 msgid "Role list"
