@@ -3,9 +3,16 @@
 
 {% block content %}
   <h1 id="members-list" class="mb-4">{% trans "Memberships pending approval" %}</h1>
-  <p class="text-break">{% blocktrans %}Shows a list of memberships pending approval for roles for which you have
-    invite or approval permissions. If the list is empty, all memberships have already been approved. Please note that
-    another approver may have recently approved or rejected the membership.{% endblocktrans %}</p>
+  {% if include_inviters %}
+    <p class="text-break">{% blocktrans %}Showing membership requests you can approve and requests for any roles where you have invite permission. Requests for roles you can invite to may have been sent by others — they must be approved by someone with approval rights.{% endblocktrans %}</p>
+  {% else %}
+    <p class="text-break">{% trans "Showing only membership requests you are authorized to approve." %}</p>
+  {% endif %}
+  {% if include_inviters %}
+    <a href="?include_inviters=0" class="btn btn-primary mb-3">{% trans "Hide memberships to roles I can only invite to" %}</a>
+  {% else %}
+    <a href="?include_inviters=1" class="btn btn-primary mb-3">{% trans "Include memberships to roles I can only invite to" %}</a>
+  {% endif %}
   <div class="table-responsive">
     <table class="table" aria-describedby="members-list">
       <thead>
@@ -33,4 +40,9 @@
       </tbody>
     </table>
   </div>
+  {% if not object_list %}
+    <div class="alert alert-info" role="alert">
+      {% trans "No pending memberships. All requests have been processed." %}
+    </div>
+  {% endif %}
 {% endblock %}

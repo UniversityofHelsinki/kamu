@@ -463,12 +463,23 @@ class MembershipApprovalListView(MembershipListBaseView):
 
     template_name = "membership/membership_approval_list.html"
 
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Add include_inviters flag to context.
+        """
+        context = super().get_context_data(**kwargs)
+        context["include_inviters"] = True if self.request.GET.get("include_inviters") == "1" else False
+        return context
+
     def get_queryset(self) -> QuerySet[Membership]:
         """
         Include only memberships that require approval.
+
+        Optionally include memberships for roles where user has invite permission.
         """
+        include_inviters = True if self.request.GET.get("include_inviters") == "1" else False
         if self.request.user.is_authenticated:
-            return get_memberships_requiring_approval(self.request.user, include_inviters=True)
+            return get_memberships_requiring_approval(self.request.user, include_inviters=include_inviters)
         return Membership.objects.none()
 
 
@@ -481,18 +492,22 @@ class MembershipExpiringListView(MembershipListBaseView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """
-        Add date limit to context.
+        Add date limit and include_inviters flag to context.
         """
         context = super().get_context_data(**kwargs)
         context["expiring_date_limit"] = getattr(settings, "EXPIRING_LIMIT_DAYS", 30)
+        context["include_inviters"] = True if self.request.GET.get("include_inviters") == "1" else False
         return context
 
     def get_queryset(self) -> QuerySet[Membership]:
         """
         Include only memberships expiring in the next EXPIRING_LIMIT_DAYS (default 30) days.
+
+        Optionally include memberships for roles where user has invite permission.
         """
+        include_inviters = True if self.request.GET.get("include_inviters") == "1" else False
         if self.request.user.is_authenticated:
-            return get_expiring_memberships(self.request.user, include_inviters=True)
+            return get_expiring_memberships(self.request.user, include_inviters=include_inviters)
         return Membership.objects.none()
 
 

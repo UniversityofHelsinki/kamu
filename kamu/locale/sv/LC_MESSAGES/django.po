@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-23 13:23+0300\n"
+"POT-Creation-Date: 2026-11-04 13:01+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -346,7 +346,7 @@ msgstr "Personlig inbjudningskod"
 
 #: kamu/forms/auth.py:446 kamu/forms/auth.py:452 kamu/forms/auth.py:456
 #: kamu/forms/auth.py:458 kamu/views/auth.py:133 kamu/views/auth.py:154
-#: kamu/views/auth.py:242 kamu/views/membership.py:965
+#: kamu/views/auth.py:242 kamu/views/membership.py:980
 msgid "Invalid invitation code."
 msgstr "Ogiltig inbjudningskod."
 
@@ -691,9 +691,9 @@ msgstr "Begränsat användarkonto"
 #: kamu/models/account.py:38 kamu/templates/account/account_detail.html:14
 #: kamu/templates/account/account_list.html:18
 #: kamu/templates/identity/identity_detail.html:140
-#: kamu/templates/membership/membership_approval_list.html:16
+#: kamu/templates/membership/membership_approval_list.html:23
 #: kamu/templates/membership/membership_detail.html:61
-#: kamu/templates/membership/membership_expiring_list.html:17
+#: kamu/templates/membership/membership_expiring_list.html:25
 #: kamu/templates/membership/membership_managed_list.html:15
 #: kamu/templates/role/role_detail.html:67
 msgid "Status"
@@ -722,7 +722,7 @@ msgstr "Deaktiverat den"
 #: kamu/models/identity.py:568 kamu/models/identity.py:639
 #: kamu/models/identity.py:713 kamu/models/identity.py:782
 #: kamu/models/membership.py:122 kamu/models/organisation.py:31
-#: kamu/models/role.py:86 kamu/models/role.py:348 kamu/models/role.py:497
+#: kamu/models/role.py:87 kamu/models/role.py:352 kamu/models/role.py:501
 #: kamu/models/token.py:321
 msgid "Created at"
 msgstr "Skapat den"
@@ -732,11 +732,11 @@ msgstr "Skapat den"
 #: kamu/models/identity.py:569 kamu/models/identity.py:640
 #: kamu/models/identity.py:714 kamu/models/identity.py:783
 #: kamu/models/membership.py:123 kamu/models/organisation.py:32
-#: kamu/models/role.py:87 kamu/models/role.py:349 kamu/models/role.py:498
+#: kamu/models/role.py:88 kamu/models/role.py:353 kamu/models/role.py:502
 msgid "Updated at"
 msgstr "Uppdaterat den"
 
-#: kamu/models/account.py:53 kamu/models/role.py:326
+#: kamu/models/account.py:53 kamu/models/role.py:330
 #: kamu/templates/account/account_detail.html:8
 #: kamu/templates/identity/identity_search.html:18
 #: kamu/templates/identity/identity_search.html:67
@@ -850,15 +850,15 @@ msgstr "Land"
 msgid "Countries"
 msgstr "Länder"
 
-#: kamu/models/identity.py:138 kamu/models/role.py:36 settings/common.py:141
+#: kamu/models/identity.py:138 kamu/models/role.py:37 settings/common.py:141
 msgid "English"
 msgstr "Engelska"
 
-#: kamu/models/identity.py:139 kamu/models/role.py:37 settings/common.py:142
+#: kamu/models/identity.py:139 kamu/models/role.py:38 settings/common.py:142
 msgid "Finnish"
 msgstr "Finska"
 
-#: kamu/models/identity.py:140 kamu/models/role.py:38 settings/common.py:143
+#: kamu/models/identity.py:140 kamu/models/role.py:39 settings/common.py:143
 msgid "Swedish"
 msgstr "Svenska"
 
@@ -1164,8 +1164,8 @@ msgid "Invalid eduPersonPrincipalName format."
 msgstr "Ogiltigt format för eduPersonPrincipalName."
 
 #: kamu/models/membership.py:56
-#: kamu/templates/membership/membership_approval_list.html:25
-#: kamu/templates/membership/membership_expiring_list.html:26
+#: kamu/templates/membership/membership_approval_list.html:32
+#: kamu/templates/membership/membership_expiring_list.html:34
 #: kamu/templates/role/role_detail.html:76
 msgid "Invited"
 msgstr "Inbjuden"
@@ -1307,190 +1307,191 @@ msgstr "Organisation"
 msgid "Organisations"
 msgstr "Organisationer"
 
-#: kamu/models/role.py:41
+#: kamu/models/role.py:42
 msgid "Role identifier"
 msgstr "Rollidentifierare"
 
-#: kamu/models/role.py:42
+#: kamu/models/role.py:43
 msgid "Role name (fi)"
 msgstr "Rollens namn (fi)"
 
-#: kamu/models/role.py:43
+#: kamu/models/role.py:44
 msgid "Role name (en)"
 msgstr "Rollens namn (en)"
 
-#: kamu/models/role.py:44
+#: kamu/models/role.py:45
 msgid "Role name (sv)"
 msgstr "Rollens namn (sv)"
 
-#: kamu/models/role.py:45
+#: kamu/models/role.py:46
 msgid "Role description (fi)"
 msgstr "Rollbeskrivning (fi)"
 
-#: kamu/models/role.py:46
+#: kamu/models/role.py:47
 msgid "Role description (en)"
 msgstr "Rollbeskrivning (en)"
 
-#: kamu/models/role.py:47
+#: kamu/models/role.py:48
 msgid "Role description (sv)"
 msgstr "Rollbeskrivning (sv)"
 
-#: kamu/models/role.py:53 kamu/templates/membership/membership_detail.html:27
+#: kamu/models/role.py:54 kamu/templates/membership/membership_detail.html:27
 #: kamu/templates/membership/membership_invite.html:21
 #: kamu/templates/role/role_detail.html:22
 msgid "Organisation unit"
 msgstr "Organisationsenhet"
 
-#: kamu/models/role.py:55
+#: kamu/models/role.py:56
 msgid "Notification email address"
 msgstr "E-postadress för aviseringar"
 
-#: kamu/models/role.py:60 kamu/templates/role/role_detail.html:47
+#: kamu/models/role.py:61 kamu/templates/role/role_detail.html:47
 msgid "Notification language"
 msgstr "Språk för aviseringar"
 
-#: kamu/models/role.py:63 kamu/templates/role/role_detail.html:34
+#: kamu/models/role.py:64 kamu/templates/role/role_detail.html:34
 msgid "Inviter groups"
 msgstr "Inbjudargrupper"
 
-#: kamu/models/role.py:66 kamu/templates/role/role_detail.html:37
+#: kamu/models/role.py:67 kamu/templates/role/role_detail.html:37
 msgid "Approver groups"
 msgstr "Godkännargrupper"
 
-#: kamu/models/role.py:69 kamu/models/role.py:354
+#: kamu/models/role.py:70 kamu/models/role.py:358
 #: kamu/templates/membership/membership_detail.html:23
 #: kamu/templates/membership/membership_invite.html:17
 #: kamu/templates/role/role_detail.html:13
 msgid "Permissions"
 msgstr "Behörigheter"
 
-#: kamu/models/role.py:71 kamu/models/role.py:345 kamu/models/role.py:506
+#: kamu/models/role.py:72 kamu/models/role.py:349 kamu/models/role.py:510
 #: kamu/templates/role/role_detail.html:16
 msgid "Requirements"
 msgstr "Krav"
 
-#: kamu/models/role.py:74
+#: kamu/models/role.py:75
 msgid "IAM Group"
 msgstr "IAM-grupp"
 
-#: kamu/models/role.py:76
+#: kamu/models/role.py:77
 msgid "Requires SMS verification"
 msgstr "Kräver SMS-verifiering"
 
-#: kamu/models/role.py:77
+#: kamu/models/role.py:78
 msgid "Maximum duration (days)"
 msgstr "Maximal varaktighet (dagar)"
 
-#: kamu/models/role.py:80
+#: kamu/models/role.py:81
 msgid "Purge delay (days)"
 msgstr "Reningsfördröjning (dagar)"
 
-#: kamu/models/role.py:81
+#: kamu/models/role.py:82
 msgid "Grace period from membership expiration to purge (days)"
 msgstr "Anstånd från medlemskapets utgång till rensning (dagar)"
 
-#: kamu/models/role.py:93 kamu/templates/identity/identity_detail.html:139
+#: kamu/models/role.py:94 kamu/templates/identity/identity_detail.html:139
 #: kamu/templates/identity/identity_detail.html:166
-#: kamu/templates/membership/membership_approval_list.html:14
+#: kamu/templates/membership/membership_approval_list.html:21
 #: kamu/templates/membership/membership_detail.html:17
 #: kamu/templates/membership/membership_detail.html:93
 #: kamu/templates/membership/membership_detail.html:123
 #: kamu/templates/membership/membership_detail.html:150
-#: kamu/templates/membership/membership_expiring_list.html:15
+#: kamu/templates/membership/membership_expiring_list.html:23
 #: kamu/templates/membership/membership_managed_list.html:14
 #: kamu/templates/membership/verification_form.html:9
 msgid "Role"
 msgstr "Roll"
 
-#: kamu/models/role.py:94 kamu/templates/base.html:45
+#: kamu/models/role.py:95 kamu/templates/base.html:45
 msgid "Roles"
 msgstr "Roller"
 
-#: kamu/models/role.py:164
+#: kamu/models/role.py:167
+#, python-format
 msgid "IAM Group must be at most %(max_length)d characters long."
 msgstr "IAM-gruppen får högst vara %(max_length)d tecken lång."
 
-#: kamu/models/role.py:170
+#: kamu/models/role.py:174
 msgid "IAM Group must contain only lowercase letters, numbers and hyphens."
 msgstr "IAM-gruppen får endast innehålla gemener, siffror och bindestreck."
 
-#: kamu/models/role.py:323
+#: kamu/models/role.py:327
 msgid "Permission identifier"
 msgstr "Rättighetsidentifierare"
 
-#: kamu/models/role.py:327
+#: kamu/models/role.py:331
 msgid "Generic permission"
 msgstr "Allmän rättighet"
 
-#: kamu/models/role.py:328
+#: kamu/models/role.py:332
 msgid "Service"
 msgstr "Tjänst"
 
-#: kamu/models/role.py:331
+#: kamu/models/role.py:335
 msgid "Permission type"
 msgstr "Typ av rättighet"
 
-#: kamu/models/role.py:334
+#: kamu/models/role.py:338
 msgid "Permission name (fi)"
 msgstr "Rättighetens namn (fi)"
 
-#: kamu/models/role.py:335
+#: kamu/models/role.py:339
 msgid "Permission name (en)"
 msgstr "Rättighetens namn (en)"
 
-#: kamu/models/role.py:336
+#: kamu/models/role.py:340
 msgid "Permission name (sv)"
 msgstr "Rättighetens namn (sv)"
 
-#: kamu/models/role.py:337
+#: kamu/models/role.py:341
 msgid "Permission description (fi)"
 msgstr "Rättighetens beskrivning (fi)"
 
-#: kamu/models/role.py:338
+#: kamu/models/role.py:342
 msgid "Permission description (en)"
 msgstr "Rättighetens beskrivning (en)"
 
-#: kamu/models/role.py:339
+#: kamu/models/role.py:343
 msgid "Permission description (sv)"
 msgstr "Rättighetens beskrivning (sv)"
 
-#: kamu/models/role.py:341
+#: kamu/models/role.py:345
 msgid "Permission cost"
 msgstr "Rättighetens kostnad"
 
-#: kamu/models/role.py:342
+#: kamu/models/role.py:346
 msgid "Permission value"
 msgstr "Rättighetens värde"
 
-#: kamu/models/role.py:353
+#: kamu/models/role.py:357
 msgid "Permission"
 msgstr "Rättighet"
 
-#: kamu/models/role.py:418
+#: kamu/models/role.py:422
 msgid "The membership requires a verified email address."
 msgstr "Medlemskapet kräver en verifierad e-postadress."
 
-#: kamu/models/role.py:420
+#: kamu/models/role.py:424
 msgid "Add and verify email address"
 msgstr "Lägg till eller verifiera e-post"
 
-#: kamu/models/role.py:424
+#: kamu/models/role.py:428
 msgid "The membership requires a verified external email address."
 msgstr "Medlemskapet kräver en verifierad extern e-postadress."
 
-#: kamu/models/role.py:426
+#: kamu/models/role.py:430
 msgid "Add and verify external email address"
 msgstr "Lägg till eller verifiera extern e-post"
 
-#: kamu/models/role.py:430
+#: kamu/models/role.py:434
 msgid "The membership requires a verified phone number."
 msgstr "Medlemskapet kräver ett verifierat telefonnummer."
 
-#: kamu/models/role.py:432
+#: kamu/models/role.py:436
 msgid "Add and verify phone number"
 msgstr "Lägg till eller verifiera telefon"
 
-#: kamu/models/role.py:437
+#: kamu/models/role.py:441
 msgid ""
 "The membership requires either Finnish personal identity code for Suomi.fi e-"
 "Identification, or date of birth and official names for identification with "
@@ -1500,51 +1501,51 @@ msgstr ""
 "eller födelsedatum och fullständigt namn för identifiering med antingen ett "
 "eIDAS‑kompatibelt e‑ID eller ett officiellt identitetsdokument."
 
-#: kamu/models/role.py:442
+#: kamu/models/role.py:446
 msgid "Add attributes for identity verification"
 msgstr "Lägg till attribut för identitetsverifiering"
 
-#: kamu/models/role.py:466
+#: kamu/models/role.py:470
 msgid "Requirement name (fi)"
 msgstr "Kravnamn (fi)"
 
-#: kamu/models/role.py:467
+#: kamu/models/role.py:471
 msgid "Requirement name (en)"
 msgstr "Kravnamn (en)"
 
-#: kamu/models/role.py:468
+#: kamu/models/role.py:472
 msgid "Requirement name (sv)"
 msgstr "Kravnamn (sv)"
 
-#: kamu/models/role.py:471
+#: kamu/models/role.py:475
 msgid "Requires a signed contract of type (value)"
 msgstr "Godkännande saknas i avtalet. Öppna och godkänn avtalet. (value)"
 
-#: kamu/models/role.py:472
+#: kamu/models/role.py:476
 msgid "User attribute (value) is defined"
 msgstr "Användarattributet (value) är definierat"
 
-#: kamu/models/role.py:473
+#: kamu/models/role.py:477
 msgid "Assurance level at least level"
 msgstr "Kontrollnivå minst på nivå"
 
-#: kamu/models/role.py:474
+#: kamu/models/role.py:478
 msgid "External requirement"
 msgstr "Externa krav"
 
-#: kamu/models/role.py:476
+#: kamu/models/role.py:480
 msgid "Requirement type"
 msgstr "Typ av krav"
 
-#: kamu/models/role.py:480
+#: kamu/models/role.py:484
 msgid "Requirement value"
 msgstr "Kravets värde"
 
-#: kamu/models/role.py:484
+#: kamu/models/role.py:488
 msgid "Level or version required"
 msgstr "Nivå eller version som krävs"
 
-#: kamu/models/role.py:486
+#: kamu/models/role.py:490
 msgid ""
 "Require a minimum level of assurance or attribute verification level, or a "
 "minimum version of contract. Contract level must be a positive integer. "
@@ -1558,40 +1559,40 @@ msgstr ""
 "verifieringsnivåer är från 10 (självangiven) till 40 (stark elektronisk "
 "verifiering)"
 
-#: kamu/models/role.py:493
+#: kamu/models/role.py:497
 msgid "Grace period (days)"
 msgstr "Anstånd (dagar)"
 
-#: kamu/models/role.py:494
+#: kamu/models/role.py:498
 msgid "Grace period (days) before membership status is changed."
 msgstr "Anstånd (dagar) innan medlemsstatus ändras."
 
-#: kamu/models/role.py:505
+#: kamu/models/role.py:509
 msgid "Requirement"
 msgstr "Krav"
 
-#: kamu/models/role.py:554
+#: kamu/models/role.py:558
 msgid "Contract requirement needs contract type as a value."
 msgstr "Avtalskrav måste ha avtalstyp som värde."
 
-#: kamu/models/role.py:556
+#: kamu/models/role.py:560
 msgid "Contract version must be a positive integer."
 msgstr "Avtalsversionen måste vara ett positivt heltal."
 
-#: kamu/models/role.py:568
+#: kamu/models/role.py:572
 #, python-format
 msgid "Allowed assurance levels are: %(choices)s."
 msgstr "Tillåtna kontrollnivåer är: %(choices)s."
 
-#: kamu/models/role.py:575
+#: kamu/models/role.py:579
 msgid "Invalid attribute name."
 msgstr "Ogiltigt attributnamn."
 
-#: kamu/models/role.py:580
+#: kamu/models/role.py:584
 msgid "Attribute does not have verification level."
 msgstr "Attributet har ingen verifieringsnivå."
 
-#: kamu/models/role.py:594
+#: kamu/models/role.py:598
 #, python-format
 msgid "Allowed levels are: %(choices)s."
 msgstr "Tillåtna nivåer är: %(choices)s."
@@ -3385,20 +3386,20 @@ msgstr "Nuvarande och framtida medlemskap"
 
 #: kamu/templates/identity/identity_detail.html:141
 #: kamu/templates/identity/identity_detail.html:167
-#: kamu/templates/membership/membership_approval_list.html:17
+#: kamu/templates/membership/membership_approval_list.html:24
 #: kamu/templates/membership/membership_detail.html:63
-#: kamu/templates/membership/membership_expiring_list.html:18
+#: kamu/templates/membership/membership_expiring_list.html:26
 #: kamu/templates/role/role_detail.html:68
 msgid "Start date"
 msgstr "Startdatum"
 
 #: kamu/templates/identity/identity_detail.html:142
 #: kamu/templates/identity/identity_detail.html:168
-#: kamu/templates/membership/membership_approval_list.html:18
+#: kamu/templates/membership/membership_approval_list.html:25
 #: kamu/templates/membership/membership_detail.html:97
 #: kamu/templates/membership/membership_detail.html:127
 #: kamu/templates/membership/membership_detail.html:154
-#: kamu/templates/membership/membership_expiring_list.html:19
+#: kamu/templates/membership/membership_expiring_list.html:27
 #: kamu/templates/role/role_detail.html:69
 msgid "Expiration date"
 msgstr "Avslutningsdag"
@@ -3637,35 +3638,53 @@ msgstr "Verifiering av telefonnummer"
 msgid "For your information"
 msgstr "För din kännedom"
 
-#: kamu/templates/membership/membership_approval_list.html:6
+#: kamu/templates/membership/membership_approval_list.html:7
 msgid ""
-"Shows a list of memberships pending approval for roles for which you have\n"
-"    invite or approval permissions. If the list is empty, all memberships "
-"have already been approved. Please note that\n"
-"    another approver may have recently approved or rejected the membership."
+"Showing membership requests you can approve and requests for any roles where "
+"you have invite permission. Requests for roles you can invite to may have "
+"been sent by others — they must be approved by someone with approval rights."
 msgstr ""
-"Visar en lista över medlemskap som väntar på godkännande för roller för "
-"vilka du har inbjudnings- eller godkännandebehörighet. \n"
-"Om listan är tom har alla medlemskap redan godkänts. \n"
-"Obs! Någon annan person kan nyligen ha godkänt eller avvisat medlemskapet."
+"Visar medlemskapsförfrågningar som du kan godkänna och förfrågningar för "
+"alla roller där du har inbjudningsbehörighet. Förfrågningar om roller som du "
+"kan bjuda in till kan ha skickats av andra — de måste godkännas av någon med "
+"godkännanderättigheter."
 
-#: kamu/templates/membership/membership_approval_list.html:13
+#: kamu/templates/membership/membership_approval_list.html:9
+msgid "Showing only membership requests you are authorized to approve."
+msgstr ""
+"Visar endast medlemskapsförfrågningar som du har behörighet att godkänna."
+
+#: kamu/templates/membership/membership_approval_list.html:12
+#: kamu/templates/membership/membership_expiring_list.html:14
+msgid "Hide memberships to roles I can only invite to"
+msgstr "Dölj medlemskap i roller som jag endast kan bjuda in till"
+
+#: kamu/templates/membership/membership_approval_list.html:14
+#: kamu/templates/membership/membership_expiring_list.html:16
+msgid "Include memberships to roles I can only invite to"
+msgstr "Inkludera medlemskap i roller som jag endast kan bjuda in till"
+
+#: kamu/templates/membership/membership_approval_list.html:20
 #: kamu/templates/membership/membership_detail.html:34
 #: kamu/templates/membership/membership_detail.html:95
 #: kamu/templates/membership/membership_detail.html:125
 #: kamu/templates/membership/membership_detail.html:152
-#: kamu/templates/membership/membership_expiring_list.html:14
+#: kamu/templates/membership/membership_expiring_list.html:22
 #: kamu/templates/membership/membership_managed_list.html:13
 #: kamu/templates/role/role_detail.html:66
 msgid "Person"
 msgstr "Person"
 
-#: kamu/templates/membership/membership_approval_list.html:15
+#: kamu/templates/membership/membership_approval_list.html:22
 #: kamu/templates/membership/membership_detail.html:69
-#: kamu/templates/membership/membership_expiring_list.html:16
+#: kamu/templates/membership/membership_expiring_list.html:24
 #: kamu/templates/membership/verification_form.html:13
 msgid "Inviter"
 msgstr "Inbjudare"
+
+#: kamu/templates/membership/membership_approval_list.html:45
+msgid "No pending memberships. All requests have been processed."
+msgstr "Inga väntande medlemskap. Alla förfrågningar har behandlats."
 
 #: kamu/templates/membership/membership_detail.html:4
 msgid "Agreement on membership of the University community"
@@ -3827,22 +3846,33 @@ msgstr "Detta medlemskap avslutades %(cancellation_time)s."
 msgid "Updating membership clears cancellation."
 msgstr "Att uppdatera medlemskapet återställer avbokningen."
 
-#: kamu/templates/membership/membership_expiring_list.html:6
+#: kamu/templates/membership/membership_expiring_list.html:7
 #, python-format
 msgid ""
 "Shows a list of memberships expiring within\n"
-"    %(day_limit)s days for roles for which you have invite or approval "
-"permissions. If the list is empty, there are\n"
-"    no expiring memberships at the moment. Please note that another approver "
-"may have recently extended or cancelled\n"
-"    the membership."
+"      %(day_limit)s days for roles for which you have invite or approval "
+"permissions."
 msgstr ""
-"Visar en lista över medlemskap som löper ut inom %(day_limit)s dagar \n"
-" för roller för vilka du har \n"
-"inbjudnings- eller godkännandebehörighet. Om listan är tom finns det inga "
-"medlemskap som löper ut just nu. \n"
-"Obs! Någon annan person kan nyligen ha förlängt eller återkallat "
-"medlemskapet."
+"Visar en lista över medlemskap som löper ut inom %(day_limit)s dagar för "
+"roller som du har inbjudnings- eller godkännanderättigheter för."
+
+#: kamu/templates/membership/membership_expiring_list.html:10
+#, python-format
+msgid ""
+"Shows a list of memberships expiring within\n"
+"    %(day_limit)s days that you can extend."
+msgstr ""
+"Visar en lista över medlemskap som löper ut inom %(day_limit)s dagar som du "
+"kan förlänga."
+
+#: kamu/templates/membership/membership_expiring_list.html:47
+#, python-format
+msgid ""
+"No expiring memberships. All memberships are valid for more than the next "
+"%(day_limit)s days."
+msgstr ""
+"Inga medlemskap som löper ut. Alla medlemskap är giltiga i mer än de "
+"kommande %(day_limit)s dagarna."
 
 #: kamu/templates/membership/membership_form.html:6
 msgid "Join role"
@@ -4719,8 +4749,8 @@ msgstr ""
 "Partiella namnträffar gav för många resultat. Återger endast exakta träffar."
 
 #: kamu/views/identity.py:1700 kamu/views/identity.py:1714
-#: kamu/views/identity.py:1741 kamu/views/membership.py:813
-#: kamu/views/membership.py:822
+#: kamu/views/identity.py:1741 kamu/views/membership.py:828
+#: kamu/views/membership.py:837
 msgid ""
 "PersonDB connection failed, could not load person information. Please try "
 "again later."
@@ -4779,7 +4809,7 @@ msgstr ""
 msgid "You have approved the membership below."
 msgstr "Du har godkänt medlemskapet nedan."
 
-#: kamu/views/membership.py:300 kamu/views/membership.py:916
+#: kamu/views/membership.py:300 kamu/views/membership.py:931
 msgid "The email invitation has been sent."
 msgstr "E-postinbjudan har skickats."
 
@@ -4807,20 +4837,20 @@ msgstr "Medlemskap avslutat."
 msgid "Membership updated."
 msgstr "Medlemskap uppdaterat."
 
-#: kamu/views/membership.py:797 kamu/views/membership.py:838
+#: kamu/views/membership.py:812 kamu/views/membership.py:853
 msgid "Multiple identities found, please contact IT-Helpdesk."
 msgstr "Flera identiteter hittades, kontakta IT-helpdesk."
 
-#: kamu/views/membership.py:921 kamu/views/membership.py:1213
+#: kamu/views/membership.py:936 kamu/views/membership.py:1228
 msgid ""
 "The email invitation will be sent when the membership has been approved."
 msgstr "E-postinbjudan skickas när medlemskapet har godkänts."
 
-#: kamu/views/membership.py:968
+#: kamu/views/membership.py:983
 msgid "This invitation is already claimed."
 msgstr "Den här inbjudan är redan använd."
 
-#: kamu/views/membership.py:1077
+#: kamu/views/membership.py:1092
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and email address {email} are "
@@ -4829,7 +4859,7 @@ msgstr ""
 "Personbeteckningen {fpic} och e-postadressen {email} är registrerade för "
 "olika identiteter."
 
-#: kamu/views/membership.py:1087
+#: kamu/views/membership.py:1102
 #, python-brace-format
 msgid ""
 "Finnish personal identity code {fpic} and phone number {phone} are "
@@ -4838,7 +4868,7 @@ msgstr ""
 "Personbeteckningen {fpic} och telefonnumret {phone} är registrerade för "
 "olika identiteter."
 
-#: kamu/views/membership.py:1096
+#: kamu/views/membership.py:1111
 #, python-brace-format
 msgid ""
 "Email address {email} and phone number {phone} are registered to different "
@@ -4847,22 +4877,22 @@ msgstr ""
 "E-postadressen {email} och telefonnumret {phone} är registrerade för olika "
 "identiteter."
 
-#: kamu/views/membership.py:1134
+#: kamu/views/membership.py:1149
 #, python-format
 msgid "Email address is required. Invalid line: \"%(line)s\"."
 msgstr "E-postadress krävs. Ogiltig rad: \"%(line)s\"."
 
-#: kamu/views/membership.py:1139
+#: kamu/views/membership.py:1154
 #, python-format
 msgid "Phone number is required for this role. Invalid line: \"%(line)s\"."
 msgstr "Telefonnummer krävs för den här rollen. Ogiltig rad: \"%(line)s\"."
 
-#: kamu/views/membership.py:1221
+#: kamu/views/membership.py:1236
 #, python-brace-format
 msgid "The email invitation has been sent to following addresses: {0}"
 msgstr "E-postinbjudan har skickats till följande e-postadresser: {0}"
 
-#: kamu/views/membership.py:1230
+#: kamu/views/membership.py:1245
 #, python-brace-format
 msgid ""
 "The email invitation will be sent to following addresses when the membership "
@@ -4871,7 +4901,7 @@ msgstr ""
 "E-postinbjudan skickas till följande adresser när medlemskapet har godkänts: "
 "{0}"
 
-#: kamu/views/membership.py:1236
+#: kamu/views/membership.py:1251
 #, python-brace-format
 msgid "Added following identities: {0}"
 msgstr "Följande identiteter har lagts till: {0}"

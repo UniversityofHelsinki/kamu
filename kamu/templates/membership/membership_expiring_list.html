@@ -3,10 +3,18 @@
 
 {% block content %}
   <h1 id="members-list" class="mb-4">{% trans "Expiring memberships" %}</h1>
-  <p class="text-break">{% blocktrans with day_limit=expiring_date_limit %}Shows a list of memberships expiring within
-    {{ day_limit }} days for roles for which you have invite or approval permissions. If the list is empty, there are
-    no expiring memberships at the moment. Please note that another approver may have recently extended or cancelled
-    the membership.{% endblocktrans %}</p>
+  {% if include_inviters %}
+    <p class="text-break">{% blocktrans with day_limit=expiring_date_limit %}Shows a list of memberships expiring within
+      {{ day_limit }} days for roles for which you have invite or approval permissions.{% endblocktrans %}</p>
+  {% else %}
+    <p class="text-break">{% blocktrans with day_limit=expiring_date_limit %}Shows a list of memberships expiring within
+    {{ day_limit }} days that you can extend.{% endblocktrans %}</p>  {% endif %}
+
+  {% if include_inviters %}
+    <a href="?include_inviters=0" class="btn btn-primary mb-3">{% trans "Hide memberships to roles I can only invite to" %}</a>
+  {% else %}
+    <a href="?include_inviters=1" class="btn btn-primary mb-3">{% trans "Include memberships to roles I can only invite to" %}</a>
+  {% endif %}
   <div class="table-responsive">
     <table class="table" aria-describedby="members-list">
       <thead>
@@ -34,4 +42,9 @@
       </tbody>
     </table>
   </div>
+  {% if not object_list %}
+    <div class="alert alert-info" role="alert">
+      {% blocktrans with day_limit=expiring_date_limit %}No expiring memberships. All memberships are valid for more than the next {{ day_limit }} days.{% endblocktrans %}
+    </div>
+  {% endif %}
 {% endblock %}

@@ -234,29 +234,35 @@ class MembershipViewTests(BaseTestCase):
     def test_view_membership_approval_list(self):
         response = self.client.get("/membership/approval/")
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data["object_list"].count(), 0)
+        response = self.client.get("/membership/approval/?include_inviters=1")
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data["object_list"].count(), 1)
         self.membership.cancelled_at = timezone.now()
         self.membership.save()
-        response = self.client.get("/membership/expiring/")
+        response = self.client.get("/membership/approval/?include_inviters=1")
         self.assertEqual(response.context_data["object_list"].count(), 0)
         self.membership.cancelled_at = None
         self.membership.approver = self.user
         self.membership.save()
-        response = self.client.get("/membership/approval/")
+        response = self.client.get("/membership/approval/?include_inviters=1")
         self.assertEqual(response.context_data["object_list"].count(), 0)
 
     def test_view_membership_expiring_list(self):
         response = self.client.get("/membership/expiring/")
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data["object_list"].count(), 0)
+        response = self.client.get("/membership/expiring/?include_inviters=1")
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data["object_list"].count(), 1)
         self.membership.cancelled_at = timezone.now()
         self.membership.save()
-        response = self.client.get("/membership/expiring/")
+        response = self.client.get("/membership/expiring/?include_inviters=1")
         self.assertEqual(response.context_data["object_list"].count(), 0)
         self.membership.cancelled_at = None
         self.membership.expire_date = timezone.now().date() + datetime.timedelta(days=31)
         self.membership.save()
-        response = self.client.get("/membership/expiring/")
+        response = self.client.get("/membership/expiring/?include_inviters=1")
         self.assertEqual(response.context_data["object_list"].count(), 0)
 
     def test_view_membership_managed_list(self):
