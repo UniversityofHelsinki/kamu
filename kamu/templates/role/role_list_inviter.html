@@ -4,8 +4,12 @@
   <h1 id="roles-list" class="mb-4">{% trans "Member invitation" %}</h1>
     <div class="alert alert-success" role="alert">
       <p>{% blocktrans %}Invite a person to become a member of the University community by first selecting the role
-        that best describes the person’s relationship to the University, then clicking the Invite button in the
-        role details. The list only shows the roles to which you have permission to invite members.
+        that describes the person’s relationship to the University, then clicking the Invite button in the role
+        details. The list only shows the roles to which you have permission to invite members.{% endblocktrans %}</p>
+      {% url 'role-search' as search_url %}
+      <p>{% blocktrans %}If a suitable role is missing from the list, find the right role
+        <a href="{{ search_url }}">here</a> and check who can invite the person to that role.
+        It is important that the person is invited to a role that describe their relationship to the University.
         {% endblocktrans %}</p>
   </div>
 {% endblock %}
