@@ -68,6 +68,7 @@ from kamu.views.membership import (
     MembershipUpdateView,
 )
 from kamu.views.role import (
+    RoleDetailGroupView,
     RoleDetailView,
     RoleListApproverView,
     RoleListInviterView,
@@ -131,6 +132,7 @@ urlpatterns = [
     path("role/owner/", RoleListOwnerView.as_view(), name="role-list-owner"),
     path("role/search/", RoleSearchView.as_view(), name="role-search"),
     path("role/<int:pk>/", RoleDetailView.as_view(), name="role-detail"),
+    path("role/<int:pk>/group/<str:group_pk>/", RoleDetailGroupView.as_view(), name="role-detail-group"),
     path("role/<int:role_pk>/invite/", MembershipInviteIdentitySearch.as_view(), name="role-invite-identity"),
     path("role/<int:role_pk>/invite/multiple/", MembershipMassInviteView.as_view(), name="role-invite-mass"),
     path("role/<int:role_pk>/invite/ldap/<str:uid>/", MembershipInviteLdapView.as_view(), name="role-invite-ldap"),

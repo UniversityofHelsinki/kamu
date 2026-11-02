@@ -32,10 +32,14 @@
     <dd class="col-sm-8">{{ object.owner.get_full_name|default:"&nbsp;" }}</dd>
 
     <dt class="col-sm-4">{% trans "Inviter groups" %}</dt>
-    <dd class="col-sm-8">{% for inviter in object.inviters.all %}{{ inviter }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+    <dd class="col-sm-8">{% for inviter in object.inviters.all %}{% if group_members %}
+      <a href="{% url 'role-detail-group' pk=object.pk group_pk=inviter.pk %}">{{ inviter }}</a>{% else %}{{ inviter }}
+    {% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
 
     <dt class="col-sm-4">{% trans "Approver groups" %}</dt>
-    <dd class="col-sm-8">{% for approver in object.approvers.all %}{{ approver }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
+    <dd class="col-sm-8">{% for approver in object.approvers.all %}{% if group_members %}
+      <a href="{% url 'role-detail-group' pk=object.pk group_pk=approver.pk %}">{{ approver }}</a>{% else %}{{ approver }}
+    {% endif %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</dd>
 
     <dt class="col-sm-4">{% trans "SMS verification" %}</dt>
     <dd class="col-sm-8">{% if object.require_sms_verification %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</dd>

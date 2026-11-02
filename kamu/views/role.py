@@ -4,7 +4,9 @@ Role views for the UI.
 
 from typing import Any
 
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q, QuerySet
 from django.http import HttpRequest, HttpResponseBase
@@ -12,6 +14,7 @@ from django.utils import timezone
 from django.utils.translation import get_language
 from django.views.generic import DetailView, ListView
 
+from kamu.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_get_group_members
 from kamu.forms.generic import TextSearchForm
 from kamu.models.membership import Membership
 from kamu.models.role import Role
@@ -37,6 +40,12 @@ class RoleDetailView(LoginRequiredMixin, DetailView[Role]):
         user = self.request.user
         if not user.is_authenticated:
             raise PermissionDenied
+        if self.request.user.has_perm("kamu.search_roles") and getattr(
+            settings, "LDAP_SHOW_GROUP_MEMBER_LISTS", False
+        ):
+            context["group_members"] = True
+        else:
+            context["group_members"] = False
         if self.object.is_inviter(user):
             context["mass_invite_limit"] = get_mass_invite_limit(user)
             context["memberships"] = Membership.objects.filter(
@@ -53,6 +62,48 @@ class RoleDetailView(LoginRequiredMixin, DetailView[Role]):
             context["is_inviter"] = True
         if self.object.is_approver(user):
             context["is_approver"] = True
+        return context
+
+
+class RoleDetailGroupView(LoginRequiredMixin, DetailView[Role]):
+    """
+    View for role details.
+    """
+
+    model = Role
+    template_name = "role/role_detail_group.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Add group and group members to context, if user has search_roles permission.
+        """
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        if not (
+            user.is_authenticated
+            and user.has_perm("kamu.search_roles")
+            and getattr(settings, "LDAP_SHOW_GROUP_MEMBER_LISTS", False)
+        ):
+            raise PermissionDenied
+        try:
+            group = Group.objects.get(pk=self.kwargs.get("group_pk"))
+        except Group.DoesNotExist:
+            group = None
+        if not group:
+            raise PermissionDenied
+        if self.object.approvers.filter(pk=group.pk).exists():
+            context["group_type"] = "approver"
+        elif self.object.inviters.filter(pk=group.pk).exists():
+            context["group_type"] = "inviter"
+        else:
+            raise PermissionDenied
+        try:
+            members = ldap_get_group_members(group.name)
+        except LDAP_SIZELIMIT_EXCEEDED:
+            members = None
+            context["group_members_too_many"] = True
+        context["group"] = group
+        context["group_members"] = sorted(members) if members else []
         return context
 
 

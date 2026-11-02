@@ -701,7 +701,7 @@ msgstr "Kevyttunnus"
 #: kamu/templates/membership/membership_detail.html:61
 #: kamu/templates/membership/membership_expiring_list.html:25
 #: kamu/templates/membership/membership_managed_list.html:15
-#: kamu/templates/role/role_detail.html:67
+#: kamu/templates/role/role_detail.html:71
 msgid "Status"
 msgstr "Tila"
 
@@ -1277,7 +1277,7 @@ msgid "Membership"
 msgstr "Jäsenyys"
 
 #: kamu/models/membership.py:135 kamu/templates/base.html:34
-#: kamu/templates/role/role_detail.html:61
+#: kamu/templates/role/role_detail.html:65
 msgid "Memberships"
 msgstr "Jäsenyydet"
 
@@ -3874,7 +3874,7 @@ msgid "Join role"
 msgstr "Liity rooliin"
 
 #: kamu/templates/membership/membership_invite.html:8
-#: kamu/templates/role/role_detail.html:52
+#: kamu/templates/role/role_detail.html:56
 msgid "Invite a new member"
 msgstr "Kutsu uusi jäsen"
 
@@ -3883,17 +3883,17 @@ msgid "Role information"
 msgstr "Roolin tiedot"
 
 #: kamu/templates/membership/membership_invite.html:25
-#: kamu/templates/role/role_detail.html:40
+#: kamu/templates/role/role_detail.html:44
 msgid "SMS verification"
 msgstr "Tekstiviestivahvistus"
 
 #: kamu/templates/membership/membership_invite.html:26
-#: kamu/templates/role/role_detail.html:41
+#: kamu/templates/role/role_detail.html:45
 msgid "Yes"
 msgstr "Kyllä"
 
 #: kamu/templates/membership/membership_invite.html:26
-#: kamu/templates/role/role_detail.html:41
+#: kamu/templates/role/role_detail.html:45
 msgid "No"
 msgstr "Ei"
 
@@ -4121,18 +4121,40 @@ msgstr "Päärooli"
 msgid "Owner"
 msgstr "Omistaja"
 
-#: kamu/templates/role/role_detail.html:43
+#: kamu/templates/role/role_detail.html:47
 msgid "Notification address"
 msgstr "Ilmoitusosoite"
 
-#: kamu/templates/role/role_detail.html:55
+#: kamu/templates/role/role_detail.html:59
 msgid "Join"
 msgstr "Liity"
 
-#: kamu/templates/role/role_detail.html:58
+#: kamu/templates/role/role_detail.html:62
 #, python-format
 msgid "Invite multiple members (max %(limit)s)"
 msgstr "Kutsu useita jäseniä (enintään %(limit)s)"
+
+#: kamu/templates/role/role_detail_group.html:7
+#, python-format
+msgid "Listing approvers in group \"%(group)s\""
+msgstr "Luettelo hyväksyjistä ryhmässä \"%(group)s\""
+
+#: kamu/templates/role/role_detail_group.html:9
+#, python-format
+msgid "Listing inviters in group \"%(group)s\""
+msgstr "Luettelo kutsujista ryhmässä \"%(group)s\""
+
+#: kamu/templates/role/role_detail_group.html:19
+msgid "This group has too many members to display."
+msgstr "Tässä ryhmässä on liian monta jäsentä näytettäväksi."
+
+#: kamu/templates/role/role_detail_group.html:23
+msgid "No members found in this group."
+msgstr "Tästä ryhmästä ei löytynyt jäseniä."
+
+#: kamu/templates/role/role_detail_group.html:27
+msgid "Back to role details"
+msgstr "Takaisin roolin tietoihin"
 
 #: kamu/templates/role/role_detail.html:66
 msgid "Person"

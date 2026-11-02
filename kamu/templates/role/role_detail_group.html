@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+  <h1 class="mb-3">{{ object.name }}</h1>
+  {% if group_type == "approver" %}
+    <p>{% blocktrans with group=group %}Listing approvers in group "{{ group }}"{% endblocktrans %}.</p>
+  {% elif group_type == "inviter" %}
+    <p>{% blocktrans with group=group %}Listing inviters in group "{{ group }}"{% endblocktrans %}.</p>
+  {% endif %}
+  <ul>
+  {% for member in group_members %}
+    <li>{{ member }}</li>
+  {% endfor %}
+  </ul>
+  {% if not group_members %}
+  {% if group_members_too_many %}
+    <div class="alert alert-warning" role="alert">
+      {% trans "This group has too many members to display." %}
+    </div>
+  {% else %}
+    <div class="alert alert-info" role="alert">
+      {% trans "No members found in this group." %}
+    </div>
+  {% endif %}
+  {% endif %}
+   <a href="{% url 'role-detail' pk=object.pk %}" class="btn btn-primary mb-3">{% trans "Back to role details" %}</a>
+{% endblock %}

@@ -104,6 +104,29 @@ def _get_search_base() -> str | None:
     return search_base
 
 
+def ldap_get_group_members(group_name: str) -> list[str] | None:
+    """
+    Get members of a specific LDAP group.
+    """
+    name_attribute = settings.LDAP_NAME_ATTRIBUTE
+    search_filter = settings.LDAP_SETTINGS.get("GROUP_MEMBERSHIP_SEARCH_FILTER", "")
+    ldap_attributes = [name_attribute]
+    if not search_filter or not group_name:
+        return None
+    result = ldap_search(
+        search_filter,
+        ldap_attributes=ldap_attributes,
+        search_values=[group_name],
+        ignore_local_size_limit=True,
+    )
+    if result is None:
+        return result
+    members = [entry[name_attribute] for entry in result if name_attribute in entry]
+    if len(members) > getattr(settings, "LDAP_GROUP_MEMBERS_SEARCH_LIMIT", 50):
+        raise LDAP_SIZELIMIT_EXCEEDED
+    return members
+
+
 def ldap_search(
     search_filter: str,
     search_values: list[str] | None = None,

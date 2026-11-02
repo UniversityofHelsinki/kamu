@@ -199,6 +199,10 @@ PERSONDB_NAME_SEARCH_LIMIT: int = 50
 # Should LDAP be searched in identity search or when inviting members.
 LDAP_SEARCH_FOR_INVITES: bool = True  # Defaults to True
 LDAP_SEARCH_FOR_IDENTITIES: bool = False  # Defaults to False
+LDAP_SHOW_GROUP_MEMBER_LISTS: bool = False  # Defaults to False
+
+# If LDAP group membership search would return more results, do not list members.
+LDAP_GROUP_MEMBERS_SEARCH_LIMIT: int = 50  # Defaults to 50
 
 # Should PersonDB be searched in identity search or when inviting members.
 PERSONDB_SEARCH_FOR_INVITES: bool = False  # Defaults to False
@@ -221,6 +225,7 @@ LDAP_SETTINGS: dict[str, Any] = {
     "USER": "ou=ldapuser,dc=example,dc=org",
     "PASSWORD": "ldapuser_password",
     "SEARCH_BASE": "ou=users,dc=example,dc=org",
+    "GROUP_MEMBERSHIP_SEARCH_FILTER": "(memberOf=cn={},ou=groups,dc=example,dc=org)",  # {} is replaced with group name
     # "TIMEOUT_SECONDS": 5,
     # "USE_LDAPS": True,
     # "CACERTFILE": "/path/to/cacert.pem",  # Not set or None to use system default

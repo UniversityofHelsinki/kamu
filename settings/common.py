@@ -242,6 +242,7 @@ PURGE_DELAY_DAYS: int = 730
 
 LDAP_SETTINGS: dict[str, Any] = {}
 LDAP_ATTRIBUTES: list[str] = ["cn", "mail", "uid", "schacPersonalUniqueID"]
+LDAP_NAME_ATTRIBUTE: str = "cn"
 
 HTTP_CHECK_FORWARDING_HEADER: bool = True
 HTTP_FORWARDING_HEADER: str = "HTTP_X_FORWARDED_FOR"

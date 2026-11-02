@@ -2,12 +2,15 @@
 View tests for roles.
 """
 
-from django.contrib.auth.models import Group
-from django.test import Client
+from unittest import mock
+
+from django.contrib.auth.models import Group, Permission
+from django.test import Client, override_settings
 
 from kamu.utils.auth import set_default_permissions
 from kamu.views.role import RoleListApproverView, RoleListInviterView, RoleListOwnerView
 from tests.setup import BaseTestCase
+from tests.utils import MockLdapConn
 
 
 class RoleListTests(BaseTestCase):
@@ -109,3 +112,55 @@ class RoleViewTests(BaseTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("Superuser", response.content.decode("utf-8"))
+
+
+class RoleGroupViewTests(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.create_user()
+        self.role = self.create_role()
+        self.group = Group.objects.create(name="ApproverGroup")
+        self.role.approvers.add(self.group)
+        self.url = f"/role/{self.role.pk}/group/{self.group.pk}/"
+        self.client = Client()
+        self.client.force_login(self.user)
+
+    @override_settings(LDAP_SHOW_GROUP_MEMBER_LISTS=True)
+    @mock.patch("kamu.connectors.ldap._get_connection")
+    def test_show_role_group(self, mock_ldap):
+        mock_ldap.return_value = MockLdapConn()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
+        self.user.user_permissions.add(Permission.objects.get(codename="search_roles"))
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.group.name, response.content.decode("utf-8"))
+        self.assertIn("Ldap User", response.content.decode("utf-8"))
+
+    @override_settings(LDAP_SHOW_GROUP_MEMBER_LISTS=True)
+    @mock.patch("kamu.connectors.ldap._get_connection")
+    def test_show_role_group_max_size(self, mock_ldap):
+        mock_ldap.return_value = MockLdapConn(size_exceeded=True)
+        self.user.user_permissions.add(Permission.objects.get(codename="search_roles"))
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.group.name, response.content.decode("utf-8"))
+        self.assertIn("This group has too many members to display", response.content.decode("utf-8"))
+        self.assertNotIn("Ldap User", response.content.decode("utf-8"))
+
+    @override_settings(LDAP_GROUP_MEMBERS_SEARCH_LIMIT=0)
+    @override_settings(LDAP_SHOW_GROUP_MEMBER_LISTS=True)
+    @mock.patch("kamu.connectors.ldap._get_connection")
+    def test_show_role_group_max_size_local(self, mock_ldap):
+        mock_ldap.return_value = MockLdapConn()
+        self.user.user_permissions.add(Permission.objects.get(codename="search_roles"))
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("This group has too many members to display", response.content.decode("utf-8"))
+
+    def test_show_role_group_no_ldap_membership_lists(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
+        self.user.user_permissions.add(Permission.objects.get(codename="search_roles"))
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
