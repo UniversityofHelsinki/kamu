@@ -85,6 +85,9 @@ MASS_INVITE_PERMISSION_GROUPS: dict[str, int] = {
 # Role hierarchy maximum depth, 1 = no hierarchy, 2 = parent and child, etc.
 ROLE_HIERARCHY_MAXIMUM_DEPTH: int = 4
 
+# If more roles are included in role listings, show filters. Default is 5, use 0 to always show filters.
+ROLE_LIST_FILTER_LIMIT: int = 5
+
 # Maximum length for group name in role.
 ROLE_IAM_GROUP_MAX_LENGTH: int = 32
 # Disallowed characters search regex for group name in role. Characters matching this regex cause rejection.

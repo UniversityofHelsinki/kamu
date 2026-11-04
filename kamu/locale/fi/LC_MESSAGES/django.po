@@ -670,6 +670,18 @@ msgstr ""
 "Riviltä puuttuu tunnisteet: \"%(line)s\". Kaksi ensimmäistä kenttää ovat "
 "nimiä varten."
 
+#: kamu/forms/role.py:23 kamu/models/role.py:357
+msgid "Permission"
+msgstr "Valtuus"
+
+#: kamu/forms/role.py:26
+msgid "Service permissions apply only to limited user accounts."
+msgstr "Palveluvaltuudet koskevat vain kevyttunnuksia."
+
+#: kamu/forms/role.py:43
+msgid "All permissions"
+msgstr "Kaikki valtuudet"
+
 #: kamu/models/account.py:29
 msgid "Enabled"
 msgstr "Aktiivinen"
@@ -1480,10 +1492,6 @@ msgstr "Oikeuden hinta"
 #: kamu/models/role.py:346
 msgid "Permission value"
 msgstr "Oikeuden arvo"
-
-#: kamu/models/role.py:357
-msgid "Permission"
-msgstr "Oikeus"
 
 #: kamu/models/role.py:422
 msgid "The membership requires a verified email address."
@@ -3461,7 +3469,7 @@ msgstr "Tiedot"
 
 #: kamu/templates/identity/identity_search.html:34
 #: kamu/templates/membership/membership_invite_identity.html:40
-#: kamu/templates/role/role_search.html:29
+#: kamu/templates/role/role_search.html:30
 msgid "No results with the provided search parameters."
 msgstr "Ei tuloksia annetuilla hakuehdoilla."
 
@@ -3715,8 +3723,8 @@ msgstr "Hylkää"
 #: kamu/templates/membership/membership_detail.html:21
 #: kamu/templates/membership/membership_invite.html:15
 #: kamu/templates/role/role_detail.html:10
-#: kamu/templates/role/role_list.html:13
-#: kamu/templates/role/role_search.html:15
+#: kamu/templates/role/role_list.html:17
+#: kamu/templates/role/role_search.html:16
 msgid "Description"
 msgstr "Kuvaus"
 
@@ -4170,16 +4178,16 @@ msgstr "Tästä ryhmästä ei löytynyt jäseniä."
 msgid "Back to role details"
 msgstr "Takaisin roolin tietoihin"
 
-#: kamu/templates/role/role_list.html:5
+#: kamu/templates/role/role_list.html:6
 msgid "Role list"
 msgstr "Roolit"
 
-#: kamu/templates/role/role_list.html:12
-#: kamu/templates/role/role_search.html:14
+#: kamu/templates/role/role_list.html:16
+#: kamu/templates/role/role_search.html:15
 msgid "Role name"
 msgstr "Roolin nimi"
 
-#: kamu/templates/role/role_list.html:27
+#: kamu/templates/role/role_list.html:31
 msgid "No roles."
 msgstr "Ei rooleja."
 
@@ -4232,11 +4240,11 @@ msgstr ""
 "Etsi rooleja roolin nimellä, kuvauksella tai niiden osalla. Mukana kaikki "
 "järjestelmästä löytyvät roolit."
 
-#: kamu/templates/role/role_search.html:9
+#: kamu/templates/role/role_search.html:10
 msgid "Results"
 msgstr "Tulokset"
 
-#: kamu/templates/role/role_search.html:31
+#: kamu/templates/role/role_search.html:32
 msgid "Submit a search to get results."
 msgstr "Suorita haku saadaksesi tuloksia."
 

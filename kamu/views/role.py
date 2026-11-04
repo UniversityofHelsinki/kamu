@@ -15,9 +15,9 @@ from django.utils.translation import get_language
 from django.views.generic import DetailView, ListView
 
 from kamu.connectors.ldap import LDAP_SIZELIMIT_EXCEEDED, ldap_get_group_members
-from kamu.forms.generic import TextSearchForm
+from kamu.forms.role import RoleSearchForm
 from kamu.models.membership import Membership
-from kamu.models.role import Role
+from kamu.models.role import Permission, Role
 from kamu.utils.audit import AuditLog
 from kamu.utils.membership import get_mass_invite_limit
 
@@ -107,12 +107,80 @@ class RoleDetailGroupView(LoginRequiredMixin, DetailView[Role]):
         return context
 
 
-class RoleListApproverView(LoginRequiredMixin, ListView[Role]):
+class RoleFilterMixin:
+
+    def filter_by_permission(self, queryset: QuerySet[Role], permission: Permission) -> QuerySet[Role]:
+        """
+        Filter role queryset by a specific permission.
+
+        Get all roles the with hierarchical permission and filter the queryset with those.
+        """
+        roles_with_permission_ids = set(Role.objects.filter(permissions=permission).values_list("pk", flat=True))
+        current_level_ids = roles_with_permission_ids.copy()
+        depth = 1
+        while current_level_ids and depth < settings.ROLE_HIERARCHY_MAXIMUM_DEPTH:
+            current_level_ids = (
+                set(Role.objects.filter(parent_id__in=current_level_ids).values_list("pk", flat=True))
+                - roles_with_permission_ids
+            )
+            roles_with_permission_ids.update(current_level_ids)
+            depth += 1
+        return queryset.filter(pk__in=roles_with_permission_ids)
+
+    def search_queryset(self, queryset: QuerySet[Role], search: str) -> QuerySet[Role]:
+        """
+        Search role queryset based on the current language.
+        """
+        if get_language() == "fi":
+            queryset = queryset.filter(
+                Q(identifier__icontains=search) | Q(name_fi__icontains=search) | Q(description_fi__icontains=search)
+            )
+        elif get_language() == "sv":
+            queryset = queryset.filter(
+                Q(identifier__icontains=search) | Q(name_sv__icontains=search) | Q(description_sv__icontains=search)
+            )
+        else:
+            queryset = queryset.filter(
+                Q(identifier__icontains=search) | Q(name_en__icontains=search) | Q(description_en__icontains=search)
+            )
+        return queryset
+
+    def apply_get_filters(self, request: HttpRequest, queryset: QuerySet[Role]) -> QuerySet[Role]:
+        search = request.GET.get("search", None)
+        permission = request.GET.get("permission", None)
+        if search:
+            queryset = self.search_queryset(queryset, search)
+        if permission:
+            queryset = self.filter_by_permission(queryset, Permission.objects.get(pk=permission))
+        return queryset
+
+
+class RoleListMixin(LoginRequiredMixin, RoleFilterMixin, ListView[Role]):
+    """
+    Mixin for role list views.
+    """
+
+    model = Role
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Add search form to ListView, including search parameters if present.
+        """
+        context = super().get_context_data(**kwargs)
+        if "search" in self.request.GET or "permission" in self.request.GET:
+            context["form"] = RoleSearchForm(self.request.GET)
+            context["show_filter_limit"] = 0
+        else:
+            context["form"] = RoleSearchForm()
+            context["show_filter_limit"] = getattr(settings, "ROLE_LIST_FILTER_LIMIT", 5)
+        return context
+
+
+class RoleListApproverView(RoleListMixin):
     """
     List all roles where user is an approver.
     """
 
-    model = Role
     template_name = "role/role_list_approver.html"
 
     def get_queryset(self) -> QuerySet[Role]:
@@ -128,15 +196,15 @@ class RoleListApproverView(LoginRequiredMixin, ListView[Role]):
             .distinct()
             .order_by(*Role.get_ordering_by_name())
         )
+        queryset = self.apply_get_filters(self.request, queryset)
         return queryset.prefetch_related("owner", "parent")
 
 
-class RoleListInviterView(LoginRequiredMixin, ListView[Role]):
+class RoleListInviterView(RoleListMixin):
     """
     List all roles where user is an inviter.
     """
 
-    model = Role
     template_name = "role/role_list_inviter.html"
 
     def get_queryset(self) -> QuerySet[Role]:
@@ -152,15 +220,15 @@ class RoleListInviterView(LoginRequiredMixin, ListView[Role]):
             .distinct()
             .order_by(*Role.get_ordering_by_name())
         )
+        queryset = self.apply_get_filters(self.request, queryset)
         return queryset.prefetch_related("owner", "parent")
 
 
-class RoleListOwnerView(LoginRequiredMixin, ListView[Role]):
+class RoleListOwnerView(RoleListMixin):
     """
     List all roles owned by the user.
     """
 
-    model = Role
     template_name = "role/role_list_owner.html"
 
     def get_queryset(self) -> QuerySet[Role]:
@@ -174,7 +242,7 @@ class RoleListOwnerView(LoginRequiredMixin, ListView[Role]):
         return queryset.prefetch_related("owner", "parent")
 
 
-class RoleSearchView(LoginRequiredMixin, ListView[Role]):
+class RoleSearchView(LoginRequiredMixin, RoleFilterMixin, ListView[Role]):
     """
     View for role search.
     """
@@ -192,10 +260,12 @@ class RoleSearchView(LoginRequiredMixin, ListView[Role]):
         Add search form to ListView, including search parameters if present.
         """
         context = super().get_context_data(**kwargs)
-        if "search" in self.request.GET:
-            context["form"] = TextSearchForm(self.request.GET)
+        if "search" in self.request.GET or "permission" in self.request.GET:
+            context["form"] = RoleSearchForm(self.request.GET)
+            context["show_results"] = True
         else:
-            context["form"] = TextSearchForm()
+            context["form"] = RoleSearchForm()
+            context["show_results"] = False
         return context
 
     def get_queryset(self) -> QuerySet[Role]:
@@ -203,19 +273,5 @@ class RoleSearchView(LoginRequiredMixin, ListView[Role]):
         Filter queryset based on search parameters.
         """
         queryset = Role.objects.all()
-        if "search" not in self.request.GET:
-            return queryset.none()
-        search = self.request.GET["search"]
-        if get_language() == "fi":
-            queryset = queryset.filter(
-                Q(identifier__icontains=search) | Q(name_fi__icontains=search) | Q(description_fi__icontains=search)
-            )
-        elif get_language() == "sv":
-            queryset = queryset.filter(
-                Q(identifier__icontains=search) | Q(name_sv__icontains=search) | Q(description_sv__icontains=search)
-            )
-        else:
-            queryset = queryset.filter(
-                Q(identifier__icontains=search) | Q(name_en__icontains=search) | Q(description_en__icontains=search)
-            )
+        queryset = self.apply_get_filters(self.request, queryset)
         return queryset.prefetch_related("owner", "parent").order_by(*Role.get_ordering_by_name())

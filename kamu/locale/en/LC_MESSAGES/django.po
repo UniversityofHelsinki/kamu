@@ -608,6 +608,18 @@ msgid ""
 "Line is missing identifiers: \"%(line)s\". First two fields are for names."
 msgstr ""
 
+#: kamu/forms/role.py:23 kamu/models/role.py:357
+msgid "Permission"
+msgstr ""
+
+#: kamu/forms/role.py:26
+msgid "Service permissions apply only to limited user accounts."
+msgstr ""
+
+#: kamu/forms/role.py:43
+msgid "All permissions"
+msgstr ""
+
 #: kamu/models/account.py:29
 msgid "Enabled"
 msgstr ""
@@ -1398,10 +1410,6 @@ msgstr ""
 
 #: kamu/models/role.py:346
 msgid "Permission value"
-msgstr ""
-
-#: kamu/models/role.py:357
-msgid "Permission"
 msgstr ""
 
 #: kamu/models/role.py:422
@@ -3158,7 +3166,7 @@ msgstr ""
 
 #: kamu/templates/identity/identity_search.html:34
 #: kamu/templates/membership/membership_invite_identity.html:40
-#: kamu/templates/role/role_search.html:29
+#: kamu/templates/role/role_search.html:30
 msgid "No results with the provided search parameters."
 msgstr ""
 
@@ -3384,8 +3392,8 @@ msgstr ""
 #: kamu/templates/membership/membership_detail.html:21
 #: kamu/templates/membership/membership_invite.html:15
 #: kamu/templates/role/role_detail.html:10
-#: kamu/templates/role/role_list.html:13
-#: kamu/templates/role/role_search.html:15
+#: kamu/templates/role/role_list.html:17
+#: kamu/templates/role/role_search.html:16
 msgid "Description"
 msgstr ""
 
@@ -3799,16 +3807,16 @@ msgstr ""
 msgid "Back to role details"
 msgstr ""
 
-#: kamu/templates/role/role_list.html:5
+#: kamu/templates/role/role_list.html:6
 msgid "Role list"
 msgstr ""
 
-#: kamu/templates/role/role_list.html:12
-#: kamu/templates/role/role_search.html:14
+#: kamu/templates/role/role_list.html:16
+#: kamu/templates/role/role_search.html:15
 msgid "Role name"
 msgstr ""
 
-#: kamu/templates/role/role_list.html:27
+#: kamu/templates/role/role_list.html:31
 msgid "No roles."
 msgstr ""
 
@@ -3851,11 +3859,11 @@ msgid ""
 "the system are included."
 msgstr ""
 
-#: kamu/templates/role/role_search.html:9
+#: kamu/templates/role/role_search.html:10
 msgid "Results"
 msgstr ""
 
-#: kamu/templates/role/role_search.html:31
+#: kamu/templates/role/role_search.html:32
 msgid "Submit a search to get results."
 msgstr ""
 

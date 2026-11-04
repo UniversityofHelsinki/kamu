@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load crispy_forms_tags %}
 {% block content %}
   {% block role_list_description %}
     <h1 id="roles-list" class="mb-4">{% trans "Role list" %}</h1>
   {% endblock %}
+  {% if show_filter_limit == 0 or show_filter_limit < object_list|length %}
+    {% crispy form form.helper %}
+  {% endif %}
   {% if object_list %}
     <div class="table-responsive">
       <table class="table" aria-describedby="roles-list">

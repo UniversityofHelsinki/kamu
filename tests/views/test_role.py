@@ -57,6 +57,10 @@ class RoleListTests(BaseTestCase):
         response = RoleListInviterView.as_view()(request)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data["object_list"].count(), 2)
+        request = self.factory.get(f"{self.url}inviter/?search={self.another_role.name()[:-1]}")
+        request.user = self.user
+        response = RoleListInviterView.as_view()(request)
+        self.assertEqual(response.context_data["object_list"].count(), 1)
 
     def test_view_role_search(self):
         set_default_permissions(self.user)
@@ -65,6 +69,22 @@ class RoleListTests(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.another_role.name(), response.content.decode("utf-8"))
         self.assertNotIn(self.role.name(), response.content.decode("utf-8"))
+
+    def test_view_role_filter_permission(self):
+        set_default_permissions(self.user)
+        permission = self.create_permission()
+        self.role.permissions.add(permission)
+        url = f"{self.url}search/?permission={permission.pk}"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.role.name(), response.content.decode("utf-8"))
+        self.assertNotIn(self.another_role.name(), response.content.decode("utf-8"))
+        # Filter with permission and search term
+        url = f"{self.url}search/?search={self.another_role.name()[:-1]}&permission={permission.pk}"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(self.role.name(), response.content.decode("utf-8"))
+        self.assertNotIn(self.another_role.name(), response.content.decode("utf-8"))
 
     def test_view_role_search_without_permission(self):
         set_default_permissions(self.user, remove=True)

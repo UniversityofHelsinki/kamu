@@ -15,7 +15,7 @@ class TextSearchForm(forms.Form):
     Form for text search.
 
     Using GET method to get a bookmarkable URL.
-    Only use with insensitive fields as search values are set to URL parameters.
+    Only use with nonsensitive fields as search values are set to URL parameters.
     """
 
     search = forms.CharField(label=_("Search text"), max_length=255)

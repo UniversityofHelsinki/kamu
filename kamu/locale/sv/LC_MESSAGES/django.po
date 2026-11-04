@@ -664,6 +664,18 @@ msgid ""
 msgstr ""
 "Raden saknar identifierare: \"%(line)s\". De två första fälten är för namn."
 
+#: kamu/forms/role.py:23 kamu/models/role.py:357
+msgid "Permission"
+msgstr "Rättighet"
+
+#: kamu/forms/role.py:26
+msgid "Service permissions apply only to limited user accounts."
+msgstr "Tjänstbehörigheter gäller endast för begränsade användarkonton."
+
+#: kamu/forms/role.py:43
+msgid "All permissions"
+msgstr "Alla behörigheter"
+
 #: kamu/models/account.py:29
 msgid "Enabled"
 msgstr "Aktiverad"
@@ -1473,10 +1485,6 @@ msgstr "Rättighetens kostnad"
 #: kamu/models/role.py:346
 msgid "Permission value"
 msgstr "Rättighetens värde"
-
-#: kamu/models/role.py:357
-msgid "Permission"
-msgstr "Rättighet"
 
 #: kamu/models/role.py:422
 msgid "The membership requires a verified email address."
@@ -3455,7 +3463,7 @@ msgstr "Attribut"
 
 #: kamu/templates/identity/identity_search.html:34
 #: kamu/templates/membership/membership_invite_identity.html:40
-#: kamu/templates/role/role_search.html:29
+#: kamu/templates/role/role_search.html:30
 msgid "No results with the provided search parameters."
 msgstr "Inga resultat med de angivna sökparametrarna."
 
@@ -3715,8 +3723,8 @@ msgstr "Avvisa"
 #: kamu/templates/membership/membership_detail.html:21
 #: kamu/templates/membership/membership_invite.html:15
 #: kamu/templates/role/role_detail.html:10
-#: kamu/templates/role/role_list.html:13
-#: kamu/templates/role/role_search.html:15
+#: kamu/templates/role/role_list.html:17
+#: kamu/templates/role/role_search.html:16
 msgid "Description"
 msgstr "Beskrivning"
 
@@ -4171,16 +4179,16 @@ msgstr "Inga medlemmar hittades i denna grupp."
 msgid "Back to role details"
 msgstr "Tillbaka till rollinformation"
 
-#: kamu/templates/role/role_list.html:5
+#: kamu/templates/role/role_list.html:6
 msgid "Role list"
 msgstr "Rollista"
 
-#: kamu/templates/role/role_list.html:12
-#: kamu/templates/role/role_search.html:14
+#: kamu/templates/role/role_list.html:16
+#: kamu/templates/role/role_search.html:15
 msgid "Role name"
 msgstr "Rollens namn"
 
-#: kamu/templates/role/role_list.html:27
+#: kamu/templates/role/role_list.html:31
 msgid "No roles."
 msgstr "Inga roller."
 
@@ -4233,11 +4241,11 @@ msgstr ""
 "Sök efter roller med rollens namn, beskrivning eller en del av dem. Alla "
 "roller som finns i systemet ingår."
 
-#: kamu/templates/role/role_search.html:9
+#: kamu/templates/role/role_search.html:10
 msgid "Results"
 msgstr "Resultat"
 
-#: kamu/templates/role/role_search.html:31
+#: kamu/templates/role/role_search.html:32
 msgid "Submit a search to get results."
 msgstr "Gör en sökning för att få resultat."
 
