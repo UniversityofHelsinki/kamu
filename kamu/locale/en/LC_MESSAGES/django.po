@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 13:01+0200\n"
+"POT-Creation-Date: 2026-11-04 14:26+0200\n"
 "Language: EN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -665,7 +665,7 @@ msgstr ""
 #: kamu/models/identity.py:48 kamu/models/identity.py:289
 #: kamu/models/identity.py:568 kamu/models/identity.py:639
 #: kamu/models/identity.py:713 kamu/models/identity.py:782
-#: kamu/models/membership.py:122 kamu/models/organisation.py:31
+#: kamu/models/membership.py:128 kamu/models/organisation.py:31
 #: kamu/models/role.py:87 kamu/models/role.py:352 kamu/models/role.py:501
 #: kamu/models/token.py:321
 msgid "Created at"
@@ -675,7 +675,7 @@ msgstr ""
 #: kamu/models/identity.py:49 kamu/models/identity.py:290
 #: kamu/models/identity.py:569 kamu/models/identity.py:640
 #: kamu/models/identity.py:714 kamu/models/identity.py:783
-#: kamu/models/membership.py:123 kamu/models/organisation.py:32
+#: kamu/models/membership.py:129 kamu/models/organisation.py:32
 #: kamu/models/role.py:88 kamu/models/role.py:353 kamu/models/role.py:502
 msgid "Updated at"
 msgstr ""
@@ -1101,7 +1101,7 @@ msgstr ""
 #: kamu/models/membership.py:56
 #: kamu/templates/membership/membership_approval_list.html:32
 #: kamu/templates/membership/membership_expiring_list.html:34
-#: kamu/templates/role/role_detail.html:76
+#: kamu/templates/role/role_detail.html:80
 msgid "Invited"
 msgstr ""
 
@@ -1175,32 +1175,39 @@ msgstr ""
 msgid "Membership status"
 msgstr ""
 
-#: kamu/models/membership.py:116
+#: kamu/models/membership.py:117
 msgid "Reasons for membership"
 msgstr ""
 
-#: kamu/models/membership.py:117
+#: kamu/models/membership.py:119
+msgid ""
+"Provide a clear justification for the membership. If the role is general, "
+"specify, for example, the name of the research group, project, or course, or "
+"another similar, more detailed reason."
+msgstr ""
+
+#: kamu/models/membership.py:123
 msgid "Membership start date"
 msgstr ""
 
-#: kamu/models/membership.py:118
+#: kamu/models/membership.py:124
 msgid "Membership expiry date"
 msgstr ""
 
-#: kamu/models/membership.py:119
+#: kamu/models/membership.py:125
 #: kamu/templates/membership/membership_detail.html:65
 msgid "Cancelled at"
 msgstr ""
 
-#: kamu/models/membership.py:121
+#: kamu/models/membership.py:127
 msgid "Requirements failed time"
 msgstr ""
 
-#: kamu/models/membership.py:134
+#: kamu/models/membership.py:140
 msgid "Membership"
 msgstr ""
 
-#: kamu/models/membership.py:135 kamu/templates/base.html:34
+#: kamu/models/membership.py:141 kamu/templates/base.html:34
 #: kamu/templates/role/role_detail.html:65
 msgid "Memberships"
 msgstr ""
@@ -1275,7 +1282,7 @@ msgstr ""
 msgid "Notification email address"
 msgstr ""
 
-#: kamu/models/role.py:61 kamu/templates/role/role_detail.html:47
+#: kamu/models/role.py:61 kamu/templates/role/role_detail.html:51
 msgid "Notification language"
 msgstr ""
 
@@ -1283,7 +1290,7 @@ msgstr ""
 msgid "Inviter groups"
 msgstr ""
 
-#: kamu/models/role.py:67 kamu/templates/role/role_detail.html:37
+#: kamu/models/role.py:67 kamu/templates/role/role_detail.html:39
 msgid "Approver groups"
 msgstr ""
 
@@ -3094,7 +3101,7 @@ msgstr ""
 #: kamu/templates/membership/membership_approval_list.html:24
 #: kamu/templates/membership/membership_detail.html:63
 #: kamu/templates/membership/membership_expiring_list.html:26
-#: kamu/templates/role/role_detail.html:68
+#: kamu/templates/role/role_detail.html:72
 msgid "Start date"
 msgstr ""
 
@@ -3105,7 +3112,7 @@ msgstr ""
 #: kamu/templates/membership/membership_detail.html:127
 #: kamu/templates/membership/membership_detail.html:154
 #: kamu/templates/membership/membership_expiring_list.html:27
-#: kamu/templates/role/role_detail.html:69
+#: kamu/templates/role/role_detail.html:73
 msgid "Expiration date"
 msgstr ""
 
@@ -3766,6 +3773,10 @@ msgstr ""
 msgid "Invite multiple members (max %(limit)s)"
 msgstr ""
 
+#: kamu/templates/role/role_detail.html:70
+msgid "Person"
+msgstr ""
+
 #: kamu/templates/role/role_detail_group.html:7
 #, python-format
 msgid "Listing approvers in group \"%(group)s\""
@@ -3786,10 +3797,6 @@ msgstr ""
 
 #: kamu/templates/role/role_detail_group.html:27
 msgid "Back to role details"
-msgstr ""
-
-#: kamu/templates/role/role_detail.html:66
-msgid "Person"
 msgstr ""
 
 #: kamu/templates/role/role_list.html:5

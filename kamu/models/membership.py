@@ -113,7 +113,13 @@ class Membership(models.Model):
     inviter = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="membership_inviter", on_delete=models.SET_NULL, null=True, blank=True
     )
-    reason = models.TextField(verbose_name=_("Reasons for membership"))
+    reason = models.TextField(
+        verbose_name=_("Reasons for membership"),
+        help_text=_(
+            "Provide a clear justification for the membership. If the role is general, specify, for example, the "
+            "name of the research group, project, or course, or another similar, more detailed reason."
+        ),
+    )
     start_date = models.DateField(verbose_name=_("Membership start date"))
     expire_date = models.DateField(verbose_name=_("Membership expiry date"))
     cancelled_at = models.DateTimeField(blank=True, null=True, verbose_name=_("Cancelled at"))
