@@ -30,6 +30,7 @@ Clone the repository and install the dependencies::
     uv sync
       # Install dependencies using uv, creating .venv directory for the virtual environment.
       # Use --extra mysql or --extra postgresql to install database driver.
+      # Use --no-dev to skip development dependencies in production environment.
     source .venv/bin/activate
       # Activate the virtual environment,
       # or use "uv run <command>" to run commands in the virtual environment

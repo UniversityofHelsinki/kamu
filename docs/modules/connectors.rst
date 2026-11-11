@@ -17,7 +17,7 @@ LDAP
     :members:
 
 Organisation
-----
+------------
 .. automodule:: kamu.connectors.organisation
     :members:
 
