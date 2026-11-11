@@ -24,6 +24,15 @@ Run code tests with the following::
 
     python manage.py test --settings=tests.settings
 
+Translations
+------------
+
+Do not include line numbers or obsolete translations in the translation files.
+
+Use the following command to update and compile translation files::
+
+    python manage.py makemessages --all --ignore .venv --no-obsolete --add-location file
+    python manage.py compilemessages --ignore .venv
 
 Committing code
 ---------------

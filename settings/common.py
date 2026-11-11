@@ -143,6 +143,9 @@ LANGUAGES: list[tuple[str, StrOrPromise]] = [
     ("sv", _("Swedish")),
 ]
 
+LOCALE_PATHS: list[str] = [
+    str(BASE_DIR / "kamu/locale"),
+]
 
 TIME_ZONE: str = "Europe/Helsinki"
 

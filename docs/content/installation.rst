@@ -42,7 +42,8 @@ Run tests using local SQLite database::
 Run the development server::
 
     python manage.py migrate --settings=settings.test  # Run migrations, test settings use local SQLite.
-    python manage.py runserver --settings=settings.test  # Run the development server
+    python manage.py compilemessages --ignore .venv  # Compile translations.
+    python manage.py runserver --settings=settings.test  # Run the development server.
 
 Generate test data::
 
